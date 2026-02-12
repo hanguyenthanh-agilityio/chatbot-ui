@@ -1,51 +1,37 @@
-import { createOpenAI } from "@ai-sdk/openai";
 import { convertToModelMessages, streamText, UIMessage } from "ai";
+import {
+  AIProviderName,
+  getChatModelConfig,
+  getSupportedAIProviderList,
+  isAIProviderName,
+} from "@/lib/ai-provider";
+import { getErrorMessage } from "@/utils/error-message";
 
-const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL;
-const USES_OLLAMA =
-  OPENAI_BASE_URL?.includes("localhost:11434") ||
-  OPENAI_BASE_URL?.includes("127.0.0.1:11434");
-
-const MODEL_ID =
-  process.env.OPENAI_MODEL ?? (USES_OLLAMA ? "qwen2.5:3b" : "gpt-4o-mini");
-const OPENAI_PROVIDER = createOpenAI({
-  baseURL: OPENAI_BASE_URL,
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const MODEL = USES_OLLAMA
-  ? OPENAI_PROVIDER.chat(MODEL_ID)
-  : OPENAI_PROVIDER(MODEL_ID);
 const SYSTEM_PROMPT = "You are a helpful assistant.";
 
 type ChatRequestBody = {
   messages?: UIMessage[];
+  provider?: string;
+  openaiApiKey?: string;
 };
 
 function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 });
 }
 
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (typeof error === "string") return error;
-  if (error && typeof error === "object" && "message" in error) {
-    const message = (error as { message?: unknown }).message;
-    if (typeof message === "string") return message;
-  }
-
-  return "An unknown error occurred.";
-}
-
-function formatStreamError(error: unknown): string {
+function formatStreamError(error: unknown, provider: AIProviderName): string {
   const message = getErrorMessage(error);
   const normalizedMessage = message.toLowerCase();
 
-  if (normalizedMessage.includes("insufficient_quota")) {
+  if (
+    provider === "openai" &&
+    normalizedMessage.includes("insufficient_quota")
+  ) {
     return "OpenAI quota exceeded. Use local free mode by setting OPENAI_BASE_URL=http://localhost:11434/v1 and OPENAI_MODEL=qwen2.5:3b.";
   }
 
   if (
-    USES_OLLAMA &&
+    provider === "ollama" &&
     (normalizedMessage.includes("econnrefused") ||
       normalizedMessage.includes("fetch failed") ||
       normalizedMessage.includes("connection"))
@@ -68,13 +54,35 @@ export async function POST(req: Request) {
     return badRequest("`messages` must be an array.");
   }
 
+  const providerFromBody = body.provider?.trim().toLowerCase();
+  let providerOverride: AIProviderName | undefined;
+  if (providerFromBody) {
+    if (!isAIProviderName(providerFromBody)) {
+      return badRequest(
+        `Invalid \`provider\`. Supported values: ${getSupportedAIProviderList()}.`,
+      );
+    }
+
+    providerOverride = providerFromBody;
+  }
+
+  let modelConfig: ReturnType<typeof getChatModelConfig>;
+  try {
+    modelConfig = getChatModelConfig({
+      provider: providerOverride,
+      openaiApiKey: body.openaiApiKey,
+    });
+  } catch (error) {
+    return Response.json({ error: getErrorMessage(error) }, { status: 500 });
+  }
+
   const result = streamText({
-    model: MODEL,
+    model: modelConfig.model,
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(body.messages),
   });
 
   return result.toUIMessageStreamResponse({
-    onError: formatStreamError,
+    onError: (error) => formatStreamError(error, modelConfig.provider),
   });
 }
