@@ -3,12 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run dev:all",
+    "dev:web": "next dev",
+    "dev:ollama": "sh -c \"curl -sSf http://127.0.0.1:11434/api/tags >/dev/null 2>&1 && echo 'Ollama already running on 127.0.0.1:11434' || ollama serve\"",
+    "dev:all": "concurrently --kill-others-on-fail --names WEB,OLLAMA --prefix-colors cyan,magenta \"npm:dev:web\" \"npm:dev:ollama\"",
+    "ollama:pull": "ollama pull qwen2.5:3b",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.27",
+    "@ai-sdk/react": "^3.0.83",
+    "ai": "^6.0.81",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -18,6 +25,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
