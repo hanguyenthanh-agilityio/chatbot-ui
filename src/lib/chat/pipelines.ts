@@ -16,7 +16,7 @@ import {
 import { isProductionLikeServer } from "@/lib/runtime-env";
 import { getErrorMessage } from "@/utils/error-message";
 
-const DEFAULT_MCP_STDIO_SERVER_PATH = "scripts/mcp-demo-server.mjs";
+const DEFAULT_MCP_STDIO_SERVER_PATH = "scripts/mcp-demo-server-stdio.mjs";
 
 export function formatStreamError(
   error: unknown,

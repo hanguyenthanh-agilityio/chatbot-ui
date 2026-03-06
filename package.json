@@ -13,6 +13,7 @@
     "ollama:pull": "ollama pull qwen2.5:3b",
     "ollama:pull:vision": "ollama pull gemma3:4b",
     "mcp:demo": "node scripts/mcp-demo-server.mjs",
+    "mcp:demo:stdio": "node scripts/mcp-demo-server-stdio.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

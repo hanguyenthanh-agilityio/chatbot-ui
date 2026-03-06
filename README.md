@@ -99,7 +99,7 @@ OPENAI_IMAGE_MODEL=gpt-image-1
 # MCP_SERVER_URL=https://your-mcp-server.example.com/mcp
 # MCP_AUTH_TOKEN=your_optional_bearer_token
 # MCP_STDIO_COMMAND=node
-# MCP_STDIO_SERVER_PATH=scripts/mcp-demo-server.mjs
+# MCP_STDIO_SERVER_PATH=scripts/mcp-demo-server-stdio.mjs
 ```
 
 Production behavior:
@@ -130,13 +130,14 @@ MCP_SERVER_URL=https://your-mcp-server.example.com/mcp
 
 ## Scripts
 
-- `pnpm run dev`: run web + Ollama + MCP demo server together
+- `pnpm run dev`: run web + Ollama + MCP demo HTTP server together
 - `pnpm run dev:mock-production`: run local with production-like behavior toggled on
 - `pnpm run dev:web`: run Next.js only
 - `pnpm run dev:ollama`: start Ollama only if not running
-- `pnpm run dev:mcp`: run local MCP demo server (stdio)
+- `pnpm run dev:mcp`: run local MCP demo HTTP server at `http://127.0.0.1:4001/mcp`
 - `pnpm run ollama:pull`: pull default local text model
 - `pnpm run ollama:pull:vision`: pull local vision model for chat image Q&A
-- `pnpm run mcp:demo`: run local MCP demo server manually (stdio)
+- `pnpm run mcp:demo`: run local MCP demo HTTP server manually
+- `pnpm run mcp:demo:stdio`: run local MCP demo stdio fallback server manually
 - `pnpm run lint`: lint
 - `pnpm run build`: production build
