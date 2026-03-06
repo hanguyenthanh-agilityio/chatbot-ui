@@ -7,41 +7,42 @@ import { Text } from "@/components/ui/text";
 
 type ProviderSelectorProps = {
   selectedProvider: AIProviderName;
+  allowedProviders?: AIProviderName[];
   openaiApiKeyInput: string;
   ollamaBaseUrlInput: string;
-  mcpServerUrlInput: string;
-  showMcpServerUrlInput?: boolean;
   isOpenAISelected: boolean;
   isValidatingKey: boolean;
+  isValidatingOllamaBaseUrl: boolean;
   providerStatus: string;
   withContainer?: boolean;
   onProviderChange: (provider: AIProviderName) => void;
   onOpenAIApiKeyChange: (value: string) => void;
   onOllamaBaseUrlChange: (value: string) => void;
-  onMcpServerUrlChange: (value: string) => void;
   onVerifyOpenAIKey: () => void | Promise<void>;
+  onVerifyOllamaBaseUrl: () => void | Promise<void>;
 };
 
 export function ProviderSelector({
   selectedProvider,
+  allowedProviders = ["ollama", "openai"],
   openaiApiKeyInput,
   ollamaBaseUrlInput,
-  mcpServerUrlInput,
-  showMcpServerUrlInput = false,
   isOpenAISelected,
   isValidatingKey,
+  isValidatingOllamaBaseUrl,
   providerStatus,
   withContainer = true,
   onProviderChange,
   onOpenAIApiKeyChange,
   onOllamaBaseUrlChange,
-  onMcpServerUrlChange,
   onVerifyOpenAIKey,
+  onVerifyOllamaBaseUrl,
 }: ProviderSelectorProps) {
+  const isProviderSelectDisabled = allowedProviders.length <= 1;
   const showOllamaBaseUrlInput = isProductionLikeClient() && !isOpenAISelected;
 
   const content = (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <Text as="label" variant="body" className="font-medium text-slate-800">
         AI Provider
       </Text>
@@ -51,16 +52,25 @@ export function ProviderSelector({
         onChange={(event) =>
           onProviderChange(event.target.value as AIProviderName)
         }
+        disabled={isProviderSelectDisabled}
         fullWidth
         controlSize="md"
         variant="default"
       >
-        <option value="ollama">Ollama</option>
-        <option value="openai">OpenAI</option>
+        {allowedProviders.includes("ollama") ? (
+          <option value="ollama">Ollama</option>
+        ) : null}
+        {allowedProviders.includes("openai") ? (
+          <option value="openai">OpenAI</option>
+        ) : null}
       </Select>
 
+      <Text variant="caption" className="min-h-4" aria-live="polite">
+        {providerStatus}
+      </Text>
+
       {isOpenAISelected ? (
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2">
           <Input
             type="password"
             value={openaiApiKeyInput}
@@ -69,7 +79,6 @@ export function ProviderSelector({
             fullWidth
             controlSize="md"
             variant="default"
-            className="flex-1"
           />
           <Button
             type="button"
@@ -77,6 +86,7 @@ export function ProviderSelector({
             isLoading={isValidatingKey}
             variant="primary"
             size="md"
+            fullWidth
           >
             {isValidatingKey ? "Verifying..." : "Verify key"}
           </Button>
@@ -94,23 +104,18 @@ export function ProviderSelector({
             controlSize="md"
             variant="default"
           />
-          {showMcpServerUrlInput ? (
-            <Input
-              type="url"
-              value={mcpServerUrlInput}
-              onChange={(event) => onMcpServerUrlChange(event.target.value)}
-              placeholder="MCP server URL (e.g. https://your-mcp.example.com/mcp)"
-              fullWidth
-              controlSize="md"
-              variant="default"
-            />
-          ) : null}
+
+          <Button
+            type="button"
+            onClick={onVerifyOllamaBaseUrl}
+            isLoading={isValidatingOllamaBaseUrl}
+            variant="primary"
+            size="md"
+          >
+            {isValidatingOllamaBaseUrl ? "Verifying..." : "Verify URL"}
+          </Button>
         </div>
       ) : null}
-
-      <Text variant="caption" aria-live="polite">
-        {providerStatus}
-      </Text>
     </div>
   );
 

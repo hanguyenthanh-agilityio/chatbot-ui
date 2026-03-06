@@ -12,11 +12,23 @@ type ValidateOpenAIKeyResponse = {
   details?: string;
 };
 
+type ValidateUrlResponse = {
+  ok?: boolean;
+  message?: string;
+  details?: string;
+};
+
 type ProviderRequestBody = {
   provider: AIProviderName;
   openaiApiKey?: string;
   ollamaBaseUrl?: string;
   mcpServerUrl?: string;
+};
+
+type UseProviderSelectionOptions = {
+  requireMcpServerUrl?: boolean;
+  requireOpenAIApiKeyVerification?: boolean;
+  defaultProvider?: AIProviderName;
 };
 
 type UseProviderSelectionResult = {
@@ -27,7 +39,10 @@ type UseProviderSelectionResult = {
   providerStatus: string;
   isOpenAISelected: boolean;
   isOpenAIReady: boolean;
+  isProviderReady: boolean;
   isValidatingKey: boolean;
+  isValidatingOllamaBaseUrl: boolean;
+  isValidatingMcpServerUrl: boolean;
   validationError: string | null;
   validationErrorId: number;
   openaiApiKeyForRequests?: string;
@@ -37,33 +52,52 @@ type UseProviderSelectionResult = {
   updateOllamaBaseUrlInput: (value: string) => void;
   updateMcpServerUrlInput: (value: string) => void;
   verifyOpenAIKey: () => Promise<void>;
+  verifyOllamaBaseUrl: () => Promise<void>;
+  verifyMcpServerUrl: () => Promise<void>;
 };
 
 const DEFAULT_PROVIDER_BY_ENV: AIProviderName = isProductionLikeClient()
   ? "openai"
   : "ollama";
 const IS_SERVER_OPENAI_READY =
-  process.env.NEXT_PUBLIC_OPENAI_SERVER_READY === "true" ||
-  isProductionLikeClient();
+  process.env.NEXT_PUBLIC_OPENAI_SERVER_READY === "true";
+const REQUIRES_OLLAMA_URL_VERIFICATION = isProductionLikeClient();
 
-export function useProviderSelection(): UseProviderSelectionResult {
-  const [selectedProvider, setSelectedProvider] = useState<AIProviderName>(
-    DEFAULT_PROVIDER_BY_ENV,
-  );
+export function useProviderSelection({
+  requireMcpServerUrl = false,
+  requireOpenAIApiKeyVerification = false,
+  defaultProvider = DEFAULT_PROVIDER_BY_ENV,
+}: UseProviderSelectionOptions = {}): UseProviderSelectionResult {
+  const [selectedProvider, setSelectedProvider] =
+    useState<AIProviderName>(defaultProvider);
   const [openaiApiKeyInput, setOpenaiApiKeyInput] = useState("");
   const [ollamaBaseUrlInput, setOllamaBaseUrlInput] = useState("");
   const [mcpServerUrlInput, setMcpServerUrlInput] = useState("");
   const [verifiedOpenAIKey, setVerifiedOpenAIKey] = useState<string | null>(
     null,
   );
+  const [verifiedOllamaBaseUrl, setVerifiedOllamaBaseUrl] = useState<
+    string | null
+  >(null);
+  const [verifiedMcpServerUrl, setVerifiedMcpServerUrl] = useState<
+    string | null
+  >(null);
   const [providerStatus, setProviderStatus] = useState<string>(
-    DEFAULT_PROVIDER_BY_ENV === "openai" && IS_SERVER_OPENAI_READY
+    defaultProvider === "openai" &&
+      IS_SERVER_OPENAI_READY &&
+      !requireOpenAIApiKeyVerification
       ? PROVIDER_STATUS.openaiServerDefault
-      : DEFAULT_PROVIDER_BY_ENV === "openai"
+      : defaultProvider === "openai"
         ? PROVIDER_STATUS.openaiSelected
-        : PROVIDER_STATUS.ollamaDefault,
+        : REQUIRES_OLLAMA_URL_VERIFICATION
+          ? PROVIDER_STATUS.ollamaSelected
+          : PROVIDER_STATUS.ollamaDefault,
   );
   const [isValidatingKey, setIsValidatingKey] = useState(false);
+  const [isValidatingOllamaBaseUrl, setIsValidatingOllamaBaseUrl] =
+    useState(false);
+  const [isValidatingMcpServerUrl, setIsValidatingMcpServerUrl] =
+    useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [validationErrorId, setValidationErrorId] = useState(0);
 
@@ -73,8 +107,17 @@ export function useProviderSelection(): UseProviderSelectionResult {
   }
 
   const isOpenAISelected = selectedProvider === "openai";
+  const isOpenAIBypassReady =
+    IS_SERVER_OPENAI_READY && !requireOpenAIApiKeyVerification;
   const isOpenAIReady =
-    !isOpenAISelected || IS_SERVER_OPENAI_READY || Boolean(verifiedOpenAIKey);
+    !isOpenAISelected || isOpenAIBypassReady || Boolean(verifiedOpenAIKey);
+  const isOllamaReady = isOpenAISelected
+    ? true
+    : !REQUIRES_OLLAMA_URL_VERIFICATION
+      ? true
+      : Boolean(verifiedOllamaBaseUrl) &&
+        (!requireMcpServerUrl || Boolean(verifiedMcpServerUrl));
+  const isProviderReady = isOpenAISelected ? isOpenAIReady : isOllamaReady;
 
   const requestBody = useMemo<ProviderRequestBody>(
     () =>
@@ -85,12 +128,18 @@ export function useProviderSelection(): UseProviderSelectionResult {
           }
         : {
             provider: selectedProvider,
-            ollamaBaseUrl: ollamaBaseUrlInput.trim() || undefined,
-            mcpServerUrl: mcpServerUrlInput.trim() || undefined,
+            ollamaBaseUrl: REQUIRES_OLLAMA_URL_VERIFICATION
+              ? (verifiedOllamaBaseUrl ?? undefined)
+              : ollamaBaseUrlInput.trim() || undefined,
+            mcpServerUrl: REQUIRES_OLLAMA_URL_VERIFICATION
+              ? (verifiedMcpServerUrl ?? undefined)
+              : mcpServerUrlInput.trim() || undefined,
           },
     [
       selectedProvider,
       verifiedOpenAIKey,
+      verifiedOllamaBaseUrl,
+      verifiedMcpServerUrl,
       ollamaBaseUrlInput,
       mcpServerUrlInput,
     ],
@@ -101,13 +150,19 @@ export function useProviderSelection(): UseProviderSelectionResult {
     setValidationError(null);
 
     if (nextProvider === "ollama") {
-      setProviderStatus(PROVIDER_STATUS.ollamaDefault);
+      setProviderStatus(
+        REQUIRES_OLLAMA_URL_VERIFICATION
+          ? PROVIDER_STATUS.ollamaSelected
+          : PROVIDER_STATUS.ollamaDefault,
+      );
       return;
     }
 
     setVerifiedOpenAIKey(null);
+    setVerifiedOllamaBaseUrl(null);
+    setVerifiedMcpServerUrl(null);
     setProviderStatus(
-      IS_SERVER_OPENAI_READY
+      isOpenAIBypassReady
         ? PROVIDER_STATUS.openaiServerDefault
         : PROVIDER_STATUS.openaiSelected,
     );
@@ -122,7 +177,7 @@ export function useProviderSelection(): UseProviderSelectionResult {
 
       if (selectedProvider === "openai") {
         setProviderStatus(
-          IS_SERVER_OPENAI_READY
+          isOpenAIBypassReady
             ? PROVIDER_STATUS.openaiServerDefault
             : PROVIDER_STATUS.openaiSelected,
         );
@@ -133,11 +188,27 @@ export function useProviderSelection(): UseProviderSelectionResult {
   function updateOllamaBaseUrlInput(nextValue: string) {
     setOllamaBaseUrlInput(nextValue);
     setValidationError(null);
+
+    if (verifiedOllamaBaseUrl !== nextValue.trim()) {
+      setVerifiedOllamaBaseUrl(null);
+    }
+
+    if (REQUIRES_OLLAMA_URL_VERIFICATION && selectedProvider === "ollama") {
+      setProviderStatus(PROVIDER_STATUS.ollamaSelected);
+    }
   }
 
   function updateMcpServerUrlInput(nextValue: string) {
     setMcpServerUrlInput(nextValue);
     setValidationError(null);
+
+    if (verifiedMcpServerUrl !== nextValue.trim()) {
+      setVerifiedMcpServerUrl(null);
+    }
+
+    if (REQUIRES_OLLAMA_URL_VERIFICATION && selectedProvider === "ollama") {
+      setProviderStatus(PROVIDER_STATUS.ollamaSelected);
+    }
   }
 
   async function verifyOpenAIKey() {
@@ -188,6 +259,84 @@ export function useProviderSelection(): UseProviderSelectionResult {
     }
   }
 
+  async function verifyOllamaBaseUrl() {
+    const baseUrl = ollamaBaseUrlInput.trim();
+
+    if (!baseUrl) {
+      setProviderStatus(PROVIDER_STATUS.ollamaBaseUrlRequired);
+      return;
+    }
+
+    setValidationError(null);
+    setIsValidatingOllamaBaseUrl(true);
+    setProviderStatus(PROVIDER_STATUS.verifyingOllamaUrls);
+
+    try {
+      const ollamaResponse = await fetch("/api/validate-ollama-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ baseUrl }),
+      });
+
+      const ollamaData = (await ollamaResponse.json()) as ValidateUrlResponse;
+      if (!ollamaResponse.ok || !ollamaData.ok) {
+        throw new Error(
+          ollamaData.details ??
+            ollamaData.message ??
+            PROVIDER_STATUS.ollamaUrlInvalid,
+        );
+      }
+
+      setVerifiedOllamaBaseUrl(baseUrl);
+      setProviderStatus(PROVIDER_STATUS.ollamaUrlsVerified);
+    } catch (error) {
+      setVerifiedOllamaBaseUrl(null);
+      setProviderStatus(PROVIDER_STATUS.ollamaUrlInvalid);
+      setNewValidationError(getErrorMessage(error));
+    } finally {
+      setIsValidatingOllamaBaseUrl(false);
+    }
+  }
+
+  async function verifyMcpServerUrl() {
+    const mcpUrl = mcpServerUrlInput.trim();
+
+    if (!mcpUrl) {
+      setProviderStatus(PROVIDER_STATUS.ollamaMcpUrlRequired);
+      return;
+    }
+
+    setValidationError(null);
+    setIsValidatingMcpServerUrl(true);
+    setProviderStatus(PROVIDER_STATUS.verifyingMcpServerUrl);
+
+    try {
+      const mcpResponse = await fetch("/api/validate-mcp-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ serverUrl: mcpUrl }),
+      });
+
+      const mcpData = (await mcpResponse.json()) as ValidateUrlResponse;
+      if (!mcpResponse.ok || !mcpData.ok) {
+        throw new Error(
+          mcpData.details ??
+            mcpData.message ??
+            PROVIDER_STATUS.ollamaUrlInvalid,
+        );
+      }
+
+      setVerifiedMcpServerUrl(mcpUrl);
+      setProviderStatus(PROVIDER_STATUS.ollamaMcpUrlsVerified);
+    } catch (error) {
+      setVerifiedMcpServerUrl(null);
+      setProviderStatus(PROVIDER_STATUS.ollamaUrlInvalid);
+      setNewValidationError(getErrorMessage(error));
+    } finally {
+      setIsValidatingMcpServerUrl(false);
+    }
+  }
+
   return {
     selectedProvider,
     openaiApiKeyInput,
@@ -196,7 +345,10 @@ export function useProviderSelection(): UseProviderSelectionResult {
     providerStatus,
     isOpenAISelected,
     isOpenAIReady,
+    isProviderReady,
     isValidatingKey,
+    isValidatingOllamaBaseUrl,
+    isValidatingMcpServerUrl,
     validationError,
     validationErrorId,
     openaiApiKeyForRequests: verifiedOpenAIKey ?? undefined,
@@ -206,5 +358,7 @@ export function useProviderSelection(): UseProviderSelectionResult {
     updateOllamaBaseUrlInput,
     updateMcpServerUrlInput,
     verifyOpenAIKey,
+    verifyOllamaBaseUrl,
+    verifyMcpServerUrl,
   };
 }

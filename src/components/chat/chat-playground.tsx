@@ -8,9 +8,13 @@ import {
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { ChatInputForm } from "@/components/chat/chat-input-form";
 import { FeatureSelector } from "@/components/chat/feature-selector";
-import { ChatMessages } from "@/components/chat/chat-messages";
+import {
+  ChatMessages,
+  type ChatRequestFailure,
+} from "@/components/chat/chat-messages";
 import { ProviderSelector } from "@/components/chat/provider-selector";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { Text } from "@/components/ui/text";
 import { ToastViewport } from "@/components/ui/toast";
@@ -23,6 +27,7 @@ import {
   CHAT_TITLE,
   SUBMITTING_HINT,
   VERIFY_KEY_HINT,
+  VERIFY_PROVIDER_URL_HINT,
 } from "@/constants/chat-ui";
 import { useChatAutoScroll } from "@/hooks/use-chat-auto-scroll";
 import { useChatHistoryPersistence } from "@/hooks/use-chat-history-persistence";
@@ -40,35 +45,59 @@ export function ChatPlayground() {
   const [dismissedValidationErrorId, setDismissedValidationErrorId] = useState<
     number | null
   >(null);
-  const provider = useProviderSelection();
-  const { messages, setMessages, sendMessage, addToolOutput, status, error } =
-    useChat({
-      transport: new DefaultChatTransport({
-        api: "/api/chat",
-      }),
-      // Auto-continue when tool outputs are all available.
-      sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-      onToolCall: ({ toolCall }) => {
-        if (toolCall.dynamic) {
-          return;
-        }
+  const provider = useProviderSelection({
+    requireMcpServerUrl: featureMode === "mcp",
+    requireOpenAIApiKeyVerification: true,
+  });
+  const {
+    messages,
+    setMessages,
+    sendMessage,
+    regenerate,
+    clearError,
+    addToolOutput,
+    status,
+    error,
+  } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+    // Auto-continue when tool outputs are all available.
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+    onToolCall: ({ toolCall }) => {
+      if (toolCall.dynamic) {
+        return;
+      }
 
-        if (toolCall.toolName === "getClientContext") {
-          addToolOutput({
-            tool: "getClientContext",
-            toolCallId: toolCall.toolCallId,
-            output: {
-              locale: navigator.language,
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-              localTimeIso: new Date().toISOString(),
-            },
-          });
-        }
-      },
-    });
+      if (toolCall.toolName === "getClientContext") {
+        addToolOutput({
+          tool: "getClientContext",
+          toolCallId: toolCall.toolCallId,
+          output: {
+            locale: navigator.language,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            localTimeIso: new Date().toISOString(),
+          },
+        });
+      }
+    },
+  });
   const { clearHistory } = useChatHistoryPersistence(messages, setMessages);
   const messagesContainerRef = useRef<HTMLElement>(null);
   const lastChatErrorRef = useRef<string | null>(null);
+  const [requestFailures, setRequestFailures] = useState<ChatRequestFailure[]>(
+    [],
+  );
+  const [retryingFailureId, setRetryingFailureId] = useState<string | null>(
+    null,
+  );
+  const [lastSubmittedRequestBody, setLastSubmittedRequestBody] = useState<{
+    provider: string;
+    featureMode: ChatFeatureMode;
+    openaiApiKey?: string;
+    ollamaBaseUrl?: string;
+    mcpServerUrl?: string;
+  } | null>(null);
   const { toasts, showError, dismissToast } = useToast();
   const isMcpDisabledForProvider = provider.selectedProvider === "openai";
   const showMcpServerUrlInput =
@@ -84,7 +113,16 @@ export function ChatPlayground() {
   const canSend =
     (trimmedInput.length > 0 || hasAttachedFiles) &&
     !isLoading &&
-    provider.isOpenAIReady;
+    provider.isProviderReady;
+  const statusHintMessage = isSubmitting
+    ? SUBMITTING_HINT
+    : provider.isOpenAISelected && !provider.isOpenAIReady
+      ? VERIFY_KEY_HINT
+      : !provider.isOpenAISelected && !provider.isProviderReady
+        ? VERIFY_PROVIDER_URL_HINT
+        : "";
+  const statusHintVariant =
+    isSubmitting || !statusHintMessage ? "caption" : "warning";
   const validationErrorMessage = provider.validationError
     ? getDisplayErrorMessage(provider.validationError)
     : null;
@@ -102,16 +140,35 @@ export function ChatPlayground() {
       return;
     }
 
-    if (lastChatErrorRef.current === nextErrorMessage) {
+    const nextErrorSignature = `${nextErrorMessage}::${messages.length}`;
+    if (lastChatErrorRef.current === nextErrorSignature) {
       return;
     }
 
-    lastChatErrorRef.current = nextErrorMessage;
+    lastChatErrorRef.current = nextErrorSignature;
+
+    const latestUserMessage = [...messages]
+      .reverse()
+      .find((message) => message.role === "user");
+
+    setRequestFailures((current) => [
+      ...current,
+      {
+        id:
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? crypto.randomUUID()
+            : `${Date.now()}-${current.length + 1}`,
+        message: nextErrorMessage,
+        messageId: latestUserMessage?.id,
+        retriedCount: 0,
+      },
+    ]);
+
     showError({
       title: "Chat request failed",
       description: nextErrorMessage,
     });
-  }, [error, showError]);
+  }, [error, messages, showError]);
 
   function handleProviderChange(
     nextProvider: Parameters<typeof provider.selectProvider>[0],
@@ -166,7 +223,7 @@ export function ChatPlayground() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!trimmedInput && !hasAttachedFiles) return;
-    if (!provider.isOpenAIReady) return;
+    if (!provider.isProviderReady) return;
 
     const filesForSend = hasAttachedFiles
       ? filesToFileList(attachedFiles)
@@ -176,15 +233,50 @@ export function ChatPlayground() {
       ? { text: trimmedInput, files: filesForSend }
       : { files: filesForSend! };
 
+    const requestBody = {
+      ...provider.requestBody,
+      featureMode,
+    };
+
+    setLastSubmittedRequestBody(requestBody);
+    clearError();
+
     void sendMessage(outgoingMessage, {
-      body: {
-        ...provider.requestBody,
-        featureMode,
-      },
+      body: requestBody,
     });
 
     setInput("");
     setAttachedFiles([]);
+  }
+
+  async function handleRetryFailure(failureId: string) {
+    const failure = requestFailures.find((item) => item.id === failureId);
+    if (!failure?.messageId || !lastSubmittedRequestBody) return;
+
+    setRetryingFailureId(failureId);
+    clearError();
+
+    try {
+      await regenerate({
+        messageId: failure.messageId,
+        body: lastSubmittedRequestBody,
+      });
+
+      setRequestFailures((current) =>
+        current.map((item) =>
+          item.id === failureId
+            ? { ...item, retriedCount: item.retriedCount + 1 }
+            : item,
+        ),
+      );
+    } catch (retryError) {
+      showError({
+        title: "Retry failed",
+        description: getDisplayErrorMessage(retryError),
+      });
+    } finally {
+      setRetryingFailureId(null);
+    }
   }
 
   return (
@@ -217,25 +309,53 @@ export function ChatPlayground() {
             selectedProvider={provider.selectedProvider}
             openaiApiKeyInput={provider.openaiApiKeyInput}
             ollamaBaseUrlInput={provider.ollamaBaseUrlInput}
-            mcpServerUrlInput={provider.mcpServerUrlInput}
-            showMcpServerUrlInput={showMcpServerUrlInput}
             isOpenAISelected={provider.isOpenAISelected}
             isValidatingKey={provider.isValidatingKey}
+            isValidatingOllamaBaseUrl={provider.isValidatingOllamaBaseUrl}
             providerStatus={provider.providerStatus}
             withContainer={false}
             onProviderChange={handleProviderChange}
             onOpenAIApiKeyChange={provider.updateOpenAIApiKeyInput}
             onOllamaBaseUrlChange={provider.updateOllamaBaseUrlInput}
-            onMcpServerUrlChange={provider.updateMcpServerUrlInput}
             onVerifyOpenAIKey={provider.verifyOpenAIKey}
+            onVerifyOllamaBaseUrl={provider.verifyOllamaBaseUrl}
           />
 
-          <FeatureSelector
-            selectedFeature={featureMode}
-            withContainer={false}
-            disabledFeatures={isMcpDisabledForProvider ? ["mcp"] : []}
-            onFeatureChange={setFeatureMode}
-          />
+          <div className="flex flex-col gap-2">
+            <FeatureSelector
+              selectedFeature={featureMode}
+              withContainer={false}
+              disabledFeatures={isMcpDisabledForProvider ? ["mcp"] : []}
+              onFeatureChange={setFeatureMode}
+            />
+
+            {showMcpServerUrlInput ? (
+              <div className="flex flex-col gap-2">
+                <Input
+                  type="url"
+                  value={provider.mcpServerUrlInput}
+                  onChange={(event) =>
+                    provider.updateMcpServerUrlInput(event.target.value)
+                  }
+                  placeholder="MCP server URL (e.g. https://your-mcp.example.com/mcp)"
+                  fullWidth
+                  controlSize="md"
+                  variant="default"
+                />
+                <Button
+                  type="button"
+                  onClick={provider.verifyMcpServerUrl}
+                  isLoading={provider.isValidatingMcpServerUrl}
+                  variant="primary"
+                  size="md"
+                >
+                  {provider.isValidatingMcpServerUrl
+                    ? "Verifying..."
+                    : "Verify MCP URL"}
+                </Button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </section>
 
@@ -244,23 +364,24 @@ export function ChatPlayground() {
         messages={messages}
         isSubmitting={isSubmitting}
         isStreaming={isStreaming}
+        requestFailures={requestFailures}
+        retryingFailureId={retryingFailureId}
+        onRetryFailure={handleRetryFailure}
       />
 
-      {isSubmitting ? (
-        <Text variant="caption" aria-live="polite">
-          {SUBMITTING_HINT}
-        </Text>
-      ) : null}
-
-      {provider.isOpenAISelected && !provider.isOpenAIReady ? (
-        <Text variant="warning">{VERIFY_KEY_HINT}</Text>
-      ) : null}
+      <Text
+        variant={statusHintVariant}
+        aria-live="polite"
+        className={!statusHintMessage ? "text-transparent" : undefined}
+      >
+        {statusHintMessage || "\u00A0"}
+      </Text>
 
       <ChatInputForm
         input={input}
         canSend={canSend}
         isLoading={isLoading}
-        isOpenAIReady={provider.isOpenAIReady}
+        isProviderReady={provider.isProviderReady}
         attachedFiles={attachedFiles}
         onInputChange={setInput}
         onAddFiles={addAttachedFiles}
@@ -271,7 +392,7 @@ export function ChatPlayground() {
 
       <Modal
         open={showValidationErrorModal}
-        title="OpenAI validation failed"
+        title="Provider validation failed"
         description={validationErrorMessage ?? undefined}
         onClose={() =>
           setDismissedValidationErrorId(provider.validationErrorId)

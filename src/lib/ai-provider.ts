@@ -33,11 +33,7 @@ abstract class ProviderResolver {
     protected readonly overrides: ChatModelOverrides,
   ) {}
 
-  protected resolveModelFromEnv(): string | undefined {
-    return (
-      this.overrides.modelId ?? process.env.AI_MODEL ?? process.env.OPENAI_MODEL
-    );
-  }
+  protected abstract resolveModelFromEnv(): string | undefined;
 
   protected abstract getDefaultModelId(): string;
   protected abstract createModel(modelId: string): LanguageModel;
@@ -56,6 +52,16 @@ abstract class ProviderResolver {
 class OpenAIResolver extends ProviderResolver {
   constructor(overrides: ChatModelOverrides) {
     super("openai", overrides);
+  }
+
+  protected resolveModelFromEnv(): string | undefined {
+    const configuredProvider = process.env.AI_PROVIDER?.trim().toLowerCase();
+
+    return (
+      this.overrides.modelId ??
+      process.env.OPENAI_MODEL ??
+      (configuredProvider === "openai" ? process.env.AI_MODEL : undefined)
+    );
   }
 
   protected getDefaultModelId(): string {
@@ -86,6 +92,16 @@ class OpenAIResolver extends ProviderResolver {
 class OllamaResolver extends ProviderResolver {
   constructor(overrides: ChatModelOverrides) {
     super("ollama", overrides);
+  }
+
+  protected resolveModelFromEnv(): string | undefined {
+    const configuredProvider = process.env.AI_PROVIDER?.trim().toLowerCase();
+
+    return (
+      this.overrides.modelId ??
+      process.env.OLLAMA_MODEL ??
+      (configuredProvider === "ollama" ? process.env.AI_MODEL : undefined)
+    );
   }
 
   protected getDefaultModelId(): string {

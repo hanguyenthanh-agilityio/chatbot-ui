@@ -15,7 +15,7 @@ type ChatInputFormProps = {
   input: string;
   canSend: boolean;
   isLoading: boolean;
-  isOpenAIReady: boolean;
+  isProviderReady: boolean;
   attachedFiles: File[];
   onInputChange: (value: string) => void;
   onAddFiles: (files: FileList | null) => void;
@@ -28,7 +28,7 @@ export function ChatInputForm({
   input,
   canSend,
   isLoading,
-  isOpenAIReady,
+  isProviderReady,
   attachedFiles,
   onInputChange,
   onAddFiles,
@@ -96,7 +96,7 @@ export function ChatInputForm({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       className={cn(
-        "space-y-2 rounded-xl border border-transparent p-1 transition",
+        "rounded-xl border border-transparent transition",
         isDragActive && "border-sky-400 bg-sky-50/40",
       )}
     >
@@ -108,6 +108,7 @@ export function ChatInputForm({
             variant="outline"
             aria-label="Open file actions"
             onClick={() => setIsMenuOpen((value) => !value)}
+            disabled={!isProviderReady}
           >
             +
           </Button>
@@ -143,6 +144,7 @@ export function ChatInputForm({
           onChange={(event) => onInputChange(event.target.value)}
           placeholder={CHAT_PLACEHOLDER}
           aria-label="Chat input"
+          disabled={!isProviderReady}
           fullWidth
           controlSize="md"
           variant="default"
@@ -155,8 +157,8 @@ export function ChatInputForm({
           variant="primary"
           size="md"
         >
-          {!isOpenAIReady
-            ? "Verify key first"
+          {!isProviderReady
+            ? "Verify first"
             : isLoading
               ? "Generating..."
               : "Send"}
@@ -199,7 +201,7 @@ export function ChatInputForm({
           </button>
         </div>
       ) : (
-        <Text variant="caption" className="text-slate-500">
+        <Text variant="caption" className="text-slate-500 mt-2">
           Click <strong>+</strong> to add files, or drag-and-drop into the input
           area.
         </Text>

@@ -12,6 +12,8 @@
     "dev:mock-production": "NEXT_PUBLIC_MOCK_PRODUCTION=true pnpm run dev:all",
     "ollama:pull": "ollama pull qwen2.5:3b",
     "ollama:pull:vision": "ollama pull gemma3:4b",
+    "tunnel:ollama": "cloudflared tunnel --url http://127.0.0.1:11434 --http-host-header 127.0.0.1:11434",
+    "tunnel:mcp": "cloudflared tunnel --url http://127.0.0.1:4001 --http-host-header 127.0.0.1:4001",
     "mcp:demo": "node scripts/mcp-demo-server.mjs",
     "mcp:demo:stdio": "node scripts/mcp-demo-server-stdio.mjs",
     "build": "next build",

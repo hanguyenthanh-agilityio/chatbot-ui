@@ -14,7 +14,10 @@ export default function ImagePage() {
   const [dismissedValidationErrorId, setDismissedValidationErrorId] = useState<
     number | null
   >(null);
-  const provider = useProviderSelection();
+  const provider = useProviderSelection({
+    requireOpenAIApiKeyVerification: true,
+    defaultProvider: "openai",
+  });
 
   const validationErrorMessage = provider.validationError
     ? getDisplayErrorMessage(provider.validationError)
@@ -38,18 +41,18 @@ export default function ImagePage() {
 
       <ProviderSelector
         selectedProvider={provider.selectedProvider}
+        allowedProviders={["openai"]}
         openaiApiKeyInput={provider.openaiApiKeyInput}
         ollamaBaseUrlInput={provider.ollamaBaseUrlInput}
-        mcpServerUrlInput={provider.mcpServerUrlInput}
-        showMcpServerUrlInput={false}
         isOpenAISelected={provider.isOpenAISelected}
         isValidatingKey={provider.isValidatingKey}
+        isValidatingOllamaBaseUrl={provider.isValidatingOllamaBaseUrl}
         providerStatus={provider.providerStatus}
         onProviderChange={provider.selectProvider}
         onOpenAIApiKeyChange={provider.updateOpenAIApiKeyInput}
         onOllamaBaseUrlChange={provider.updateOllamaBaseUrlInput}
-        onMcpServerUrlChange={provider.updateMcpServerUrlInput}
         onVerifyOpenAIKey={provider.verifyOpenAIKey}
+        onVerifyOllamaBaseUrl={provider.verifyOllamaBaseUrl}
       />
 
       {provider.isOpenAISelected && !provider.isOpenAIReady ? (
@@ -59,6 +62,7 @@ export default function ImagePage() {
       <MediaLab
         selectedProvider={provider.selectedProvider}
         openaiApiKey={provider.openaiApiKeyForRequests}
+        isOpenAIKeyVerified={Boolean(provider.openaiApiKeyForRequests)}
       />
 
       <Modal

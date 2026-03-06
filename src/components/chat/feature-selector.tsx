@@ -49,7 +49,9 @@ export function FeatureSelector({
         ))}
       </Select>
 
-      <Text variant="caption">{selectedOption?.hint}</Text>
+      <Text variant="caption" className="min-h-4">
+        {selectedOption?.hint}
+      </Text>
     </div>
   );
 

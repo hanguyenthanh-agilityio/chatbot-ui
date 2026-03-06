@@ -66,6 +66,58 @@ pnpm run dev:mock-production
 
 This enables `NEXT_PUBLIC_MOCK_PRODUCTION=true` so local behaves like production defaults.
 
+## Local run + Cloudflare Quick Tunnel (public URL)
+
+Use this when app is deployed on Vercel but you want to route chat to your local Ollama + MCP.
+
+1. Start local services
+
+```bash
+# Terminal A
+ollama serve
+
+# Terminal B
+pnpm run dev:mcp
+```
+
+2. Open Cloudflare Quick Tunnels
+
+```bash
+# Terminal C (Ollama)
+pnpm run tunnel:ollama
+# or: cloudflared tunnel --url http://127.0.0.1:11434 --http-host-header 127.0.0.1:11434
+
+# Terminal D (MCP HTTP server)
+pnpm run tunnel:mcp
+# or: cloudflared tunnel --url http://127.0.0.1:4001 --http-host-header 127.0.0.1:4001
+```
+
+3. Copy the 2 public URLs from cloudflared output:
+
+- Ollama tunnel: `https://xxxx.trycloudflare.com`
+- MCP tunnel: `https://yyyy.trycloudflare.com`
+
+4. In your Vercel app `/chat`:
+
+- Select provider: **Ollama**
+- Enter **Ollama base URL**: `https://xxxx.trycloudflare.com/v1`
+- If mode is **MCP**, enter **MCP server URL**: `https://yyyy.trycloudflare.com/mcp`
+- Click **Verify URL** / **Verify URLs** before sending chat messages
+
+5. Smoke test public URLs
+
+```bash
+curl https://xxxx.trycloudflare.com/api/tags
+curl -i https://yyyy.trycloudflare.com/mcp
+```
+
+Notes:
+
+- `GET /mcp` returns `405` is expected (MCP uses POST for requests).
+- If you see `403 Forbidden`, make sure `--http-host-header` is set (Ollama and MCP in this project validate host headers).
+- Quick Tunnel URLs change after restart. Refill new URLs in the app.
+- For stable URLs, use Cloudflare Named Tunnel + your domain.
+
 ## Environment
 
 Default local chat with Ollama:
@@ -73,6 +125,7 @@ Default local chat with Ollama:
 ```env
 AI_PROVIDER=ollama
 AI_MODEL=qwen2.5:3b
+OLLAMA_MODEL=qwen2.5:3b
 OLLAMA_VISION_MODEL=gemma3:4b
 OPENAI_API_KEY=ollama
 OPENAI_BASE_URL=http://localhost:11434/v1
@@ -83,6 +136,7 @@ Optional OpenAI mode:
 ```env
 AI_PROVIDER=openai
 AI_MODEL=gpt-4o-mini
+OPENAI_MODEL=gpt-4o-mini
 OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_BASE_URL=https://api.openai.com/v1
 NEXT_PUBLIC_OPENAI_SERVER_READY=true
@@ -95,7 +149,7 @@ Optional extra features:
 OPENAI_IMAGE_MODEL=gpt-image-1
 
 # MCP integration
-# If omitted, app uses built-in local stdio MCP demo server
+# If omitted, app uses built-in local stdio MCP fallback server
 # MCP_SERVER_URL=https://your-mcp-server.example.com/mcp
 # MCP_AUTH_TOKEN=your_optional_bearer_token
 # MCP_STDIO_COMMAND=node
@@ -108,6 +162,7 @@ Production behavior:
 - If you switch production to **Ollama**, enter URLs in chat UI inputs:
   - **Ollama base URL** (e.g. `https://your-tunnel.example.com/v1`)
   - **MCP server URL** (required only when using MCP mode)
+  - Click **Verify URL(s)** first; chat input stays disabled until verification succeeds
 - You can still keep env defaults if needed:
 
 ```env
@@ -127,6 +182,7 @@ MCP_SERVER_URL=https://your-mcp-server.example.com/mcp
 
 - `openai`: ✅ Supported
 - `ollama`: ❌ Not supported on this page (this page intentionally uses OpenAI image API only)
+- On `/image`, OpenAI key verification is required before `Generate image` is enabled.
 
 ## Scripts
 
@@ -135,6 +191,8 @@ MCP_SERVER_URL=https://your-mcp-server.example.com/mcp
 - `pnpm run dev:web`: run Next.js only
 - `pnpm run dev:ollama`: start Ollama only if not running
 - `pnpm run dev:mcp`: run local MCP demo HTTP server at `http://127.0.0.1:4001/mcp`
+- `pnpm run tunnel:ollama`: open Cloudflare Quick Tunnel for local Ollama (`11434`)
+- `pnpm run tunnel:mcp`: open Cloudflare Quick Tunnel for local MCP HTTP server (`4001`)
 - `pnpm run ollama:pull`: pull default local text model
 - `pnpm run ollama:pull:vision`: pull local vision model for chat image Q&A
 - `pnpm run mcp:demo`: run local MCP demo HTTP server manually

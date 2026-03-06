@@ -10,6 +10,7 @@ import { Text } from "@/components/ui/text";
 type MediaLabProps = {
   selectedProvider: AIProviderName;
   openaiApiKey?: string;
+  isOpenAIKeyVerified: boolean;
 };
 
 type ImageGenerationResponse = {
@@ -18,20 +19,28 @@ type ImageGenerationResponse = {
   error?: string;
 };
 
-export function MediaLab({ selectedProvider, openaiApiKey }: MediaLabProps) {
-  const [imagePrompt, setImagePrompt] = useState(
-    "A cinematic cyberpunk street at night",
-  );
+export function MediaLab({
+  selectedProvider,
+  openaiApiKey,
+  isOpenAIKeyVerified,
+}: MediaLabProps) {
+  const [imagePrompt, setImagePrompt] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const isOllamaSelected = selectedProvider === "ollama";
+  const trimmedImagePrompt = imagePrompt.trim();
+  const isGenerateDisabled =
+    isGeneratingImage ||
+    isOllamaSelected ||
+    !isOpenAIKeyVerified ||
+    trimmedImagePrompt.length === 0;
 
   async function handleGenerateImage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const prompt = imagePrompt.trim();
+    const prompt = trimmedImagePrompt;
     if (!prompt) return;
 
     setIsGeneratingImage(true);
@@ -83,6 +92,10 @@ export function MediaLab({ selectedProvider, openaiApiKey }: MediaLabProps) {
             Ollama mode does not expose OpenAI image generation endpoint in this
             project, so image generation is not supported.
           </Text>
+        ) : !isOpenAIKeyVerified ? (
+          <Text variant="warning" className="mt-1">
+            Verify OpenAI key before generating images.
+          </Text>
         ) : (
           <Text variant="caption" className="mt-1">
             OpenAI mode is supported for image generation.
@@ -94,21 +107,35 @@ export function MediaLab({ selectedProvider, openaiApiKey }: MediaLabProps) {
         <Text variant="body" className="font-medium">
           Image Generation
         </Text>
-        <Input
-          value={imagePrompt}
-          onChange={(event) => setImagePrompt(event.target.value)}
-          fullWidth
-          controlSize="md"
-          placeholder="Describe the image"
-        />
-        <Button
-          type="submit"
-          isLoading={isGeneratingImage}
-          size="sm"
-          disabled={isOllamaSelected}
-        >
-          {isGeneratingImage ? "Generating image..." : "Generate image"}
-        </Button>
+        <div className="flex gap-2">
+          <Input
+            value={imagePrompt}
+            onChange={(event) => setImagePrompt(event.target.value)}
+            fullWidth
+            controlSize="md"
+            placeholder={
+              !isOpenAIKeyVerified
+                ? "Verify key first to enter prompt"
+                : "Describe the image"
+            }
+            disabled={!isOpenAIKeyVerified || isOllamaSelected}
+            className="flex-1"
+          />
+          <Button
+            type="submit"
+            isLoading={isGeneratingImage}
+            size="md"
+            disabled={isGenerateDisabled}
+          >
+            {isOllamaSelected
+              ? "OpenAI only"
+              : !isOpenAIKeyVerified
+                ? "Verify key first"
+                : isGeneratingImage
+                  ? "Generating..."
+                  : "Generate"}
+          </Button>
+        </div>
         {imageError ? <Text variant="error">{imageError}</Text> : null}
         {imageUrl ? (
           <Image
