@@ -82,7 +82,11 @@ export function ChatPlayground() {
       }
     },
   });
-  const { clearHistory } = useChatHistoryPersistence(messages, setMessages);
+  const { clearHistory } = useChatHistoryPersistence(
+    messages,
+    setMessages,
+    provider.selectedProvider,
+  );
   const messagesContainerRef = useRef<HTMLElement>(null);
   const lastChatErrorRef = useRef<string | null>(null);
   const [requestFailures, setRequestFailures] = useState<ChatRequestFailure[]>(
@@ -298,7 +302,7 @@ export function ChatPlayground() {
             Clear chat history
           </Button>
           <Text variant="caption">
-            History persistence: localStorage enabled
+            History persistence: localStorage enabled (separate per provider)
           </Text>
         </div>
       </header>
@@ -337,7 +341,7 @@ export function ChatPlayground() {
                   onChange={(event) =>
                     provider.updateMcpServerUrlInput(event.target.value)
                   }
-                  placeholder="MCP server URL (e.g. https://your-mcp.example.com/mcp)"
+                  placeholder="MCP server URL (e.g. https://your-mcp.example.com) — /mcp auto-added"
                   fullWidth
                   controlSize="md"
                   variant="default"

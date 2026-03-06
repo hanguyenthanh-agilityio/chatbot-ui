@@ -23,7 +23,9 @@ import {
   FEATURE_SYSTEM_PROMPTS,
   getToolsForMode,
 } from "@/lib/chat/feature-config";
+import { normalizeMcpServerUrl } from "@/lib/mcp-url";
 import { resolveOllamaVisionModel } from "@/lib/chat/ollama-vision";
+import { normalizeOllamaBaseUrl } from "@/lib/ollama-url";
 import {
   formatStreamError,
   resolveProviderCandidate,
@@ -115,11 +117,11 @@ function validateRuntimeConstraints({
   }
 
   if (!ollamaBaseUrl?.trim()) {
-    return "Production Ollama requires `ollamaBaseUrl` (public tunnel URL ending with /v1).";
+    return "Production Ollama requires `ollamaBaseUrl` (public tunnel URL).";
   }
 
   if (featureMode === "mcp" && !mcpServerUrl?.trim()) {
-    return "MCP mode with Ollama requires `mcpServerUrl` (public MCP /mcp URL).";
+    return "MCP mode with Ollama requires `mcpServerUrl` (public MCP URL).";
   }
 
   return undefined;
@@ -161,7 +163,8 @@ export async function POST(req: Request) {
   }
 
   const hasImageAttachment = hasImageFileAttachment(body.messages);
-  const ollamaBaseUrlOverride = body.ollamaBaseUrl?.trim();
+  const ollamaBaseUrlOverride =
+    normalizeOllamaBaseUrl(body.ollamaBaseUrl) ?? undefined;
   const ollamaTagsEndpointOverride = deriveOllamaTagsEndpoint(
     ollamaBaseUrlOverride,
   );
@@ -201,7 +204,8 @@ export async function POST(req: Request) {
       model: modelConfig.model,
       provider: modelConfig.provider,
       messages: modelMessages,
-      mcpServerUrlOverride: body.mcpServerUrl?.trim(),
+      mcpServerUrlOverride:
+        normalizeMcpServerUrl(body.mcpServerUrl) ?? undefined,
     });
   }
 

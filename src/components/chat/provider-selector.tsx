@@ -99,7 +99,7 @@ export function ProviderSelector({
             type="url"
             value={ollamaBaseUrlInput}
             onChange={(event) => onOllamaBaseUrlChange(event.target.value)}
-            placeholder="Ollama base URL (e.g. https://your-tunnel.example.com/v1)"
+            placeholder="Ollama base URL (e.g. https://your-tunnel.example.com) — /v1 auto-added"
             fullWidth
             controlSize="md"
             variant="default"

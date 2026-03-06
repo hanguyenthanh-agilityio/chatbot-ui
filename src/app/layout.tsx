@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI SDK Playground",
+  title: "AI SDK Core",
   description:
-    "AI SDK Core/UI playground with default/tool/agent/prompt/MCP chat modes and image generation demos.",
+    "AI SDK Core with default/tool/agent/prompt/MCP chat modes and image generation demos.",
 };
 
 export default function RootLayout({

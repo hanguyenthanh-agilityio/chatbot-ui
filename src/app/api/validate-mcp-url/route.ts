@@ -1,4 +1,5 @@
 import { createMCPClient } from "@ai-sdk/mcp";
+import { normalizeMcpServerUrl } from "@/lib/mcp-url";
 import { getErrorMessage } from "@/utils/error-message";
 
 type ValidateMcpUrlRequestBody = {
@@ -9,23 +10,10 @@ function badRequest(message: string) {
   return Response.json({ ok: false, message }, { status: 400 });
 }
 
-function parseAndValidateMcpUrl(rawUrl?: string): string | null {
-  const trimmed = rawUrl?.trim();
-  if (!trimmed) return null;
-
-  try {
-    const url = new URL(trimmed);
-    if (!["http:", "https:"].includes(url.protocol)) {
-      return null;
-    }
-
-    return url.toString();
-  } catch {
-    return null;
-  }
-}
-
-async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+async function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   try {
@@ -51,7 +39,7 @@ export async function POST(req: Request) {
     return badRequest("Invalid JSON body.");
   }
 
-  const serverUrl = parseAndValidateMcpUrl(body.serverUrl);
+  const serverUrl = normalizeMcpServerUrl(body.serverUrl);
   if (!serverUrl) {
     return badRequest("`serverUrl` must be a valid http/https URL.");
   }
@@ -79,6 +67,7 @@ export async function POST(req: Request) {
     return Response.json({
       ok: true,
       message: "MCP URL verified.",
+      normalizedServerUrl: serverUrl,
       details:
         toolNames.length > 0
           ? `Connected successfully. Discovered tools: ${toolNames.join(", ")}`

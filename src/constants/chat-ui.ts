@@ -1,4 +1,4 @@
-export const CHAT_TITLE = "AI SDK Core + UI Playground";
+export const CHAT_TITLE = "AI SDK Core";
 export const CHAT_SUBTITLE =
   "Default, tool, agent, multi-agent, MCP, and prompt chat modes with image generation and file-aware demos";
 export const CHAT_PLACEHOLDER = "Ask a question (optionally attach files)...";

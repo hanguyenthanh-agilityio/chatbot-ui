@@ -100,8 +100,8 @@ pnpm run tunnel:mcp
 4. In your Vercel app `/chat`:
 
 - Select provider: **Ollama**
-- Enter **Ollama base URL**: `https://xxxx.trycloudflare.com/v1`
-- If mode is **MCP**, enter **MCP server URL**: `https://yyyy.trycloudflare.com/mcp`
+- Enter **Ollama base URL**: `https://xxxx.trycloudflare.com` (app auto-adds `/v1`)
+- If mode is **MCP**, enter **MCP server URL**: `https://yyyy.trycloudflare.com` (app auto-adds `/mcp`)
 - Click **Verify URL** / **Verify URLs** before sending chat messages
 
 5. Smoke test public URLs
@@ -160,7 +160,7 @@ Production behavior:
 
 - Default provider is **OpenAI**.
 - If you switch production to **Ollama**, enter URLs in chat UI inputs:
-  - **Ollama base URL** (e.g. `https://your-tunnel.example.com/v1`)
+  - **Ollama base URL** (e.g. `https://your-tunnel.example.com`; app auto-adds `/v1`)
   - **MCP server URL** (required only when using MCP mode)
   - Click **Verify URL(s)** first; chat input stays disabled until verification succeeds
 - You can still keep env defaults if needed:

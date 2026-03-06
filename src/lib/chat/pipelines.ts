@@ -13,6 +13,7 @@ import {
   FEATURE_SYSTEM_PROMPTS,
   getMultiAgentResearchToolSet,
 } from "@/lib/chat/feature-config";
+import { normalizeMcpServerUrl } from "@/lib/mcp-url";
 import { isProductionLikeServer } from "@/lib/runtime-env";
 import { getErrorMessage } from "@/utils/error-message";
 
@@ -79,8 +80,9 @@ export async function streamWithMcpTools({
   messages: ModelMessage[];
   mcpServerUrlOverride?: string;
 }): Promise<Response> {
-  const mcpUrl =
-    mcpServerUrlOverride?.trim() || process.env.MCP_SERVER_URL?.trim();
+  const mcpUrl = normalizeMcpServerUrl(
+    mcpServerUrlOverride?.trim() || process.env.MCP_SERVER_URL?.trim(),
+  );
   const mcpAuthToken = process.env.MCP_AUTH_TOKEN?.trim();
   const mcpStdioServerPath =
     process.env.MCP_STDIO_SERVER_PATH ?? DEFAULT_MCP_STDIO_SERVER_PATH;

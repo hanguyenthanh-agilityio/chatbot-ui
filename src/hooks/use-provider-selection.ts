@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { PROVIDER_STATUS } from "@/constants/chat-ui";
 import type { AIProviderName } from "@/lib/ai-provider";
+import { normalizeMcpServerUrl } from "@/lib/mcp-url";
+import { normalizeOllamaBaseUrl } from "@/lib/ollama-url";
 import { isProductionLikeClient } from "@/lib/runtime-env";
 import { getErrorMessage } from "@/utils/error-message";
 
@@ -16,6 +18,8 @@ type ValidateUrlResponse = {
   ok?: boolean;
   message?: string;
   details?: string;
+  normalizedServerUrl?: string;
+  normalizedBaseUrl?: string;
 };
 
 type ProviderRequestBody = {
@@ -130,10 +134,14 @@ export function useProviderSelection({
             provider: selectedProvider,
             ollamaBaseUrl: REQUIRES_OLLAMA_URL_VERIFICATION
               ? (verifiedOllamaBaseUrl ?? undefined)
-              : ollamaBaseUrlInput.trim() || undefined,
+              : (normalizeOllamaBaseUrl(ollamaBaseUrlInput) ??
+                  ollamaBaseUrlInput.trim()) ||
+                undefined,
             mcpServerUrl: REQUIRES_OLLAMA_URL_VERIFICATION
               ? (verifiedMcpServerUrl ?? undefined)
-              : mcpServerUrlInput.trim() || undefined,
+              : (normalizeMcpServerUrl(mcpServerUrlInput) ??
+                  mcpServerUrlInput.trim()) ||
+                undefined,
           },
     [
       selectedProvider,
@@ -189,7 +197,11 @@ export function useProviderSelection({
     setOllamaBaseUrlInput(nextValue);
     setValidationError(null);
 
-    if (verifiedOllamaBaseUrl !== nextValue.trim()) {
+    const normalizedNextValue = normalizeOllamaBaseUrl(nextValue);
+    if (
+      verifiedOllamaBaseUrl &&
+      verifiedOllamaBaseUrl !== normalizedNextValue
+    ) {
       setVerifiedOllamaBaseUrl(null);
     }
 
@@ -202,7 +214,8 @@ export function useProviderSelection({
     setMcpServerUrlInput(nextValue);
     setValidationError(null);
 
-    if (verifiedMcpServerUrl !== nextValue.trim()) {
+    const normalizedNextValue = normalizeMcpServerUrl(nextValue);
+    if (verifiedMcpServerUrl && verifiedMcpServerUrl !== normalizedNextValue) {
       setVerifiedMcpServerUrl(null);
     }
 
@@ -260,7 +273,7 @@ export function useProviderSelection({
   }
 
   async function verifyOllamaBaseUrl() {
-    const baseUrl = ollamaBaseUrlInput.trim();
+    const baseUrl = normalizeOllamaBaseUrl(ollamaBaseUrlInput);
 
     if (!baseUrl) {
       setProviderStatus(PROVIDER_STATUS.ollamaBaseUrlRequired);
@@ -287,7 +300,7 @@ export function useProviderSelection({
         );
       }
 
-      setVerifiedOllamaBaseUrl(baseUrl);
+      setVerifiedOllamaBaseUrl(ollamaData.normalizedBaseUrl ?? baseUrl);
       setProviderStatus(PROVIDER_STATUS.ollamaUrlsVerified);
     } catch (error) {
       setVerifiedOllamaBaseUrl(null);
@@ -299,7 +312,7 @@ export function useProviderSelection({
   }
 
   async function verifyMcpServerUrl() {
-    const mcpUrl = mcpServerUrlInput.trim();
+    const mcpUrl = normalizeMcpServerUrl(mcpServerUrlInput);
 
     if (!mcpUrl) {
       setProviderStatus(PROVIDER_STATUS.ollamaMcpUrlRequired);
@@ -326,7 +339,7 @@ export function useProviderSelection({
         );
       }
 
-      setVerifiedMcpServerUrl(mcpUrl);
+      setVerifiedMcpServerUrl(mcpData.normalizedServerUrl ?? mcpUrl);
       setProviderStatus(PROVIDER_STATUS.ollamaMcpUrlsVerified);
     } catch (error) {
       setVerifiedMcpServerUrl(null);
