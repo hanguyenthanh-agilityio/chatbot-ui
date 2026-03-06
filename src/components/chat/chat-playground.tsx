@@ -27,6 +27,7 @@ import {
 import { useChatAutoScroll } from "@/hooks/use-chat-auto-scroll";
 import { useChatHistoryPersistence } from "@/hooks/use-chat-history-persistence";
 import { useProviderSelection } from "@/hooks/use-provider-selection";
+import { isProductionLikeClient } from "@/lib/runtime-env";
 import { useToast } from "@/hooks/use-toast";
 import { getDisplayErrorMessage } from "@/utils/error-message";
 
@@ -69,6 +70,11 @@ export function ChatPlayground() {
   const messagesContainerRef = useRef<HTMLElement>(null);
   const lastChatErrorRef = useRef<string | null>(null);
   const { toasts, showError, dismissToast } = useToast();
+  const isMcpDisabledForProvider = provider.selectedProvider === "openai";
+  const showMcpServerUrlInput =
+    isProductionLikeClient() &&
+    provider.selectedProvider === "ollama" &&
+    featureMode === "mcp";
 
   const isSubmitting = status === "submitted";
   const isStreaming = status === "streaming";
@@ -106,6 +112,16 @@ export function ChatPlayground() {
       description: nextErrorMessage,
     });
   }, [error, showError]);
+
+  function handleProviderChange(
+    nextProvider: Parameters<typeof provider.selectProvider>[0],
+  ) {
+    if (nextProvider === "openai" && featureMode === "mcp") {
+      setFeatureMode(DEFAULT_CHAT_FEATURE_MODE);
+    }
+
+    provider.selectProvider(nextProvider);
+  }
 
   function filesToFileList(files: File[]): FileList {
     const dataTransfer = new DataTransfer();
@@ -200,18 +216,24 @@ export function ChatPlayground() {
           <ProviderSelector
             selectedProvider={provider.selectedProvider}
             openaiApiKeyInput={provider.openaiApiKeyInput}
+            ollamaBaseUrlInput={provider.ollamaBaseUrlInput}
+            mcpServerUrlInput={provider.mcpServerUrlInput}
+            showMcpServerUrlInput={showMcpServerUrlInput}
             isOpenAISelected={provider.isOpenAISelected}
             isValidatingKey={provider.isValidatingKey}
             providerStatus={provider.providerStatus}
             withContainer={false}
-            onProviderChange={provider.selectProvider}
+            onProviderChange={handleProviderChange}
             onOpenAIApiKeyChange={provider.updateOpenAIApiKeyInput}
+            onOllamaBaseUrlChange={provider.updateOllamaBaseUrlInput}
+            onMcpServerUrlChange={provider.updateMcpServerUrlInput}
             onVerifyOpenAIKey={provider.verifyOpenAIKey}
           />
 
           <FeatureSelector
             selectedFeature={featureMode}
             withContainer={false}
+            disabledFeatures={isMcpDisabledForProvider ? ["mcp"] : []}
             onFeatureChange={setFeatureMode}
           />
         </div>

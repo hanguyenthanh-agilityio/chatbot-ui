@@ -9,7 +9,8 @@ export const VERIFY_KEY_HINT =
   "Verify your OpenAI key before sending messages.";
 
 export const PROVIDER_STATUS = {
-  ollamaDefault: "Using Ollama (default).",
+  ollamaDefault: "Using Ollama.",
+  openaiServerDefault: "Using OpenAI (default via server config).",
   openaiSelected: "OpenAI selected. Enter API key and click Verify.",
   openaiKeyRequired: "OpenAI key is required.",
   verifyingOpenAIKey: "Verifying OpenAI key with a 'hello' test...",

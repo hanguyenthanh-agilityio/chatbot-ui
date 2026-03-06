@@ -39,11 +39,16 @@ export default function ImagePage() {
       <ProviderSelector
         selectedProvider={provider.selectedProvider}
         openaiApiKeyInput={provider.openaiApiKeyInput}
+        ollamaBaseUrlInput={provider.ollamaBaseUrlInput}
+        mcpServerUrlInput={provider.mcpServerUrlInput}
+        showMcpServerUrlInput={false}
         isOpenAISelected={provider.isOpenAISelected}
         isValidatingKey={provider.isValidatingKey}
         providerStatus={provider.providerStatus}
         onProviderChange={provider.selectProvider}
         onOpenAIApiKeyChange={provider.updateOpenAIApiKeyInput}
+        onOllamaBaseUrlChange={provider.updateOllamaBaseUrlInput}
+        onMcpServerUrlChange={provider.updateMcpServerUrlInput}
         onVerifyOpenAIKey={provider.verifyOpenAIKey}
       />
 

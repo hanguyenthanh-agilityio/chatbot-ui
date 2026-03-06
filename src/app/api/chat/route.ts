@@ -30,6 +30,7 @@ import {
   streamWithMcpTools,
   streamWithMultiAgentPipeline,
 } from "@/lib/chat/pipelines";
+import { isProductionLikeServer } from "@/lib/runtime-env";
 import { getErrorMessage } from "@/utils/error-message";
 
 export const maxDuration = 60;
@@ -39,6 +40,8 @@ type ChatRequestBody = {
   messages?: UIMessage[];
   provider?: string;
   openaiApiKey?: string;
+  ollamaBaseUrl?: string;
+  mcpServerUrl?: string;
   featureMode?: string;
 };
 
@@ -69,18 +72,57 @@ function parseFeatureMode(featureMode?: string): {
   featureMode?: ChatFeatureMode;
   errorMessage?: string;
 } {
-  const featureModeRaw = featureMode?.trim().toLowerCase()
-    ?? DEFAULT_CHAT_FEATURE_MODE;
+  const featureModeRaw =
+    featureMode?.trim().toLowerCase() ?? DEFAULT_CHAT_FEATURE_MODE;
   // Backward compatibility for older payloads.
-  const normalizedFeatureMode = featureModeRaw === "multi-tool"
-    ? "agent"
-    : featureModeRaw;
+  const normalizedFeatureMode =
+    featureModeRaw === "multi-tool" ? "agent" : featureModeRaw;
 
   if (!isChatFeatureMode(normalizedFeatureMode)) {
     return { errorMessage: `Invalid \`featureMode\`: ${featureModeRaw}.` };
   }
 
   return { featureMode: normalizedFeatureMode };
+}
+
+function deriveOllamaTagsEndpoint(baseUrl?: string): string | undefined {
+  if (!baseUrl?.trim()) return undefined;
+
+  try {
+    return new URL("/api/tags", baseUrl).toString();
+  } catch {
+    return undefined;
+  }
+}
+
+function validateRuntimeConstraints({
+  provider,
+  featureMode,
+  ollamaBaseUrl,
+  mcpServerUrl,
+}: {
+  provider: AIProviderName;
+  featureMode: ChatFeatureMode;
+  ollamaBaseUrl?: string;
+  mcpServerUrl?: string;
+}): string | undefined {
+  if (provider === "openai" && featureMode === "mcp") {
+    return "`mcp` mode is disabled for OpenAI provider. Switch to Ollama provider.";
+  }
+
+  if (!isProductionLikeServer() || provider !== "ollama") {
+    return undefined;
+  }
+
+  if (!ollamaBaseUrl?.trim()) {
+    return "Production Ollama requires `ollamaBaseUrl` (public tunnel URL ending with /v1).";
+  }
+
+  if (featureMode === "mcp" && !mcpServerUrl?.trim()) {
+    return "MCP mode with Ollama requires `mcpServerUrl` (public MCP /mcp URL).";
+  }
+
+  return undefined;
 }
 
 export async function POST(req: Request) {
@@ -107,12 +149,28 @@ export async function POST(req: Request) {
     return badRequest(featureModeErrorMessage ?? "Invalid `featureMode`.");
   }
 
-  const hasImageAttachment = hasImageFileAttachment(body.messages);
   const providerCandidate = resolveProviderCandidate(providerOverride);
+  const runtimeConstraintError = validateRuntimeConstraints({
+    provider: providerCandidate,
+    featureMode,
+    ollamaBaseUrl: body.ollamaBaseUrl,
+    mcpServerUrl: body.mcpServerUrl,
+  });
+  if (runtimeConstraintError) {
+    return badRequest(runtimeConstraintError);
+  }
+
+  const hasImageAttachment = hasImageFileAttachment(body.messages);
+  const ollamaBaseUrlOverride = body.ollamaBaseUrl?.trim();
+  const ollamaTagsEndpointOverride = deriveOllamaTagsEndpoint(
+    ollamaBaseUrlOverride,
+  );
   let modelIdOverride: string | undefined;
 
   if (providerCandidate === "ollama" && hasImageAttachment) {
-    const resolvedVisionModel = await resolveOllamaVisionModel();
+    const resolvedVisionModel = await resolveOllamaVisionModel({
+      tagsEndpointOverride: ollamaTagsEndpointOverride,
+    });
     if ("errorMessage" in resolvedVisionModel) {
       return badRequest(resolvedVisionModel.errorMessage);
     }
@@ -126,6 +184,8 @@ export async function POST(req: Request) {
       provider: providerOverride,
       openaiApiKey: body.openaiApiKey,
       modelId: modelIdOverride,
+      baseUrl:
+        providerCandidate === "ollama" ? ollamaBaseUrlOverride : undefined,
     });
   } catch (error) {
     return Response.json({ error: getErrorMessage(error) }, { status: 500 });
@@ -141,6 +201,7 @@ export async function POST(req: Request) {
       model: modelConfig.model,
       provider: modelConfig.provider,
       messages: modelMessages,
+      mcpServerUrlOverride: body.mcpServerUrl?.trim(),
     });
   }
 

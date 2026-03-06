@@ -58,6 +58,14 @@ pnpm run dev
 
 Open: `http://localhost:3000`
 
+Mock production behavior locally (for testing production UI/runtime rules):
+
+```bash
+pnpm run dev:mock-production
+```
+
+This enables `NEXT_PUBLIC_MOCK_PRODUCTION=true` so local behaves like production defaults.
+
 ## Environment
 
 Default local chat with Ollama:
@@ -77,6 +85,7 @@ AI_PROVIDER=openai
 AI_MODEL=gpt-4o-mini
 OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_BASE_URL=https://api.openai.com/v1
+NEXT_PUBLIC_OPENAI_SERVER_READY=true
 ```
 
 Optional extra features:
@@ -93,6 +102,21 @@ OPENAI_IMAGE_MODEL=gpt-image-1
 # MCP_STDIO_SERVER_PATH=scripts/mcp-demo-server.mjs
 ```
 
+Production behavior:
+
+- Default provider is **OpenAI**.
+- If you switch production to **Ollama**, enter URLs in chat UI inputs:
+  - **Ollama base URL** (e.g. `https://your-tunnel.example.com/v1`)
+  - **MCP server URL** (required only when using MCP mode)
+- You can still keep env defaults if needed:
+
+```env
+AI_PROVIDER=ollama
+OPENAI_BASE_URL=https://your-ollama-tunnel.example.com/v1
+OLLAMA_TAGS_ENDPOINT=https://your-ollama-tunnel.example.com/api/tags
+MCP_SERVER_URL=https://your-mcp-server.example.com/mcp
+```
+
 ## Attachment behavior in chat
 
 - **Images**: kept as image parts. With Ollama provider, route tries `OLLAMA_VISION_MODEL` first, then auto-falls back to installed vision models.
@@ -107,6 +131,7 @@ OPENAI_IMAGE_MODEL=gpt-image-1
 ## Scripts
 
 - `pnpm run dev`: run web + Ollama + MCP demo server together
+- `pnpm run dev:mock-production`: run local with production-like behavior toggled on
 - `pnpm run dev:web`: run Next.js only
 - `pnpm run dev:ollama`: start Ollama only if not running
 - `pnpm run dev:mcp`: run local MCP demo server (stdio)

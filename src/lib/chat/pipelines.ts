@@ -8,14 +8,12 @@ import {
   type ModelMessage,
   type ToolSet,
 } from "ai";
-import {
-  AIProviderName,
-  isAIProviderName,
-} from "@/lib/ai-provider";
+import { AIProviderName, isAIProviderName } from "@/lib/ai-provider";
 import {
   FEATURE_SYSTEM_PROMPTS,
   getMultiAgentResearchToolSet,
 } from "@/lib/chat/feature-config";
+import { isProductionLikeServer } from "@/lib/runtime-env";
 import { getErrorMessage } from "@/utils/error-message";
 
 const DEFAULT_MCP_STDIO_SERVER_PATH = "scripts/mcp-demo-server.mjs";
@@ -67,19 +65,22 @@ export function resolveProviderCandidate(
     return envProvider;
   }
 
-  return "ollama";
+  return isProductionLikeServer() ? "openai" : "ollama";
 }
 
 export async function streamWithMcpTools({
   model,
   provider,
   messages,
+  mcpServerUrlOverride,
 }: {
   model: LanguageModel;
   provider: AIProviderName;
   messages: ModelMessage[];
+  mcpServerUrlOverride?: string;
 }): Promise<Response> {
-  const mcpUrl = process.env.MCP_SERVER_URL?.trim();
+  const mcpUrl =
+    mcpServerUrlOverride?.trim() || process.env.MCP_SERVER_URL?.trim();
   const mcpAuthToken = process.env.MCP_AUTH_TOKEN?.trim();
   const mcpStdioServerPath =
     process.env.MCP_STDIO_SERVER_PATH ?? DEFAULT_MCP_STDIO_SERVER_PATH;

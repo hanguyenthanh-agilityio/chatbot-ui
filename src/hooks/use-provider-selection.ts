@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { PROVIDER_STATUS } from "@/constants/chat-ui";
 import type { AIProviderName } from "@/lib/ai-provider";
+import { isProductionLikeClient } from "@/lib/runtime-env";
 import { getErrorMessage } from "@/utils/error-message";
 
 type ValidateOpenAIKeyResponse = {
@@ -14,11 +15,15 @@ type ValidateOpenAIKeyResponse = {
 type ProviderRequestBody = {
   provider: AIProviderName;
   openaiApiKey?: string;
+  ollamaBaseUrl?: string;
+  mcpServerUrl?: string;
 };
 
 type UseProviderSelectionResult = {
   selectedProvider: AIProviderName;
   openaiApiKeyInput: string;
+  ollamaBaseUrlInput: string;
+  mcpServerUrlInput: string;
   providerStatus: string;
   isOpenAISelected: boolean;
   isOpenAIReady: boolean;
@@ -29,18 +34,34 @@ type UseProviderSelectionResult = {
   requestBody: ProviderRequestBody;
   selectProvider: (provider: AIProviderName) => void;
   updateOpenAIApiKeyInput: (value: string) => void;
+  updateOllamaBaseUrlInput: (value: string) => void;
+  updateMcpServerUrlInput: (value: string) => void;
   verifyOpenAIKey: () => Promise<void>;
 };
 
+const DEFAULT_PROVIDER_BY_ENV: AIProviderName = isProductionLikeClient()
+  ? "openai"
+  : "ollama";
+const IS_SERVER_OPENAI_READY =
+  process.env.NEXT_PUBLIC_OPENAI_SERVER_READY === "true" ||
+  isProductionLikeClient();
+
 export function useProviderSelection(): UseProviderSelectionResult {
-  const [selectedProvider, setSelectedProvider] =
-    useState<AIProviderName>("ollama");
+  const [selectedProvider, setSelectedProvider] = useState<AIProviderName>(
+    DEFAULT_PROVIDER_BY_ENV,
+  );
   const [openaiApiKeyInput, setOpenaiApiKeyInput] = useState("");
+  const [ollamaBaseUrlInput, setOllamaBaseUrlInput] = useState("");
+  const [mcpServerUrlInput, setMcpServerUrlInput] = useState("");
   const [verifiedOpenAIKey, setVerifiedOpenAIKey] = useState<string | null>(
     null,
   );
   const [providerStatus, setProviderStatus] = useState<string>(
-    PROVIDER_STATUS.ollamaDefault,
+    DEFAULT_PROVIDER_BY_ENV === "openai" && IS_SERVER_OPENAI_READY
+      ? PROVIDER_STATUS.openaiServerDefault
+      : DEFAULT_PROVIDER_BY_ENV === "openai"
+        ? PROVIDER_STATUS.openaiSelected
+        : PROVIDER_STATUS.ollamaDefault,
   );
   const [isValidatingKey, setIsValidatingKey] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -52,7 +73,8 @@ export function useProviderSelection(): UseProviderSelectionResult {
   }
 
   const isOpenAISelected = selectedProvider === "openai";
-  const isOpenAIReady = !isOpenAISelected || Boolean(verifiedOpenAIKey);
+  const isOpenAIReady =
+    !isOpenAISelected || IS_SERVER_OPENAI_READY || Boolean(verifiedOpenAIKey);
 
   const requestBody = useMemo<ProviderRequestBody>(
     () =>
@@ -61,8 +83,17 @@ export function useProviderSelection(): UseProviderSelectionResult {
             provider: selectedProvider,
             openaiApiKey: verifiedOpenAIKey ?? undefined,
           }
-        : { provider: selectedProvider },
-    [selectedProvider, verifiedOpenAIKey],
+        : {
+            provider: selectedProvider,
+            ollamaBaseUrl: ollamaBaseUrlInput.trim() || undefined,
+            mcpServerUrl: mcpServerUrlInput.trim() || undefined,
+          },
+    [
+      selectedProvider,
+      verifiedOpenAIKey,
+      ollamaBaseUrlInput,
+      mcpServerUrlInput,
+    ],
   );
 
   function selectProvider(nextProvider: AIProviderName) {
@@ -75,7 +106,11 @@ export function useProviderSelection(): UseProviderSelectionResult {
     }
 
     setVerifiedOpenAIKey(null);
-    setProviderStatus(PROVIDER_STATUS.openaiSelected);
+    setProviderStatus(
+      IS_SERVER_OPENAI_READY
+        ? PROVIDER_STATUS.openaiServerDefault
+        : PROVIDER_STATUS.openaiSelected,
+    );
   }
 
   function updateOpenAIApiKeyInput(nextValue: string) {
@@ -86,9 +121,23 @@ export function useProviderSelection(): UseProviderSelectionResult {
       setVerifiedOpenAIKey(null);
 
       if (selectedProvider === "openai") {
-        setProviderStatus(PROVIDER_STATUS.openaiSelected);
+        setProviderStatus(
+          IS_SERVER_OPENAI_READY
+            ? PROVIDER_STATUS.openaiServerDefault
+            : PROVIDER_STATUS.openaiSelected,
+        );
       }
     }
+  }
+
+  function updateOllamaBaseUrlInput(nextValue: string) {
+    setOllamaBaseUrlInput(nextValue);
+    setValidationError(null);
+  }
+
+  function updateMcpServerUrlInput(nextValue: string) {
+    setMcpServerUrlInput(nextValue);
+    setValidationError(null);
   }
 
   async function verifyOpenAIKey() {
@@ -142,6 +191,8 @@ export function useProviderSelection(): UseProviderSelectionResult {
   return {
     selectedProvider,
     openaiApiKeyInput,
+    ollamaBaseUrlInput,
+    mcpServerUrlInput,
     providerStatus,
     isOpenAISelected,
     isOpenAIReady,
@@ -152,6 +203,8 @@ export function useProviderSelection(): UseProviderSelectionResult {
     requestBody,
     selectProvider,
     updateOpenAIApiKeyInput,
+    updateOllamaBaseUrlInput,
+    updateMcpServerUrlInput,
     verifyOpenAIKey,
   };
 }

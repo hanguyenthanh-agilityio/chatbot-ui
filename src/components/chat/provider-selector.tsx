@@ -1,4 +1,5 @@
 import type { AIProviderName } from "@/lib/ai-provider";
+import { isProductionLikeClient } from "@/lib/runtime-env";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -7,26 +8,38 @@ import { Text } from "@/components/ui/text";
 type ProviderSelectorProps = {
   selectedProvider: AIProviderName;
   openaiApiKeyInput: string;
+  ollamaBaseUrlInput: string;
+  mcpServerUrlInput: string;
+  showMcpServerUrlInput?: boolean;
   isOpenAISelected: boolean;
   isValidatingKey: boolean;
   providerStatus: string;
   withContainer?: boolean;
   onProviderChange: (provider: AIProviderName) => void;
   onOpenAIApiKeyChange: (value: string) => void;
+  onOllamaBaseUrlChange: (value: string) => void;
+  onMcpServerUrlChange: (value: string) => void;
   onVerifyOpenAIKey: () => void | Promise<void>;
 };
 
 export function ProviderSelector({
   selectedProvider,
   openaiApiKeyInput,
+  ollamaBaseUrlInput,
+  mcpServerUrlInput,
+  showMcpServerUrlInput = false,
   isOpenAISelected,
   isValidatingKey,
   providerStatus,
   withContainer = true,
   onProviderChange,
   onOpenAIApiKeyChange,
+  onOllamaBaseUrlChange,
+  onMcpServerUrlChange,
   onVerifyOpenAIKey,
 }: ProviderSelectorProps) {
+  const showOllamaBaseUrlInput = isProductionLikeClient() && !isOpenAISelected;
+
   const content = (
     <div className="flex flex-col gap-3">
       <Text as="label" variant="body" className="font-medium text-slate-800">
@@ -42,7 +55,7 @@ export function ProviderSelector({
         controlSize="md"
         variant="default"
       >
-        <option value="ollama">Ollama (default)</option>
+        <option value="ollama">Ollama</option>
         <option value="openai">OpenAI</option>
       </Select>
 
@@ -67,6 +80,31 @@ export function ProviderSelector({
           >
             {isValidatingKey ? "Verifying..." : "Verify key"}
           </Button>
+        </div>
+      ) : null}
+
+      {showOllamaBaseUrlInput ? (
+        <div className="flex flex-col gap-2">
+          <Input
+            type="url"
+            value={ollamaBaseUrlInput}
+            onChange={(event) => onOllamaBaseUrlChange(event.target.value)}
+            placeholder="Ollama base URL (e.g. https://your-tunnel.example.com/v1)"
+            fullWidth
+            controlSize="md"
+            variant="default"
+          />
+          {showMcpServerUrlInput ? (
+            <Input
+              type="url"
+              value={mcpServerUrlInput}
+              onChange={(event) => onMcpServerUrlChange(event.target.value)}
+              placeholder="MCP server URL (e.g. https://your-mcp.example.com/mcp)"
+              fullWidth
+              controlSize="md"
+              variant="default"
+            />
+          ) : null}
         </div>
       ) : null}
 

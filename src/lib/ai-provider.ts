@@ -1,5 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import type { LanguageModel } from "ai";
+import { isProductionLikeServer } from "@/lib/runtime-env";
 
 export const SUPPORTED_AI_PROVIDERS = ["openai", "ollama"] as const;
 
@@ -15,6 +16,7 @@ export type ChatModelOverrides = {
   provider?: AIProviderName;
   openaiApiKey?: string;
   modelId?: string;
+  baseUrl?: string;
 };
 
 export function isAIProviderName(value: string): value is AIProviderName {
@@ -63,7 +65,7 @@ class OpenAIResolver extends ProviderResolver {
   protected createModel(modelId: string): LanguageModel {
     const apiKey = this.resolveOpenAIApiKey();
     const openai = createOpenAI({
-      baseURL: process.env.OPENAI_BASE_URL,
+      baseURL: this.overrides.baseUrl ?? process.env.OPENAI_BASE_URL,
       apiKey,
     });
 
@@ -92,7 +94,10 @@ class OllamaResolver extends ProviderResolver {
 
   protected createModel(modelId: string): LanguageModel {
     const openaiCompatible = createOpenAI({
-      baseURL: process.env.OPENAI_BASE_URL ?? "http://localhost:11434/v1",
+      baseURL:
+        this.overrides.baseUrl ??
+        process.env.OPENAI_BASE_URL ??
+        "http://localhost:11434/v1",
       apiKey: process.env.OPENAI_API_KEY ?? "ollama",
     });
 
@@ -102,7 +107,7 @@ class OllamaResolver extends ProviderResolver {
 }
 
 function resolveDefaultProvider(): AIProviderName {
-  return "ollama";
+  return isProductionLikeServer() ? "openai" : "ollama";
 }
 
 function resolveProvider(overrides: ChatModelOverrides): AIProviderName {

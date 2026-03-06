@@ -19,7 +19,9 @@ function isLikelyVisionModel(modelId: string): boolean {
   );
 }
 
-async function getInstalledOllamaModelIds(tagsEndpoint: string): Promise<string[]> {
+async function getInstalledOllamaModelIds(
+  tagsEndpoint: string,
+): Promise<string[]> {
   try {
     const response = await fetch(tagsEndpoint, {
       signal: AbortSignal.timeout(2_500),
@@ -77,12 +79,16 @@ function findInstalledModelMatch(
   return null;
 }
 
-export async function resolveOllamaVisionModel(): Promise<
-  { modelId: string } | { errorMessage: string }
-> {
+export async function resolveOllamaVisionModel({
+  tagsEndpointOverride,
+}: {
+  tagsEndpointOverride?: string;
+} = {}): Promise<{ modelId: string } | { errorMessage: string }> {
   const preferredFromEnv = process.env.OLLAMA_VISION_MODEL?.trim();
   const tagsEndpoint =
-    process.env.OLLAMA_TAGS_ENDPOINT ?? DEFAULT_OLLAMA_TAGS_ENDPOINT;
+    tagsEndpointOverride?.trim() ||
+    process.env.OLLAMA_TAGS_ENDPOINT ||
+    DEFAULT_OLLAMA_TAGS_ENDPOINT;
   const installedModelIds = await getInstalledOllamaModelIds(tagsEndpoint);
 
   // If tags API is unavailable, keep deterministic fallback behavior.

@@ -9,6 +9,7 @@
     "dev:ollama": "sh -c \"curl -sSf http://127.0.0.1:11434/api/tags >/dev/null 2>&1 && echo 'Ollama already running on 127.0.0.1:11434' || ollama serve\"",
     "dev:mcp": "node scripts/mcp-demo-server.mjs",
     "dev:all": "sh -c \"pnpm run dev:web & pnpm run dev:ollama & pnpm run dev:mcp & wait\"",
+    "dev:mock-production": "NEXT_PUBLIC_MOCK_PRODUCTION=true pnpm run dev:all",
     "ollama:pull": "ollama pull qwen2.5:3b",
     "ollama:pull:vision": "ollama pull gemma3:4b",
     "mcp:demo": "node scripts/mcp-demo-server.mjs",

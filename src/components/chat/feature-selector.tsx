@@ -8,17 +8,20 @@ import { Text } from "@/components/ui/text";
 type FeatureSelectorProps = {
   selectedFeature: ChatFeatureMode;
   withContainer?: boolean;
+  disabledFeatures?: ChatFeatureMode[];
   onFeatureChange: (feature: ChatFeatureMode) => void;
 };
 
 export function FeatureSelector({
   selectedFeature,
   withContainer = true,
+  disabledFeatures = [],
   onFeatureChange,
 }: FeatureSelectorProps) {
   const selectedOption = CHAT_FEATURE_OPTIONS.find(
     (option) => option.value === selectedFeature,
   );
+  const disabledSet = new Set(disabledFeatures);
 
   const content = (
     <div className="flex flex-col gap-2">
@@ -36,7 +39,11 @@ export function FeatureSelector({
         variant="default"
       >
         {CHAT_FEATURE_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option
+            key={option.value}
+            value={option.value}
+            disabled={disabledSet.has(option.value)}
+          >
             {option.label}
           </option>
         ))}
