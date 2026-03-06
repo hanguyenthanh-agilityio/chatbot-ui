@@ -25,6 +25,7 @@ type UseProviderSelectionResult = {
   isValidatingKey: boolean;
   validationError: string | null;
   validationErrorId: number;
+  openaiApiKeyForRequests?: string;
   requestBody: ProviderRequestBody;
   selectProvider: (provider: AIProviderName) => void;
   updateOpenAIApiKeyInput: (value: string) => void;
@@ -147,6 +148,7 @@ export function useProviderSelection(): UseProviderSelectionResult {
     isValidatingKey,
     validationError,
     validationErrorId,
+    openaiApiKeyForRequests: verifiedOpenAIKey ?? undefined,
     requestBody,
     selectProvider,
     updateOpenAIApiKeyInput,

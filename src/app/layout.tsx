@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Simple AI Chatbot",
-  description: "A minimal chatbot built with Next.js and the AI SDK.",
+  title: "AI SDK Playground",
+  description:
+    "AI SDK Core/UI playground with default/tool/agent/prompt/MCP chat modes and image generation demos.",
 };
 
 export default function RootLayout({
@@ -13,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="bg-slate-50 antialiased">{children}</body>
     </html>
   );
 }

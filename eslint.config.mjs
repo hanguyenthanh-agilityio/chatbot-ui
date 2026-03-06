@@ -5,6 +5,13 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      // This rule is currently extremely slow in this project setup and makes
+      // `pnpm lint` appear to hang. Keep it off so lint/build stay usable.
+      "react-hooks/static-components": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

@@ -1,45 +1,86 @@
-import { convertToModelMessages, streamText, UIMessage } from "ai";
+import {
+  convertToModelMessages,
+  stepCountIs,
+  streamText,
+  type UIMessage,
+} from "ai";
+import {
+  DEFAULT_CHAT_FEATURE_MODE,
+  isChatFeatureMode,
+  type ChatFeatureMode,
+} from "@/constants/ai-feature";
 import {
   AIProviderName,
   getChatModelConfig,
   getSupportedAIProviderList,
   isAIProviderName,
 } from "@/lib/ai-provider";
+import {
+  hasImageFileAttachment,
+  normalizeMessagesForFileAttachments,
+} from "@/lib/chat-attachment";
+import {
+  FEATURE_SYSTEM_PROMPTS,
+  getToolsForMode,
+} from "@/lib/chat/feature-config";
+import { resolveOllamaVisionModel } from "@/lib/chat/ollama-vision";
+import {
+  formatStreamError,
+  resolveProviderCandidate,
+  streamWithMcpTools,
+  streamWithMultiAgentPipeline,
+} from "@/lib/chat/pipelines";
 import { getErrorMessage } from "@/utils/error-message";
 
-const SYSTEM_PROMPT = "You are a helpful assistant.";
+export const maxDuration = 60;
+export const runtime = "nodejs";
 
 type ChatRequestBody = {
   messages?: UIMessage[];
   provider?: string;
   openaiApiKey?: string;
+  featureMode?: string;
 };
 
 function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 });
 }
 
-function formatStreamError(error: unknown, provider: AIProviderName): string {
-  const message = getErrorMessage(error);
-  const normalizedMessage = message.toLowerCase();
+function parseProviderOverride(provider?: string): {
+  providerOverride?: AIProviderName;
+  errorMessage?: string;
+} {
+  const providerFromBody = provider?.trim().toLowerCase();
 
-  if (
-    provider === "openai" &&
-    normalizedMessage.includes("insufficient_quota")
-  ) {
-    return "OpenAI quota exceeded. Use local free mode by setting OPENAI_BASE_URL=http://localhost:11434/v1 and OPENAI_MODEL=qwen2.5:3b.";
+  if (!providerFromBody) {
+    return {};
   }
 
-  if (
-    provider === "ollama" &&
-    (normalizedMessage.includes("econnrefused") ||
-      normalizedMessage.includes("fetch failed") ||
-      normalizedMessage.includes("connection"))
-  ) {
-    return "Cannot connect to Ollama at http://localhost:11434. Start Ollama and run `ollama pull qwen2.5:3b`.";
+  if (!isAIProviderName(providerFromBody)) {
+    return {
+      errorMessage: `Invalid \`provider\`. Supported values: ${getSupportedAIProviderList()}.`,
+    };
   }
 
-  return message;
+  return { providerOverride: providerFromBody };
+}
+
+function parseFeatureMode(featureMode?: string): {
+  featureMode?: ChatFeatureMode;
+  errorMessage?: string;
+} {
+  const featureModeRaw = featureMode?.trim().toLowerCase()
+    ?? DEFAULT_CHAT_FEATURE_MODE;
+  // Backward compatibility for older payloads.
+  const normalizedFeatureMode = featureModeRaw === "multi-tool"
+    ? "agent"
+    : featureModeRaw;
+
+  if (!isChatFeatureMode(normalizedFeatureMode)) {
+    return { errorMessage: `Invalid \`featureMode\`: ${featureModeRaw}.` };
+  }
+
+  return { featureMode: normalizedFeatureMode };
 }
 
 export async function POST(req: Request) {
@@ -54,16 +95,29 @@ export async function POST(req: Request) {
     return badRequest("`messages` must be an array.");
   }
 
-  const providerFromBody = body.provider?.trim().toLowerCase();
-  let providerOverride: AIProviderName | undefined;
-  if (providerFromBody) {
-    if (!isAIProviderName(providerFromBody)) {
-      return badRequest(
-        `Invalid \`provider\`. Supported values: ${getSupportedAIProviderList()}.`,
-      );
+  const { providerOverride, errorMessage: providerErrorMessage } =
+    parseProviderOverride(body.provider);
+  if (providerErrorMessage) {
+    return badRequest(providerErrorMessage);
+  }
+
+  const { featureMode, errorMessage: featureModeErrorMessage } =
+    parseFeatureMode(body.featureMode);
+  if (featureModeErrorMessage || !featureMode) {
+    return badRequest(featureModeErrorMessage ?? "Invalid `featureMode`.");
+  }
+
+  const hasImageAttachment = hasImageFileAttachment(body.messages);
+  const providerCandidate = resolveProviderCandidate(providerOverride);
+  let modelIdOverride: string | undefined;
+
+  if (providerCandidate === "ollama" && hasImageAttachment) {
+    const resolvedVisionModel = await resolveOllamaVisionModel();
+    if ("errorMessage" in resolvedVisionModel) {
+      return badRequest(resolvedVisionModel.errorMessage);
     }
 
-    providerOverride = providerFromBody;
+    modelIdOverride = resolvedVisionModel.modelId;
   }
 
   let modelConfig: ReturnType<typeof getChatModelConfig>;
@@ -71,15 +125,44 @@ export async function POST(req: Request) {
     modelConfig = getChatModelConfig({
       provider: providerOverride,
       openaiApiKey: body.openaiApiKey,
+      modelId: modelIdOverride,
     });
   } catch (error) {
     return Response.json({ error: getErrorMessage(error) }, { status: 500 });
   }
 
+  const normalizedMessages = await normalizeMessagesForFileAttachments(
+    body.messages,
+  );
+  const modelMessages = await convertToModelMessages(normalizedMessages);
+
+  if (featureMode === "mcp") {
+    return streamWithMcpTools({
+      model: modelConfig.model,
+      provider: modelConfig.provider,
+      messages: modelMessages,
+    });
+  }
+
+  if (featureMode === "multi-agent") {
+    return streamWithMultiAgentPipeline({
+      model: modelConfig.model,
+      provider: modelConfig.provider,
+      messages: modelMessages,
+    });
+  }
+
   const result = streamText({
     model: modelConfig.model,
-    system: SYSTEM_PROMPT,
-    messages: await convertToModelMessages(body.messages),
+    system: FEATURE_SYSTEM_PROMPTS[featureMode],
+    messages: modelMessages,
+    tools: getToolsForMode(featureMode),
+    // Enable multi-step loops only for tool-based modes.
+    stopWhen:
+      featureMode === "tool" || featureMode === "agent"
+        ? stepCountIs(8)
+        : undefined,
+    temperature: featureMode === "prompt" ? 0 : undefined,
   });
 
   return result.toUIMessageStreamResponse({

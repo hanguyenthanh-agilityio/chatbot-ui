@@ -1,10 +1,12 @@
-export const CHAT_TITLE = "Simple AI Chatbot";
-export const CHAT_SUBTITLE = "Built with Next.js + AI SDK";
-export const CHAT_PLACEHOLDER = "Say something...";
+export const CHAT_TITLE = "AI SDK Core + UI Playground";
+export const CHAT_SUBTITLE =
+  "Default, tool, agent, multi-agent, MCP, and prompt chat modes with image generation and file-aware demos";
+export const CHAT_PLACEHOLDER = "Ask a question (optionally attach files)...";
 export const EMPTY_CHAT_HINT = "Ask something to start the chat.";
 export const STREAMING_PLACEHOLDER_TEXT = "Working on your response...";
 export const SUBMITTING_HINT = "Sending message...";
-export const VERIFY_KEY_HINT = "Verify your OpenAI key before sending messages.";
+export const VERIFY_KEY_HINT =
+  "Verify your OpenAI key before sending messages.";
 
 export const PROVIDER_STATUS = {
   ollamaDefault: "Using Ollama (default).",
