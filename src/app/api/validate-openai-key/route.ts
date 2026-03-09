@@ -30,9 +30,8 @@ export async function POST(req: Request) {
     });
 
     await generateText({
-      model: openai("gpt-4o-mini"),
+      model: openai.chat("gpt-4o-mini"),
       prompt: "hello",
-      maxOutputTokens: 5,
     });
 
     return Response.json({

@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PROVIDER_STATUS } from "@/constants/chat-ui";
-import type { AIProviderName } from "@/lib/ai-provider";
+import { isAIProviderName, type AIProviderName } from "@/lib/ai-provider";
 import { normalizeMcpServerUrl } from "@/lib/mcp-url";
 import { normalizeOllamaBaseUrl } from "@/lib/ollama-url";
 import { isProductionLikeClient } from "@/lib/runtime-env";
@@ -66,19 +66,66 @@ const DEFAULT_PROVIDER_BY_ENV: AIProviderName = isProductionLikeClient()
 const IS_SERVER_OPENAI_READY =
   process.env.NEXT_PUBLIC_OPENAI_SERVER_READY === "true";
 const REQUIRES_OLLAMA_URL_VERIFICATION = isProductionLikeClient();
+const SESSION_STORAGE_KEYS = {
+  selectedProvider: "ai-sdk:selected-provider",
+  openaiApiKeyInput: "ai-sdk:openai-api-key-input",
+  verifiedOpenAIKey: "ai-sdk:verified-openai-key",
+} as const;
+
+function readSessionStorage(key: string): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    return window.sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeSessionStorage(key: string, value: string | null) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    if (value) {
+      window.sessionStorage.setItem(key, value);
+      return;
+    }
+
+    window.sessionStorage.removeItem(key);
+  } catch {
+    // Ignore storage failures and keep in-memory state working.
+  }
+}
 
 export function useProviderSelection({
   requireMcpServerUrl = false,
   requireOpenAIApiKeyVerification = false,
   defaultProvider = DEFAULT_PROVIDER_BY_ENV,
 }: UseProviderSelectionOptions = {}): UseProviderSelectionResult {
+  const storedSelectedProvider = readSessionStorage(
+    SESSION_STORAGE_KEYS.selectedProvider,
+  );
+  const initialSelectedProvider: AIProviderName = isAIProviderName(
+    storedSelectedProvider ?? "",
+  )
+    ? (storedSelectedProvider as AIProviderName)
+    : defaultProvider;
+  const initialOpenAIKeyInput =
+    readSessionStorage(SESSION_STORAGE_KEYS.openaiApiKeyInput) ?? "";
+  const initialVerifiedOpenAIKey =
+    readSessionStorage(SESSION_STORAGE_KEYS.verifiedOpenAIKey);
   const [selectedProvider, setSelectedProvider] =
-    useState<AIProviderName>(defaultProvider);
-  const [openaiApiKeyInput, setOpenaiApiKeyInput] = useState("");
+    useState<AIProviderName>(initialSelectedProvider);
+  const [openaiApiKeyInput, setOpenaiApiKeyInput] =
+    useState(initialOpenAIKeyInput);
   const [ollamaBaseUrlInput, setOllamaBaseUrlInput] = useState("");
   const [mcpServerUrlInput, setMcpServerUrlInput] = useState("");
   const [verifiedOpenAIKey, setVerifiedOpenAIKey] = useState<string | null>(
-    null,
+    initialVerifiedOpenAIKey,
   );
   const [verifiedOllamaBaseUrl, setVerifiedOllamaBaseUrl] = useState<
     string | null
@@ -87,11 +134,14 @@ export function useProviderSelection({
     string | null
   >(null);
   const [providerStatus, setProviderStatus] = useState<string>(
-    defaultProvider === "openai" &&
-      IS_SERVER_OPENAI_READY &&
-      !requireOpenAIApiKeyVerification
+    initialSelectedProvider === "openai" &&
+      initialVerifiedOpenAIKey
+      ? PROVIDER_STATUS.openaiVerified
+      : initialSelectedProvider === "openai" &&
+          IS_SERVER_OPENAI_READY &&
+          !requireOpenAIApiKeyVerification
       ? PROVIDER_STATUS.openaiServerDefault
-      : defaultProvider === "openai"
+      : initialSelectedProvider === "openai"
         ? PROVIDER_STATUS.openaiSelected
         : REQUIRES_OLLAMA_URL_VERIFICATION
           ? PROVIDER_STATUS.ollamaSelected
@@ -152,6 +202,24 @@ export function useProviderSelection({
       mcpServerUrlInput,
     ],
   );
+
+  useEffect(() => {
+    writeSessionStorage(SESSION_STORAGE_KEYS.selectedProvider, selectedProvider);
+  }, [selectedProvider]);
+
+  useEffect(() => {
+    writeSessionStorage(
+      SESSION_STORAGE_KEYS.openaiApiKeyInput,
+      openaiApiKeyInput.trim() ? openaiApiKeyInput : null,
+    );
+  }, [openaiApiKeyInput]);
+
+  useEffect(() => {
+    writeSessionStorage(
+      SESSION_STORAGE_KEYS.verifiedOpenAIKey,
+      verifiedOpenAIKey,
+    );
+  }, [verifiedOpenAIKey]);
 
   function selectProvider(nextProvider: AIProviderName) {
     setSelectedProvider(nextProvider);
