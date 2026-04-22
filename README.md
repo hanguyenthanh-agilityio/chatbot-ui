@@ -24,7 +24,14 @@ Focused Next.js chat app for **personal time-off management**.
   - `@ai-sdk/openai`
   - Ollama via OpenAI-compatible endpoint
 - Validation: `zod`
-- JSON data server: `json-server` with local file in `server/db/manager-db.json`
+- JSON data server: `json-server` with local file in `server/db/company-system.json`
+
+## Layering (clean split)
+
+- `src/app`, `src/components`, `src/hooks`, `src/constants`, `src/utils`: FE layer
+- `src/app/api`, `src/services/company-system/*`: BE/API layer for calling json-server
+- `src/agents/*`: Agent layer (coordinator + specialist agents + tools/services)
+- `src/agents/chat-core/*`: shared agent runtime optimizations (run policy, context compaction, usage metrics)
 
 ## Routes
 
@@ -68,17 +75,23 @@ NEXT_PUBLIC_OPENAI_SERVER_READY=true
 
 ## Notes
 
-- All manager/time-off data lives in `server/db/manager-db.json`.
-- Seed data is in `server/db/manager-db.seed.json`.
-- App tools read/update data through the JSON server HTTP API (`MANAGER_DB_BASE_URL`, default `http://127.0.0.1:4100`).
-- Use `pnpm run manager-db:reset` to restore seeded database state.
+- All company-system data lives in `server/db/company-system.json`.
+- Seed data is in `server/db/company-system.seed.json`.
+- App tools read/update data through the JSON server HTTP API (`COMPANY_SYSTEM_BASE_URL`, default `http://127.0.0.1:4100`).
+- Agent runtime has Flash-agent style optimizations:
+  - compact older chat context into runtime summary
+  - env-driven run policy (`AGENT_*`)
+  - optional run-stats logging via `AGENT_RUN_STATS_LOG=1`
+  - provider/model metadata added to stream message metadata
+  - automatic provider config fallback when no explicit provider override is set
+- Use `pnpm run company-system:reset` to restore seeded database state.
 - If Next dev shows stale Turbopack cache errors, remove `.next` and rerun `pnpm dev`.
 
 ## Scripts
 
 - `pnpm run dev:web`: run Next.js only
-- `pnpm run dev:manager-db`: run json-server data API on port `4100`
+- `pnpm run dev:company-system`: run json-server data API on port `4100`
 - `pnpm run dev:ollama`: start Ollama if it is installed and not already running
-- `pnpm run manager-db:reset`: reset `server/db/manager-db.json` from seed
+- `pnpm run company-system:reset`: reset `server/db/company-system.json` from seed
 - `pnpm run build`: production build
 - `pnpm run lint`: lint
