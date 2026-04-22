@@ -1,70 +1,30 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { PROVIDER_STATUS } from "@/constants/ui";
+import { API_HEADER_COPY, API_ROUTE_PATH } from "@/constants/api";
+import { PROVIDER_STORAGE_KEYS } from "@/constants/storage";
+import { PROVIDER_STATUS_COPY } from "@/constants/provider";
 import { isAIProviderName, type AIProviderName } from "@/lib/ai-provider";
 import { normalizeOllamaBaseUrl } from "@/lib/ollama-url";
-import { isProductionLikeClient } from "@/lib/runtime-env";
+import { isProductionLike } from "@/lib/runtime-env";
+import type {
+  OllamaUrlValidationResponse,
+  OpenAIKeyValidationResponse,
+} from "@/types/api";
+import type {
+  ProviderRequestBody,
+  UseProviderSelectionOptions,
+  UseProviderSelectionResult,
+} from "@/types/provider";
 import { session as sessionStorage } from "@/utils/storage";
-import { getErrorMessage } from "@/utils/error-message";
+import { getErrorMessage } from "@/utils/error";
 
-type ValidateOpenAIKeyResponse = {
-  ok?: boolean;
-  message?: string;
-  details?: string;
-};
-
-type ValidateUrlResponse = {
-  ok?: boolean;
-  message?: string;
-  details?: string;
-  normalizedBaseUrl?: string;
-};
-
-type ProviderRequestBody = {
-  provider: AIProviderName;
-  openaiApiKey?: string;
-  ollamaBaseUrl?: string;
-};
-
-type UseProviderSelectionOptions = {
-  requireOpenAIApiKeyVerification?: boolean;
-  defaultProvider?: AIProviderName;
-};
-
-type UseProviderSelectionResult = {
-  selectedProvider: AIProviderName;
-  openaiApiKeyInput: string;
-  ollamaBaseUrlInput: string;
-  providerStatus: string;
-  isOpenAISelected: boolean;
-  isOpenAIReady: boolean;
-  isProviderReady: boolean;
-  isValidatingKey: boolean;
-  isValidatingOllamaBaseUrl: boolean;
-  validationError: string | null;
-  requestBody: ProviderRequestBody;
-  selectProvider: (provider: AIProviderName) => void;
-  updateOpenAIApiKeyInput: (value: string) => void;
-  updateOllamaBaseUrlInput: (value: string) => void;
-  verifyOpenAIKey: () => Promise<void>;
-  verifyOllamaBaseUrl: () => Promise<void>;
-};
-
-const DEFAULT_PROVIDER_BY_ENV: AIProviderName = isProductionLikeClient()
+const DEFAULT_PROVIDER_BY_ENV: AIProviderName = isProductionLike()
   ? "openai"
   : "ollama";
 const IS_SERVER_OPENAI_READY =
   process.env.NEXT_PUBLIC_OPENAI_SERVER_READY === "true";
-const REQUIRES_OLLAMA_URL_VERIFICATION = isProductionLikeClient();
-
-const KEYS = {
-  selectedProvider: "timeoff-agent:selected-provider",
-  openaiApiKeyInput: "timeoff-agent:openai-api-key-input",
-  verifiedOpenAIKey: "timeoff-agent:verified-openai-key",
-  ollamaBaseUrlInput: "timeoff-agent:ollama-base-url-input",
-  verifiedOllamaBaseUrl: "timeoff-agent:verified-ollama-base-url",
-} as const;
+const REQUIRES_OLLAMA_URL_VERIFICATION = isProductionLike();
 
 function deriveProviderStatus({
   selectedProvider,
@@ -80,20 +40,20 @@ function deriveProviderStatus({
   requireOpenAIApiKeyVerification: boolean;
 }): string {
   if (selectedProvider === "openai") {
-    if (verifiedOpenAIKey) return PROVIDER_STATUS.openaiVerified;
+    if (verifiedOpenAIKey) return PROVIDER_STATUS_COPY.openaiVerified;
     if (IS_SERVER_OPENAI_READY && !requireOpenAIApiKeyVerification) {
-      return PROVIDER_STATUS.openaiServerDefault;
+      return PROVIDER_STATUS_COPY.openaiServerDefault;
     }
-    return PROVIDER_STATUS.openaiSelected;
+    return PROVIDER_STATUS_COPY.openaiSelected;
   }
 
-  if (verifiedOllamaBaseUrl) return PROVIDER_STATUS.ollamaVerified;
+  if (verifiedOllamaBaseUrl) return PROVIDER_STATUS_COPY.ollamaVerified;
   if (ollamaBaseUrlInput.trim()) {
     return REQUIRES_OLLAMA_URL_VERIFICATION
-      ? PROVIDER_STATUS.ollamaSelected
-      : PROVIDER_STATUS.ollamaCustomUrl;
+      ? PROVIDER_STATUS_COPY.ollamaSelected
+      : PROVIDER_STATUS_COPY.ollamaCustomUrl;
   }
-  return PROVIDER_STATUS.ollamaDefault;
+  return PROVIDER_STATUS_COPY.ollamaDefault;
 }
 
 export function useProviderSelection({
@@ -101,20 +61,20 @@ export function useProviderSelection({
   defaultProvider = DEFAULT_PROVIDER_BY_ENV,
 }: UseProviderSelectionOptions = {}): UseProviderSelectionResult {
   const [selectedProvider, setSelectedProvider] = useState<AIProviderName>(() => {
-    const stored = sessionStorage.read(KEYS.selectedProvider);
+    const stored = sessionStorage.read(PROVIDER_STORAGE_KEYS.selectedProvider);
     return isAIProviderName(stored ?? "") ? (stored as AIProviderName) : defaultProvider;
   });
   const [openaiApiKeyInput, setOpenaiApiKeyInput] = useState(
-    () => sessionStorage.read(KEYS.openaiApiKeyInput) ?? "",
+    () => sessionStorage.read(PROVIDER_STORAGE_KEYS.openaiApiKeyInput) ?? "",
   );
   const [ollamaBaseUrlInput, setOllamaBaseUrlInput] = useState(
-    () => sessionStorage.read(KEYS.ollamaBaseUrlInput) ?? "",
+    () => sessionStorage.read(PROVIDER_STORAGE_KEYS.ollamaBaseUrlInput) ?? "",
   );
   const [verifiedOpenAIKey, setVerifiedOpenAIKey] = useState<string | null>(
-    () => sessionStorage.read(KEYS.verifiedOpenAIKey),
+    () => sessionStorage.read(PROVIDER_STORAGE_KEYS.verifiedOpenAIKey),
   );
   const [verifiedOllamaBaseUrl, setVerifiedOllamaBaseUrl] = useState<string | null>(
-    () => sessionStorage.read(KEYS.verifiedOllamaBaseUrl),
+    () => sessionStorage.read(PROVIDER_STORAGE_KEYS.verifiedOllamaBaseUrl),
   );
   const [isValidatingKey, setIsValidatingKey] = useState(false);
   const [isValidatingOllamaBaseUrl, setIsValidatingOllamaBaseUrl] = useState(false);
@@ -138,10 +98,10 @@ export function useProviderSelection({
   // Loading states (verifying…) are captured via the isValidating* flags.
   const providerStatus = useMemo(() => {
     if (selectedProvider === "openai" && isValidatingKey) {
-      return PROVIDER_STATUS.verifyingOpenAIKey;
+      return PROVIDER_STATUS_COPY.verifyingOpenAIKey;
     }
     if (selectedProvider === "ollama" && isValidatingOllamaBaseUrl) {
-      return PROVIDER_STATUS.verifyingOllamaUrl;
+      return PROVIDER_STATUS_COPY.verifyingOllamaUrl;
     }
     return deriveProviderStatus({
       selectedProvider,
@@ -174,29 +134,32 @@ export function useProviderSelection({
   );
 
   useEffect(() => {
-    sessionStorage.write(KEYS.selectedProvider, selectedProvider);
+    sessionStorage.write(PROVIDER_STORAGE_KEYS.selectedProvider, selectedProvider);
   }, [selectedProvider]);
 
   useEffect(() => {
     sessionStorage.write(
-      KEYS.openaiApiKeyInput,
+      PROVIDER_STORAGE_KEYS.openaiApiKeyInput,
       openaiApiKeyInput.trim() ? openaiApiKeyInput : null,
     );
   }, [openaiApiKeyInput]);
 
   useEffect(() => {
-    sessionStorage.write(KEYS.verifiedOpenAIKey, verifiedOpenAIKey);
+    sessionStorage.write(PROVIDER_STORAGE_KEYS.verifiedOpenAIKey, verifiedOpenAIKey);
   }, [verifiedOpenAIKey]);
 
   useEffect(() => {
     sessionStorage.write(
-      KEYS.ollamaBaseUrlInput,
+      PROVIDER_STORAGE_KEYS.ollamaBaseUrlInput,
       ollamaBaseUrlInput.trim() ? ollamaBaseUrlInput : null,
     );
   }, [ollamaBaseUrlInput]);
 
   useEffect(() => {
-    sessionStorage.write(KEYS.verifiedOllamaBaseUrl, verifiedOllamaBaseUrl);
+    sessionStorage.write(
+      PROVIDER_STORAGE_KEYS.verifiedOllamaBaseUrl,
+      verifiedOllamaBaseUrl,
+    );
   }, [verifiedOllamaBaseUrl]);
 
   function selectProvider(nextProvider: AIProviderName) {
@@ -225,19 +188,22 @@ export function useProviderSelection({
 
   async function verifyOpenAIKey() {
     const key = openaiApiKeyInput.trim();
-    if (!key) return;
+    if (!key) {
+      setValidationError(PROVIDER_STATUS_COPY.openaiKeyRequired);
+      return;
+    }
 
     setValidationError(null);
     setIsValidatingKey(true);
 
     try {
-      const response = await fetch("/api/validate-openai-key", {
+      const response = await fetch(API_ROUTE_PATH.validateOpenAIKey, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": API_HEADER_COPY.jsonContentType },
         body: JSON.stringify({ apiKey: key }),
       });
 
-      const data = (await response.json()) as ValidateOpenAIKeyResponse;
+      const data = (await response.json()) as OpenAIKeyValidationResponse;
 
       if (response.ok && data.ok) {
         setVerifiedOpenAIKey(key);
@@ -246,7 +212,9 @@ export function useProviderSelection({
       }
 
       setVerifiedOpenAIKey(null);
-      setValidationError(data.details ?? data.message ?? PROVIDER_STATUS.openaiInvalid);
+      setValidationError(
+        data.details ?? data.message ?? PROVIDER_STATUS_COPY.openaiInvalid,
+      );
     } catch (error) {
       setVerifiedOpenAIKey(null);
       setValidationError(getErrorMessage(error));
@@ -257,21 +225,26 @@ export function useProviderSelection({
 
   async function verifyOllamaBaseUrl() {
     const baseUrl = normalizeOllamaBaseUrl(ollamaBaseUrlInput);
-    if (!baseUrl) return;
+    if (!baseUrl) {
+      setValidationError(PROVIDER_STATUS_COPY.ollamaBaseUrlRequired);
+      return;
+    }
 
     setValidationError(null);
     setIsValidatingOllamaBaseUrl(true);
 
     try {
-      const response = await fetch("/api/validate-ollama-url", {
+      const response = await fetch(API_ROUTE_PATH.validateOllamaUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": API_HEADER_COPY.jsonContentType },
         body: JSON.stringify({ baseUrl }),
       });
 
-      const data = (await response.json()) as ValidateUrlResponse;
+      const data = (await response.json()) as OllamaUrlValidationResponse;
       if (!response.ok || !data.ok) {
-        throw new Error(data.details ?? data.message ?? PROVIDER_STATUS.ollamaUrlInvalid);
+        throw new Error(
+          data.details ?? data.message ?? PROVIDER_STATUS_COPY.ollamaUrlInvalid,
+        );
       }
 
       setVerifiedOllamaBaseUrl(data.normalizedBaseUrl ?? baseUrl);

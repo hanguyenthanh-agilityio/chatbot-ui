@@ -2,34 +2,23 @@
 
 import type { UIMessage } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { CHAT_THREAD_COPY } from "@/constants/chat";
+import { CHAT_STORAGE_KEYS } from "@/constants/storage";
 import type { AIProviderName } from "@/lib/ai-provider";
 import type { AppRole } from "@/lib/auth/session";
+import type { ChatThread, SetChatMessages } from "@/types/thread";
 import { local } from "@/utils/storage";
-import { getTextParts } from "@/utils/chat-message";
+import { getTextParts } from "@/utils/message";
 
-export type ChatThread = {
-  id: string;
-  title: string;
-  preview: string;
-  createdAt: string;
-  updatedAt: string;
-  provider: AIProviderName;
-  messages: UIMessage[];
-};
-
-type SetMessages = (
-  messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[]),
-) => void;
+export type { ChatThread } from "@/types/thread";
 
 type RoleThreads = Record<AppRole, ChatThread>;
-
-const THREADS_STORAGE_KEY = "timeoff-agent:chat-threads-by-role:v2";
 
 function createThreadId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
-  return `thread-${Date.now()}`;
+  return `${CHAT_THREAD_COPY.idPrefix}-${Date.now()}`;
 }
 
 function truncate(text: string, maxLength: number) {
@@ -39,7 +28,9 @@ function truncate(text: string, maxLength: number) {
 function deriveTitle(messages: UIMessage[]) {
   const firstUserText = messages.find((m) => m.role === "user");
   const text = firstUserText ? getTextParts(firstUserText).join(" ").trim() : "";
-  return text ? truncate(text, 42) : "New chat";
+  return text
+    ? truncate(text, CHAT_THREAD_COPY.titleMaxLength)
+    : CHAT_THREAD_COPY.defaultTitle;
 }
 
 function derivePreview(messages: UIMessage[]) {
@@ -48,16 +39,19 @@ function derivePreview(messages: UIMessage[]) {
     return text.length > 0;
   });
 
-  if (!lastMessage) return "No messages yet";
-  return truncate(getTextParts(lastMessage).join(" ").trim(), 72);
+  if (!lastMessage) return CHAT_THREAD_COPY.emptyPreview;
+  return truncate(
+    getTextParts(lastMessage).join(" ").trim(),
+    CHAT_THREAD_COPY.previewMaxLength,
+  );
 }
 
 function createEmptyThread(provider: AIProviderName): ChatThread {
   const now = new Date().toISOString();
   return {
     id: createThreadId(),
-    title: "New chat",
-    preview: "No messages yet",
+    title: CHAT_THREAD_COPY.defaultTitle,
+    preview: CHAT_THREAD_COPY.emptyPreview,
     createdAt: now,
     updatedAt: now,
     provider,
@@ -115,7 +109,7 @@ function createSnapshot(input: {
 }
 
 function createInitialRoleThreads(provider: AIProviderName): RoleThreads {
-  const parsed = parseStoredThreads(local.read(THREADS_STORAGE_KEY));
+  const parsed = parseStoredThreads(local.read(CHAT_STORAGE_KEYS.threadsByRole));
   return {
     user: parsed.user ?? createEmptyThread(provider),
     manager: parsed.manager ?? createEmptyThread(provider),
@@ -129,7 +123,7 @@ export function useChatThreads({
   role,
 }: {
   messages: UIMessage[];
-  setMessages: SetMessages;
+  setMessages: SetChatMessages;
   provider: AIProviderName;
   role: AppRole;
 }) {
@@ -169,7 +163,7 @@ export function useChatThreads({
 
   useEffect(() => {
     if (previousRoleRef.current !== role) return;
-    local.write(THREADS_STORAGE_KEY, JSON.stringify(threadsToPersist));
+    local.write(CHAT_STORAGE_KEYS.threadsByRole, JSON.stringify(threadsToPersist));
   }, [role, threadsToPersist]);
 
   function clearThread() {
