@@ -1,9 +1,14 @@
 import type { AIProviderName } from "@/lib/ai-provider";
-import { isProductionLikeClient } from "@/lib/runtime-env";
+import { isProductionLike } from "@/lib/runtime-env";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
+import {
+  DEFAULT_PROVIDER_OPTIONS,
+  PROVIDER_OPTION_LABEL,
+  PROVIDER_PANEL_COPY,
+} from "@/constants/provider";
 
 type ProviderSelectorProps = {
   selectedProvider: AIProviderName;
@@ -24,7 +29,7 @@ type ProviderSelectorProps = {
 
 export function ProviderSelector({
   selectedProvider,
-  allowedProviders = ["ollama", "openai"],
+  allowedProviders = DEFAULT_PROVIDER_OPTIONS,
   openaiApiKeyInput,
   ollamaBaseUrlInput,
   isOpenAISelected,
@@ -44,10 +49,10 @@ export function ProviderSelector({
     <div className="flex flex-col gap-3">
       <div className="space-y-1">
         <Text as="label" variant="body" className="font-medium text-slate-900">
-          Provider
+          {PROVIDER_PANEL_COPY.label}
         </Text>
         <Text variant="caption" className="text-slate-500">
-          Keep the chat app slim, but switch models whenever you need.
+          {PROVIDER_PANEL_COPY.description}
         </Text>
       </div>
 
@@ -61,10 +66,10 @@ export function ProviderSelector({
         controlSize="md"
       >
         {allowedProviders.includes("ollama") ? (
-          <option value="ollama">Ollama</option>
+          <option value="ollama">{PROVIDER_OPTION_LABEL.ollama}</option>
         ) : null}
         {allowedProviders.includes("openai") ? (
-          <option value="openai">OpenAI</option>
+          <option value="openai">{PROVIDER_OPTION_LABEL.openai}</option>
         ) : null}
       </Select>
 
@@ -78,7 +83,7 @@ export function ProviderSelector({
             type="password"
             value={openaiApiKeyInput}
             onChange={(event) => onOpenAIApiKeyChange(event.target.value)}
-            placeholder="Enter OpenAI API key (sk-...)"
+            placeholder={PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder}
             fullWidth
             controlSize="md"
           />
@@ -90,7 +95,9 @@ export function ProviderSelector({
             size="md"
             fullWidth
           >
-            {isValidatingKey ? "Verifying..." : "Verify OpenAI key"}
+            {isValidatingKey
+              ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
+              : PROVIDER_PANEL_COPY.verifyOpenAIButtonLabel}
           </Button>
         </div>
       ) : (
@@ -99,7 +106,7 @@ export function ProviderSelector({
             type="url"
             value={ollamaBaseUrlInput}
             onChange={(event) => onOllamaBaseUrlChange(event.target.value)}
-            placeholder="Ollama base URL (optional locally, e.g. http://localhost:11434)"
+            placeholder={PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder}
             fullWidth
             controlSize="md"
           />
@@ -111,12 +118,14 @@ export function ProviderSelector({
             size="md"
             fullWidth
           >
-            {isValidatingOllamaBaseUrl ? "Verifying..." : "Verify Ollama URL"}
+            {isValidatingOllamaBaseUrl
+              ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
+              : PROVIDER_PANEL_COPY.verifyOllamaButtonLabel}
           </Button>
           <Text variant="caption" className="text-slate-500">
-            {isProductionLikeClient()
-              ? "A verified public Ollama URL is required in production-like mode."
-              : "If left empty in local development, the app uses the default Ollama config from env."}
+            {isProductionLike()
+              ? PROVIDER_PANEL_COPY.productionOllamaHint
+              : PROVIDER_PANEL_COPY.localOllamaHint}
           </Text>
         </div>
       )}
