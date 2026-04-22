@@ -1,0 +1,137 @@
+import type { AppRole } from "@/lib/auth/session";
+import type { QuickAction } from "@/types/chat";
+
+export const CHAT_COMPOSER_COPY = {
+  placeholder:
+    "Ask about your balance, request time off, review approvals, or cancel a request...",
+  ariaLabel: "Chat input",
+  defaultHelperText: "Press Enter to send. Shift + Enter adds a new line.",
+  submitHint: "Sending your message...",
+  sendButtonLabel: "Send",
+  thinkingButtonLabel: "Thinking...",
+  verifyFirstButtonLabel: "Verify first",
+} as const;
+
+export const CHAT_THREAD_COPY = {
+  idPrefix: "thread",
+  defaultTitle: "New chat",
+  emptyPreview: "No messages yet",
+  titleMaxLength: 42,
+  previewMaxLength: 72,
+} as const;
+
+export const CHAT_EMPTY_STATE_COPY = {
+  badge: "EA",
+  title: "Manage your leave",
+  description:
+    "Ask for balances, review upcoming leave, create a new request, or cancel one when your schedule changes.",
+} as const;
+
+export const CHAT_STREAMING_PLACEHOLDER_TEXT = "Working on it...";
+
+export const CHAT_HELPER_COPY_BY_ROLE: Record<AppRole, string> = {
+  user: "Review your balance or requests first; leave changes now require a quick UI confirmation.",
+  manager:
+    "Review the pending queue first, then approve or reject with UI confirmation.",
+};
+
+export const QUICK_ACTIONS_BY_ROLE: Record<AppRole, QuickAction[]> = {
+  user: [
+    {
+      label: "Check balance",
+      prompt:
+        "How many annual, sick, and personal leave days do I have left?",
+    },
+    {
+      label: "Review pending",
+      prompt: "List my pending and upcoming time-off requests first.",
+    },
+    {
+      label: "Draft annual leave",
+      prompt:
+        "I want annual leave from 2026-05-04 to 2026-05-05 for a family trip. Please review my balance and upcoming requests first.",
+    },
+    {
+      label: "Review before cancel",
+      prompt: "Show my cancellable requests first so I can choose one to cancel.",
+    },
+  ],
+  manager: [
+    {
+      label: "Team pending",
+      prompt: "Show my team's pending time-off requests.",
+    },
+    {
+      label: "Review Mia request",
+      prompt:
+        "Show Mia Nguyen's pending team time-off requests first.",
+    },
+    {
+      label: "Approve after review",
+      prompt:
+        "Review my team's pending requests, then help me approve the right one with comment: Approved. Please keep handover notes updated.",
+    },
+    {
+      label: "Reject after review",
+      prompt:
+        "Review my team's pending requests, then help me reject An Pham's request with comment: We need sprint coverage on that day.",
+    },
+  ],
+};
+
+export const CHAT_TRANSCRIPT_COPY = {
+  defaultAgentName: "employee",
+  userBadge: "You",
+  assistantBadgeByAgent: {
+    employee: "EM",
+    manager: "MG",
+    coordinator: "CO",
+  },
+  defaultAgentLabel: "Employee Agent",
+  toolFallbackLabel: "Action",
+  loadingBadge: "EM",
+  toolApproval: {
+    selectedRequestFallback: "selected request",
+    submitRequest: {
+      title: "Confirm time-off request",
+      confirmLabel: "Confirm request",
+      cancelLabel: "Cancel",
+    },
+    cancelRequest: {
+      title: "Confirm cancellation",
+      descriptionPrefix: "Cancel request:",
+      confirmLabel: "Confirm cancel",
+      cancelLabel: "Keep request",
+    },
+    approveRequest: {
+      title: "Confirm approval",
+      descriptionPrefix: "Approve team request:",
+      commentLabel: "Comment:",
+      confirmLabel: "Confirm approve",
+      cancelLabel: "Cancel",
+    },
+    rejectRequest: {
+      title: "Confirm rejection",
+      descriptionPrefix: "Reject team request:",
+      reasonLabel: "Reason:",
+      confirmLabel: "Confirm reject",
+      cancelLabel: "Cancel",
+    },
+    default: {
+      title: "Confirm action",
+      description: "Please review this action before it runs.",
+      confirmLabel: "Confirm",
+      cancelLabel: "Cancel",
+    },
+  },
+  toolStatus: {
+    confirmedSuffix: "confirmed. Executing...",
+    cancelledSuffix: "cancelled.",
+    failedSuffix: "failed.",
+    completedSuffix: "completed.",
+  },
+} as const;
+
+export function getQuickActionsByRole(role: AppRole) {
+  return QUICK_ACTIONS_BY_ROLE[role];
+}
