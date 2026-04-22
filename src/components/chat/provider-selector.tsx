@@ -39,13 +39,17 @@ export function ProviderSelector({
   onVerifyOllamaBaseUrl,
 }: ProviderSelectorProps) {
   const isProviderSelectDisabled = allowedProviders.length <= 1;
-  const showOllamaBaseUrlInput = isProductionLikeClient() && !isOpenAISelected;
 
   const content = (
-    <div className="flex flex-col gap-2">
-      <Text as="label" variant="body" className="font-medium text-slate-800">
-        AI Provider
-      </Text>
+    <div className="flex flex-col gap-3">
+      <div className="space-y-1">
+        <Text as="label" variant="body" className="font-medium text-slate-900">
+          Provider
+        </Text>
+        <Text variant="caption" className="text-slate-500">
+          Keep the chat app slim, but switch models whenever you need.
+        </Text>
+      </div>
 
       <Select
         value={selectedProvider}
@@ -55,7 +59,6 @@ export function ProviderSelector({
         disabled={isProviderSelectDisabled}
         fullWidth
         controlSize="md"
-        variant="default"
       >
         {allowedProviders.includes("ollama") ? (
           <option value="ollama">Ollama</option>
@@ -65,7 +68,7 @@ export function ProviderSelector({
         ) : null}
       </Select>
 
-      <Text variant="caption" className="min-h-4" aria-live="polite">
+      <Text variant="caption" className="min-h-4 text-slate-600" aria-live="polite">
         {providerStatus}
       </Text>
 
@@ -78,7 +81,6 @@ export function ProviderSelector({
             placeholder="Enter OpenAI API key (sk-...)"
             fullWidth
             controlSize="md"
-            variant="default"
           />
           <Button
             type="button"
@@ -88,41 +90,43 @@ export function ProviderSelector({
             size="md"
             fullWidth
           >
-            {isValidatingKey ? "Verifying..." : "Verify key"}
+            {isValidatingKey ? "Verifying..." : "Verify OpenAI key"}
           </Button>
         </div>
-      ) : null}
-
-      {showOllamaBaseUrlInput ? (
+      ) : (
         <div className="flex flex-col gap-2">
           <Input
             type="url"
             value={ollamaBaseUrlInput}
             onChange={(event) => onOllamaBaseUrlChange(event.target.value)}
-            placeholder="Ollama base URL (e.g. https://your-tunnel.example.com) — /v1 auto-added"
+            placeholder="Ollama base URL (optional locally, e.g. http://localhost:11434)"
             fullWidth
             controlSize="md"
-            variant="default"
           />
-
           <Button
             type="button"
             onClick={onVerifyOllamaBaseUrl}
             isLoading={isValidatingOllamaBaseUrl}
-            variant="primary"
+            variant="outline"
             size="md"
+            fullWidth
           >
-            {isValidatingOllamaBaseUrl ? "Verifying..." : "Verify URL"}
+            {isValidatingOllamaBaseUrl ? "Verifying..." : "Verify Ollama URL"}
           </Button>
+          <Text variant="caption" className="text-slate-500">
+            {isProductionLikeClient()
+              ? "A verified public Ollama URL is required in production-like mode."
+              : "If left empty in local development, the app uses the default Ollama config from env."}
+          </Text>
         </div>
-      ) : null}
+      )}
     </div>
   );
 
   if (!withContainer) return content;
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
       {content}
     </section>
   );

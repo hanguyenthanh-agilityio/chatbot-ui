@@ -1,38 +1,19 @@
 import {
-  convertToModelMessages,
-  stepCountIs,
-  streamText,
   type UIMessage,
 } from "ai";
+import { routeConversation } from "@/agents/coordinator/router";
+import { createStaticAgentResponse } from "@/agents/shared/response";
+import { runManagerAgent } from "@/agents/manager/run";
+import { runTimeOffAgent } from "@/agents/time-off/run";
+import { isAppRole } from "@/lib/auth/session";
+import { getMockAuthSession } from "@/lib/auth/session-store";
 import {
-  DEFAULT_CHAT_FEATURE_MODE,
-  isChatFeatureMode,
-  type ChatFeatureMode,
-} from "@/constants/ai-feature";
-import {
-  AIProviderName,
   getChatModelConfig,
   getSupportedAIProviderList,
   isAIProviderName,
+  type AIProviderName,
 } from "@/lib/ai-provider";
-import {
-  hasImageFileAttachment,
-  normalizeMessagesForFileAttachments,
-} from "@/lib/chat-attachment";
-import {
-  FEATURE_SYSTEM_PROMPTS,
-  getToolsForMode,
-} from "@/lib/chat/feature-config";
-import { normalizeMcpServerUrl } from "@/lib/mcp-url";
-import { resolveOllamaVisionModel } from "@/lib/chat/ollama-vision";
 import { normalizeOllamaBaseUrl } from "@/lib/ollama-url";
-import {
-  formatStreamError,
-  resolveProviderCandidate,
-  streamWithMcpTools,
-  streamWithMultiAgentPipeline,
-} from "@/lib/chat/pipelines";
-import { isProductionLikeServer } from "@/lib/runtime-env";
 import { getErrorMessage } from "@/utils/error-message";
 
 export const maxDuration = 60;
@@ -43,8 +24,7 @@ type ChatRequestBody = {
   provider?: string;
   openaiApiKey?: string;
   ollamaBaseUrl?: string;
-  mcpServerUrl?: string;
-  featureMode?: string;
+  authRole?: string;
 };
 
 function badRequest(message: string) {
@@ -70,65 +50,9 @@ function parseProviderOverride(provider?: string): {
   return { providerOverride: providerFromBody };
 }
 
-function parseFeatureMode(featureMode?: string): {
-  featureMode?: ChatFeatureMode;
-  errorMessage?: string;
-} {
-  const featureModeRaw =
-    featureMode?.trim().toLowerCase() ?? DEFAULT_CHAT_FEATURE_MODE;
-  // Backward compatibility for older payloads.
-  const normalizedFeatureMode =
-    featureModeRaw === "multi-tool" ? "agent" : featureModeRaw;
-
-  if (!isChatFeatureMode(normalizedFeatureMode)) {
-    return { errorMessage: `Invalid \`featureMode\`: ${featureModeRaw}.` };
-  }
-
-  return { featureMode: normalizedFeatureMode };
-}
-
-function deriveOllamaTagsEndpoint(baseUrl?: string): string | undefined {
-  if (!baseUrl?.trim()) return undefined;
-
-  try {
-    return new URL("/api/tags", baseUrl).toString();
-  } catch {
-    return undefined;
-  }
-}
-
-function validateRuntimeConstraints({
-  provider,
-  featureMode,
-  ollamaBaseUrl,
-  mcpServerUrl,
-}: {
-  provider: AIProviderName;
-  featureMode: ChatFeatureMode;
-  ollamaBaseUrl?: string;
-  mcpServerUrl?: string;
-}): string | undefined {
-  if (provider === "openai" && featureMode === "mcp") {
-    return "`mcp` mode is disabled for OpenAI provider. Switch to Ollama provider.";
-  }
-
-  if (!isProductionLikeServer() || provider !== "ollama") {
-    return undefined;
-  }
-
-  if (!ollamaBaseUrl?.trim()) {
-    return "Production Ollama requires `ollamaBaseUrl` (public tunnel URL).";
-  }
-
-  if (featureMode === "mcp" && !mcpServerUrl?.trim()) {
-    return "MCP mode with Ollama requires `mcpServerUrl` (public MCP URL).";
-  }
-
-  return undefined;
-}
-
 export async function POST(req: Request) {
   let body: ChatRequestBody;
+
   try {
     body = (await req.json()) as ChatRequestBody;
   } catch {
@@ -139,98 +63,55 @@ export async function POST(req: Request) {
     return badRequest("`messages` must be an array.");
   }
 
-  const { providerOverride, errorMessage: providerErrorMessage } =
-    parseProviderOverride(body.provider);
-  if (providerErrorMessage) {
-    return badRequest(providerErrorMessage);
+  const { providerOverride, errorMessage } = parseProviderOverride(body.provider);
+  if (errorMessage) {
+    return badRequest(errorMessage);
   }
 
-  const { featureMode, errorMessage: featureModeErrorMessage } =
-    parseFeatureMode(body.featureMode);
-  if (featureModeErrorMessage || !featureMode) {
-    return badRequest(featureModeErrorMessage ?? "Invalid `featureMode`.");
-  }
-
-  const providerCandidate = resolveProviderCandidate(providerOverride);
-  const runtimeConstraintError = validateRuntimeConstraints({
-    provider: providerCandidate,
-    featureMode,
-    ollamaBaseUrl: body.ollamaBaseUrl,
-    mcpServerUrl: body.mcpServerUrl,
-  });
-  if (runtimeConstraintError) {
-    return badRequest(runtimeConstraintError);
-  }
-
-  const hasImageAttachment = hasImageFileAttachment(body.messages);
-  const ollamaBaseUrlOverride =
-    normalizeOllamaBaseUrl(body.ollamaBaseUrl) ?? undefined;
-  const ollamaTagsEndpointOverride = deriveOllamaTagsEndpoint(
-    ollamaBaseUrlOverride,
+  const authRole = body.authRole?.trim().toLowerCase();
+  const session = await getMockAuthSession(
+    authRole && isAppRole(authRole) ? authRole : "user",
   );
-  let modelIdOverride: string | undefined;
 
-  if (providerCandidate === "ollama" && hasImageAttachment) {
-    const resolvedVisionModel = await resolveOllamaVisionModel({
-      tagsEndpointOverride: ollamaTagsEndpointOverride,
-    });
-    if ("errorMessage" in resolvedVisionModel) {
-      return badRequest(resolvedVisionModel.errorMessage);
-    }
-
-    modelIdOverride = resolvedVisionModel.modelId;
-  }
+  const normalizedOllamaBaseUrl = normalizeOllamaBaseUrl(body.ollamaBaseUrl);
 
   let modelConfig: ReturnType<typeof getChatModelConfig>;
   try {
     modelConfig = getChatModelConfig({
       provider: providerOverride,
       openaiApiKey: body.openaiApiKey,
-      modelId: modelIdOverride,
-      baseUrl:
-        providerCandidate === "ollama" ? ollamaBaseUrlOverride : undefined,
+      baseUrl: providerOverride === "ollama" ? normalizedOllamaBaseUrl ?? undefined : undefined,
     });
   } catch (error) {
     return Response.json({ error: getErrorMessage(error) }, { status: 500 });
   }
 
-  const normalizedMessages = await normalizeMessagesForFileAttachments(
-    body.messages,
-  );
-  const modelMessages = await convertToModelMessages(normalizedMessages);
+  const coordinatorDecision = routeConversation({
+    messages: body.messages,
+    session,
+  });
 
-  if (featureMode === "mcp") {
-    return streamWithMcpTools({
-      model: modelConfig.model,
-      provider: modelConfig.provider,
-      messages: modelMessages,
-      mcpServerUrlOverride:
-        normalizeMcpServerUrl(body.mcpServerUrl) ?? undefined,
+  if (coordinatorDecision.type === "deny") {
+    return createStaticAgentResponse({
+      text: coordinatorDecision.message,
+      agent: "coordinator",
+      accessRole: session.role,
+      originalMessages: body.messages,
     });
   }
 
-  if (featureMode === "multi-agent") {
-    return streamWithMultiAgentPipeline({
-      model: modelConfig.model,
-      provider: modelConfig.provider,
-      messages: modelMessages,
-    });
+  switch (coordinatorDecision.specialist) {
+    case "manager":
+      return runManagerAgent({
+        model: modelConfig.model,
+        messages: body.messages,
+        session,
+      });
+    case "time-off":
+      return runTimeOffAgent({
+        model: modelConfig.model,
+        messages: body.messages,
+        session,
+      });
   }
-
-  const result = streamText({
-    model: modelConfig.model,
-    system: FEATURE_SYSTEM_PROMPTS[featureMode],
-    messages: modelMessages,
-    tools: getToolsForMode(featureMode),
-    // Enable multi-step loops only for tool-based modes.
-    stopWhen:
-      featureMode === "tool" || featureMode === "agent"
-        ? stepCountIs(8)
-        : undefined,
-    temperature: featureMode === "prompt" ? 0 : undefined,
-  });
-
-  return result.toUIMessageStreamResponse({
-    onError: (error) => formatStreamError(error, modelConfig.provider),
-  });
 }
