@@ -1,31 +1,28 @@
 import {
-  type UIMessage,
-} from "ai";
-import { routeConversation } from "@/agents/coordinator/router";
-import { createStaticAgentResponse } from "@/agents/shared/response";
+  createStaticAgentResponse,
+  logAgentLogger,
+  routeConversation,
+} from "@/agents/chat-core";
 import { runManagerAgent } from "@/agents/manager/run";
-import { runTimeOffAgent } from "@/agents/time-off/run";
+import { runEmployeeAgent } from "@/agents/employee/run";
+import { API_COMMON_ERROR_COPY, CHAT_API_COPY } from "@/constants/api";
 import { isAppRole } from "@/lib/auth/session";
 import { getMockAuthSession } from "@/lib/auth/session-store";
 import {
-  getChatModelConfig,
+  type ChatModelConfig,
+  getChatModelCandidates,
   getSupportedAIProviderList,
   isAIProviderName,
   type AIProviderName,
 } from "@/lib/ai-provider";
 import { normalizeOllamaBaseUrl } from "@/lib/ollama-url";
-import { getErrorMessage } from "@/utils/error-message";
+import type { ChatApiRequestBody } from "@/types/api";
+import { getErrorMessage } from "@/utils/error";
 
 export const maxDuration = 60;
 export const runtime = "nodejs";
 
-type ChatRequestBody = {
-  messages?: UIMessage[];
-  provider?: string;
-  openaiApiKey?: string;
-  ollamaBaseUrl?: string;
-  authRole?: string;
-};
+const handleAgentLogger = logAgentLogger;
 
 function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 });
@@ -43,7 +40,7 @@ function parseProviderOverride(provider?: string): {
 
   if (!isAIProviderName(providerFromBody)) {
     return {
-      errorMessage: `Invalid \`provider\`. Supported values: ${getSupportedAIProviderList()}.`,
+      errorMessage: `${CHAT_API_COPY.invalidProviderPrefix} ${getSupportedAIProviderList()}.`,
     };
   }
 
@@ -51,16 +48,16 @@ function parseProviderOverride(provider?: string): {
 }
 
 export async function POST(req: Request) {
-  let body: ChatRequestBody;
+  let body: ChatApiRequestBody;
 
   try {
-    body = (await req.json()) as ChatRequestBody;
+    body = (await req.json()) as ChatApiRequestBody;
   } catch {
-    return badRequest("Invalid JSON body.");
+    return badRequest(API_COMMON_ERROR_COPY.invalidJsonBody);
   }
 
   if (!Array.isArray(body.messages)) {
-    return badRequest("`messages` must be an array.");
+    return badRequest(CHAT_API_COPY.invalidMessages);
   }
 
   const { providerOverride, errorMessage } = parseProviderOverride(body.provider);
@@ -75,13 +72,14 @@ export async function POST(req: Request) {
 
   const normalizedOllamaBaseUrl = normalizeOllamaBaseUrl(body.ollamaBaseUrl);
 
-  let modelConfig: ReturnType<typeof getChatModelConfig>;
+  let modelConfig: ChatModelConfig;
   try {
-    modelConfig = getChatModelConfig({
+    const candidates = getChatModelCandidates({
       provider: providerOverride,
       openaiApiKey: body.openaiApiKey,
       baseUrl: providerOverride === "ollama" ? normalizedOllamaBaseUrl ?? undefined : undefined,
     });
+    modelConfig = candidates[0];
   } catch (error) {
     return Response.json({ error: getErrorMessage(error) }, { status: 500 });
   }
@@ -97,6 +95,8 @@ export async function POST(req: Request) {
       agent: "coordinator",
       accessRole: session.role,
       originalMessages: body.messages,
+      provider: modelConfig.provider,
+      modelId: modelConfig.modelId,
     });
   }
 
@@ -104,14 +104,20 @@ export async function POST(req: Request) {
     case "manager":
       return runManagerAgent({
         model: modelConfig.model,
+        modelId: modelConfig.modelId,
+        provider: modelConfig.provider,
         messages: body.messages,
         session,
+        onRunStats: handleAgentLogger,
       });
-    case "time-off":
-      return runTimeOffAgent({
+    case "employee":
+      return runEmployeeAgent({
         model: modelConfig.model,
+        modelId: modelConfig.modelId,
+        provider: modelConfig.provider,
         messages: body.messages,
         session,
+        onRunStats: handleAgentLogger,
       });
   }
 }
