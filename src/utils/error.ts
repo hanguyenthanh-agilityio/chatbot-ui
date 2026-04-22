@@ -1,4 +1,7 @@
-const DEFAULT_ERROR_MESSAGE = "An unknown error occurred.";
+import { ERROR_COPY } from "@/constants/error";
+import type { ApiErrorPayload } from "@/types/error";
+
+const DEFAULT_ERROR_MESSAGE = ERROR_COPY.unknown;
 
 export function getErrorMessage(
   error: unknown,
@@ -10,7 +13,7 @@ export function getErrorMessage(
     case typeof error === "string":
       return error;
     case Boolean(error && typeof error === "object" && "message" in error): {
-      const message = (error as { message?: unknown }).message;
+      const message = (error as { message?: string }).message;
       return typeof message === "string" ? message : fallbackMessage;
     }
     default:
@@ -18,23 +21,11 @@ export function getErrorMessage(
   }
 }
 
-type ApiErrorPayload = {
-  error?: unknown;
-  message?: unknown;
-  details?: unknown;
-};
-
-function getNestedErrorMessage(value: unknown): string | undefined {
-  switch (true) {
-    case typeof value === "string":
-      return value;
-    case Boolean(value && typeof value === "object" && "message" in value): {
-      const message = (value as { message?: unknown }).message;
-      return typeof message === "string" ? message : undefined;
-    }
-    default:
-      return undefined;
-  }
+function getNestedErrorMessage(
+  value: string | { message?: string } | undefined,
+): string | undefined {
+  if (typeof value === "string") return value;
+  return typeof value?.message === "string" ? value.message : undefined;
 }
 
 export function normalizeErrorMessage(
