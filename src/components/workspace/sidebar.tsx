@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
-import type { ChatThread } from "@/hooks/use-chat-threads";
 import { Text } from "@/components/ui/text";
+import { SIDEBAR_COPY } from "@/constants/app";
+import {
+  THREAD_TIMESTAMP_FORMAT,
+  THREAD_TIMESTAMP_LOCALE,
+} from "@/constants/date-time";
+import type { ChatThread } from "@/types/thread";
 
 function formatTimestamp(value: string) {
   if (!value) {
@@ -8,12 +13,10 @@ function formatTimestamp(value: string) {
   }
 
   try {
-    return new Intl.DateTimeFormat("en", {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    }).format(new Date(value));
+    return new Intl.DateTimeFormat(
+      THREAD_TIMESTAMP_LOCALE,
+      THREAD_TIMESTAMP_FORMAT,
+    ).format(new Date(value));
   } catch {
     return value;
   }
@@ -39,13 +42,13 @@ export function ThreadSidebar({
       <div className="border-b border-white/10 p-5">
         <div className="space-y-1">
           <Text as="p" className="text-xs font-medium uppercase tracking-[0.2em] text-sky-300">
-            Time Off Agent
+            {SIDEBAR_COPY.eyebrow}
           </Text>
           <Text as="h1" className="text-2xl font-semibold text-white">
-            Personal leave chat
+            {SIDEBAR_COPY.title}
           </Text>
           <Text variant="caption" className="text-slate-400">
-            One focused assistant for your own balance, requests, and cancellations.
+            {SIDEBAR_COPY.description}
           </Text>
         </div>
       </div>
@@ -57,7 +60,7 @@ export function ThreadSidebar({
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
         <div className="mb-3 px-2">
           <Text as="p" className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
-            Current chat
+            {SIDEBAR_COPY.currentChatLabel}
           </Text>
         </div>
 
@@ -92,7 +95,7 @@ export function ThreadSidebar({
               onClick={onDeleteThread}
               disabled={disabled}
             >
-              Delete chat
+              {SIDEBAR_COPY.deleteChatLabel}
             </button>
           </div>
         </div>

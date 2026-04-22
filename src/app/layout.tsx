@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import {
+  APP_METADATA_DESCRIPTION,
+  APP_METADATA_TITLE,
+} from "@/constants/app";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Time Off Agent",
-  description:
-    "A focused Next.js chat app for managing your own time off with OpenAI or Ollama.",
+  title: APP_METADATA_TITLE,
+  description: APP_METADATA_DESCRIPTION,
 };
 
 export default function RootLayout({
