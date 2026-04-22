@@ -2,12 +2,12 @@ import { spawn } from "node:child_process";
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const HOST = process.env.MANAGER_DB_HOST || "127.0.0.1";
-const PORT = Number(process.env.MANAGER_DB_PORT || 4100);
+const HOST = process.env.COMPANY_SYSTEM_HOST || "127.0.0.1";
+const PORT = Number(process.env.COMPANY_SYSTEM_PORT || 4100);
 const SERVER_DIRECTORY = path.join(process.cwd(), "server");
 const DB_DIRECTORY = path.join(SERVER_DIRECTORY, "db");
-const DB_PATH = path.join(DB_DIRECTORY, "manager-db.json");
-const DB_SEED_PATH = path.join(DB_DIRECTORY, "manager-db.seed.json");
+const DB_PATH = path.join(DB_DIRECTORY, "company-system.json");
+const DB_SEED_PATH = path.join(DB_DIRECTORY, "company-system.seed.json");
 
 const EMPTY_DB_SHAPE = {
   teams: [],
@@ -67,7 +67,7 @@ async function main() {
 
   child.once("error", (error) => {
     console.error(
-      "[manager-data-server] failed to start json-server. Ensure dependency is installed.",
+      "[company-system-server] failed to start json-server. Ensure dependency is installed.",
     );
     console.error(error);
     process.exit(1);
@@ -89,12 +89,12 @@ async function main() {
   process.once("SIGINT", stopChild);
   process.once("SIGTERM", stopChild);
 
-  console.log(`[manager-data-server] starting json-server at http://${HOST}:${PORT}`);
-  console.log(`[manager-data-server] database file ${DB_PATH}`);
+  console.log(`[company-system-server] starting json-server at http://${HOST}:${PORT}`);
+  console.log(`[company-system-server] database file ${DB_PATH}`);
 }
 
 main().catch((error) => {
-  console.error("[manager-data-server] startup failed");
+  console.error("[company-system-server] startup failed");
   console.error(error);
   process.exit(1);
 });
