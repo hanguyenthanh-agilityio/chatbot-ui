@@ -1,4 +1,6 @@
-function makeStorageAccessor(getStorage: () => Storage) {
+import type { StorageAccessor } from "@/types/storage";
+
+function makeStorageAccessor(getStorage: () => Storage): StorageAccessor {
   return {
     read(key: string): string | null {
       if (typeof window === "undefined") return null;

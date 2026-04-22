@@ -17,8 +17,13 @@ export type MockAuthSession = MockSessionSeed &
     managedEmployees: EmployeeRecord[];
   };
 
+const ROLE_LABEL_BY_ROLE: Record<AppRole, string> = {
+  user: "User mode",
+  manager: "Manager mode",
+};
+
 export function getRoleLabel(role: AppRole): string {
-  return role === "manager" ? "Manager mode" : "User mode";
+  return ROLE_LABEL_BY_ROLE[role];
 }
 
 export function isAppRole(value: string): value is AppRole {
