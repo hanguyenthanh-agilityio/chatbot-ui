@@ -9,7 +9,9 @@ import { EMPLOYEE_TOOL_DESCRIPTION, EMPLOYEE_TOOL_NAME } from "../common/definit
 
 const OPTIONAL_STATUS_SCHEMA = z.preprocess(
   (value) => (value == null ? undefined : value),
-  z.enum(["all", "pending", "approved", "cancelled", "rejected"]).optional(),
+  z
+    .enum(["all", "upcoming", "pending", "approved", "cancelled", "rejected"])
+    .optional(),
 );
 
 const OPTIONAL_QUERY_SCHEMA = z.preprocess(

@@ -51,7 +51,7 @@ export type RequestMatch = {
 };
 
 export type ListRequestInput = {
-  status?: RequestStatus | "all";
+  status?: RequestStatus | "all" | "upcoming";
   query?: string;
 };
 

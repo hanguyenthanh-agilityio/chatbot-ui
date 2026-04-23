@@ -34,7 +34,7 @@ import {
 } from "@/agents/handlers/common/date";
 
 type TeamRequestListInput = {
-  status?: RequestStatus | "all";
+  status?: RequestStatus | "all" | "upcoming";
   employeeQuery?: string;
 };
 
@@ -103,12 +103,25 @@ function buildMyTimeOffRequestsPayload(
   input: ListRequestInput | undefined,
 ) {
   const status = input?.status ?? "all";
+  const todayDay = parseIsoDateToUtcDay(getTodayIsoDate(session.timeZone));
   const filteredRequests = filterRequestsByQuery(
     ctx.employees,
     getRequestsForEmployee(ctx.requests, session.employeeId),
     input?.query,
   )
-    .filter((request) => (status === "all" ? true : request.status === status))
+    .filter((request) => {
+      if (status === "all") return true;
+      if (status === "upcoming") {
+        const startDay = parseIsoDateToUtcDay(request.startDate);
+        return (
+          Number.isFinite(startDay) &&
+          startDay >= todayDay &&
+          request.status !== "cancelled" &&
+          request.status !== "rejected"
+        );
+      }
+      return request.status === status;
+    })
     .sort(compareByStartDate)
     .map((request) => formatRequest(ctx.employees, request));
 
@@ -137,12 +150,25 @@ function buildTeamTimeOffRequestsPayload(
   if (denied) return denied;
 
   const status = input?.status ?? "all";
+  const todayDay = parseIsoDateToUtcDay(getTodayIsoDate(session.timeZone));
   const filteredRequests = filterRequestsByQuery(
     ctx.employees,
     getTeamRequestsForManager(ctx.requests, session),
     input?.employeeQuery,
   )
-    .filter((request) => (status === "all" ? true : request.status === status))
+    .filter((request) => {
+      if (status === "all") return true;
+      if (status === "upcoming") {
+        const startDay = parseIsoDateToUtcDay(request.startDate);
+        return (
+          Number.isFinite(startDay) &&
+          startDay >= todayDay &&
+          request.status !== "cancelled" &&
+          request.status !== "rejected"
+        );
+      }
+      return request.status === status;
+    })
     .sort(compareByStartDate)
     .map((request) => formatRequest(ctx.employees, request));
 

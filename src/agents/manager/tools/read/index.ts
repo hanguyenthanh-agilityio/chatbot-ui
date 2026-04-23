@@ -6,7 +6,9 @@ import { MANAGER_TOOL_DESCRIPTION, MANAGER_TOOL_NAME } from "../common/definitio
 
 const OPTIONAL_STATUS_SCHEMA = z.preprocess(
   (value) => (value == null ? undefined : value),
-  z.enum(["all", "pending", "approved", "cancelled", "rejected"]).optional(),
+  z
+    .enum(["all", "upcoming", "pending", "approved", "cancelled", "rejected"])
+    .optional(),
 );
 
 const OPTIONAL_EMPLOYEE_QUERY_SCHEMA = z.preprocess(
