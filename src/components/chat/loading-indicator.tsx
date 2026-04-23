@@ -1,19 +1,13 @@
 import { APP_NAME } from "@/constants/app";
+import { AssistantAvatar } from "@/components/chat/assistant-avatar";
 
 const SKELETON_WIDTHS = ["w-full", "w-4/5", "w-3/5"] as const;
 const DOT_DELAYS = ["0ms", "150ms", "300ms"] as const;
 
-type LoadingIndicatorProps = {
-  badge: string;
-};
-
-export function LoadingIndicator({ badge }: LoadingIndicatorProps) {
+export function LoadingIndicator() {
   return (
     <article className="flex items-start gap-2.5 py-1">
-      {/* Bot avatar — gradient square matching reference */}
-      <div className="mt-0.5 flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#06b6d4)] border border-white/[.18] text-[10px] font-bold text-white">
-        {badge}
-      </div>
+      <AssistantAvatar size="sm" className="mt-0.5" />
 
       {/* Processing card */}
       <div className="w-[280px] px-4 py-3.5 backdrop-blur-md rounded-tl rounded-tr-2xl rounded-br-2xl rounded-bl-2xl bg-white/[.08] border border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.2)]">

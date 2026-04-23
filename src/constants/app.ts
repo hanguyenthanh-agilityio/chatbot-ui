@@ -4,6 +4,8 @@ export const APP_NAME = "Employee Assistant";
 export const APP_METADATA_TITLE = APP_NAME;
 export const APP_METADATA_DESCRIPTION =
   "A focused Next.js chat app for managing employee leave with OpenAI or Ollama.";
+export const APP_ASSISTANT_AVATAR_SRC = "/chatbot-assistant-avatar.png";
+export const APP_ASSISTANT_AVATAR_ALT = `${APP_NAME} avatar`;
 
 export const APP_HEADER_SUBTITLE_BY_ROLE: Record<AppRole, string> = {
   user:

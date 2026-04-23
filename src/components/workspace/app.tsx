@@ -37,6 +37,7 @@ import { useChatThreads } from "@/hooks/use-threads";
 import { useProviderSelection } from "@/hooks/use-provider";
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
 import { Text } from "@/components/ui/text";
+import { getInitialsFromName } from "@/utils/avatar";
 import { getDisplayErrorMessage } from "@/utils/error";
 
 type WorkspaceAppProps = {
@@ -147,11 +148,18 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     clearError();
   }, [auth.role, clearError]);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!canSend) return;
+  async function submitTextMessage(
+    text: string,
+    options?: { restoreInputOnError?: boolean },
+  ) {
+    const messageText = text.trim();
+    if (!messageText) return;
 
-    const messageText = trimmedInput;
+    if (isLoading || !provider.isProviderReady) {
+      setInput(messageText);
+      return;
+    }
+
     setInput("");
     clearError();
 
@@ -166,12 +174,19 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
         },
       );
     } catch {
-      setInput(messageText);
+      if (options?.restoreInputOnError ?? false) {
+        setInput(messageText);
+      }
     }
   }
 
-  function handlePromptSelect(prompt: string) {
-    setInput(prompt);
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await submitTextMessage(trimmedInput, { restoreInputOnError: true });
+  }
+
+  async function handlePromptSelect(prompt: string) {
+    await submitTextMessage(prompt, { restoreInputOnError: true });
   }
 
   function handleToolApproval(id: string, approved: boolean) {
@@ -293,6 +308,9 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             containerRef={messagesContainerRef}
             messages={messages}
             isLoading={isLoading}
+            userAvatarUrl={auth.session.avatar}
+            userAvatarLabel={`${auth.session.name} avatar`}
+            userInitials={getInitialsFromName(auth.session.name)}
             quickActions={quickActions}
             onSelectPrompt={handlePromptSelect}
             onToolApproval={handleToolApproval}

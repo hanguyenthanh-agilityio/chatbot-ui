@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { AssistantAvatar } from "@/components/chat/assistant-avatar";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 type MessageBubbleProps = {
   isUser: boolean;
@@ -25,21 +27,30 @@ export function MessageBubble({ isUser, text, placeholder }: MessageBubbleProps)
 type MessageAvatarProps = {
   initials: string;
   isUser: boolean;
+  avatarUrl?: string;
+  avatarLabel?: string;
+  size?: "sm" | "md" | "lg";
   children?: ReactNode;
 };
 
-export function MessageAvatar({ initials, isUser }: MessageAvatarProps) {
+export function MessageAvatar({
+  initials,
+  isUser,
+  avatarUrl,
+  avatarLabel = "User avatar",
+  size = "sm",
+}: MessageAvatarProps) {
   if (isUser) {
     return (
-      <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-500/30 text-[10px] font-semibold text-white ring-2 ring-indigo-500/30">
-        {initials}
-      </div>
+      <UserAvatar
+        src={avatarUrl}
+        alt={avatarLabel}
+        initials={initials}
+        size={size}
+        className="mt-1"
+      />
     );
   }
 
-  return (
-    <div className="mt-1 flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#06b6d4)] border border-white/[.18] text-[10px] font-bold text-white">
-      {initials}
-    </div>
-  );
+  return <AssistantAvatar size="sm" className="mt-1" />;
 }

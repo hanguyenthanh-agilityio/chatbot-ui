@@ -1,3 +1,4 @@
+import { AssistantAvatar } from "@/components/chat/assistant-avatar";
 import { Text } from "@/components/ui/text";
 import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
 import type { QuickAction } from "@/types/chat";
@@ -16,13 +17,17 @@ export function ChatEmptyState({
       {/* Glass welcome card matching reference WelcomeScreen */}
       <div className="w-full max-w-[520px] rounded-[24px] p-8 flex flex-col items-center gap-6 backdrop-blur-[32px] border bg-white/[.05] border-white/10 shadow-[0_24px_64px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.1)]">
         {/* Logo / badge */}
-        <div className="flex h-14 w-44 items-center justify-center rounded-xl bg-white/[.05] border border-white/[.08] text-lg font-bold text-white font-syne tracking-wide">
-          {CHAT_EMPTY_STATE_COPY.badge}
+        <div className="flex items-center justify-center">
+          <AssistantAvatar size="lg" />
         </div>
 
         {/* Title + subtitle */}
         <div className="text-center">
-          <Text as="h2" variant="title" className="mb-2 leading-tight">
+          <Text
+            as="h2"
+            variant="inherit"
+            className="mb-2 font-dm-sans text-[28px] font-bold leading-[1.35] text-white"
+          >
             {CHAT_EMPTY_STATE_COPY.title}
           </Text>
           <Text variant="subtitle" className="text-sm leading-relaxed">

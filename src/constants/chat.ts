@@ -21,7 +21,6 @@ export const CHAT_THREAD_COPY = {
 } as const;
 
 export const CHAT_EMPTY_STATE_COPY = {
-  badge: "EA",
   title: "Manage your leave",
   description:
     "Ask for balances, review upcoming leave, create a new request, or cancel one when your schedule changes.",
@@ -89,7 +88,6 @@ export const CHAT_TRANSCRIPT_COPY = {
   },
   defaultAgentLabel: "Employee Agent",
   toolFallbackLabel: "Action",
-  loadingBadge: "EM",
   toolApproval: {
     selectedRequestFallback: "selected request",
     submitRequest: {
