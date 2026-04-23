@@ -1,14 +1,23 @@
 import type { ReactNode } from "react";
 import { AssistantAvatar } from "@/components/chat/assistant-avatar";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { cn } from "@/utils/class-name";
 
 type MessageBubbleProps = {
   isUser: boolean;
   text?: string;
   placeholder?: string;
+  fullWidth?: boolean;
+  children?: ReactNode;
 };
 
-export function MessageBubble({ isUser, text, placeholder }: MessageBubbleProps) {
+export function MessageBubble({
+  isUser,
+  text,
+  placeholder,
+  fullWidth = false,
+  children,
+}: MessageBubbleProps) {
   if (isUser) {
     return (
       <div className="ml-auto py-[10px] px-[15px] max-w-[75%] text-sm leading-relaxed break-words font-dm-sans text-white/[.87] rounded-[18px_4px_18px_18px] bg-[linear-gradient(135deg,rgba(124,58,237,.5),rgba(79,70,229,.5))] backdrop-blur-lg border border-violet-500/35 shadow-[0_4px_18px_rgba(99,60,220,0.18)]">
@@ -18,8 +27,21 @@ export function MessageBubble({ isUser, text, placeholder }: MessageBubbleProps)
   }
 
   return (
-    <div className="px-4 py-2.5 max-w-[72%] text-sm leading-relaxed font-dm-sans text-white/[.87] rounded-tl rounded-tr-2xl rounded-br-2xl rounded-bl-2xl bg-white/[.08] backdrop-blur-md border border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.2)]">
-      <span className="whitespace-pre-wrap">{text ?? <span className="text-white/40">{placeholder}</span>}</span>
+    <div
+      className={cn(
+        "px-4 py-2.5 text-sm leading-relaxed font-dm-sans text-white/[.87] rounded-tl rounded-tr-2xl rounded-br-2xl rounded-bl-2xl bg-white/[.08] backdrop-blur-md border border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.2)]",
+        fullWidth ? "max-w-full" : "max-w-[72%]",
+      )}
+    >
+      {text ? <span className="whitespace-pre-wrap">{text}</span> : null}
+      {!text && placeholder ? (
+        <span className="text-white/40">{placeholder}</span>
+      ) : null}
+      {children ? (
+        <div className={cn(text || placeholder ? "mt-3" : undefined)}>
+          {children}
+        </div>
+      ) : null}
     </div>
   );
 }

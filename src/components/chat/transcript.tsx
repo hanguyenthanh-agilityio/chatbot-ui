@@ -11,10 +11,7 @@ import {
 import { ToolStatusBadge } from "@/components/chat/tool-status-badge";
 import { ChatEmptyState } from "@/components/chat/empty-state";
 import { UserAvatar } from "@/components/ui/user-avatar";
-import {
-  CHAT_STREAMING_PLACEHOLDER_TEXT,
-  CHAT_TRANSCRIPT_COPY,
-} from "@/constants/chat";
+import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
 import type { MessageMetadata } from "@/agents/chat-core";
 import type { QuickAction } from "@/types/chat";
 import type {
@@ -37,12 +34,25 @@ function getToolParts(message: UIMessage) {
   );
 }
 
-function getToolLabel(part: UIMessage["parts"][number]) {
-  if (!isToolUIPart(part)) return part.type;
+const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {
+  get_my_time_off_balance: "My leave balance",
+  list_my_time_off_requests: "My time-off requests",
+  list_team_time_off_requests: "Team time-off requests",
+  submit_my_time_off_request: "Submit time-off request",
+  cancel_my_time_off_request: "Cancel time-off request",
+  approve_team_time_off_request: "Approve team request",
+  reject_team_time_off_request: "Reject team request",
+};
 
-  return part.type === "dynamic-tool"
-    ? part.toolName
-    : part.type.replace("tool-", "");
+function humanizeToolName(toolName: string) {
+  return toolName
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function getFriendlyToolLabelByName(toolName: string | null) {
+  if (!toolName) return CHAT_TRANSCRIPT_COPY.toolFallbackLabel;
+  return TOOL_FRIENDLY_LABEL_BY_NAME[toolName] ?? humanizeToolName(toolName);
 }
 
 function getToolName(part: UIMessage["parts"][number]) {
@@ -51,6 +61,24 @@ function getToolName(part: UIMessage["parts"][number]) {
   return part.type === "dynamic-tool"
     ? part.toolName
     : part.type.replace("tool-", "");
+}
+
+function getToolStepText(part: UIMessage["parts"][number]) {
+  if (!isToolUIPart(part)) return null;
+
+  switch (part.state) {
+    case "input-streaming":
+    case "input-available":
+    case "output-available":
+    case "output-error":
+      return `Call tool: ${getFriendlyToolLabelByName(getToolName(part))}`;
+    case "approval-responded":
+      return part.approval.approved
+        ? `Call tool: ${getFriendlyToolLabelByName(getToolName(part))}`
+        : null;
+    default:
+      return null;
+  }
 }
 
 function isApprovalRequestedToolPart(
@@ -119,8 +147,7 @@ function getToolStatusCopy(part: UIMessage["parts"][number]) {
   }
 
   const toolName = getToolName(part);
-  const shortLabel =
-    toolName?.replaceAll("_", " ") ?? CHAT_TRANSCRIPT_COPY.toolFallbackLabel;
+  const shortLabel = getFriendlyToolLabelByName(toolName);
 
   switch (part.state) {
     case "approval-responded":
@@ -141,10 +168,7 @@ function getToolStatusCopy(part: UIMessage["parts"][number]) {
         text: `${shortLabel} ${CHAT_TRANSCRIPT_COPY.toolStatus.cancelledSuffix}`,
       };
     case "output-available":
-      return {
-        tone: "success" as const,
-        text: `${shortLabel} ${CHAT_TRANSCRIPT_COPY.toolStatus.completedSuffix}`,
-      };
+      return null;
     default:
       return null;
   }
@@ -186,11 +210,76 @@ function asNumber(value: unknown, fallback = "—") {
     : fallback;
 }
 
+const ISO_DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const DATE_WITH_YEAR_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
+function parseIsoDateUtc(value: string) {
+  if (!ISO_DATE_ONLY_REGEX.test(value)) return null;
+
+  const [yearText, monthText, dayText] = value.split("-");
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+
+  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
+    return null;
+  }
+
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    return null;
+  }
+
+  return parsed;
+}
+
 function formatDateRange(startDate: string, endDate: string) {
   if (!startDate && !endDate) return "—";
-  if (!endDate || startDate === endDate) return startDate || endDate;
-  if (!startDate) return endDate;
-  return `${startDate} → ${endDate}`;
+
+  if (!startDate || !endDate) {
+    const single = startDate || endDate;
+    const parsed = parseIsoDateUtc(single);
+    return parsed ? DATE_WITH_YEAR_FORMATTER.format(parsed) : single;
+  }
+
+  const parsedStart = parseIsoDateUtc(startDate);
+  const parsedEnd = parseIsoDateUtc(endDate);
+
+  if (!parsedStart || !parsedEnd) {
+    return startDate === endDate ? startDate : `${startDate} → ${endDate}`;
+  }
+
+  if (startDate === endDate) {
+    return DATE_WITH_YEAR_FORMATTER.format(parsedStart);
+  }
+
+  const sameYear = parsedStart.getUTCFullYear() === parsedEnd.getUTCFullYear();
+  const sameMonth = sameYear && parsedStart.getUTCMonth() === parsedEnd.getUTCMonth();
+
+  if (sameMonth) {
+    return `${MONTH_DAY_FORMATTER.format(parsedStart)}–${parsedEnd.getUTCDate()}, ${parsedStart.getUTCFullYear()}`;
+  }
+
+  if (sameYear) {
+    return `${MONTH_DAY_FORMATTER.format(parsedStart)} – ${MONTH_DAY_FORMATTER.format(parsedEnd)}, ${parsedStart.getUTCFullYear()}`;
+  }
+
+  return `${DATE_WITH_YEAR_FORMATTER.format(parsedStart)} – ${DATE_WITH_YEAR_FORMATTER.format(parsedEnd)}`;
 }
 
 function formatStatus(status: string) {
@@ -206,6 +295,13 @@ function renderLeaveTypeChip(label: string) {
       {label}
     </span>
   );
+}
+
+function compactLeaveTypeLabel(label: string) {
+  const normalized = label.trim();
+  if (!normalized) return "—";
+
+  return normalized.replace(/\s+leave$/i, "");
 }
 
 function renderStatusChip(status: string) {
@@ -243,16 +339,16 @@ function renderEmployeeCell(request: UnknownRecord) {
         src={employeeAvatar}
         alt={`${employeeName} avatar`}
         initials={getInitialsFromName(employeeName)}
-        size="md"
+        size="sm"
         className="ring-white/15"
       />
 
       <div className="min-w-0">
-        <p className="truncate font-dm-sans text-sm font-semibold text-white/92">
+        <p className="whitespace-nowrap font-dm-sans text-sm font-semibold leading-[1.25] text-white/92">
           {employeeName}
         </p>
         {employeeTeam ? (
-          <p className="truncate font-dm-sans text-xs text-white/55">
+          <p className="mt-0.5 whitespace-nowrap font-dm-sans text-xs leading-[1.25] text-white/60">
             {employeeTeam}
           </p>
         ) : null}
@@ -274,33 +370,45 @@ function getRequestTableModel(params: {
 
   const columns: ToolOutputTableColumn[] = params.showEmployee
     ? [
-        { key: "employee", label: "Employee" },
-        { key: "leaveType", label: "Leave type" },
-        { key: "dateRange", label: "Date range" },
+        { key: "employee", label: "Employee", className: "sm:pr-4" },
+        { key: "leaveType", label: "Leave type", align: "center" },
+        {
+          key: "dateRange",
+          label: "Date range",
+          align: "center",
+          className: "whitespace-nowrap",
+        },
         {
           key: "days",
           label: "Days",
-          align: "right",
+          align: "center",
           className: "font-semibold tabular-nums",
         },
-        { key: "status", label: "Status" },
+        { key: "status", label: "Status", align: "center" },
       ]
     : [
-        { key: "leaveType", label: "Leave type" },
-        { key: "dateRange", label: "Date range" },
+        { key: "leaveType", label: "Leave type", align: "center" },
+        {
+          key: "dateRange",
+          label: "Date range",
+          align: "center",
+          className: "whitespace-nowrap",
+        },
         {
           key: "days",
           label: "Days",
-          align: "right",
+          align: "center",
           className: "font-semibold tabular-nums",
         },
-        { key: "status", label: "Status" },
+        { key: "status", label: "Status", align: "center" },
       ];
 
   const rows = asRecordArray(params.payload.requests).map((request) => {
     const row: ToolOutputTableRow = {
       leaveType: renderLeaveTypeChip(
-        asString(request.leaveTypeLabel, asString(request.leaveType)),
+        compactLeaveTypeLabel(
+          asString(request.leaveTypeLabel, asString(request.leaveType)),
+        ),
       ),
       dateRange: formatDateRange(
         asString(request.startDate, ""),
@@ -337,36 +445,36 @@ function getBalanceTableModel(params: {
   }
 
   const columns: ToolOutputTableColumn[] = [
-    { key: "leaveType", label: "Leave type" },
+    { key: "leaveType", label: "Leave type", align: "center" },
     {
       key: "allowance",
       label: "Allowance",
-      align: "right",
+      align: "center",
       className: "font-semibold tabular-nums",
     },
     {
       key: "used",
       label: "Used",
-      align: "right",
+      align: "center",
       className: "font-semibold tabular-nums",
     },
     {
       key: "pending",
       label: "Pending",
-      align: "right",
+      align: "center",
       className: "font-semibold tabular-nums",
     },
     {
       key: "remaining",
       label: "Remaining",
-      align: "right",
+      align: "center",
       className: "font-semibold tabular-nums",
     },
   ];
 
   const rows = asRecordArray(params.payload.balances).map((balance) => ({
     leaveType: renderLeaveTypeChip(
-      leaveTypeLabel(asString(balance.leaveType, "annual")),
+      compactLeaveTypeLabel(leaveTypeLabel(asString(balance.leaveType, "annual"))),
     ),
     allowance: asNumber(balance.allowance),
     used: asNumber(balance.used),
@@ -383,6 +491,430 @@ function getBalanceTableModel(params: {
   };
 }
 
+type RecordCollection = {
+  path: string[];
+  rows: UnknownRecord[];
+};
+
+const GENERIC_TABLE_TITLE_BY_KEY: Record<string, string> = {
+  balances: "Leave balance",
+  upcomingrequests: "Upcoming requests",
+  teamrequests: "Team requests",
+  requests: "Requests",
+  matches: "Matching requests",
+  conflictingrequests: "Conflicting requests",
+  records: "Records",
+  items: "Items",
+  rows: "Rows",
+  results: "Results",
+};
+
+const GENERIC_COLUMN_LABEL_BY_KEY: Record<string, string> = {
+  id: "ID",
+  employeeId: "Employee ID",
+  requestId: "Request ID",
+  leaveType: "Leave type",
+  leaveTypeLabel: "Leave type",
+  dateRange: "Date range",
+};
+
+const GENERIC_NUMERIC_COLUMN_KEY_REGEX =
+  /(^|_)(count|total|days?|allowance|used|pending|remaining|hours?)$/i;
+const STRUCTURAL_COLLECTION_KEYS = new Set([
+  "records",
+  "items",
+  "rows",
+  "results",
+  "data",
+  "list",
+]);
+
+function toKebabCase(value: string) {
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/[_\s]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .toLowerCase();
+}
+
+function toComparableKey(value: string) {
+  return value.replace(/[_\-\s]/g, "").toLowerCase();
+}
+
+function toHumanLabel(value: string) {
+  const words = value
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (words.length === 0) {
+    return "Records";
+  }
+
+  return words
+    .map((word) =>
+      word.toLowerCase() === "id"
+        ? "ID"
+        : `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`,
+    )
+    .join(" ");
+}
+
+function getCollectionTitle(path: string[], toolName: string | null) {
+  if (path.length === 0) {
+    return getFriendlyToolLabelByName(toolName);
+  }
+
+  const leaf = path[path.length - 1] ?? "records";
+  const parent = path[path.length - 2] ?? "";
+  const leafComparable = toComparableKey(leaf);
+
+  if (
+    STRUCTURAL_COLLECTION_KEYS.has(leafComparable) &&
+    parent.length > 0
+  ) {
+    return toHumanLabel(parent);
+  }
+
+  if (
+    leafComparable === "requests" &&
+    path.some((segment) => toComparableKey(segment).includes("team"))
+  ) {
+    return "Team requests";
+  }
+
+  if (
+    leafComparable === "requests" &&
+    path.some((segment) => toComparableKey(segment).includes("upcoming"))
+  ) {
+    return "Upcoming requests";
+  }
+
+  return GENERIC_TABLE_TITLE_BY_KEY[leafComparable] ?? toHumanLabel(leaf);
+}
+
+function getCollectionId(path: string[], toolName: string | null) {
+  const segments = path.length > 0 ? path : [toolName ?? "records"];
+  const id = segments.map((segment) => toKebabCase(segment)).join("-");
+
+  return id.length > 0 ? id : "records";
+}
+
+function collectRecordCollections(
+  value: unknown,
+  path: string[] = [],
+  depth = 0,
+): RecordCollection[] {
+  if (depth > 5 || value == null) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    const rows = value.filter(isRecord);
+
+    if (rows.length > 0 && rows.length === value.length) {
+      return [{ path, rows }];
+    }
+
+    return [];
+  }
+
+  const record = asRecord(value);
+  if (!record) {
+    return [];
+  }
+
+  return Object.entries(record).flatMap(([key, nestedValue]) =>
+    collectRecordCollections(nestedValue, [...path, key], depth + 1),
+  );
+}
+
+function isPrimitiveValue(value: unknown): value is string | number | boolean | null {
+  return (
+    value === null ||
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  );
+}
+
+function canRenderCellValue(value: unknown) {
+  if (isPrimitiveValue(value)) return true;
+  return Array.isArray(value) && value.every((item) => isPrimitiveValue(item));
+}
+
+function hasRenderableColumnValue(rows: UnknownRecord[], key: string) {
+  return rows.some((row) => {
+    const value = row[key];
+    if (value === undefined || value === null || value === "") {
+      return false;
+    }
+
+    return canRenderCellValue(value);
+  });
+}
+
+function isNumericColumn(rows: UnknownRecord[], key: string) {
+  if (GENERIC_NUMERIC_COLUMN_KEY_REGEX.test(key)) {
+    return true;
+  }
+
+  const values = rows
+    .map((row) => row[key])
+    .filter((value) => value !== null && value !== undefined && value !== "");
+
+  if (values.length === 0) {
+    return false;
+  }
+
+  return values.every((value) => typeof value === "number" && Number.isFinite(value));
+}
+
+function formatGenericCellValue(value: unknown, key: string) {
+  if (value === null || value === undefined || value === "") {
+    return "—";
+  }
+
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? String(value) : "—";
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+
+  if (typeof value === "string") {
+    const normalizedValue = value.trim();
+    if (!normalizedValue) return "—";
+
+    if (key.toLowerCase().endsWith("date")) {
+      const parsedDate = parseIsoDateUtc(normalizedValue);
+      if (parsedDate) {
+        return DATE_WITH_YEAR_FORMATTER.format(parsedDate);
+      }
+    }
+
+    return normalizedValue;
+  }
+
+  if (Array.isArray(value)) {
+    const primitiveItems = value.filter((item) => isPrimitiveValue(item));
+    if (primitiveItems.length === value.length) {
+      const joinedValue = primitiveItems
+        .map((item) => (item === null ? "—" : String(item)))
+        .join(", ");
+
+      return joinedValue.length > 0 ? joinedValue : "—";
+    }
+  }
+
+  return "—";
+}
+
+function isBalanceLikeRecord(row: UnknownRecord) {
+  return (
+    "leaveType" in row &&
+    "allowance" in row &&
+    "used" in row &&
+    "pending" in row &&
+    "remaining" in row
+  );
+}
+
+function isRequestLikeRecord(row: UnknownRecord) {
+  const hasLeaveType = "leaveType" in row || "leaveTypeLabel" in row;
+  const hasDateRange = "dateRange" in row || "startDate" in row || "endDate" in row;
+  const hasStatus = "status" in row;
+
+  return hasLeaveType && hasDateRange && hasStatus;
+}
+
+function getGenericTableModel(params: {
+  id: string;
+  title: string;
+  rows: UnknownRecord[];
+  emptyLabel: string;
+}): ToolOutputTableModel | null {
+  const discoveredKeys: string[] = [];
+
+  for (const row of params.rows) {
+    for (const key of Object.keys(row)) {
+      if (!discoveredKeys.includes(key)) {
+        discoveredKeys.push(key);
+      }
+    }
+  }
+
+  if (discoveredKeys.length === 0) {
+    return null;
+  }
+
+  const selectedKeys: string[] = [];
+  const includeEmployeeColumn = discoveredKeys.includes("employeeName");
+  const includeLeaveTypeColumn =
+    discoveredKeys.includes("leaveType") || discoveredKeys.includes("leaveTypeLabel");
+  const includeDateRangeColumn =
+    discoveredKeys.includes("dateRange") ||
+    discoveredKeys.includes("startDate") ||
+    discoveredKeys.includes("endDate");
+
+  if (includeEmployeeColumn) selectedKeys.push("employee");
+  if (includeLeaveTypeColumn) {
+    selectedKeys.push(discoveredKeys.includes("leaveType") ? "leaveType" : "leaveTypeLabel");
+  }
+  if (includeDateRangeColumn) selectedKeys.push("dateRange");
+  if (discoveredKeys.includes("status")) selectedKeys.push("status");
+
+  const excludedKeys = new Set<string>();
+  if (includeEmployeeColumn) {
+    excludedKeys.add("employeeName");
+    excludedKeys.add("employeeAvatar");
+    excludedKeys.add("team");
+  }
+  if (includeLeaveTypeColumn && discoveredKeys.includes("leaveType")) {
+    excludedKeys.add("leaveTypeLabel");
+  }
+  if (includeDateRangeColumn) {
+    excludedKeys.add("startDate");
+    excludedKeys.add("endDate");
+    excludedKeys.add("dateRange");
+  }
+
+  for (const key of discoveredKeys) {
+    if (selectedKeys.includes(key) || excludedKeys.has(key)) continue;
+    if (!hasRenderableColumnValue(params.rows, key)) continue;
+    selectedKeys.push(key);
+  }
+
+  if (selectedKeys.length === 0) {
+    return null;
+  }
+
+  const columns: ToolOutputTableColumn[] = selectedKeys.map((key) => {
+    if (key === "employee") {
+      return { key, label: "Employee" };
+    }
+
+    if (key === "dateRange") {
+      return { key, label: "Date range", className: "whitespace-nowrap" };
+    }
+
+    if (key === "status") {
+      return { key, label: "Status", className: "sm:pl-2" };
+    }
+
+    const align = isNumericColumn(params.rows, key)
+      ? ("center" as const)
+      : ("left" as const);
+    const className = isNumericColumn(params.rows, key)
+      ? "font-semibold tabular-nums"
+      : undefined;
+
+    return {
+      key,
+      label: GENERIC_COLUMN_LABEL_BY_KEY[key] ?? toHumanLabel(key),
+      align,
+      className,
+    };
+  });
+
+  const rows = params.rows.map((row) => {
+    const tableRow: ToolOutputTableRow = {};
+
+    for (const key of selectedKeys) {
+      if (key === "employee") {
+        tableRow[key] = renderEmployeeCell(row);
+        continue;
+      }
+
+      if (key === "leaveType" || key === "leaveTypeLabel") {
+        const leaveType = asString(
+          row.leaveTypeLabel,
+          asString(row.leaveType, asString(row.leaveTypeLabel)),
+        );
+        tableRow[key] = renderLeaveTypeChip(compactLeaveTypeLabel(leaveType));
+        continue;
+      }
+
+      if (key === "dateRange") {
+        const explicitDateRange = asOptionalString(row.dateRange)?.trim();
+        tableRow[key] = explicitDateRange
+          ? explicitDateRange
+          : formatDateRange(asString(row.startDate, ""), asString(row.endDate, ""));
+        continue;
+      }
+
+      if (key === "status") {
+        tableRow[key] = renderStatusChip(asString(row.status, ""));
+        continue;
+      }
+
+      tableRow[key] = formatGenericCellValue(row[key], key);
+    }
+
+    return tableRow;
+  });
+
+  return {
+    id: params.id,
+    title: params.title,
+    columns,
+    rows,
+    emptyLabel: params.emptyLabel,
+  };
+}
+
+function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
+  const collections = collectRecordCollections(output);
+  if (collections.length === 0) {
+    return [] as ToolOutputTableModel[];
+  }
+
+  const idCollisionCount = new Map<string, number>();
+
+  return collections
+    .map((collection, index) => {
+      const baseId = getCollectionId(collection.path, toolName);
+      const collisionCount = idCollisionCount.get(baseId) ?? 0;
+      idCollisionCount.set(baseId, collisionCount + 1);
+
+      const id =
+        collisionCount === 0 ? baseId : `${baseId}-${collisionCount + 1}`;
+      const title = getCollectionTitle(collection.path, toolName);
+      const rows = collection.rows;
+
+      if (rows.every(isBalanceLikeRecord)) {
+        return getBalanceTableModel({
+          id,
+          title,
+          payload: { balances: rows },
+          emptyLabel: "No records found.",
+        });
+      }
+
+      if (rows.every(isRequestLikeRecord)) {
+        return getRequestTableModel({
+          id,
+          title,
+          payload: { requests: rows },
+          showEmployee: rows.some((row) => Boolean(asOptionalString(row.employeeName))),
+          emptyLabel: "No records found.",
+        });
+      }
+
+      return getGenericTableModel({
+        id,
+        title: title || `${getFriendlyToolLabelByName(toolName)} ${index + 1}`,
+        rows,
+        emptyLabel: "No records found.",
+      });
+    })
+    .filter((table): table is ToolOutputTableModel => table !== null);
+}
+
 function getToolOutputTables(part: UIMessage["parts"][number]) {
   if (!isToolUIPart(part) || part.state !== "output-available" || part.preliminary) {
     return [] as ToolOutputTableModel[];
@@ -390,9 +922,14 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
 
   const toolName = getToolName(part);
   const output = asRecord(part.output);
+  const dynamicTables = getDynamicToolOutputTables(part.output, toolName);
 
-  if (!toolName || !output) {
-    return [] as ToolOutputTableModel[];
+  if (!toolName) {
+    return dynamicTables;
+  }
+
+  if (!output) {
+    return dynamicTables;
   }
 
   switch (toolName) {
@@ -404,7 +941,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         showEmployee: false,
         emptyLabel: "No time-off requests found.",
       });
-      return requests ? [requests] : [];
+      return requests ? [requests] : dynamicTables;
     }
 
     case "list_team_time_off_requests": {
@@ -415,7 +952,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         showEmployee: true,
         emptyLabel: "No team requests found.",
       });
-      return requests ? [requests] : [];
+      return requests ? [requests] : dynamicTables;
     }
 
     case "get_my_time_off_balance": {
@@ -437,13 +974,13 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         }),
       ].filter((table): table is ToolOutputTableModel => table !== null);
 
-      return tables;
+      return tables.length > 0 ? tables : dynamicTables;
     }
 
     case "submit_my_time_off_request":
     case "cancel_my_time_off_request": {
       const balance = asRecord(output.balance);
-      if (!balance) return [];
+      if (!balance) return dynamicTables;
 
       const tables = [
         getBalanceTableModel({
@@ -463,13 +1000,13 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         }),
       ].filter((table): table is ToolOutputTableModel => table !== null);
 
-      return tables;
+      return tables.length > 0 ? tables : dynamicTables;
     }
 
     case "approve_team_time_off_request":
     case "reject_team_time_off_request": {
       const teamRequests = asRecord(output.teamRequests);
-      if (!teamRequests) return [];
+      if (!teamRequests) return dynamicTables;
 
       const requests = getRequestTableModel({
         id: "pending-team-time-off-requests",
@@ -478,12 +1015,191 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         showEmployee: true,
         emptyLabel: "No pending team requests.",
       });
-      return requests ? [requests] : [];
+      return requests ? [requests] : dynamicTables;
     }
 
     default:
-      return [];
+      return dynamicTables;
   }
+}
+
+const BULLET_LIST_LINE_REGEX = /^[-*•]\s+/;
+const MARKDOWN_TABLE_LINE_REGEX = /^\|.*\|\s*$/;
+
+function splitParagraphs(text: string) {
+  const byBlankLine = text
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  if (byBlankLine.length > 1) {
+    return byBlankLine;
+  }
+
+  return text
+    .split(/\r?\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+function stripRedundantStructuredListText(text: string) {
+  const sanitized = text
+    .split(/\r?\n/)
+    .filter((line) => {
+      const trimmedLine = line.trim();
+      return (
+        !BULLET_LIST_LINE_REGEX.test(trimmedLine) &&
+        !MARKDOWN_TABLE_LINE_REGEX.test(trimmedLine)
+      );
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return sanitized;
+}
+
+const FOLLOW_UP_LINE_START_REGEX =
+  /^(which|what|would|do|does|did|is|are|can|could|shall|should|let me know|feel free|if you need|if you'd like|i will|next|please let me know)\b/i;
+const FOLLOW_UP_LINE_CONTAINS_REGEX =
+  /\b(let me know|if you need|if you'd like|anything else|next page|would you like|please specify)\b/i;
+
+function isLikelyFollowUpParagraph(paragraph: string) {
+  const normalizedParagraph = paragraph.trim();
+
+  if (normalizedParagraph.length === 0) {
+    return false;
+  }
+
+  return (
+    normalizedParagraph.endsWith("?") ||
+    FOLLOW_UP_LINE_START_REGEX.test(normalizedParagraph) ||
+    FOLLOW_UP_LINE_CONTAINS_REGEX.test(normalizedParagraph)
+  );
+}
+
+type TableTextPlacement = {
+  beforeTables: string;
+  afterTables: string | null;
+};
+
+function splitTextBeforeAndAfterTables(text: string): TableTextPlacement {
+  if (!text.trim()) {
+    return {
+      beforeTables: "",
+      afterTables: null,
+    };
+  }
+
+  const paragraphs = splitParagraphs(text);
+
+  if (paragraphs.length < 2) {
+    return {
+      beforeTables: text,
+      afterTables: null,
+    };
+  }
+
+  const trailingFollowUpParagraphs: string[] = [];
+  const leadingParagraphs = [...paragraphs];
+
+  while (leadingParagraphs.length > 1) {
+    const candidate = leadingParagraphs.at(-1);
+
+    if (!candidate || !isLikelyFollowUpParagraph(candidate)) {
+      break;
+    }
+
+    trailingFollowUpParagraphs.unshift(candidate);
+    leadingParagraphs.pop();
+  }
+
+  if (trailingFollowUpParagraphs.length === 0) {
+    return {
+      beforeTables: text,
+      afterTables: null,
+    };
+  }
+
+  return {
+    beforeTables: leadingParagraphs.join("\n\n"),
+    afterTables: trailingFollowUpParagraphs.join("\n\n"),
+  };
+}
+
+function shouldUseTableLeadInLayout(tableIds: string[]) {
+  const idSet = new Set(tableIds);
+
+  const hasBalancePair =
+    idSet.has("my-time-off-balance") && idSet.has("my-upcoming-requests");
+  const hasUpdatedBalancePair =
+    idSet.has("updated-time-off-balance") &&
+    idSet.has("updated-upcoming-requests");
+
+  return hasBalancePair || hasUpdatedBalancePair;
+}
+
+function getTableLeadInText(tableId: string, tableIds: string[]): string | null {
+  const idSet = new Set(tableIds);
+
+  const hasBalancePair =
+    idSet.has("my-time-off-balance") && idSet.has("my-upcoming-requests");
+
+  if (hasBalancePair) {
+    if (tableId === "my-time-off-balance") {
+      return "You have the following remaining leave days:";
+    }
+
+    if (tableId === "my-upcoming-requests") {
+      return "Here is your upcoming request:";
+    }
+  }
+
+  const hasUpdatedBalancePair =
+    idSet.has("updated-time-off-balance") &&
+    idSet.has("updated-upcoming-requests");
+
+  if (hasUpdatedBalancePair) {
+    if (tableId === "updated-time-off-balance") {
+      return "Your remaining leave days are now:";
+    }
+
+    if (tableId === "updated-upcoming-requests") {
+      return "Here is your upcoming request:";
+    }
+  }
+
+  return null;
+}
+
+function normalizeComparableLine(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[:.]\s*$/g, "");
+}
+
+function getRenderedTableLeadIns(tableIds: string[]) {
+  return tableIds
+    .map((tableId) => getTableLeadInText(tableId, tableIds))
+    .filter((line): line is string => Boolean(line));
+}
+
+function extractTableLeadInFollowUp(text: string, renderedLeadIns: string[]) {
+  if (!text.trim()) return null;
+
+  const suppressedLines = new Set(renderedLeadIns.map(normalizeComparableLine));
+
+  const remainingLines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter(
+      (line) => !suppressedLines.has(normalizeComparableLine(line)),
+    );
+
+  const nonHeadingLines = remainingLines.filter((line) => !line.endsWith(":"));
+  return nonHeadingLines.at(-1) ?? remainingLines.at(-1) ?? null;
 }
 
 function readMessageMeta(message: UIMessage) {
@@ -543,9 +1259,10 @@ export function ChatTranscript({
       ) : (
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
           {messages.map((message) => {
-            const text = getTextParts(message).join("\n").trim();
+            const rawText = getTextParts(message).join("\n").trim();
             const toolParts = getToolParts(message);
             const isUser = message.role === "user";
+            const isLastMessage = message.id === lastMessage?.id;
             const approvalParts = toolParts.filter(isApprovalRequestedToolPart);
             const outputTables = toolParts.flatMap((part, partIndex) =>
               getToolOutputTables(part).map((table) => ({
@@ -553,11 +1270,45 @@ export function ChatTranscript({
                 key: `${message.id}-${part.toolCallId ?? partIndex}-${table.id}`,
               })),
             );
+            const currentToolStep = [...toolParts]
+              .reverse()
+              .map((part) => getToolStepText(part))
+              .find((step): step is string => Boolean(step));
+            const thinkingLabel = currentToolStep ?? "Thinking";
+            const shouldDeferOutputTables = !isUser && isLastMessage && isLoading;
+            const visibleOutputTables = shouldDeferOutputTables ? [] : outputTables;
+            const embedOutputTablesInBubble = !isUser && visibleOutputTables.length > 0;
+            const tableIds = visibleOutputTables.map((table) => table.id);
+            const useTableLeadInLayout =
+              !isUser && shouldUseTableLeadInLayout(tableIds);
+            const renderedTableLeadIns = useTableLeadInLayout
+              ? getRenderedTableLeadIns(tableIds)
+              : [];
+            const normalizedText =
+              !isUser && visibleOutputTables.length > 0
+                ? stripRedundantStructuredListText(rawText)
+                : rawText;
+            const tableLeadInFollowUp = useTableLeadInLayout
+              ? extractTableLeadInFollowUp(normalizedText, renderedTableLeadIns)
+              : null;
+            const shouldSplitTextAroundTables =
+              !isUser && visibleOutputTables.length > 0 && !useTableLeadInLayout;
+            const textPlacement = useTableLeadInLayout
+              ? { beforeTables: "", afterTables: tableLeadInFollowUp }
+              : shouldSplitTextAroundTables
+                ? splitTextBeforeAndAfterTables(normalizedText)
+                : { beforeTables: normalizedText, afterTables: null };
+            const text = textPlacement.beforeTables;
+            const shouldShowThinkingSkeleton =
+              !isUser &&
+              isLastMessage &&
+              isLoading &&
+              text.length === 0 &&
+              approvalParts.length === 0;
             const statusParts = toolParts
               .map((part) => getToolStatusCopy(part))
               .filter((item) => item !== null);
-            const shouldRenderBubble =
-              text.length > 0 || (message.role === "assistant" && toolParts.length === 0);
+            const shouldRenderBubble = text.length > 0 || embedOutputTablesInBubble;
 
             return (
               <article
@@ -576,21 +1327,41 @@ export function ChatTranscript({
                     <MessageBubble
                       isUser={isUser}
                       text={text || undefined}
-                      placeholder={text ? undefined : CHAT_STREAMING_PLACEHOLDER_TEXT}
-                    />
+                      fullWidth={embedOutputTablesInBubble}
+                    >
+                      {embedOutputTablesInBubble ? (
+                        <div className="space-y-3">
+                          {visibleOutputTables.map((table) => (
+                            <div key={table.key} className="space-y-2">
+                              {useTableLeadInLayout ? (
+                                <p className="font-dm-sans text-sm text-white/82">
+                                  {getTableLeadInText(table.id, tableIds)}
+                                </p>
+                              ) : null}
+                              <ToolOutputTable
+                                title={table.title}
+                                columns={table.columns}
+                                rows={table.rows}
+                                emptyLabel={table.emptyLabel}
+                              />
+                            </div>
+                          ))}
+                          {textPlacement.afterTables ? (
+                            <p className="whitespace-pre-wrap font-dm-sans text-sm text-white/78">
+                              {textPlacement.afterTables}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </MessageBubble>
                   ) : null}
 
-                  {toolParts.length > 0 ? (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {toolParts.map((part, index) => (
-                        <span
-                          key={`${message.id}-${part.toolCallId ?? index}`}
-                          className="font-dm-sans inline-flex rounded-full border border-white/10 bg-white/[.06] px-2.5 py-1 text-[11px] font-medium text-white/40"
-                        >
-                          {getToolLabel(part)}
-                        </span>
-                      ))}
-                    </div>
+                  {shouldShowThinkingSkeleton ? (
+                    <LoadingIndicator
+                      showAvatar={false}
+                      label={thinkingLabel}
+                      className="max-w-[72%]"
+                    />
                   ) : null}
 
                   {approvalParts.length > 0 ? (
@@ -617,9 +1388,9 @@ export function ChatTranscript({
                     </div>
                   ) : null}
 
-                  {outputTables.length > 0 ? (
+                  {!embedOutputTablesInBubble && visibleOutputTables.length > 0 ? (
                     <div className="mt-3 space-y-3">
-                      {outputTables.map((table) => (
+                      {visibleOutputTables.map((table) => (
                         <ToolOutputTable
                           key={table.key}
                           title={table.title}
@@ -657,7 +1428,7 @@ export function ChatTranscript({
           })}
 
           {isLoading && lastMessage?.role === "user" ? (
-            <LoadingIndicator />
+            <LoadingIndicator label="Thinking" />
           ) : null}
         </div>
       )}
