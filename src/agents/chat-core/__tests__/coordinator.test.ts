@@ -16,6 +16,8 @@ function createSession(role: MockAuthSession["role"]): MockAuthSession {
     employeeId: "EMP-1001",
     name: "Thang Ho Quang",
     email: "thang.hoquang@asnet.com.vn",
+    avatar:
+      "https://api.dicebear.com/7.x/adventurer/svg?seed=thang.hoquang%40asnet.com.vn",
     team: "Platform",
     manager: "Linh Tran",
     timeZone: "Asia/Ho_Chi_Minh",
@@ -32,6 +34,8 @@ function createSession(role: MockAuthSession["role"]): MockAuthSession {
               employeeId: "EMP-1007",
               name: "Mia Nguyen",
               email: "mia.nguyen@asnet.com.vn",
+              avatar:
+                "https://api.dicebear.com/7.x/adventurer/svg?seed=mia.nguyen%40asnet.com.vn",
               team: "Platform",
               manager: "Linh Tran",
               timeZone: "Asia/Ho_Chi_Minh",

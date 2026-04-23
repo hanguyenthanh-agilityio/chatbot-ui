@@ -9,6 +9,7 @@ import type {
   TeamRow,
 } from "@/lib/db/schema";
 import { cloneRows, request } from "@/services/company-system/client";
+import { getAvatarUrl } from "@/utils/avatar";
 
 function isTeamRow(value: unknown): value is TeamRow {
   if (!value || typeof value !== "object") return false;
@@ -24,6 +25,8 @@ function isEmployeeRow(value: unknown): value is EmployeeRow {
     typeof candidate.employeeId === "string" &&
     typeof candidate.name === "string" &&
     typeof candidate.email === "string" &&
+    (typeof candidate.avatar === "string" ||
+      typeof candidate.avatar === "undefined") &&
     typeof candidate.teamId === "string" &&
     typeof candidate.timeZone === "string" &&
     (typeof candidate.managerEmployeeId === "string" ||
@@ -97,6 +100,7 @@ export async function listEmployeeDirectory(): Promise<EmployeeRecord[]> {
       employeeId: employee.employeeId,
       name: employee.name,
       email: employee.email,
+      avatar: employee.avatar?.trim() || getAvatarUrl(employee.name),
       team: teamNameByTeamId.get(employee.teamId) ?? employee.teamId,
       manager: managerName ?? "Not assigned",
       timeZone: employee.timeZone,

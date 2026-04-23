@@ -1,8 +1,7 @@
 import type { AppRole } from "@/lib/auth/session";
 
 export const ROLE_HELPER_COPY_BY_ROLE: Record<AppRole, string> = {
-  user:
-    "User mode routes to the Employee Assistant for your personal leave requests and balance checks.",
+  user: "User mode routes to the Employee Assistant for your personal leave requests and balance checks.",
   manager:
     "Manager mode unlocks team approval workflows while still supporting personal leave questions.",
 };
@@ -13,6 +12,8 @@ export const AUTH_PANEL_COPY = {
   userModeLabel: "User mode",
   managerModeLabel: "Manager mode",
   managerLabelPrefix: "Manager",
+  projectLabel: "Project",
+  emailLabel: "Email",
   directReportsLabel: "Direct reports",
 } as const;
 

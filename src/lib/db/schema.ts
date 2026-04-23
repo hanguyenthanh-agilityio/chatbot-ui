@@ -15,6 +15,7 @@ export type EmployeeRow = {
   employeeId: string;
   name: string;
   email: string;
+  avatar?: string;
   teamId: string;
   managerEmployeeId?: string | null;
   timeZone: string;
@@ -36,6 +37,7 @@ export type EmployeeRecord = {
   employeeId: string;
   name: string;
   email: string;
+  avatar: string;
   team: string;
   manager: string;
   timeZone: string;
