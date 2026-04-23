@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
 import type { QuickAction } from "@/types/chat";
@@ -13,30 +12,37 @@ export function ChatEmptyState({
   onSelectPrompt,
 }: ChatEmptyStateProps) {
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-12 text-center">
-      <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 text-lg font-semibold text-white shadow-lg shadow-slate-900/10">
-        {CHAT_EMPTY_STATE_COPY.badge}
-      </div>
-      <Text as="h2" className="text-3xl font-semibold text-slate-900">
-        {CHAT_EMPTY_STATE_COPY.title}
-      </Text>
-      <Text variant="subtitle" className="mt-3 max-w-2xl text-base text-slate-600">
-        {CHAT_EMPTY_STATE_COPY.description}
-      </Text>
+    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-4 py-12">
+      {/* Glass welcome card matching reference WelcomeScreen */}
+      <div className="w-full max-w-[520px] rounded-[24px] p-8 flex flex-col items-center gap-6 backdrop-blur-[32px] border bg-white/[.05] border-white/10 shadow-[0_24px_64px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.1)]">
+        {/* Logo / badge */}
+        <div className="flex h-14 w-44 items-center justify-center rounded-xl bg-white/[.05] border border-white/[.08] text-lg font-bold text-white font-syne tracking-wide">
+          {CHAT_EMPTY_STATE_COPY.badge}
+        </div>
 
-      <div className="mt-8 grid w-full gap-3 sm:grid-cols-2">
-        {quickActions.map((action) => (
-          <Button
-            key={action.label}
-            type="button"
-            variant="outline"
-            size="lg"
-            className="justify-start rounded-2xl border-slate-200 bg-white/85 px-4 text-left shadow-sm hover:border-slate-300 hover:bg-white"
-            onClick={() => onSelectPrompt(action.prompt)}
-          >
-            {action.label}
-          </Button>
-        ))}
+        {/* Title + subtitle */}
+        <div className="text-center">
+          <Text as="h2" variant="title" className="mb-2 leading-tight">
+            {CHAT_EMPTY_STATE_COPY.title}
+          </Text>
+          <Text variant="subtitle" className="text-sm leading-relaxed">
+            {CHAT_EMPTY_STATE_COPY.description}
+          </Text>
+        </div>
+
+        {/* Suggestion chips — rounded-full pill style */}
+        <div className="flex flex-wrap gap-2 justify-center">
+          {quickActions.map((action) => (
+            <button
+              key={action.label}
+              type="button"
+              className="rounded-full text-xs px-3.5 py-1.5 cursor-pointer border transition-all duration-200 backdrop-blur-[10px] font-dm-sans bg-white/[.06] border-white/[.18] text-white/75 hover:bg-violet-600/20 hover:border-violet-500/50 hover:text-white hover:shadow-[0_4px_12px_rgba(99,60,220,0.2)]"
+              onClick={() => onSelectPrompt(action.prompt)}
+            >
+              {action.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
