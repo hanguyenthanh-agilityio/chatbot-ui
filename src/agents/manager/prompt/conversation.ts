@@ -6,7 +6,9 @@ import { MANAGER_AGENT_SYSTEM_PROMPT } from "./system";
  * @param {MockAuthSession} session
  * @returns {string}
  */
-export function buildManagerConversationPrompt(session: MockAuthSession): string {
+export function buildManagerConversationPrompt(
+  session: MockAuthSession,
+): string {
   const managedEmployees = session.managedEmployees
     .map((e) => `- ${e.name} (${e.employeeId}, ${e.team})`)
     .join("\n");

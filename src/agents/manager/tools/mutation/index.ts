@@ -7,6 +7,16 @@ import {
 } from "@/agents/handlers/time-off";
 import { MANAGER_TOOL_DESCRIPTION, MANAGER_TOOL_NAME } from "../common/definitions";
 
+const OPTIONAL_COMMENT_SCHEMA = z.preprocess(
+  (value) => {
+    if (value == null) return undefined;
+    if (typeof value !== "string") return value;
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  },
+  z.string().optional(),
+);
+
 /**
  * Creates manager mutation tools.
  * @param {MockAuthSession} session
@@ -24,7 +34,7 @@ export function createManagerMutationTools(session: MockAuthSession) {
           .describe(
             "A team request description such as latest pending request, Mia annual leave on 2026-05-12, or apartment paperwork request.",
           ),
-        comment: z.string().trim().optional(),
+        comment: OPTIONAL_COMMENT_SCHEMA,
       }),
       execute: async ({ requestQuery, comment }) =>
         approveTeamTimeOffRequest(session, { requestQuery, comment }),

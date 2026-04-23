@@ -13,6 +13,16 @@ const leaveTypeSchema = z
     "Type of leave. Map vacation/PTO to annual, illness/doctor to sick, personal errand to personal.",
   );
 
+const OPTIONAL_NOTE_SCHEMA = z.preprocess(
+  (value) => {
+    if (value == null) return undefined;
+    if (typeof value !== "string") return value;
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  },
+  z.string().optional(),
+);
+
 /**
  * Creates employee mutation tools.
  * @param {MockAuthSession} session
@@ -35,7 +45,7 @@ export function createEmployeeMutationTools(session: MockAuthSession) {
           .min(1)
           .describe("End date, e.g. 2026-05-02 or next friday."),
         reason: z.string().trim().min(1).describe("Short reason for the leave."),
-        note: z.string().trim().optional(),
+        note: OPTIONAL_NOTE_SCHEMA,
       }),
       execute: async ({ leaveType, startDate, endDate, reason, note }) =>
         submitMyTimeOffRequest(session, {
