@@ -26,6 +26,7 @@ export type FormattedRequest = {
   id: string;
   employeeId: string;
   employeeName: string;
+  employeeAvatar: string;
   team: string;
   leaveType: LeaveType;
   leaveTypeLabel: string;
@@ -119,6 +120,7 @@ export function getEmployeeSummary(session: MockAuthSession) {
     employeeId: session.employeeId,
     name: session.name,
     email: session.email,
+    avatar: session.avatar,
     team: session.team,
     manager: session.manager,
     timeZone: session.timeZone,
@@ -127,6 +129,7 @@ export function getEmployeeSummary(session: MockAuthSession) {
     managedEmployees: session.managedEmployees.map((e) => ({
       employeeId: e.employeeId,
       name: e.name,
+      avatar: e.avatar,
       team: e.team,
     })),
   };
@@ -149,6 +152,7 @@ export function formatRequest(
     id: request.id,
     employeeId: employee.employeeId,
     employeeName: employee.name,
+    employeeAvatar: employee.avatar,
     team: employee.team,
     leaveType: request.leaveType,
     leaveTypeLabel: label,
