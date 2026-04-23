@@ -12,9 +12,9 @@ const DB_SEED_PATH = path.join(DB_DIRECTORY, "company-system.seed.json");
 const EMPTY_DB_SHAPE = {
   teams: [],
   employees: [],
-  leaveEntitlements: [],
-  roleProfiles: [],
-  timeOffRequests: [],
+  "leave-entitlements": [],
+  "role-profiles": [],
+  "time-off-requests": [],
   updatedAt: new Date().toISOString(),
 };
 

@@ -1,12 +1,12 @@
 {
   "teams": [
     {
-      "teamId": "TEAM-PLATFORM",
-      "name": "Platform"
+      "teamId": "TEAM-ID-1",
+      "name": "Flash"
     },
     {
-      "teamId": "TEAM-EXECUTIVE",
-      "name": "Executive"
+      "teamId": "TEAM-ID-2",
+      "name": "Space"
     }
   ],
   "employees": [
@@ -14,15 +14,17 @@
       "employeeId": "EMP-1001",
       "name": "Thang Ho Quang",
       "email": "thang.hoquang@asnet.com.vn",
-      "teamId": "TEAM-PLATFORM",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=thang.hoquang%40asnet.com.vn",
+      "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
       "timeZone": "Asia/Ho_Chi_Minh"
     },
     {
       "employeeId": "EMP-1006",
-      "name": "Linh Tran",
-      "email": "linh.tran@asnet.com.vn",
-      "teamId": "TEAM-PLATFORM",
+      "name": "Ni Ngo",
+      "email": "ni.ngo@asnet.com.vn",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=ni.ngo%40asnet.com.vn",
+      "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1010",
       "timeZone": "Asia/Ho_Chi_Minh"
     },
@@ -30,7 +32,8 @@
       "employeeId": "EMP-1007",
       "name": "Mia Nguyen",
       "email": "mia.nguyen@asnet.com.vn",
-      "teamId": "TEAM-PLATFORM",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=mia.nguyen%40asnet.com.vn",
+      "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
       "timeZone": "Asia/Ho_Chi_Minh"
     },
@@ -38,20 +41,22 @@
       "employeeId": "EMP-1008",
       "name": "An Pham",
       "email": "an.pham@asnet.com.vn",
-      "teamId": "TEAM-PLATFORM",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=an.pham%40asnet.com.vn",
+      "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
       "timeZone": "Asia/Ho_Chi_Minh"
     },
     {
       "employeeId": "EMP-1010",
-      "name": "Avery Ross",
-      "email": "avery.ross@asnet.com.vn",
-      "teamId": "TEAM-EXECUTIVE",
+      "name": "Tho Pham",
+      "email": "tho.pham@asnet.com.vn",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=tho.pham%40asnet.com.vn",
+      "teamId": "TEAM-ID-2",
       "managerEmployeeId": null,
       "timeZone": "Asia/Ho_Chi_Minh"
     }
   ],
-  "leaveEntitlements": [
+  "leave-entitlements": [
     {
       "employeeId": "EMP-1001",
       "annual": 14,
@@ -83,7 +88,7 @@
       "personal": 3
     }
   ],
-  "roleProfiles": [
+  "role-profiles": [
     {
       "role": "user",
       "employeeId": "EMP-1001"
@@ -93,7 +98,7 @@
       "employeeId": "EMP-1006"
     }
   ],
-  "timeOffRequests": [
+  "time-off-requests": [
     {
       "id": "REQ-3001",
       "employeeId": "EMP-1001",
