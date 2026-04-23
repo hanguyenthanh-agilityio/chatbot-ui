@@ -239,7 +239,7 @@ export function ChatTranscript({
                       {toolParts.map((part, index) => (
                         <span
                           key={`${message.id}-${part.toolCallId ?? index}`}
-                          className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600"
+                          className="font-dm-sans inline-flex rounded-full border border-white/10 bg-white/[.06] px-2.5 py-1 text-[11px] font-medium text-white/40"
                         >
                           {getToolLabel(part)}
                         </span>

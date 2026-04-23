@@ -55,8 +55,8 @@ export function WorkspaceApp({ authRole = "user", authSessions }: WorkspaceAppPr
     return (
       <main className="min-h-screen min-h-dvh px-4 py-4 sm:px-5 sm:py-5">
         <div className="mx-auto flex min-h-[calc(100vh-2rem)] min-h-[calc(100dvh-2rem)] w-full max-w-[1600px] flex-col gap-4 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] lg:flex-row">
-          <div className="h-[70vh] w-full rounded-[2rem] border border-slate-800 bg-slate-950 lg:max-w-sm" />
-          <div className="h-[70vh] flex-1 rounded-[2rem] border border-slate-200 bg-white/85" />
+          <div className="h-[70vh] w-full rounded-[2rem] border border-white/[.08] bg-white/[.04] backdrop-blur-[28px] lg:max-w-sm" />
+          <div className="h-[70vh] flex-1 rounded-[2rem] border border-white/[.08] bg-white/[.04] backdrop-blur-[28px]" />
         </div>
       </main>
     );
@@ -223,7 +223,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
   );
 
   const sidebarProviderPanel = (
-    <div className="rounded-2xl bg-white p-4 text-slate-900 shadow-sm">
+    <div className="rounded-2xl border border-white/[.08] bg-white/[.04] p-4 text-white">
       <ProviderSelector
         selectedProvider={provider.selectedProvider}
         openaiApiKeyInput={provider.openaiApiKeyInput}
@@ -240,7 +240,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
         onVerifyOllamaBaseUrl={provider.verifyOllamaBaseUrl}
       />
       {provider.validationError ? (
-        <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
           {provider.validationError}
         </p>
       ) : null}
@@ -258,30 +258,30 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           onDeleteThread={handleDeleteChat}
         />
 
-        <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white/85 shadow-2xl shadow-slate-900/5 backdrop-blur">
-          <header className="border-b border-slate-200/80 bg-white/70 px-4 py-5 sm:px-6 lg:px-8">
+        <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/[.08] bg-white/[.04] backdrop-blur-[28px]">
+          <header className="border-b border-white/[.08] bg-white/[.03] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.15)]">
             <div className="mx-auto w-full max-w-3xl">
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Text as="p" className="text-xs font-medium uppercase tracking-[0.2em] text-sky-600">
+                <Text as="p" variant="eyebrow">
                   {APP_NAME}
                 </Text>
-                <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+                <span className="inline-flex rounded-full border border-white/[.18] bg-white/[.08] px-2.5 py-1 text-[11px] font-medium text-white/75">
                   {auth.session.roleLabel}
                 </span>
-                <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
+                <span className="inline-flex rounded-full border border-violet-500/35 bg-violet-500/15 px-2.5 py-1 text-[11px] font-medium text-violet-300">
                   {APP_HEADER_REVIEW_BADGE_LABEL}
                 </span>
               </div>
 
               <div className="space-y-2">
-                <Text as="h2" className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.9rem]">
+                <Text as="h2" variant="title" className="tracking-tight sm:text-[1.9rem]">
                   {headerTitle}
                 </Text>
-                <Text variant="subtitle" className="max-w-2xl text-[15px] leading-7 text-slate-600">
+                <Text variant="subtitle" className="max-w-2xl">
                   {headerSubtitle}
                 </Text>
                 {headerHint ? (
-                  <Text variant="caption" className="block text-slate-500">
+                  <Text variant="captionMuted" className="block">
                     {headerHint}
                   </Text>
                 ) : null}

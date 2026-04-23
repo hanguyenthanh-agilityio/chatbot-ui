@@ -48,10 +48,10 @@ export function ProviderSelector({
   const content = (
     <div className="flex flex-col gap-3">
       <div className="space-y-1">
-        <Text as="label" variant="body" className="font-medium text-slate-900">
+        <Text as="label" variant="sectionTitle">
           {PROVIDER_PANEL_COPY.label}
         </Text>
-        <Text variant="caption" className="text-slate-500">
+        <Text variant="captionStrong">
           {PROVIDER_PANEL_COPY.description}
         </Text>
       </div>
@@ -64,6 +64,7 @@ export function ProviderSelector({
         disabled={isProviderSelectDisabled}
         fullWidth
         controlSize="md"
+        variant="dark"
       >
         {allowedProviders.includes("ollama") ? (
           <option value="ollama">{PROVIDER_OPTION_LABEL.ollama}</option>
@@ -73,7 +74,7 @@ export function ProviderSelector({
         ) : null}
       </Select>
 
-      <Text variant="caption" className="min-h-4 text-slate-600" aria-live="polite">
+      <Text variant="captionStrong" className="min-h-4" aria-live="polite">
         {providerStatus}
       </Text>
 
@@ -86,6 +87,7 @@ export function ProviderSelector({
             placeholder={PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder}
             fullWidth
             controlSize="md"
+            variant="dark"
           />
           <Button
             type="button"
@@ -109,20 +111,22 @@ export function ProviderSelector({
             placeholder={PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder}
             fullWidth
             controlSize="md"
+            variant="dark"
           />
           <Button
             type="button"
             onClick={onVerifyOllamaBaseUrl}
             isLoading={isValidatingOllamaBaseUrl}
-            variant="outline"
+            variant="ghost"
             size="md"
             fullWidth
+            className="font-dm-sans border border-white/[.12] text-white/60 hover:bg-white/[.08]"
           >
             {isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
               : PROVIDER_PANEL_COPY.verifyOllamaButtonLabel}
           </Button>
-          <Text variant="caption" className="text-slate-500">
+          <Text variant="captionMuted">
             {isProductionLike()
               ? PROVIDER_PANEL_COPY.productionOllamaHint
               : PROVIDER_PANEL_COPY.localOllamaHint}
@@ -135,7 +139,7 @@ export function ProviderSelector({
   if (!withContainer) return content;
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="rounded-2xl border border-white/[.08] bg-white/[.04] p-4">
       {content}
     </section>
   );

@@ -6,9 +6,9 @@ type ToolStatusBadgeProps = {
 };
 
 const toneClasses: Record<ToolStatusTone, string> = {
-  error: "border border-red-200 bg-red-50 text-red-700",
-  success: "border border-emerald-200 bg-emerald-50 text-emerald-700",
-  neutral: "border border-slate-200 bg-slate-50 text-slate-600",
+  error: "border border-red-500/25 bg-red-500/10 text-red-400 font-dm-sans",
+  success: "border border-emerald-500/25 bg-emerald-500/10 text-emerald-400 font-dm-sans",
+  neutral: "border border-white/10 bg-white/[.06] text-white/50 font-dm-sans",
 };
 
 export function ToolStatusBadge({ text, tone }: ToolStatusBadgeProps) {

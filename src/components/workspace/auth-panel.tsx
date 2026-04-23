@@ -22,18 +22,18 @@ export function AuthPanel({
   }
 
   return (
-    <section className="rounded-2xl bg-white p-4 text-slate-900 shadow-sm">
+    <section className="rounded-2xl border border-white/[.08] bg-white/[.04] p-4 text-white">
       <div className="space-y-1">
-        <Text as="p" variant="body" className="font-medium text-slate-900">
+        <Text as="p" variant="sectionTitle">
           {AUTH_PANEL_COPY.title}
         </Text>
-        <Text variant="caption" className="text-slate-500">
+        <Text variant="captionStrong">
           {ROLE_HELPER_COPY_BY_ROLE[role]}
         </Text>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-        <Text variant="caption" className="mb-2 block text-slate-600">
+      <div className="mt-4 rounded-2xl border border-white/[.08] bg-white/[.04] px-4 py-3">
+        <Text variant="caption" className="mb-2 block">
           {AUTH_PANEL_COPY.modeLabel}
         </Text>
         <Select
@@ -42,30 +42,25 @@ export function AuthPanel({
           disabled={disabled}
           fullWidth
           controlSize="md"
+          variant="dark"
         >
           <option value="user">{AUTH_PANEL_COPY.userModeLabel}</option>
           <option value="manager">{AUTH_PANEL_COPY.managerModeLabel}</option>
         </Select>
-
-        <Text as="p" className="text-sm font-medium text-slate-900">
-          <span className="mt-3 inline-flex rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700">
-            {session.roleLabel}
-          </span>
-        </Text>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-        <Text as="p" className="text-sm font-medium text-slate-900">
+      <div className="mt-4 rounded-2xl border border-white/[.08] bg-white/[.04] px-4 py-3">
+        <Text as="p" variant="bodyStrong">
           {session.name}
         </Text>
-        <Text variant="caption" className="mt-1 block text-slate-600">
-          {session.email}
+        <Text variant="captionStrong" className="mt-1 block">
+          Email: {session.email}
         </Text>
-        <Text variant="caption" className="block text-slate-500">
+        <Text variant="caption">
           {session.team} · {AUTH_PANEL_COPY.managerLabelPrefix}: {session.manager}
         </Text>
         {session.role === "manager" ? (
-          <Text variant="caption" className="mt-2 block text-slate-500">
+          <Text variant="caption" className="mt-2 block">
             {AUTH_PANEL_COPY.directReportsLabel}:{" "}
             {session.managedEmployees.map((employee) => employee.name).join(", ")}
           </Text>
