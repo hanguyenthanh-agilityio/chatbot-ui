@@ -52,19 +52,8 @@ export const QUICK_ACTIONS_BY_ROLE: Record<AppRole, QuickAction[]> = {
       prompt: "Show my team's pending time-off requests.",
     },
     {
-      label: "Review Mia request",
-      prompt:
-        "Show Mia Nguyen's pending team time-off requests first.",
-    },
-    {
-      label: "Approve after review",
-      prompt:
-        "Review my team's pending requests, then help me approve the right one with comment: Approved. Please keep handover notes updated.",
-    },
-    {
-      label: "Reject after review",
-      prompt:
-        "Review my team's pending requests, then help me reject An Pham's request with comment: We need sprint coverage on that day.",
+      label: "Review list employees",
+      prompt: "List all members in my project.",
     },
   ],
 };

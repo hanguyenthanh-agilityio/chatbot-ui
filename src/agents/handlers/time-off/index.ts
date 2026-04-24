@@ -261,7 +261,9 @@ async function reviewTeamTimeOffRequest(
     };
   }
 
-  const matches = findTeamRequestsMatchingQuery(ctx, session, query);
+  const allowedStatuses: ("pending" | "approved")[] =
+    input.nextStatus === "rejected" ? ["pending", "approved"] : ["pending"];
+  const matches = findTeamRequestsMatchingQuery(ctx, session, query, allowedStatuses);
   if (matches.length === 0) {
     return {
       ok: false,
@@ -304,6 +306,92 @@ async function reviewTeamTimeOffRequest(
 }
 
 export { getMyTimeOffBalance };
+
+/**
+ * Lists team members with their time-off request summaries.
+ * @param {MockAuthSession} session
+ */
+export async function listTeamMembers(session: MockAuthSession) {
+  const denied = requireManagerRole(session);
+  if (denied) return denied;
+
+  const ctx = await loadContext();
+  const teamRequests = getTeamRequestsForManager(ctx.requests, session);
+  const todayDay = parseIsoDateToUtcDay(getTodayIsoDate(session.timeZone));
+
+  const members = session.managedEmployees.map((e) => {
+    const employeeRequests = teamRequests.filter((r) => r.employeeId === e.employeeId);
+    const pendingCount = employeeRequests.filter((r) => r.status === "pending").length;
+    const upcomingCount = employeeRequests.filter((r) => {
+      const startDay = parseIsoDateToUtcDay(r.startDate);
+      return (
+        r.status !== "cancelled" &&
+        r.status !== "rejected" &&
+        Number.isFinite(startDay) &&
+        startDay >= todayDay
+      );
+    }).length;
+
+    return {
+      employeeId: e.employeeId,
+      employeeName: e.name,
+      employeeAvatar: e.avatar,
+      team: e.team,
+      pendingCount,
+      upcomingCount,
+      totalCount: employeeRequests.length,
+    };
+  });
+
+  return {
+    ok: true,
+    scope: "team",
+    manager: getEmployeeSummary(session),
+    totalMembers: members.length,
+    members,
+  };
+}
+
+/**
+ * Lists all employees in the company with their time-off request summaries.
+ * @param {MockAuthSession} session
+ */
+export async function listAllEmployees(session: MockAuthSession) {
+  const ctx = await loadContext();
+  const todayDay = parseIsoDateToUtcDay(getTodayIsoDate(session.timeZone));
+
+  const projectEmployees = ctx.employees.filter((e) => e.team === session.team);
+
+  const employees = projectEmployees.map((e) => {
+    const employeeRequests = ctx.requests.filter((r) => r.employeeId === e.employeeId);
+    const pendingCount = employeeRequests.filter((r) => r.status === "pending").length;
+    const upcomingCount = employeeRequests.filter((r) => {
+      const startDay = parseIsoDateToUtcDay(r.startDate);
+      return (
+        r.status !== "cancelled" &&
+        r.status !== "rejected" &&
+        Number.isFinite(startDay) &&
+        startDay >= todayDay
+      );
+    }).length;
+
+    return {
+      employeeId: e.employeeId,
+      employeeName: e.name,
+      employeeAvatar: e.avatar,
+      team: e.team,
+      pendingCount,
+      upcomingCount,
+      totalCount: employeeRequests.length,
+    };
+  });
+
+  return {
+    ok: true,
+    totalEmployees: employees.length,
+    employees,
+  };
+}
 
 /**
  * Lists my time off requests.
