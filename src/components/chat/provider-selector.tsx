@@ -1,6 +1,7 @@
 import type { AIProviderName } from "@/lib/ai-provider";
 import { isProductionLike } from "@/lib/runtime-env";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
@@ -139,8 +140,8 @@ export function ProviderSelector({
   if (!withContainer) return content;
 
   return (
-    <section className="rounded-2xl border border-white/[.08] bg-white/[.04] p-4">
+    <Card variant="panel" className="p-4">
       {content}
-    </section>
+    </Card>
   );
 }

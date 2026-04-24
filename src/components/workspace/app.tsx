@@ -13,10 +13,11 @@ import {
   useSyncExternalStore,
   type FormEvent,
 } from "react";
-import type { ProviderRequestBody } from "@/types/provider";
 import { ProviderSelector } from "@/components/chat/provider-selector";
 import { ChatComposer } from "@/components/chat/composer";
 import { ChatTranscript } from "@/components/chat/transcript";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { AuthPanel } from "@/components/workspace/auth-panel";
 import { ThreadSidebar } from "@/components/workspace/sidebar";
 import { API_ROUTE_PATH } from "@/constants/api";
@@ -55,10 +56,10 @@ export function WorkspaceApp({ authRole = "user", authSessions }: WorkspaceAppPr
 
   if (!isHydrated) {
     return (
-      <main className="min-h-screen min-h-dvh px-4 py-4 sm:px-5 sm:py-5">
-        <div className="mx-auto flex min-h-[calc(100vh-2rem)] min-h-[calc(100dvh-2rem)] w-full max-w-[1600px] flex-col gap-4 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] lg:flex-row">
-          <div className="h-[70vh] w-full rounded-[2rem] border border-white/[.08] bg-white/[.04] backdrop-blur-[28px] lg:max-w-sm" />
-          <div className="h-[70vh] flex-1 rounded-[2rem] border border-white/[.08] bg-white/[.04] backdrop-blur-[28px]" />
+      <main className="min-h-screen min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
+        <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
+          <div className="h-[70vh] w-full rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px] lg:max-w-sm" />
+          <div className="h-[70vh] flex-1 rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px]" />
         </div>
       </main>
     );
@@ -86,25 +87,16 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     [authSession, selectedRole],
   );
 
-  // Refs that stay in sync with reactive values so the transport body function
-  // always reads the latest role and provider on every request, including
-  // auto-submitted ones triggered by sendAutomaticallyWhen.
-  const selectedRoleRef = useRef<AppRole>(selectedRole);
-  const providerRequestBodyRef = useRef<ProviderRequestBody>(provider.requestBody);
-  selectedRoleRef.current = selectedRole;
-  providerRequestBodyRef.current = provider.requestBody;
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: API_ROUTE_PATH.chat,
         body: () => ({
-          ...providerRequestBodyRef.current,
-          authRole: selectedRoleRef.current,
+          ...provider.requestBody,
+          authRole: selectedRole,
         }),
       }),
-    [],
+    [provider.requestBody, selectedRole],
   );
 
   const {
@@ -290,7 +282,10 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
   );
 
   const sidebarProviderPanel = (
-    <div className="rounded-2xl border border-white/[.08] bg-white/[.04] p-4 text-white">
+    <Card
+      variant="panel"
+      className="p-4 text-white shadow-[0_8px_30px_rgba(5,10,30,0.25)]"
+    >
       <ProviderSelector
         selectedProvider={provider.selectedProvider}
         openaiApiKeyInput={provider.openaiApiKeyInput}
@@ -311,12 +306,12 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           {provider.validationError}
         </p>
       ) : null}
-    </div>
+    </Card>
   );
 
   return (
-    <main className="min-h-screen min-h-dvh px-4 py-4 sm:px-5 sm:py-5">
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] min-h-[calc(100dvh-2rem)] w-full max-w-[1600px] flex-col gap-4 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] lg:flex-row">
+    <main className="min-h-screen min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
+      <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
         <ThreadSidebar
           thread={activeThread}
           disabled={isLoading}
@@ -325,19 +320,19 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           onDeleteThread={handleDeleteChat}
         />
 
-        <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[2rem] border border-white/[.08] bg-white/[.04] backdrop-blur-[28px]">
-          <header className="border-b border-white/[.08] bg-white/[.03] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.15)]">
+        <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]">
+          <header className="border-b border-white/[.08] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]">
             <div className="mx-auto w-full max-w-3xl">
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <Text as="p" variant="eyebrow">
                   {APP_NAME}
                 </Text>
-                <span className="inline-flex rounded-full border border-white/[.18] bg-white/[.08] px-2.5 py-1 text-[11px] font-medium text-white/75">
+                <Badge size="md" variant="neutral">
                   {auth.session.roleLabel}
-                </span>
-                <span className="inline-flex rounded-full border border-violet-500/35 bg-violet-500/15 px-2.5 py-1 text-[11px] font-medium text-violet-300">
+                </Badge>
+                <Badge size="md" variant="brand">
                   {APP_HEADER_REVIEW_BADGE_LABEL}
-                </span>
+                </Badge>
               </div>
 
               <div className="space-y-2">

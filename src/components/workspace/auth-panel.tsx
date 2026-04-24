@@ -1,8 +1,9 @@
+import { Card } from "@/components/ui/card";
 import { isAppRole, type AppRole, type MockAuthSession } from "@/lib/auth/session";
 import { Select } from "@/components/ui/select";
 import { AUTH_PANEL_COPY, ROLE_HELPER_COPY_BY_ROLE } from "@/constants/auth";
 import { Text } from "@/components/ui/text";
-import { UserAvatar } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { getInitialsFromName } from "@/utils/avatar";
 
 type AuthPanelProps = {
@@ -24,7 +25,7 @@ export function AuthPanel({
   }
 
   return (
-    <section className="rounded-2xl border border-white/[.08] bg-white/[.04] p-4 text-white">
+    <Card className="p-4 text-white shadow-[0_8px_24px_rgba(7,12,30,0.22)]">
       <div className="space-y-1">
         <Text as="p" variant="sectionTitle">
           {AUTH_PANEL_COPY.title}
@@ -34,7 +35,7 @@ export function AuthPanel({
         </Text>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-white/[.08] bg-white/[.04] px-4 py-3">
+      <Card variant="panel" className="mt-4 px-4 py-3">
         <Text variant="caption" className="mb-2 block">
           {AUTH_PANEL_COPY.modeLabel}
         </Text>
@@ -49,11 +50,12 @@ export function AuthPanel({
           <option value="user">{AUTH_PANEL_COPY.userModeLabel}</option>
           <option value="manager">{AUTH_PANEL_COPY.managerModeLabel}</option>
         </Select>
-      </div>
+      </Card>
 
-      <div className="mt-4 rounded-2xl border border-white/[.08] bg-white/[.04] px-4 py-3">
+      <Card variant="panel" className="mt-4 px-4 py-3">
         <div className="flex items-center gap-3">
-          <UserAvatar
+          <Avatar
+            variant="user"
             src={session.avatar}
             alt={`${session.name} avatar`}
             initials={getInitialsFromName(session.name)}
@@ -82,7 +84,7 @@ export function AuthPanel({
             ))}
           </Text>
         ) : null}
-      </div>
-    </section>
+      </Card>
+    </Card>
   );
 }

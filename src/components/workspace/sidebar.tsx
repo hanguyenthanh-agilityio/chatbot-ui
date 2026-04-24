@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { SIDEBAR_COPY } from "@/constants/app";
 import {
@@ -38,7 +40,7 @@ export function ThreadSidebar({
   onDeleteThread,
 }: ThreadSidebarProps) {
   return (
-    <aside className="flex w-full flex-col rounded-[2rem] border border-white/[.08] bg-white/[.04] text-white backdrop-blur-[28px] shadow-[-12px_0_40px_rgba(100,80,200,0.08)] lg:max-w-sm">
+    <aside className="flex w-full flex-col rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] text-white backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm">
       <div className="border-b border-white/[.08] p-5">
         <div className="space-y-1">
           <Text as="p" variant="eyebrow">
@@ -64,7 +66,10 @@ export function ThreadSidebar({
           </Text>
         </div>
 
-        <div className="group rounded-2xl border border-white/[.08] bg-white/[.06] transition hover:bg-white/[.08]">
+        <Card
+          variant="soft"
+          className="group border-white/[.1] bg-white/[.06] shadow-[0_8px_26px_rgba(8,12,30,0.22)] transition hover:border-white/[.16] hover:bg-white/[.09]"
+        >
           <div className="px-4 py-3">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -75,9 +80,9 @@ export function ThreadSidebar({
                   {thread.preview}
                 </Text>
               </div>
-              <span className="rounded-full border border-white/[.18] px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/55">
+              <Badge variant="subtle" size="sm" className="uppercase tracking-wide">
                 {thread.provider}
-              </span>
+              </Badge>
             </div>
             <Text
               variant="helper"
@@ -91,14 +96,14 @@ export function ThreadSidebar({
           <div className="px-4 pb-3">
             <button
               type="button"
-              className="font-dm-sans text-xs text-white/50 transition hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
+              className="font-dm-sans text-xs text-white/55 transition hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
               onClick={onDeleteThread}
               disabled={disabled}
             >
               {SIDEBAR_COPY.deleteChatLabel}
             </button>
           </div>
-        </div>
+        </Card>
       </div>
     </aside>
   );

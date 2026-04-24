@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 
 type ToolApprovalCardProps = {
@@ -19,11 +20,11 @@ export function ToolApprovalCard({
   onCancel,
 }: ToolApprovalCardProps) {
   return (
-    <div className="rounded-tl rounded-tr-2xl rounded-br-2xl rounded-bl-2xl border border-white/10 bg-white/[.08] backdrop-blur-md px-4 py-3 shadow-[0_2px_12px_rgba(0,0,0,0.2)]">
+    <Card className="px-4 py-3 shadow-[0_10px_26px_rgba(7,12,30,0.25)]">
       <Text as="p" variant="sectionTitle">
         {title}
       </Text>
-      <Text variant="helper" className="mt-1 block">
+      <Text variant="helper" className="mt-1 block text-white/70">
         {description}
       </Text>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -34,6 +35,6 @@ export function ToolApprovalCard({
           {cancelLabel}
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }
