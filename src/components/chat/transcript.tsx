@@ -23,6 +23,7 @@ import type {
   SubmitTimeOffInput,
 } from "@/types/tool";
 import { getAvatarUrl, getInitialsFromName } from "@/utils/avatar";
+import { formatDateWithYear, formatHumanDateRange, parseIsoDateUtc } from "@/utils/date";
 import { getTextParts } from "@/utils/message";
 import { leaveTypeLabel } from "@/utils/leave";
 
@@ -220,77 +221,6 @@ function asNumber(value: unknown, fallback = "—") {
     : fallback;
 }
 
-const ISO_DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-const DATE_WITH_YEAR_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-});
-const MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  timeZone: "UTC",
-});
-
-function parseIsoDateUtc(value: string) {
-  if (!ISO_DATE_ONLY_REGEX.test(value)) return null;
-
-  const [yearText, monthText, dayText] = value.split("-");
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const day = Number(dayText);
-
-  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
-    return null;
-  }
-
-  const parsed = new Date(Date.UTC(year, month - 1, day));
-
-  if (
-    parsed.getUTCFullYear() !== year ||
-    parsed.getUTCMonth() !== month - 1 ||
-    parsed.getUTCDate() !== day
-  ) {
-    return null;
-  }
-
-  return parsed;
-}
-
-function formatDateRange(startDate: string, endDate: string) {
-  if (!startDate && !endDate) return "—";
-
-  if (!startDate || !endDate) {
-    const single = startDate || endDate;
-    const parsed = parseIsoDateUtc(single);
-    return parsed ? DATE_WITH_YEAR_FORMATTER.format(parsed) : single;
-  }
-
-  const parsedStart = parseIsoDateUtc(startDate);
-  const parsedEnd = parseIsoDateUtc(endDate);
-
-  if (!parsedStart || !parsedEnd) {
-    return startDate === endDate ? startDate : `${startDate} → ${endDate}`;
-  }
-
-  if (startDate === endDate) {
-    return DATE_WITH_YEAR_FORMATTER.format(parsedStart);
-  }
-
-  const sameYear = parsedStart.getUTCFullYear() === parsedEnd.getUTCFullYear();
-  const sameMonth = sameYear && parsedStart.getUTCMonth() === parsedEnd.getUTCMonth();
-
-  if (sameMonth) {
-    return `${MONTH_DAY_FORMATTER.format(parsedStart)}–${parsedEnd.getUTCDate()}, ${parsedStart.getUTCFullYear()}`;
-  }
-
-  if (sameYear) {
-    return `${MONTH_DAY_FORMATTER.format(parsedStart)} – ${MONTH_DAY_FORMATTER.format(parsedEnd)}, ${parsedStart.getUTCFullYear()}`;
-  }
-
-  return `${DATE_WITH_YEAR_FORMATTER.format(parsedStart)} – ${DATE_WITH_YEAR_FORMATTER.format(parsedEnd)}`;
-}
 
 function formatStatus(status: string) {
   if (!status) return "—";
@@ -386,7 +316,7 @@ function getRequestRowSummary(request: UnknownRecord) {
   const leaveType = compactLeaveTypeLabel(
     asString(request.leaveTypeLabel, asString(request.leaveType, "")),
   );
-  const dateRange = formatDateRange(
+  const dateRange = formatHumanDateRange(
     asString(request.startDate, ""),
     asString(request.endDate, ""),
   );
@@ -545,7 +475,7 @@ function getRequestTableModel(params: {
           asString(request.leaveTypeLabel, asString(request.leaveType)),
         ),
       ),
-      dateRange: formatDateRange(
+      dateRange: formatHumanDateRange(
         asString(request.startDate, ""),
         asString(request.endDate, ""),
       ),
@@ -848,7 +778,7 @@ function formatGenericCellValue(value: unknown, key: string) {
     if (key.toLowerCase().endsWith("date")) {
       const parsedDate = parseIsoDateUtc(normalizedValue);
       if (parsedDate) {
-        return DATE_WITH_YEAR_FORMATTER.format(parsedDate);
+        return formatDateWithYear(parsedDate);
       }
     }
 
@@ -998,7 +928,7 @@ function getGenericTableModel(params: {
         const explicitDateRange = asOptionalString(row.dateRange)?.trim();
         tableRow[key] = explicitDateRange
           ? explicitDateRange
-          : formatDateRange(asString(row.startDate, ""), asString(row.endDate, ""));
+          : formatHumanDateRange(asString(row.startDate, ""), asString(row.endDate, ""));
         continue;
       }
 
@@ -1230,7 +1160,7 @@ function getMutationSuccessCard(part: UIMessage["parts"][number]) {
   const label = compactLeaveTypeLabel(
     asString(request.leaveTypeLabel, asString(request.leaveType, "Leave")),
   );
-  const dateRange = formatDateRange(
+  const dateRange = formatHumanDateRange(
     asString(request.startDate, ""),
     asString(request.endDate, ""),
   );
