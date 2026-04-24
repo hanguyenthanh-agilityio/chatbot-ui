@@ -2,7 +2,7 @@ import { isAppRole, type AppRole, type MockAuthSession } from "@/lib/auth/sessio
 import { Select } from "@/components/ui/select";
 import { AUTH_PANEL_COPY, ROLE_HELPER_COPY_BY_ROLE } from "@/constants/auth";
 import { Text } from "@/components/ui/text";
-import { UserAvatar } from "@/components/ui/user-avatar";
+import { UserAvatar } from "@/components/ui/avatar";
 import { getInitialsFromName } from "@/utils/avatar";
 
 type AuthPanelProps = {

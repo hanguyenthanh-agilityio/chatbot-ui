@@ -1,5 +1,5 @@
 import { APP_NAME } from "@/constants/app";
-import { AssistantAvatar } from "@/components/chat/assistant-avatar";
+import { AssistantAvatar } from "@/components/ui/avatar";
 import { cn } from "@/utils/class-name";
 
 const SKELETON_WIDTHS = ["w-full", "w-4/5", "w-3/5"] as const;

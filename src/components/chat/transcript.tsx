@@ -11,7 +11,7 @@ import {
 } from "@/components/chat/tool-output-table";
 import { ToolStatusBadge } from "@/components/chat/tool-status-badge";
 import { ChatEmptyState } from "@/components/chat/empty-state";
-import { UserAvatar } from "@/components/ui/user-avatar";
+import { UserAvatar } from "@/components/ui/avatar";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
 import type { MessageMetadata } from "@/agents/chat-core";
 import type { QuickAction } from "@/types/chat";

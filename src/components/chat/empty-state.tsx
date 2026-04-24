@@ -1,4 +1,4 @@
-import { AssistantAvatar } from "@/components/chat/assistant-avatar";
+import { AssistantAvatar } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
 import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
 import type { QuickAction } from "@/types/chat";

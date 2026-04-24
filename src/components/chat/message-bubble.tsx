@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { AssistantAvatar } from "@/components/chat/assistant-avatar";
-import { UserAvatar } from "@/components/ui/user-avatar";
+import { AssistantAvatar, UserAvatar } from "@/components/ui/avatar";
 import { cn } from "@/utils/class-name";
 
 type MessageBubbleProps = {
