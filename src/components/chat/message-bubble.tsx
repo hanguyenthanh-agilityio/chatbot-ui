@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AssistantAvatar, UserAvatar } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/utils/class-name";
 
 type MessageBubbleProps = {
@@ -19,7 +19,7 @@ export function MessageBubble({
 }: MessageBubbleProps) {
   if (isUser) {
     return (
-      <div className="ml-auto py-[10px] px-[15px] max-w-[75%] text-sm leading-relaxed break-words font-dm-sans text-white/[.87] rounded-[18px_4px_18px_18px] bg-[linear-gradient(135deg,rgba(124,58,237,.5),rgba(79,70,229,.5))] backdrop-blur-lg border border-violet-500/35 shadow-[0_4px_18px_rgba(99,60,220,0.18)]">
+      <div className="ml-auto max-w-[78%] rounded-[18px_6px_18px_18px] border border-violet-300/28 bg-[linear-gradient(135deg,rgba(124,58,237,0.5),rgba(79,70,229,0.44),rgba(14,165,233,0.22))] px-[15px] py-[10px] font-dm-sans text-sm leading-relaxed break-words text-white/[.9] shadow-[0_8px_26px_rgba(56,32,140,0.34)] backdrop-blur-lg">
         <span className="whitespace-pre-wrap">{text ?? placeholder}</span>
       </div>
     );
@@ -28,7 +28,7 @@ export function MessageBubble({
   return (
     <div
       className={cn(
-        "px-4 py-2.5 text-sm leading-relaxed font-dm-sans text-white/[.87] rounded-tl rounded-tr-2xl rounded-br-2xl rounded-bl-2xl bg-white/[.08] backdrop-blur-md border border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.2)]",
+        "rounded-2xl border border-white/[.11] bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.06))] px-4 py-2.5 font-dm-sans text-sm leading-relaxed text-white/[.88] shadow-[0_8px_24px_rgba(6,10,30,0.24)] backdrop-blur-md",
         fullWidth ? "max-w-full" : "max-w-[72%]",
       )}
     >
@@ -63,7 +63,8 @@ export function MessageAvatar({
 }: MessageAvatarProps) {
   if (isUser) {
     return (
-      <UserAvatar
+      <Avatar
+        variant="user"
         src={avatarUrl}
         alt={avatarLabel}
         initials={initials}
@@ -73,5 +74,5 @@ export function MessageAvatar({
     );
   }
 
-  return <AssistantAvatar size="sm" className="mt-1" />;
+  return <Avatar variant="assistant" size="sm" className="mt-1" />;
 }
