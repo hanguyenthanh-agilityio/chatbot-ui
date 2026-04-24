@@ -2,11 +2,13 @@
   "teams": [
     {
       "teamId": "TEAM-ID-1",
-      "name": "Flash"
+      "name": "Flash",
+      "id": "loWqZV4w-yQ"
     },
     {
       "teamId": "TEAM-ID-2",
-      "name": "Space"
+      "name": "Space",
+      "id": "cQIMWgsEsGw"
     }
   ],
   "employees": [
@@ -17,7 +19,8 @@
       "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=thang.hoquang%40asnet.com.vn",
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
-      "timeZone": "Asia/Ho_Chi_Minh"
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "id": "MvmxjiYGQCU"
     },
     {
       "employeeId": "EMP-1006",
@@ -26,7 +29,8 @@
       "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=ni.ngo%40asnet.com.vn",
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1010",
-      "timeZone": "Asia/Ho_Chi_Minh"
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "id": "hmmSWelPQk8"
     },
     {
       "employeeId": "EMP-1007",
@@ -35,7 +39,8 @@
       "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=mia.nguyen%40asnet.com.vn",
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
-      "timeZone": "Asia/Ho_Chi_Minh"
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "id": "5I6k3yyiFSQ"
     },
     {
       "employeeId": "EMP-1008",
@@ -44,7 +49,8 @@
       "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=an.pham%40asnet.com.vn",
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
-      "timeZone": "Asia/Ho_Chi_Minh"
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "id": "QQilkyMI5Mc"
     },
     {
       "employeeId": "EMP-1010",
@@ -53,7 +59,8 @@
       "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=tho.pham%40asnet.com.vn",
       "teamId": "TEAM-ID-2",
       "managerEmployeeId": null,
-      "timeZone": "Asia/Ho_Chi_Minh"
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "id": "nV3npsh6IcA"
     }
   ],
   "leave-entitlements": [
@@ -61,41 +68,48 @@
       "employeeId": "EMP-1001",
       "annual": 14,
       "sick": 5,
-      "personal": 2
+      "personal": 2,
+      "id": "w4eTj1yGt0U"
     },
     {
       "employeeId": "EMP-1006",
       "annual": 16,
       "sick": 5,
-      "personal": 3
+      "personal": 3,
+      "id": "VqjQVPgpUkk"
     },
     {
       "employeeId": "EMP-1007",
       "annual": 12,
       "sick": 4,
-      "personal": 2
+      "personal": 2,
+      "id": "PbvqIrpERHs"
     },
     {
       "employeeId": "EMP-1008",
       "annual": 13,
       "sick": 5,
-      "personal": 2
+      "personal": 2,
+      "id": "aeQxeHM-_Eo"
     },
     {
       "employeeId": "EMP-1010",
       "annual": 18,
       "sick": 6,
-      "personal": 3
+      "personal": 3,
+      "id": "jV7DxJZJNbQ"
     }
   ],
   "role-profiles": [
     {
       "role": "user",
-      "employeeId": "EMP-1001"
+      "employeeId": "EMP-1001",
+      "id": "4UA8pbav3fc"
     },
     {
       "role": "manager",
-      "employeeId": "EMP-1006"
+      "employeeId": "EMP-1006",
+      "id": "_eNxvkZl9-w"
     }
   ],
   "time-off-requests": [
@@ -132,10 +146,11 @@
       "startDate": "2026-06-15",
       "endDate": "2026-06-16",
       "days": 2,
-      "status": "pending",
+      "status": "approved",
       "reason": "Beach vacation",
       "createdAt": "2026-04-16T01:00:00.000Z",
-      "updatedAt": "2026-04-16T01:00:00.000Z"
+      "updatedAt": "2026-04-24T09:31:29.596Z",
+      "reviewComment": "Approved."
     },
     {
       "id": "REQ-3004",
@@ -169,10 +184,11 @@
       "startDate": "2026-04-24",
       "endDate": "2026-04-24",
       "days": 1,
-      "status": "pending",
+      "status": "approved",
       "reason": "Apartment paperwork",
       "createdAt": "2026-04-19T06:30:00.000Z",
-      "updatedAt": "2026-04-19T06:30:00.000Z"
+      "updatedAt": "2026-04-24T09:30:53.210Z",
+      "reviewComment": "Approved."
     },
     {
       "id": "REQ-3007",
@@ -201,5 +217,6 @@
       "updatedAt": "2026-04-11T09:00:00.000Z"
     }
   ],
-  "updatedAt": "2026-04-22T08:49:39.560Z"
+  "updatedAt": "2026-04-22T08:49:39.560Z",
+  "$schema": "./node_modules/json-server/schema.json"
 }
