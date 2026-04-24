@@ -91,6 +91,52 @@ function withRequests(ctx: TimeOffContext, requests: TimeOffRequest[]): TimeOffC
   return { ...ctx, requests };
 }
 
+function normalizeInlineWhitespace(value: string) {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function parseMutationRequestInput(
+  requestQuery: string,
+  comment?: string,
+) {
+  const extractedCommentMatch = requestQuery.match(
+    /\b(?:use\s+)?comment\s*:\s*["“]?([^"”\n]+?)["”]?(?=$|[.?!])/i,
+  );
+  const extractedComment = extractedCommentMatch?.[1]?.trim();
+
+  let normalizedQuery = requestQuery;
+
+  const trailingInstructionPatterns = [
+    /\bask for confirmation\b.*$/i,
+    /\bplease confirm\b.*$/i,
+    /\bbefore running\b.*$/i,
+  ];
+
+  for (const pattern of trailingInstructionPatterns) {
+    normalizedQuery = normalizedQuery.replace(pattern, "");
+  }
+
+  normalizedQuery = normalizedQuery
+    .replace(
+      /\b(?:use\s+)?comment\s*:\s*["“]?([^"”\n]+?)["”]?(?=$|[.?!])/gi,
+      "",
+    )
+    .replace(
+      /^\s*(?:please\s+)?(?:approve|reject)\s+(?:this\s+)?(?:pending\s+)?(?:team\s+)?request\s*:?\s*/i,
+      "",
+    )
+    .replace(/^\s*request\s*:?\s*/i, "");
+
+  const sanitizedQuery = normalizeInlineWhitespace(normalizedQuery);
+  const resolvedComment =
+    comment?.trim() || (extractedComment ? normalizeInlineWhitespace(extractedComment) : undefined);
+
+  return {
+    requestQuery: sanitizedQuery || normalizeInlineWhitespace(requestQuery),
+    comment: resolvedComment,
+  };
+}
+
 /**
  * Builds my time off requests payload.
  * @param {MockAuthSession} session
@@ -194,7 +240,10 @@ async function reviewTeamTimeOffRequest(
   ctx: TimeOffContext,
   input: ReviewTeamRequestInput,
 ) {
-  const query = input.requestQuery.trim();
+  const parsedInput = parseMutationRequestInput(input.requestQuery, input.comment);
+  const query = parsedInput.requestQuery;
+  const comment = parsedInput.comment;
+
   if (!query) {
     return {
       ok: false,
@@ -203,7 +252,7 @@ async function reviewTeamTimeOffRequest(
     };
   }
 
-  if (input.nextStatus === "rejected" && !input.comment?.trim()) {
+  if (input.nextStatus === "rejected" && !comment) {
     return {
       ok: false,
       code: "MISSING_COMMENT",
@@ -233,7 +282,7 @@ async function reviewTeamTimeOffRequest(
     ctx.requests,
     matches[0].id,
     input.nextStatus,
-    input.comment,
+    comment,
   );
 
   const persistedRequests = await replaceTimeOffRequests(nextRequests);

@@ -269,6 +269,8 @@ export function filterRequestsByQuery(
   const normalizedQuery = query?.trim() ? normalizeValue(query) : null;
   if (!normalizedQuery) return requests;
 
+  const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+
   return requests.filter((request) => {
     const employee = getEmployeeOrThrow(employees, request.employeeId);
     const haystacks = [
@@ -287,7 +289,9 @@ export function filterRequestsByQuery(
       formatDateRange(request.startDate, request.endDate),
     ].map(normalizeValue);
 
-    return haystacks.some((v) => v.includes(normalizedQuery));
+    // Every token must appear in at least one haystack field, supporting
+    // multi-field queries like "Mia Nguyen Annual 2026-05-12 2026-05-13".
+    return tokens.every((token) => haystacks.some((v) => v.includes(token)));
   });
 }
 
