@@ -10,7 +10,9 @@ const MANAGER_INTENT_PATTERNS = [
   /\bdirect\s+report/i,
   /\bcoverage\b/i,
   /\bapproval/i,
-  /\bemployee\b/i,
+  /\bemployee[s]?\b/i,
+  /\bmembers?\b/i,
+  /\bproject\b/i,
 ];
 
 type RouteConversationInput = {

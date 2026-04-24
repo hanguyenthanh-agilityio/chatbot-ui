@@ -348,10 +348,12 @@ export function findTeamRequestsMatchingQuery(
   ctx: TimeOffContext,
   session: MockAuthSession,
   query: string,
+  allowedStatuses: RequestStatus[] = ["pending"],
 ): TimeOffRequest[] {
   const normalizedQuery = normalizeValue(query);
+  const allowedSet = new Set(allowedStatuses);
   const teamRequests = getTeamRequestsForManager(ctx.requests, session).filter(
-    (r) => r.status === "pending",
+    (r) => allowedSet.has(r.status),
   );
 
   if (normalizedQuery.includes("latest") || normalizedQuery.includes("last")) {
