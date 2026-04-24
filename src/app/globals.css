@@ -3,7 +3,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f0c29;
+  --background: #0c1024;
   --foreground: #f8fafc;
 }
 
@@ -26,7 +26,9 @@ body {
 }
 
 body {
-  background: linear-gradient(135deg, #0f0c29 0%, #1a1035 40%, #0d1b2a 100%);
+  background: radial-gradient(1200px 700px at -10% -15%, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0) 60%),
+    radial-gradient(1100px 650px at 110% 20%, rgba(14, 165, 233, 0.18) 0%, rgba(14, 165, 233, 0) 62%),
+    linear-gradient(135deg, #0c1024 0%, #1a1739 42%, #102033 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;

@@ -54,7 +54,7 @@ export function ChatComposer({
   }
 
   return (
-    <div className="border-t border-white/[.08] bg-white/[.04] backdrop-blur-[28px] px-4 py-3 sm:px-6 lg:px-8 shadow-[0_-1px_0_rgba(255,255,255,0.04),0_-8px_32px_rgba(0,0,0,0.15)]">
+    <div className="border-t border-white/[.08] bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.06))] backdrop-blur-[28px] px-4 py-3 sm:px-6 lg:px-8 shadow-[0_-1px_0_rgba(255,255,255,0.04),0_-10px_34px_rgba(0,0,0,0.2)]">
       <div className="mx-auto w-full max-w-3xl flex flex-col gap-2">
         {errorMessage ? (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
@@ -64,7 +64,7 @@ export function ChatComposer({
 
         <form
           onSubmit={onSubmit}
-          className="flex w-full items-center gap-3 px-[18px] py-[11px] rounded-[18px] transition-all duration-200 backdrop-blur-xl border border-white/[.11] focus-within:border-violet-500/55 bg-white/[.06] shadow-[0_4px_24px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.07)]"
+          className="flex w-full items-center gap-3 rounded-[18px] border border-white/[.13] bg-[linear-gradient(165deg,rgba(255,255,255,0.08),rgba(255,255,255,0.04))] px-[16px] py-[10px] shadow-[0_8px_26px_rgba(7,12,30,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55"
         >
           <textarea
             ref={textareaRef}
@@ -75,7 +75,7 @@ export function ChatComposer({
             aria-label={CHAT_COMPOSER_COPY.ariaLabel}
             disabled={!isProviderReady}
             rows={1}
-            className="flex-1 resize-none max-h-[150px] overflow-y-auto bg-transparent text-sm leading-[1.55] outline-none border-none font-dm-sans text-white/[.88] caret-violet-500/90 placeholder:text-white/[.42] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="max-h-[150px] flex-1 resize-none overflow-y-auto border-none bg-transparent font-dm-sans text-sm leading-[1.55] text-white/[.9] caret-violet-400/90 outline-none placeholder:text-white/[.46] disabled:cursor-not-allowed disabled:opacity-50"
           />
 
           <button
@@ -83,12 +83,12 @@ export function ChatComposer({
             disabled={!canSend}
             aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
             className={cn(
-              "self-end shrink-0 w-[38px] h-[38px] rounded-[12px] grid place-items-center transition-all duration-200",
+              "self-end grid h-[40px] w-[40px] shrink-0 place-items-center rounded-[12px] transition-all duration-200",
               "disabled:opacity-30 disabled:cursor-not-allowed",
-              "hover:scale-[1.07] hover:shadow-[0_6px_20px_rgba(99,60,220,0.4)]",
+              "hover:scale-[1.04] hover:shadow-[0_6px_20px_rgba(99,60,220,0.4)]",
               canSend
-                ? "bg-[linear-gradient(135deg,#7c3aed,#4f46e5,#06b6d4)] text-white"
-                : "bg-white/[.37] text-white/80",
+                ? "bg-[linear-gradient(135deg,#8b5cf6,#6366f1,#0ea5e9)] text-white"
+                : "bg-white/[.18] text-white/75",
             )}
           >
             {isLoading ? (
@@ -101,7 +101,7 @@ export function ChatComposer({
           </button>
         </form>
 
-        <Text variant="helper" className="text-center">
+        <Text variant="helper" className="px-1 text-center text-white/55">
           {helperText ?? CHAT_COMPOSER_COPY.defaultHelperText}
         </Text>
       </div>
