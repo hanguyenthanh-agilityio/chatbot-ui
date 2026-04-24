@@ -1,10 +1,11 @@
 import { isToolUIPart, type UIMessage } from "ai";
-import type { RefObject } from "react";
+import { Fragment, type RefObject } from "react";
 import { LoadingIndicator } from "@/components/chat/loading-indicator";
 import { MessageAvatar, MessageBubble } from "@/components/chat/message-bubble";
 import { ToolApprovalCard } from "@/components/chat/tool-approval-card";
 import {
   ToolOutputTable,
+  type ToolOutputTableAction,
   type ToolOutputTableColumn,
   type ToolOutputTableRow,
 } from "@/components/chat/tool-output-table";
@@ -179,6 +180,8 @@ type ToolOutputTableModel = {
   title: string;
   columns: ToolOutputTableColumn[];
   rows: ToolOutputTableRow[];
+  rowActions?: ToolOutputTableAction[][];
+  rowActionSummaries?: string[];
   emptyLabel: string;
 };
 
@@ -357,12 +360,141 @@ function renderEmployeeCell(request: UnknownRecord) {
   );
 }
 
+function normalizeRequestStatus(status: unknown) {
+  return asString(status, "").trim().toLowerCase();
+}
+
+function buildRequestQueryText(request: UnknownRecord) {
+  const leaveType = compactLeaveTypeLabel(
+    asString(request.leaveTypeLabel, asString(request.leaveType, "")),
+  );
+
+  const parts = [
+    asOptionalString(request.employeeName)?.trim(),
+    leaveType && leaveType !== "—" ? leaveType : null,
+    asOptionalString(request.startDate)?.trim(),
+    asOptionalString(request.endDate)?.trim(),
+  ].filter((part): part is string => Boolean(part));
+
+  return parts.join(" ").trim();
+}
+
+function getRequestRowSummary(request: UnknownRecord) {
+  const employeeName = asOptionalString(request.employeeName)?.trim();
+  const leaveType = compactLeaveTypeLabel(
+    asString(request.leaveTypeLabel, asString(request.leaveType, "")),
+  );
+  const dateRange = formatDateRange(
+    asString(request.startDate, ""),
+    asString(request.endDate, ""),
+  );
+
+  return [employeeName, leaveType && leaveType !== "—" ? leaveType : null, dateRange]
+    .filter((part): part is string => Boolean(part))
+    .join(" • ");
+}
+
+function getBalanceRowSummary(balance: UnknownRecord) {
+  const leaveType = compactLeaveTypeLabel(
+    leaveTypeLabel(asString(balance.leaveType, "annual")),
+  );
+  const remaining = asNumber(balance.remaining, "");
+
+  return remaining
+    ? `${leaveType} • Remaining ${remaining}`
+    : leaveType;
+}
+
+function getSelfRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
+  const status = normalizeRequestStatus(request.status);
+
+  if (!status || status === "cancelled" || status === "rejected") {
+    return [];
+  }
+
+  const requestQuery = buildRequestQueryText(request);
+  const prompt = requestQuery
+    ? `Cancel this time-off request: ${requestQuery}.`
+    : "I want to cancel one of my requests. Please list cancellable requests and ask me to choose one request clearly.";
+
+  return [
+    {
+      label: "Cancel request",
+      prompt,
+      tone: "danger",
+    },
+  ];
+}
+
+function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
+  const status = normalizeRequestStatus(request.status);
+  if (status !== "pending") {
+    return [];
+  }
+
+  const requestQuery = buildRequestQueryText(request);
+
+  return [
+    {
+      label: "Approve",
+      prompt: requestQuery
+        ? `Approve this pending team request: ${requestQuery}. Comment: Approved.`
+        : "Please approve the selected pending team request. Ask me for missing request details before continuing.",
+      tone: "success",
+    },
+    {
+      label: "Reject",
+      prompt: requestQuery
+        ? `Reject this pending team request: ${requestQuery}.`
+        : "Please reject the selected pending team request. Ask me for a short rejection reason and any missing request details before continuing.",
+      tone: "danger",
+    },
+  ];
+}
+
+function getBalanceRowActions(balance: UnknownRecord): ToolOutputTableAction[] {
+  const leaveType = asOptionalString(balance.leaveType)?.trim().toLowerCase();
+  if (!leaveType) {
+    return [];
+  }
+
+  return [
+    {
+      label: "Request this type",
+      prompt: `I want to submit a ${leaveType} time-off request.`,
+      tone: "success",
+    },
+  ];
+}
+
+function getRequestRowActionBuilder(toolName: string | null) {
+  switch (toolName) {
+    case "list_team_time_off_requests":
+    case "approve_team_time_off_request":
+    case "reject_team_time_off_request":
+      return getTeamRequestRowActions;
+    case "list_my_time_off_requests":
+    case "get_my_time_off_balance":
+    case "submit_my_time_off_request":
+    case "cancel_my_time_off_request":
+      return getSelfRequestRowActions;
+    default:
+      return (request: UnknownRecord) => {
+        const hasEmployee = Boolean(asOptionalString(request.employeeName)?.trim());
+        return hasEmployee
+          ? getTeamRequestRowActions(request)
+          : getSelfRequestRowActions(request);
+      };
+  }
+}
+
 function getRequestTableModel(params: {
   id: string;
   title: string;
   payload: UnknownRecord;
   showEmployee: boolean;
   emptyLabel: string;
+  getRowActions?: (request: UnknownRecord) => ToolOutputTableAction[];
 }): ToolOutputTableModel | null {
   if (!Array.isArray(params.payload.requests)) {
     return null;
@@ -403,7 +535,8 @@ function getRequestTableModel(params: {
         { key: "status", label: "Status", align: "center" },
       ];
 
-  const rows = asRecordArray(params.payload.requests).map((request) => {
+  const requestRows = asRecordArray(params.payload.requests);
+  const rows = requestRows.map((request) => {
     const row: ToolOutputTableRow = {
       leaveType: renderLeaveTypeChip(
         compactLeaveTypeLabel(
@@ -425,11 +558,20 @@ function getRequestTableModel(params: {
     return row;
   });
 
+  const rowActions = params.getRowActions
+    ? requestRows.map((request) => params.getRowActions?.(request) ?? [])
+    : undefined;
+  const rowActionSummaries = rowActions
+    ? requestRows.map((request) => getRequestRowSummary(request))
+    : undefined;
+
   return {
     id: params.id,
     title: params.title,
     columns,
     rows,
+    rowActions,
+    rowActionSummaries,
     emptyLabel: params.emptyLabel,
   };
 }
@@ -439,6 +581,7 @@ function getBalanceTableModel(params: {
   title: string;
   payload: UnknownRecord;
   emptyLabel: string;
+  getRowActions?: (balance: UnknownRecord) => ToolOutputTableAction[];
 }): ToolOutputTableModel | null {
   if (!Array.isArray(params.payload.balances)) {
     return null;
@@ -472,7 +615,8 @@ function getBalanceTableModel(params: {
     },
   ];
 
-  const rows = asRecordArray(params.payload.balances).map((balance) => ({
+  const balanceRows = asRecordArray(params.payload.balances);
+  const rows = balanceRows.map((balance) => ({
     leaveType: renderLeaveTypeChip(
       compactLeaveTypeLabel(leaveTypeLabel(asString(balance.leaveType, "annual"))),
     ),
@@ -482,11 +626,20 @@ function getBalanceTableModel(params: {
     remaining: asNumber(balance.remaining),
   }));
 
+  const rowActions = params.getRowActions
+    ? balanceRows.map((balance) => params.getRowActions?.(balance) ?? [])
+    : undefined;
+  const rowActionSummaries = rowActions
+    ? balanceRows.map((balance) => getBalanceRowSummary(balance))
+    : undefined;
+
   return {
     id: params.id,
     title: params.title,
     columns,
     rows,
+    rowActions,
+    rowActionSummaries,
     emptyLabel: params.emptyLabel,
   };
 }
@@ -891,6 +1044,7 @@ function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
           id,
           title,
           payload: { balances: rows },
+          getRowActions: getBalanceRowActions,
           emptyLabel: "No records found.",
         });
       }
@@ -901,6 +1055,7 @@ function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
           title,
           payload: { requests: rows },
           showEmployee: rows.some((row) => Boolean(asOptionalString(row.employeeName))),
+          getRowActions: getRequestRowActionBuilder(toolName),
           emptyLabel: "No records found.",
         });
       }
@@ -939,6 +1094,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         title: "My time-off requests",
         payload: output,
         showEmployee: false,
+        getRowActions: getSelfRequestRowActions,
         emptyLabel: "No time-off requests found.",
       });
       return requests ? [requests] : dynamicTables;
@@ -950,6 +1106,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         title: "Team time-off requests",
         payload: output,
         showEmployee: true,
+        getRowActions: getTeamRequestRowActions,
         emptyLabel: "No team requests found.",
       });
       return requests ? [requests] : dynamicTables;
@@ -961,6 +1118,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
           id: "my-time-off-balance",
           title: "My leave balance",
           payload: output,
+          getRowActions: getBalanceRowActions,
           emptyLabel: "No balance data found.",
         }),
         getRequestTableModel({
@@ -970,6 +1128,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
             requests: output.upcomingRequests,
           },
           showEmployee: false,
+          getRowActions: getSelfRequestRowActions,
           emptyLabel: "No upcoming requests.",
         }),
       ].filter((table): table is ToolOutputTableModel => table !== null);
@@ -987,6 +1146,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
           id: "updated-time-off-balance",
           title: "Updated leave balance",
           payload: balance,
+          getRowActions: getBalanceRowActions,
           emptyLabel: "No balance data found.",
         }),
         getRequestTableModel({
@@ -996,6 +1156,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
             requests: balance.upcomingRequests,
           },
           showEmployee: false,
+          getRowActions: getSelfRequestRowActions,
           emptyLabel: "No upcoming requests.",
         }),
       ].filter((table): table is ToolOutputTableModel => table !== null);
@@ -1013,6 +1174,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
         title: "Pending team requests",
         payload: teamRequests,
         showEmployee: true,
+        getRowActions: getTeamRequestRowActions,
         emptyLabel: "No pending team requests.",
       });
       return requests ? [requests] : dynamicTables;
@@ -1023,8 +1185,76 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
   }
 }
 
+type MutationSuccessCard = {
+  key: string;
+  title: string;
+  employeeName: string;
+  employeeAvatar?: string;
+  team?: string;
+  leaveTypeLabel: string;
+  dateRange: string;
+  days: number;
+  rawStatus: string;
+  reviewComment?: string;
+};
+
+function getMutationSuccessCard(part: UIMessage["parts"][number]) {
+  if (!isToolUIPart(part) || part.state !== "output-available" || part.preliminary) {
+    return null;
+  }
+
+  const output = asRecord(part.output);
+  if (!output || output.ok !== true) {
+    return null;
+  }
+
+  const request = asRecord(output.request);
+  if (!request) {
+    return null;
+  }
+
+  const toolName = getToolName(part);
+
+  let title: string;
+  if (toolName === "approve_team_time_off_request") title = "Request approved";
+  else if (toolName === "reject_team_time_off_request") title = "Request rejected";
+  else if (toolName === "cancel_my_time_off_request") title = "Request cancelled";
+  else if (toolName === "submit_my_time_off_request") title = "Request submitted";
+  else return null;
+
+  const employeeName = asString(request.employeeName, "Employee");
+  const employeeAvatar = asOptionalString(request.employeeAvatar)?.trim() || undefined;
+  const team = asOptionalString(request.team)?.trim() || undefined;
+  const label = compactLeaveTypeLabel(
+    asString(request.leaveTypeLabel, asString(request.leaveType, "Leave")),
+  );
+  const dateRange = formatDateRange(
+    asString(request.startDate, ""),
+    asString(request.endDate, ""),
+  );
+  const days =
+    typeof request.days === "number" && Number.isFinite(request.days)
+      ? (request.days as number)
+      : 0;
+  const rawStatus = asString(request.status, "");
+  const reviewComment = asOptionalString(request.reviewComment)?.trim() || undefined;
+
+  return {
+    title,
+    employeeName,
+    employeeAvatar,
+    team,
+    leaveTypeLabel: label,
+    dateRange,
+    days,
+    rawStatus,
+    reviewComment,
+  };
+}
+
 const BULLET_LIST_LINE_REGEX = /^[-*•]\s+/;
 const MARKDOWN_TABLE_LINE_REGEX = /^\|.*\|\s*$/;
+const PIPE_SEPARATED_ROW_LINE_REGEX = /^(?:\|?\s*[^|]+\s*\|){2,}\s*[^|]+\|?\s*$/;
 
 function splitParagraphs(text: string) {
   const byBlankLine = text
@@ -1049,7 +1279,8 @@ function stripRedundantStructuredListText(text: string) {
       const trimmedLine = line.trim();
       return (
         !BULLET_LIST_LINE_REGEX.test(trimmedLine) &&
-        !MARKDOWN_TABLE_LINE_REGEX.test(trimmedLine)
+        !MARKDOWN_TABLE_LINE_REGEX.test(trimmedLine) &&
+        !PIPE_SEPARATED_ROW_LINE_REGEX.test(trimmedLine)
       );
     })
     .join("\n")
@@ -1078,6 +1309,31 @@ function isLikelyFollowUpParagraph(paragraph: string) {
   );
 }
 
+const TABLE_LEAD_IN_PARAGRAPH_REGEX =
+  /\b(here\s+(?:is|are)|i\s+(?:found|pulled|listed)|below|following)\b/i;
+const TABLE_POST_NOTE_PARAGRAPH_REGEX =
+  /\b(please\s+review|take\s+(?:appropriate|any\s+necessary)\s+action|let\s+me\s+know|if\s+you\s+need|if\s+you'?d\s+like|anything\s+else|next\s+step)\b/i;
+
+function isLikelyTableLeadInParagraph(paragraph: string) {
+  const normalized = paragraph.trim();
+  if (!normalized) return false;
+
+  return (
+    normalized.endsWith(":") ||
+    TABLE_LEAD_IN_PARAGRAPH_REGEX.test(normalized)
+  );
+}
+
+function isLikelyPostTableParagraph(paragraph: string) {
+  const normalized = paragraph.trim();
+  if (!normalized) return false;
+
+  return (
+    isLikelyFollowUpParagraph(normalized) ||
+    TABLE_POST_NOTE_PARAGRAPH_REGEX.test(normalized)
+  );
+}
+
 type TableTextPlacement = {
   beforeTables: string;
   afterTables: string | null;
@@ -1085,18 +1341,43 @@ type TableTextPlacement = {
 
 function splitTextBeforeAndAfterTables(text: string): TableTextPlacement {
   if (!text.trim()) {
-    return {
-      beforeTables: "",
-      afterTables: null,
-    };
+    return { beforeTables: "", afterTables: null };
   }
 
   const paragraphs = splitParagraphs(text);
 
   if (paragraphs.length < 2) {
+    return { beforeTables: text, afterTables: null };
+  }
+
+  const [firstParagraph, ...remainingParagraphs] = paragraphs;
+  const shouldPlaceAfterFirstParagraph =
+    isLikelyTableLeadInParagraph(firstParagraph) &&
+    remainingParagraphs.some((paragraph) =>
+      isLikelyPostTableParagraph(paragraph),
+    );
+
+  if (shouldPlaceAfterFirstParagraph) {
     return {
-      beforeTables: text,
-      afterTables: null,
+      beforeTables: firstParagraph,
+      afterTables: remainingParagraphs.join("\n\n"),
+    };
+  }
+
+  // Find the last table lead-in paragraph anywhere (handles lead-ins that are
+  // not the first paragraph, e.g. when preceded by a mutation confirmation).
+  let lastLeadInIndex = -1;
+  for (let i = 0; i < paragraphs.length - 1; i++) {
+    if (isLikelyTableLeadInParagraph(paragraphs[i])) {
+      lastLeadInIndex = i;
+    }
+  }
+
+  if (lastLeadInIndex >= 0) {
+    const afterText = paragraphs.slice(lastLeadInIndex + 1).join("\n\n");
+    return {
+      beforeTables: paragraphs.slice(0, lastLeadInIndex + 1).join("\n\n"),
+      afterTables: afterText || null,
     };
   }
 
@@ -1115,10 +1396,7 @@ function splitTextBeforeAndAfterTables(text: string): TableTextPlacement {
   }
 
   if (trailingFollowUpParagraphs.length === 0) {
-    return {
-      beforeTables: text,
-      afterTables: null,
-    };
+    return { beforeTables: text, afterTables: null };
   }
 
   return {
@@ -1305,10 +1583,216 @@ export function ChatTranscript({
               isLoading &&
               text.length === 0 &&
               approvalParts.length === 0;
+            const mutationSuccessCards = toolParts
+              .map((part, partIndex) => {
+                const success = getMutationSuccessCard(part);
+                if (!success) return null;
+                const card: MutationSuccessCard = {
+                  ...success,
+                  key: `${message.id}-success-${part.toolCallId ?? partIndex}`,
+                };
+                return card;
+              })
+              .filter((item): item is MutationSuccessCard => item !== null);
             const statusParts = toolParts
               .map((part) => getToolStatusCopy(part))
               .filter((item) => item !== null);
             const shouldRenderBubble = text.length > 0 || embedOutputTablesInBubble;
+
+            // Render the rich success card content (reused in both split and single layouts).
+            const successCardContent = mutationSuccessCards.map((card) => (
+              <div
+                key={card.key}
+                className="overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/[.06]"
+              >
+                <div className="border-b border-emerald-400/20 bg-emerald-500/[.08] px-4 py-2.5">
+                  <p className="font-dm-sans text-sm font-semibold text-emerald-100">
+                    {card.title}
+                  </p>
+                </div>
+                <div className="space-y-2.5 px-4 py-3">
+                  <div className="flex items-center gap-2.5">
+                    <UserAvatar
+                      src={card.employeeAvatar ?? getAvatarUrl(card.employeeName)}
+                      alt={`${card.employeeName} avatar`}
+                      initials={getInitialsFromName(card.employeeName)}
+                      size="sm"
+                      className="ring-emerald-400/20"
+                    />
+                    <div>
+                      <p className="font-dm-sans text-sm font-semibold leading-tight text-emerald-100">
+                        {card.employeeName}
+                      </p>
+                      {card.team ? (
+                        <p className="font-dm-sans text-xs leading-tight text-emerald-100/60">
+                          {card.team}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                    <span className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2.5 py-0.5 font-dm-sans text-xs font-medium text-emerald-100">
+                      {card.leaveTypeLabel}
+                    </span>
+                    <span className="font-dm-sans text-xs text-emerald-100/80">
+                      {card.dateRange}
+                    </span>
+                    <span className="font-dm-sans text-xs text-emerald-100/80">
+                      {card.days} {card.days === 1 ? "day" : "days"}
+                    </span>
+                    <span className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2.5 py-0.5 font-dm-sans text-xs font-medium text-emerald-100">
+                      {formatStatus(card.rawStatus)}
+                    </span>
+                  </div>
+                  {card.reviewComment ? (
+                    <p className="font-dm-sans text-xs text-emerald-100/65">
+                      Comment: {card.reviewComment}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ));
+
+            // The second part of the message: text bubble + table + status badges.
+            const hasSecondContent =
+              shouldRenderBubble ||
+              shouldShowThinkingSkeleton ||
+              approvalParts.length > 0 ||
+              (!embedOutputTablesInBubble && visibleOutputTables.length > 0) ||
+              statusParts.length > 0;
+
+            const secondContent = (
+              <>
+                {shouldRenderBubble ? (
+                  <MessageBubble
+                    isUser={isUser}
+                    text={text || undefined}
+                    fullWidth={embedOutputTablesInBubble}
+                  >
+                    {embedOutputTablesInBubble ? (
+                      <div className="space-y-3">
+                        {visibleOutputTables.map((table) => (
+                          <div key={table.key} className="space-y-2">
+                            {useTableLeadInLayout ? (
+                              <p className="font-dm-sans text-sm text-white/82">
+                                {getTableLeadInText(table.id, tableIds)}
+                              </p>
+                            ) : null}
+                            <ToolOutputTable
+                              title={table.title}
+                              columns={table.columns}
+                              rows={table.rows}
+                              rowActions={table.rowActions}
+                              rowActionSummaries={table.rowActionSummaries}
+                              onActionClick={onSelectPrompt}
+                              disableActions={isLoading}
+                              emptyLabel={table.emptyLabel}
+                            />
+                          </div>
+                        ))}
+                        {textPlacement.afterTables ? (
+                          <p className="whitespace-pre-wrap font-dm-sans text-sm text-white/78">
+                            {textPlacement.afterTables}
+                          </p>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </MessageBubble>
+                ) : null}
+
+                {shouldShowThinkingSkeleton ? (
+                  <LoadingIndicator
+                    showAvatar={false}
+                    label={thinkingLabel}
+                    className="max-w-[72%]"
+                  />
+                ) : null}
+
+                {approvalParts.length > 0 ? (
+                  <div className="mt-3 space-y-3">
+                    {approvalParts.map((part, index) => {
+                      const content = getApprovalCardContent(part);
+
+                      if (!content) {
+                        return null;
+                      }
+
+                      return (
+                        <ToolApprovalCard
+                          key={`${message.id}-approval-${part.toolCallId ?? index}`}
+                          title={content.title}
+                          description={content.description}
+                          confirmLabel={content.confirmLabel}
+                          cancelLabel={content.cancelLabel}
+                          onConfirm={() => onToolApproval(part.approval.id, true)}
+                          onCancel={() => onToolApproval(part.approval.id, false)}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : null}
+
+                {!embedOutputTablesInBubble && visibleOutputTables.length > 0 ? (
+                  <div className="mt-3 space-y-3">
+                    {visibleOutputTables.map((table) => (
+                      <ToolOutputTable
+                        key={table.key}
+                        title={table.title}
+                        columns={table.columns}
+                        rows={table.rows}
+                        rowActions={table.rowActions}
+                        rowActionSummaries={table.rowActionSummaries}
+                        onActionClick={onSelectPrompt}
+                        disableActions={isLoading}
+                        emptyLabel={table.emptyLabel}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+
+                {statusParts.length > 0 ? (
+                  <div className="mt-3 space-y-2">
+                    {statusParts.map((statusPart, index) => (
+                      <ToolStatusBadge
+                        key={`${message.id}-status-${index}`}
+                        text={statusPart.text}
+                        tone={statusPart.tone}
+                      />
+                    ))}
+                  </div>
+                ) : null}
+              </>
+            );
+
+            // When a mutation success card exists alongside other content, render
+            // two separate visual messages so the card and the follow-up text/table
+            // appear as distinct chat bubbles.
+            const shouldSplitMessage =
+              !isUser && mutationSuccessCards.length > 0 && hasSecondContent;
+
+            if (shouldSplitMessage) {
+              return (
+                <Fragment key={message.id}>
+                  <article className="flex gap-3 justify-start">
+                    <MessageAvatar
+                      initials={getAssistantInitials(message)}
+                      isUser={false}
+                    />
+                    <div className="min-w-0 max-w-full flex-1">
+                      <div className="space-y-2">{successCardContent}</div>
+                    </div>
+                  </article>
+
+                  <article className="flex gap-3 justify-start">
+                    <MessageAvatar
+                      initials={getAssistantInitials(message)}
+                      isUser={false}
+                    />
+                    <div className="min-w-0 max-w-full flex-1">{secondContent}</div>
+                  </article>
+                </Fragment>
+              );
+            }
 
             return (
               <article
@@ -1323,94 +1807,13 @@ export function ChatTranscript({
                 ) : null}
 
                 <div className={`min-w-0 ${isUser ? "max-w-[85%]" : "max-w-full flex-1"}`}>
-                  {shouldRenderBubble ? (
-                    <MessageBubble
-                      isUser={isUser}
-                      text={text || undefined}
-                      fullWidth={embedOutputTablesInBubble}
-                    >
-                      {embedOutputTablesInBubble ? (
-                        <div className="space-y-3">
-                          {visibleOutputTables.map((table) => (
-                            <div key={table.key} className="space-y-2">
-                              {useTableLeadInLayout ? (
-                                <p className="font-dm-sans text-sm text-white/82">
-                                  {getTableLeadInText(table.id, tableIds)}
-                                </p>
-                              ) : null}
-                              <ToolOutputTable
-                                title={table.title}
-                                columns={table.columns}
-                                rows={table.rows}
-                                emptyLabel={table.emptyLabel}
-                              />
-                            </div>
-                          ))}
-                          {textPlacement.afterTables ? (
-                            <p className="whitespace-pre-wrap font-dm-sans text-sm text-white/78">
-                              {textPlacement.afterTables}
-                            </p>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </MessageBubble>
+                  {mutationSuccessCards.length > 0 ? (
+                    <div className="space-y-2">{successCardContent}</div>
                   ) : null}
 
-                  {shouldShowThinkingSkeleton ? (
-                    <LoadingIndicator
-                      showAvatar={false}
-                      label={thinkingLabel}
-                      className="max-w-[72%]"
-                    />
-                  ) : null}
-
-                  {approvalParts.length > 0 ? (
-                    <div className="mt-3 space-y-3">
-                      {approvalParts.map((part, index) => {
-                        const content = getApprovalCardContent(part);
-
-                        if (!content) {
-                          return null;
-                        }
-
-                        return (
-                          <ToolApprovalCard
-                            key={`${message.id}-approval-${part.toolCallId ?? index}`}
-                            title={content.title}
-                            description={content.description}
-                            confirmLabel={content.confirmLabel}
-                            cancelLabel={content.cancelLabel}
-                            onConfirm={() => onToolApproval(part.approval.id, true)}
-                            onCancel={() => onToolApproval(part.approval.id, false)}
-                          />
-                        );
-                      })}
-                    </div>
-                  ) : null}
-
-                  {!embedOutputTablesInBubble && visibleOutputTables.length > 0 ? (
-                    <div className="mt-3 space-y-3">
-                      {visibleOutputTables.map((table) => (
-                        <ToolOutputTable
-                          key={table.key}
-                          title={table.title}
-                          columns={table.columns}
-                          rows={table.rows}
-                          emptyLabel={table.emptyLabel}
-                        />
-                      ))}
-                    </div>
-                  ) : null}
-
-                  {statusParts.length > 0 ? (
-                    <div className="mt-3 space-y-2">
-                      {statusParts.map((statusPart, index) => (
-                        <ToolStatusBadge
-                          key={`${message.id}-status-${index}`}
-                          text={statusPart.text}
-                          tone={statusPart.tone}
-                        />
-                      ))}
+                  {hasSecondContent ? (
+                    <div className={mutationSuccessCards.length > 0 ? "mt-3" : undefined}>
+                      {secondContent}
                     </div>
                   ) : null}
                 </div>

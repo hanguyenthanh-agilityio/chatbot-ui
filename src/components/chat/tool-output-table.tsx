@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useMemo, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cn } from "@/utils/class-name";
 
 export type ToolOutputTableColumn = {
@@ -9,11 +9,20 @@ export type ToolOutputTableColumn = {
 };
 
 export type ToolOutputTableRow = Record<string, ReactNode>;
+export type ToolOutputTableAction = {
+  label: string;
+  prompt: string;
+  tone?: "neutral" | "success" | "danger";
+};
 
 type ToolOutputTableProps = {
   title: string;
   columns: ToolOutputTableColumn[];
   rows: ToolOutputTableRow[];
+  rowActions?: ToolOutputTableAction[][];
+  rowActionSummaries?: string[];
+  onActionClick?: (prompt: string) => void;
+  disableActions?: boolean;
   emptyLabel?: string;
 };
 
@@ -59,31 +68,83 @@ function getDesktopTemplateClass(columns: ToolOutputTableColumn[]) {
 function getGridGapClass(columns: ToolOutputTableColumn[]) {
   const keySignature = columns.map((column) => column.key).join("|");
 
-  if (keySignature === "employee|leaveType|dateRange|days|status") {
+  if (
+    keySignature === "employee|leaveType|dateRange|days|status" ||
+    keySignature === "employee|leaveType|dateRange|days|status|__actions"
+  ) {
     return "gap-x-5";
   }
 
-  if (keySignature === "leaveType|dateRange|days|status") {
+  if (
+    keySignature === "leaveType|dateRange|days|status" ||
+    keySignature === "leaveType|dateRange|days|status|__actions"
+  ) {
     return "gap-x-3";
   }
 
   return "gap-x-3";
 }
 
+const ACTION_TONE_CLASS: Record<
+  NonNullable<ToolOutputTableAction["tone"]>,
+  string
+> = {
+  neutral:
+    "border-white/20 bg-white/[.08] text-white/80 hover:border-white/30 hover:bg-white/[.14]",
+  success:
+    "border-emerald-400/35 bg-emerald-500/14 text-emerald-100 hover:border-emerald-300/45 hover:bg-emerald-500/24",
+  danger:
+    "border-rose-400/35 bg-rose-500/14 text-rose-100 hover:border-rose-300/45 hover:bg-rose-500/24",
+};
+
 export function ToolOutputTable({
   title,
   columns,
   rows,
+  rowActions,
+  rowActionSummaries,
+  onActionClick,
+  disableActions = false,
   emptyLabel = "No records found.",
 }: ToolOutputTableProps) {
   const recordCount = rows.length;
-  const desktopTemplateClass = getDesktopTemplateClass(columns);
+  const renderColumns = columns;
+  const actionableRowIndexes = useMemo(
+    () =>
+      (rowActions ?? [])
+        .map((actions, index) => (actions.length > 0 ? index : -1))
+        .filter((index) => index >= 0),
+    [rowActions],
+  );
+  const hasRowActions =
+    Boolean(onActionClick) && actionableRowIndexes.length > 0;
+  const [manualSelectedRowIndex, setManualSelectedRowIndex] = useState<number | null>(null);
+  const selectedRowIndex = hasRowActions
+    ? manualSelectedRowIndex !== null &&
+      actionableRowIndexes.includes(manualSelectedRowIndex)
+      ? manualSelectedRowIndex
+      : (actionableRowIndexes.at(-1) ?? null)
+    : null;
+
+  const desktopTemplateClass = getDesktopTemplateClass(renderColumns);
   const gridClassName = cn(
     "grid",
-    getGridGapClass(columns),
-    getGridClass(columns.length),
+    getGridGapClass(renderColumns),
+    getGridClass(renderColumns.length),
     desktopTemplateClass,
   );
+
+  function handleSelectableRowKeyDown(
+    event: KeyboardEvent<HTMLDivElement>,
+    rowIndex: number,
+  ) {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    setManualSelectedRowIndex(rowIndex);
+  }
 
   return (
     <section className="overflow-hidden rounded-2xl border border-white/12 bg-[linear-gradient(170deg,rgba(116,116,145,0.26),rgba(64,62,93,0.34))] backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.26)]">
@@ -118,38 +179,86 @@ export function ToolOutputTable({
               ))}
             </div>
 
-            {rows.map((row, rowIndex) => (
-              <div
-                key={`${title}-${rowIndex}`}
-                className={cn(
-                  "px-3 py-2.5",
-                  rowIndex > 0 && "border-t border-white/[.07]",
-                  rowIndex % 2 === 0 ? "bg-white/[.01]" : "bg-white/[.025]",
-                )}
-              >
-                <div className={cn(gridClassName, "items-center gap-y-1.5")}>
-                  {columns.map((column) => (
-                    <div
-                      key={`${rowIndex}-${column.key}`}
-                      className="min-w-0"
-                    >
-                      <p className="font-dm-sans text-[10px] uppercase tracking-[0.14em] text-white/45 sm:hidden">
-                        {column.label}
-                      </p>
-                      <div
-                        className={cn(
-                          "font-dm-sans text-[13px] leading-[1.35] text-white/88 break-words",
-                          getAlignClass(column.align),
-                          column.className,
-                        )}
-                      >
-                        {row[column.key] ?? "—"}
+            {rows.map((row, rowIndex) => {
+              const rowHasActions = (rowActions?.[rowIndex]?.length ?? 0) > 0;
+              const isSelected = hasRowActions && selectedRowIndex === rowIndex;
+              const rowSelectedActions = rowActions?.[rowIndex] ?? [];
+              const rowSummary =
+                rowActionSummaries?.[rowIndex] ?? `Record ${rowIndex + 1}`;
+
+              return (
+                <div key={`${title}-${rowIndex}`}>
+                  <div
+                    role={hasRowActions && rowHasActions ? "button" : undefined}
+                    tabIndex={hasRowActions && rowHasActions ? 0 : undefined}
+                    onClick={
+                      hasRowActions && rowHasActions
+                        ? () => setManualSelectedRowIndex(rowIndex)
+                        : undefined
+                    }
+                    onKeyDown={
+                      hasRowActions && rowHasActions
+                        ? (event) => handleSelectableRowKeyDown(event, rowIndex)
+                        : undefined
+                    }
+                    className={cn(
+                      "px-3 py-2.5",
+                      rowIndex > 0 && "border-t border-white/[.07]",
+                      rowIndex % 2 === 0 ? "bg-white/[.01]" : "bg-white/[.025]",
+                      hasRowActions && rowHasActions && "cursor-pointer transition hover:bg-white/[.05]",
+                      isSelected && "bg-violet-500/[.09] ring-1 ring-inset ring-violet-300/30",
+                    )}
+                  >
+                    <div className={cn(gridClassName, "items-center gap-y-1.5")}>
+                      {columns.map((column) => (
+                        <div key={`${rowIndex}-${column.key}`} className="min-w-0">
+                          <p className="font-dm-sans text-[10px] uppercase tracking-[0.14em] text-white/45 sm:hidden">
+                            {column.label}
+                          </p>
+                          <div
+                            className={cn(
+                              "font-dm-sans text-[13px] leading-[1.35] text-white/88 break-words",
+                              getAlignClass(column.align),
+                              column.className,
+                            )}
+                          >
+                            {row[column.key] ?? "—"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {isSelected && rowSelectedActions.length > 0 ? (
+                    <div className="border-t border-white/[.08] bg-violet-500/[.08] px-3 py-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="font-dm-sans text-[12px] text-white/72">
+                          <span className="text-white/55">Selected:</span>{" "}
+                          {rowSummary}
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {rowSelectedActions.map((action, actionIndex) => (
+                            <button
+                              key={`${title}-selected-action-${rowIndex}-${actionIndex}`}
+                              type="button"
+                              disabled={disableActions}
+                              onClick={() => onActionClick?.(action.prompt)}
+                              className={cn(
+                                "inline-flex h-7 items-center rounded-md border px-2.5 font-dm-sans text-[11px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+                                ACTION_TONE_CLASS[action.tone ?? "neutral"],
+                              )}
+                            >
+                              {action.label}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  ) : null}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="rounded-xl border border-white/[.08] bg-white/[.04] px-3 py-3 text-sm text-white/55">
