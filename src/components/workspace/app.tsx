@@ -2,7 +2,7 @@
 
 import {
   DefaultChatTransport,
-  lastAssistantMessageIsCompleteWithApprovalResponses,
+  isToolUIPart,
 } from "ai";
 import { useChat } from "@ai-sdk/react";
 import {
@@ -13,6 +13,7 @@ import {
   useSyncExternalStore,
   type FormEvent,
 } from "react";
+import type { ProviderRequestBody } from "@/types/provider";
 import { ProviderSelector } from "@/components/chat/provider-selector";
 import { ChatComposer } from "@/components/chat/composer";
 import { ChatTranscript } from "@/components/chat/transcript";
@@ -69,6 +70,7 @@ export function WorkspaceApp({ authRole = "user", authSessions }: WorkspaceAppPr
 function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
   const [input, setInput] = useState("");
   const [selectedRole, setSelectedRole] = useState<AppRole>(authRole ?? "user");
+  const autoSubmittedApprovalIdsRef = useRef<Set<string>>(new Set());
   const provider = useProviderSelection({
     requireOpenAIApiKeyVerification: true,
   });
@@ -83,6 +85,28 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     }),
     [authSession, selectedRole],
   );
+
+  // Refs that stay in sync with reactive values so the transport body function
+  // always reads the latest role and provider on every request, including
+  // auto-submitted ones triggered by sendAutomaticallyWhen.
+  const selectedRoleRef = useRef<AppRole>(selectedRole);
+  const providerRequestBodyRef = useRef<ProviderRequestBody>(provider.requestBody);
+  selectedRoleRef.current = selectedRole;
+  providerRequestBodyRef.current = provider.requestBody;
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: API_ROUTE_PATH.chat,
+        body: () => ({
+          ...providerRequestBodyRef.current,
+          authRole: selectedRoleRef.current,
+        }),
+      }),
+    [],
+  );
+
   const {
     messages,
     setMessages,
@@ -92,10 +116,36 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     error,
     clearError,
   } = useChat({
-    transport: new DefaultChatTransport({
-      api: API_ROUTE_PATH.chat,
-    }),
-    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithApprovalResponses,
+    transport,
+    sendAutomaticallyWhen: ({ messages }) => {
+      const lastMessage = messages.at(-1);
+
+      if (!lastMessage || lastMessage.role !== "assistant") {
+        return false;
+      }
+
+      const approvalResponses = lastMessage.parts
+        .filter((part) => isToolUIPart(part) && part.state === "approval-responded")
+        .map((part) => part.approval.id);
+
+      if (approvalResponses.length === 0) {
+        return false;
+      }
+
+      const hasNewApprovalResponse = approvalResponses.some(
+        (id) => !autoSubmittedApprovalIdsRef.current.has(id),
+      );
+
+      if (!hasNewApprovalResponse) {
+        return false;
+      }
+
+      approvalResponses.forEach((id) => {
+        autoSubmittedApprovalIdsRef.current.add(id);
+      });
+
+      return true;
+    },
   });
   const { activeThread, clearThread } = useChatThreads({
     messages,
@@ -202,6 +252,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     clearError();
     setInput("");
     setMessages([]);
+    autoSubmittedApprovalIdsRef.current.clear();
     setSelectedRole(role);
   }
 
@@ -209,6 +260,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     clearError();
     setInput("");
     clearThread();
+    autoSubmittedApprovalIdsRef.current.clear();
   }
 
   const helperText = useMemo(() => {
