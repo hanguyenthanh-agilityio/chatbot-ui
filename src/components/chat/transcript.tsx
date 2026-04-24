@@ -1535,14 +1535,14 @@ export function ChatTranscript({
             const successCardContent = mutationSuccessCards.map((card) => (
               <div
                 key={card.key}
-                className="overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/[.06]"
+                className="w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/[.06]"
               >
-                <div className="border-b border-emerald-400/20 bg-emerald-500/[.08] px-4 py-2.5">
+                <div className="border-b border-emerald-400/20 bg-emerald-500/[.08] px-4 py-2">
                   <p className="font-dm-sans text-sm font-semibold text-emerald-100">
                     {card.title}
                   </p>
                 </div>
-                <div className="space-y-2.5 px-4 py-3">
+                <div className="flex items-center justify-between gap-4 px-4 py-2.5">
                   <div className="flex items-center gap-2.5">
                     <Avatar
                       variant="user"
@@ -1563,7 +1563,7 @@ export function ChatTranscript({
                       ) : null}
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                  <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
                     <Badge variant="success" className="px-2.5 py-0.5 text-xs">
                       {card.leaveTypeLabel}
                     </Badge>
@@ -1577,12 +1577,14 @@ export function ChatTranscript({
                       {formatStatus(card.rawStatus)}
                     </Badge>
                   </div>
-                  {card.reviewComment ? (
+                </div>
+                {card.reviewComment ? (
+                  <div className="border-t border-emerald-400/15 px-4 py-2">
                     <p className="font-dm-sans text-xs text-emerald-100/65">
                       Comment: {card.reviewComment}
                     </p>
-                  ) : null}
-                </div>
+                  </div>
+                ) : null}
               </div>
             ));
 
