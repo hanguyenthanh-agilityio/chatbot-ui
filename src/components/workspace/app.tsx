@@ -87,16 +87,25 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     [authSession, selectedRole],
   );
 
+  const chatRequestBodyRef = useRef({
+    ...provider.requestBody,
+    authRole: selectedRole,
+  });
+  chatRequestBodyRef.current = {
+    ...provider.requestBody,
+    authRole: selectedRole,
+  };
+
+  // Transport is created once. Body reads from a ref so auto-submissions
+  // (sendAutomaticallyWhen) always use the current role, not a stale closure.
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: API_ROUTE_PATH.chat,
-        body: () => ({
-          ...provider.requestBody,
-          authRole: selectedRole,
-        }),
+        body: () => chatRequestBodyRef.current,
       }),
-    [provider.requestBody, selectedRole],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const {
