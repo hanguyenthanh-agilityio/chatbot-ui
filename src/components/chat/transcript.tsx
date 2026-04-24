@@ -46,6 +46,8 @@ const TOOL_STATUS_TONE_CLASS: Record<"success" | "error" | "neutral", string> = 
 const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {
   get_my_time_off_balance: "My leave balance",
   list_my_time_off_requests: "My time-off requests",
+  list_employees: "All employees",
+  list_team_members: "Team members",
   list_team_time_off_requests: "Team time-off requests",
   submit_my_time_off_request: "Submit time-off request",
   cancel_my_time_off_request: "Cancel time-off request",
@@ -365,28 +367,40 @@ function getSelfRequestRowActions(request: UnknownRecord): ToolOutputTableAction
 
 function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
   const status = normalizeRequestStatus(request.status);
-  if (status !== "pending") {
-    return [];
-  }
-
   const requestQuery = buildRequestQueryText(request);
 
-  return [
-    {
-      label: "Approve",
-      prompt: requestQuery
-        ? `Approve this pending team request: ${requestQuery}. Comment: Approved.`
-        : "Please approve the selected pending team request. Ask me for missing request details before continuing.",
-      tone: "success",
-    },
-    {
-      label: "Reject",
-      prompt: requestQuery
-        ? `Reject this pending team request: ${requestQuery}.`
-        : "Please reject the selected pending team request. Ask me for a short rejection reason and any missing request details before continuing.",
-      tone: "danger",
-    },
-  ];
+  if (status === "pending") {
+    return [
+      {
+        label: "Approve",
+        prompt: requestQuery
+          ? `Approve this pending team request: ${requestQuery}. Comment: Approved.`
+          : "Please approve the selected pending team request. Ask me for missing request details before continuing.",
+        tone: "success",
+      },
+      {
+        label: "Reject",
+        prompt: requestQuery
+          ? `Reject this pending team request: ${requestQuery}.`
+          : "Please reject the selected pending team request. Ask me for a short rejection reason and any missing request details before continuing.",
+        tone: "danger",
+      },
+    ];
+  }
+
+  if (status === "approved") {
+    return [
+      {
+        label: "Reject",
+        prompt: requestQuery
+          ? `Reject this approved team request: ${requestQuery}.`
+          : "Please reject the selected approved team request. Ask me for a short rejection reason and any missing request details before continuing.",
+        tone: "danger",
+      },
+    ];
+  }
+
+  return [];
 }
 
 function getBalanceRowActions(balance: UnknownRecord): ToolOutputTableAction[] {
@@ -402,6 +416,64 @@ function getBalanceRowActions(balance: UnknownRecord): ToolOutputTableAction[] {
       tone: "success",
     },
   ];
+}
+
+function getMemberRowActions(member: UnknownRecord): ToolOutputTableAction[] {
+  const employeeName = asOptionalString(member.employeeName)?.trim();
+  if (!employeeName) return [];
+
+  return [
+    {
+      label: "View pending",
+      prompt: `Show ${employeeName}'s pending time-off requests.`,
+      tone: "neutral",
+    },
+    {
+      label: "View all",
+      prompt: `Show all time-off requests for ${employeeName}.`,
+      tone: "neutral",
+    },
+  ];
+}
+
+function getMemberRowSummary(member: UnknownRecord) {
+  return asOptionalString(member.employeeName)?.trim() ?? "";
+}
+
+function buildMembersTableModel(params: {
+  id: string;
+  title: string;
+  memberRows: UnknownRecord[];
+  emptyLabel: string;
+}): ToolOutputTableModel | null {
+  const { memberRows } = params;
+
+  const columns: ToolOutputTableColumn[] = [
+    { key: "employee", label: "Employee", className: "sm:pr-4" },
+    { key: "pendingCount", label: "Pending", align: "center", className: "font-semibold tabular-nums" },
+    { key: "upcomingCount", label: "Upcoming", align: "center", className: "font-semibold tabular-nums" },
+    { key: "totalCount", label: "Total", align: "center", className: "font-semibold tabular-nums" },
+  ];
+
+  const rows = memberRows.map((member) => ({
+    employee: renderEmployeeCell(member),
+    pendingCount: asNumber(member.pendingCount, "0"),
+    upcomingCount: asNumber(member.upcomingCount, "0"),
+    totalCount: asNumber(member.totalCount, "0"),
+  }));
+
+  const rowActions = memberRows.map((member) => getMemberRowActions(member));
+  const rowActionSummaries = memberRows.map((member) => getMemberRowSummary(member));
+
+  return {
+    id: params.id,
+    title: params.title,
+    columns,
+    rows,
+    rowActions,
+    rowActionSummaries,
+    emptyLabel: params.emptyLabel,
+  };
 }
 
 function getRequestRowActionBuilder(toolName: string | null) {
@@ -1025,6 +1097,26 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
   }
 
   switch (toolName) {
+    case "list_employees": {
+      const table = buildMembersTableModel({
+        id: "all-employees",
+        title: "Project members",
+        memberRows: asRecordArray(output.employees),
+        emptyLabel: "No employees found.",
+      });
+      return table ? [table] : dynamicTables;
+    }
+
+    case "list_team_members": {
+      const table = buildMembersTableModel({
+        id: "team-members",
+        title: "Team members",
+        memberRows: asRecordArray(output.members),
+        emptyLabel: "No team members found.",
+      });
+      return table ? [table] : dynamicTables;
+    }
+
     case "list_my_time_off_requests": {
       const requests = getRequestTableModel({
         id: "my-time-off-requests",
@@ -1491,7 +1583,9 @@ export function ChatTranscript({
               .find((step): step is string => Boolean(step));
             const thinkingLabel = currentToolStep ?? "Thinking";
             const shouldDeferOutputTables = !isUser && isLastMessage && isLoading;
-            const visibleOutputTables = shouldDeferOutputTables ? [] : outputTables;
+            const visibleOutputTables = shouldDeferOutputTables
+              ? []
+              : outputTables.filter((table) => table.rows.length > 0);
             const embedOutputTablesInBubble = !isUser && visibleOutputTables.length > 0;
             const tableIds = visibleOutputTables.map((table) => table.id);
             const useTableLeadInLayout =
@@ -1540,7 +1634,7 @@ export function ChatTranscript({
             const successCardContent = mutationSuccessCards.map((card) => (
               <div
                 key={card.key}
-                className="w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/[.06]"
+                className="w-fit max-w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/[.06]"
               >
                 <div className="border-b border-emerald-400/20 bg-emerald-500/[.08] px-4 py-2">
                   <p className="font-dm-sans text-sm font-semibold text-emerald-100">
@@ -1578,9 +1672,6 @@ export function ChatTranscript({
                     <span className="font-dm-sans text-xs text-emerald-100/80">
                       {card.days} {card.days === 1 ? "day" : "days"}
                     </span>
-                    <Badge variant="success" className="px-2.5 py-0.5 text-xs">
-                      {formatStatus(card.rawStatus)}
-                    </Badge>
                   </div>
                 </div>
                 {card.reviewComment ? (
