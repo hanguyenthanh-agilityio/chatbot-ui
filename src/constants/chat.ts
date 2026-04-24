@@ -45,15 +45,6 @@ export const QUICK_ACTIONS_BY_ROLE: Record<AppRole, QuickAction[]> = {
       label: "Review pending",
       prompt: "List my pending and upcoming time-off requests first.",
     },
-    {
-      label: "Draft annual leave",
-      prompt:
-        "I want annual leave from 2026-05-04 to 2026-05-05 for a family trip. Please review my balance and upcoming requests first.",
-    },
-    {
-      label: "Review before cancel",
-      prompt: "Show my cancellable requests first so I can choose one to cancel.",
-    },
   ],
   manager: [
     {
