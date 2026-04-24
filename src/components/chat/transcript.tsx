@@ -9,9 +9,10 @@ import {
   type ToolOutputTableColumn,
   type ToolOutputTableRow,
 } from "@/components/chat/tool-output-table";
-import { ToolStatusBadge } from "@/components/chat/tool-status-badge";
 import { ChatEmptyState } from "@/components/chat/empty-state";
-import { UserAvatar } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
 import type { MessageMetadata } from "@/agents/chat-core";
 import type { QuickAction } from "@/types/chat";
@@ -34,6 +35,12 @@ function getToolParts(message: UIMessage) {
     ).values(),
   );
 }
+
+const TOOL_STATUS_TONE_CLASS: Record<"success" | "error" | "neutral", string> = {
+  error:   "border border-rose-400/28 bg-rose-500/12 text-rose-200 font-dm-sans shadow-[0_8px_20px_rgba(90,12,36,0.24)]",
+  success: "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 font-dm-sans shadow-[0_8px_20px_rgba(8,70,42,0.22)]",
+  neutral: "border border-white/10 bg-white/[.07] text-white/72 font-dm-sans shadow-[0_8px_20px_rgba(7,12,30,0.2)]",
+};
 
 const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {
   get_my_time_off_balance: "My leave balance",
@@ -293,11 +300,7 @@ function formatStatus(status: string) {
 }
 
 function renderLeaveTypeChip(label: string) {
-  return (
-    <span className="inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-0.5 text-xs font-medium text-cyan-100">
-      {label}
-    </span>
-  );
+  return <Badge variant="info" className="px-2.5 py-0.5 text-xs">{label}</Badge>;
 }
 
 function compactLeaveTypeLabel(label: string) {
@@ -311,21 +314,19 @@ function renderStatusChip(status: string) {
   if (!status) return "—";
 
   const normalizedStatus = status.toLowerCase();
-  const statusClass =
+  const statusVariant =
     normalizedStatus === "approved"
-      ? "border-emerald-400/30 bg-emerald-500/15 text-emerald-200"
+      ? "success"
       : normalizedStatus === "pending"
-        ? "border-amber-300/35 bg-amber-500/15 text-amber-100"
+        ? "warning"
         : normalizedStatus === "rejected"
-          ? "border-rose-400/35 bg-rose-500/15 text-rose-100"
-          : "border-white/20 bg-white/10 text-white/75";
+          ? "danger"
+          : "neutral";
 
   return (
-    <span
-      className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusClass}`}
-    >
+    <Badge variant={statusVariant} className="px-2.5 py-0.5 text-xs">
       {formatStatus(status)}
-    </span>
+    </Badge>
   );
 }
 
@@ -338,7 +339,8 @@ function renderEmployeeCell(request: UnknownRecord) {
 
   return (
     <div className="flex min-w-0 items-center gap-2.5">
-      <UserAvatar
+      <Avatar
+        variant="user"
         src={employeeAvatar}
         alt={`${employeeName} avatar`}
         initials={getInitialsFromName(employeeName)}
@@ -1612,7 +1614,8 @@ export function ChatTranscript({
                 </div>
                 <div className="space-y-2.5 px-4 py-3">
                   <div className="flex items-center gap-2.5">
-                    <UserAvatar
+                    <Avatar
+                      variant="user"
                       src={card.employeeAvatar ?? getAvatarUrl(card.employeeName)}
                       alt={`${card.employeeName} avatar`}
                       initials={getInitialsFromName(card.employeeName)}
@@ -1631,18 +1634,18 @@ export function ChatTranscript({
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                    <span className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2.5 py-0.5 font-dm-sans text-xs font-medium text-emerald-100">
+                    <Badge variant="success" className="px-2.5 py-0.5 text-xs">
                       {card.leaveTypeLabel}
-                    </span>
+                    </Badge>
                     <span className="font-dm-sans text-xs text-emerald-100/80">
                       {card.dateRange}
                     </span>
                     <span className="font-dm-sans text-xs text-emerald-100/80">
                       {card.days} {card.days === 1 ? "day" : "days"}
                     </span>
-                    <span className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-500/15 px-2.5 py-0.5 font-dm-sans text-xs font-medium text-emerald-100">
+                    <Badge variant="success" className="px-2.5 py-0.5 text-xs">
                       {formatStatus(card.rawStatus)}
-                    </span>
+                    </Badge>
                   </div>
                   {card.reviewComment ? (
                     <p className="font-dm-sans text-xs text-emerald-100/65">
@@ -1753,11 +1756,12 @@ export function ChatTranscript({
                 {statusParts.length > 0 ? (
                   <div className="mt-3 space-y-2">
                     {statusParts.map((statusPart, index) => (
-                      <ToolStatusBadge
+                      <Card
                         key={`${message.id}-status-${index}`}
-                        text={statusPart.text}
-                        tone={statusPart.tone}
-                      />
+                        className={`px-4 py-3 text-sm leading-relaxed ${TOOL_STATUS_TONE_CLASS[statusPart.tone]}`}
+                      >
+                        {statusPart.text}
+                      </Card>
                     ))}
                   </div>
                 ) : null}
