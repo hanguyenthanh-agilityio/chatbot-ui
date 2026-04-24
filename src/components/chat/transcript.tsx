@@ -301,11 +301,16 @@ function buildRequestQueryText(request: UnknownRecord) {
     asString(request.leaveTypeLabel, asString(request.leaveType, "")),
   );
 
+  const startDate = asOptionalString(request.startDate)?.trim();
+  const endDate = asOptionalString(request.endDate)?.trim();
+  const datePart = startDate && endDate && startDate !== endDate
+    ? `${startDate} ${endDate}`
+    : startDate || endDate || null;
+
   const parts = [
     asOptionalString(request.employeeName)?.trim(),
     leaveType && leaveType !== "—" ? leaveType : null,
-    asOptionalString(request.startDate)?.trim(),
-    asOptionalString(request.endDate)?.trim(),
+    datePart,
   ].filter((part): part is string => Boolean(part));
 
   return parts.join(" ").trim();

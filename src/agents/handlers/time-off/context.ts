@@ -269,7 +269,12 @@ export function filterRequestsByQuery(
   const normalizedQuery = query?.trim() ? normalizeValue(query) : null;
   if (!normalizedQuery) return requests;
 
-  const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+  const STOP_WORDS = new Set(["to", "from", "a", "an", "the", "and", "or", "on", "at", "in"]);
+  const tokens = normalizedQuery
+    .split(/\s+/)
+    .filter((t) => Boolean(t) && !STOP_WORDS.has(t));
+
+  if (tokens.length === 0) return requests;
 
   return requests.filter((request) => {
     const employee = getEmployeeOrThrow(employees, request.employeeId);
