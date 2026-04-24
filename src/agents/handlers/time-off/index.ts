@@ -32,6 +32,7 @@ import {
   parseIsoDateToUtcDay,
   utcDayToIsoDate,
 } from "@/agents/handlers/common/date";
+import { notifyTimeOffApproved } from "@/services/slack";
 
 type TeamRequestListInput = {
   status?: RequestStatus | "all" | "upcoming";
@@ -287,6 +288,11 @@ async function reviewTeamTimeOffRequest(
 
   const persistedRequests = await replaceTimeOffRequests(nextRequests);
   const nextCtx = withRequests(ctx, persistedRequests);
+
+  if (input.nextStatus === "approved" && updatedRequest) {
+    const formatted = formatRequest(ctx.employees, updatedRequest);
+    void notifyTimeOffApproved(formatted.employeeName, formatted.startDate, formatted.endDate);
+  }
 
   return {
     ok: true,
