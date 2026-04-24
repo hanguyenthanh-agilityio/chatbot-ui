@@ -172,10 +172,11 @@
       "startDate": "2026-05-12",
       "endDate": "2026-05-13",
       "days": 2,
-      "status": "pending",
+      "status": "approved",
       "reason": "Family wedding",
       "createdAt": "2026-04-18T03:10:00.000Z",
-      "updatedAt": "2026-04-18T03:10:00.000Z"
+      "updatedAt": "2026-04-24T10:28:27.581Z",
+      "reviewComment": "Approved"
     },
     {
       "id": "REQ-3006",
