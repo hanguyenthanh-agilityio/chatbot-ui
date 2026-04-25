@@ -45,6 +45,10 @@ export const QUICK_ACTIONS_BY_ROLE: Record<AppRole, QuickAction[]> = {
       label: "Review pending",
       prompt: "List my pending and upcoming time-off requests first.",
     },
+    {
+      label: "All requests",
+      prompt: "Show all my time-off requests.",
+    },
   ],
   manager: [
     {
