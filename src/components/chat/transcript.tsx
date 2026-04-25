@@ -40,7 +40,7 @@ function getToolParts(message: UIMessage) {
 const TOOL_STATUS_TONE_CLASS: Record<"success" | "error" | "neutral", string> = {
   error:   "border border-rose-400/28 bg-rose-500/12 text-rose-200 font-dm-sans shadow-[0_8px_20px_rgba(90,12,36,0.24)]",
   success: "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 font-dm-sans shadow-[0_8px_20px_rgba(8,70,42,0.22)]",
-  neutral: "border border-white/10 bg-white/[.07] text-white/72 font-dm-sans shadow-[0_8px_20px_rgba(7,12,30,0.2)]",
+  neutral: "border border-white/10 bg-white/7 text-white/72 font-dm-sans shadow-[0_8px_20px_rgba(7,12,30,0.2)]",
 };
 
 const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {
@@ -344,17 +344,42 @@ function getBalanceRowSummary(balance: UnknownRecord) {
     : leaveType;
 }
 
+function isFutureOrTodayDate(dateStr: unknown): boolean {
+  if (typeof dateStr !== "string" || !dateStr.trim()) return false;
+  const start = parseIsoDateUtc(dateStr.trim());
+  if (!start) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return start >= today;
+}
+
+function buildSelfCancelPrompt(request: UnknownRecord): string {
+  const leaveType = compactLeaveTypeLabel(
+    asString(request.leaveTypeLabel, asString(request.leaveType, "")),
+  );
+  const startDate = asOptionalString(request.startDate)?.trim() ?? "";
+  const endDate = asOptionalString(request.endDate)?.trim() ?? "";
+  const dateRange = formatHumanDateRange(startDate, endDate);
+
+  if (leaveType && leaveType !== "—" && dateRange) {
+    return `I'd like to cancel my ${leaveType} leave ${dateRange}.`;
+  }
+  return "";
+}
+
 function getSelfRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
   const status = normalizeRequestStatus(request.status);
 
-  if (!status || status === "cancelled" || status === "rejected") {
+  if (status !== "approved" && status !== "pending") {
     return [];
   }
 
-  const requestQuery = buildRequestQueryText(request);
-  const prompt = requestQuery
-    ? `Cancel this time-off request: ${requestQuery}.`
-    : "I want to cancel one of my requests. Please list cancellable requests and ask me to choose one request clearly.";
+  if (!isFutureOrTodayDate(request.startDate)) {
+    return [];
+  }
+
+  const prompt = buildSelfCancelPrompt(request)
+    || "I want to cancel one of my requests. Could you list my cancellable requests so I can choose one?";
 
   return [
     {
@@ -422,18 +447,24 @@ function getMemberRowActions(member: UnknownRecord): ToolOutputTableAction[] {
   const employeeName = asOptionalString(member.employeeName)?.trim();
   if (!employeeName) return [];
 
-  return [
-    {
+  const pendingCount = typeof member.pendingCount === "number" ? member.pendingCount : 0;
+  const actions: ToolOutputTableAction[] = [];
+
+  if (pendingCount > 0) {
+    actions.push({
       label: "View pending",
       prompt: `Show ${employeeName}'s pending time-off requests.`,
       tone: "neutral",
-    },
-    {
-      label: "View all",
-      prompt: `Show all time-off requests for ${employeeName}.`,
-      tone: "neutral",
-    },
-  ];
+    });
+  }
+
+  actions.push({
+    label: "View all",
+    prompt: `Show all time-off requests for ${employeeName}.`,
+    tone: "neutral",
+  });
+
+  return actions;
 }
 
 function getMemberRowSummary(member: UnknownRecord) {
@@ -451,14 +482,16 @@ function buildMembersTableModel(params: {
   const columns: ToolOutputTableColumn[] = [
     { key: "employee", label: "Employee", className: "sm:pr-4" },
     { key: "pendingCount", label: "Pending", align: "center", className: "font-semibold tabular-nums" },
-    { key: "upcomingCount", label: "Upcoming", align: "center", className: "font-semibold tabular-nums" },
+    { key: "approvedCount", label: "Approved", align: "center", className: "font-semibold tabular-nums" },
+    { key: "cancelledCount", label: "Cancelled", align: "center", className: "font-semibold tabular-nums" },
     { key: "totalCount", label: "Total", align: "center", className: "font-semibold tabular-nums" },
   ];
 
   const rows = memberRows.map((member) => ({
     employee: renderEmployeeCell(member),
     pendingCount: asNumber(member.pendingCount, "0"),
-    upcomingCount: asNumber(member.upcomingCount, "0"),
+    approvedCount: asNumber(member.approvedCount, "0"),
+    cancelledCount: asNumber(member.cancelledCount, "0"),
     totalCount: asNumber(member.totalCount, "0"),
   }));
 
@@ -1165,8 +1198,7 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
       return tables.length > 0 ? tables : dynamicTables;
     }
 
-    case "submit_my_time_off_request":
-    case "cancel_my_time_off_request": {
+    case "submit_my_time_off_request": {
       const balance = asRecord(output.balance);
       if (!balance) return dynamicTables;
 
@@ -1191,6 +1223,21 @@ function getToolOutputTables(part: UIMessage["parts"][number]) {
       ].filter((table): table is ToolOutputTableModel => table !== null);
 
       return tables.length > 0 ? tables : dynamicTables;
+    }
+
+    case "cancel_my_time_off_request": {
+      const requests = asRecord(output.requests);
+      if (!requests) return dynamicTables;
+
+      const table = getRequestTableModel({
+        id: "my-time-off-requests",
+        title: "My time-off requests",
+        payload: requests,
+        showEmployee: false,
+        getRowActions: getSelfRequestRowActions,
+        emptyLabel: "No time-off requests found.",
+      });
+      return table ? [table] : dynamicTables;
     }
 
     case "approve_team_time_off_request":
@@ -1634,9 +1681,9 @@ export function ChatTranscript({
             const successCardContent = mutationSuccessCards.map((card) => (
               <div
                 key={card.key}
-                className="w-fit max-w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/[.06]"
+                className="w-fit max-w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/6"
               >
-                <div className="border-b border-emerald-400/20 bg-emerald-500/[.08] px-4 py-2">
+                <div className="border-b border-emerald-400/20 bg-emerald-500/8 px-4 py-2">
                   <p className="font-dm-sans text-sm font-semibold text-emerald-100">
                     {card.title}
                   </p>

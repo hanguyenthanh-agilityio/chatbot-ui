@@ -322,15 +322,8 @@ export async function listTeamMembers(session: MockAuthSession) {
   const members = session.managedEmployees.map((e) => {
     const employeeRequests = teamRequests.filter((r) => r.employeeId === e.employeeId);
     const pendingCount = employeeRequests.filter((r) => r.status === "pending").length;
-    const upcomingCount = employeeRequests.filter((r) => {
-      const startDay = parseIsoDateToUtcDay(r.startDate);
-      return (
-        r.status !== "cancelled" &&
-        r.status !== "rejected" &&
-        Number.isFinite(startDay) &&
-        startDay >= todayDay
-      );
-    }).length;
+    const approvedCount = employeeRequests.filter((r) => r.status === "approved").length;
+    const cancelledCount = employeeRequests.filter((r) => r.status === "cancelled" || r.status === "rejected").length;
 
     return {
       employeeId: e.employeeId,
@@ -338,7 +331,8 @@ export async function listTeamMembers(session: MockAuthSession) {
       employeeAvatar: e.avatar,
       team: e.team,
       pendingCount,
-      upcomingCount,
+      approvedCount,
+      cancelledCount,
       totalCount: employeeRequests.length,
     };
   });
@@ -358,22 +352,14 @@ export async function listTeamMembers(session: MockAuthSession) {
  */
 export async function listAllEmployees(session: MockAuthSession) {
   const ctx = await loadContext();
-  const todayDay = parseIsoDateToUtcDay(getTodayIsoDate(session.timeZone));
 
   const projectEmployees = ctx.employees.filter((e) => e.team === session.team);
 
   const employees = projectEmployees.map((e) => {
     const employeeRequests = ctx.requests.filter((r) => r.employeeId === e.employeeId);
     const pendingCount = employeeRequests.filter((r) => r.status === "pending").length;
-    const upcomingCount = employeeRequests.filter((r) => {
-      const startDay = parseIsoDateToUtcDay(r.startDate);
-      return (
-        r.status !== "cancelled" &&
-        r.status !== "rejected" &&
-        Number.isFinite(startDay) &&
-        startDay >= todayDay
-      );
-    }).length;
+    const approvedCount = employeeRequests.filter((r) => r.status === "approved").length;
+    const cancelledCount = employeeRequests.filter((r) => r.status === "cancelled" || r.status === "rejected").length;
 
     return {
       employeeId: e.employeeId,
@@ -381,7 +367,8 @@ export async function listAllEmployees(session: MockAuthSession) {
       employeeAvatar: e.avatar,
       team: e.team,
       pendingCount,
-      upcomingCount,
+      approvedCount,
+      cancelledCount,
       totalCount: employeeRequests.length,
     };
   });
@@ -583,7 +570,7 @@ export async function cancelMyTimeOffRequest(
   return {
     ok: true,
     request: cancelledRequest ? formatRequest(ctx.employees, cancelledRequest) : null,
-    balance: buildMyTimeOffBalancePayload(session, nextCtx),
+    requests: buildMyTimeOffRequestsPayload(session, nextCtx, { status: "all" }),
   };
 }
 
