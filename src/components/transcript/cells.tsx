@@ -127,7 +127,7 @@ export function getSelfRequestRowActions(request: UnknownRecord): ToolOutputTabl
 export function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
   const status = normalizeRequestStatus(request.status);
 
-  if (!isFutureOrTodayDate(request.startDate)) return [];
+  const isFuture = isFutureOrTodayDate(request.startDate);
 
   if (status === "pending") {
     return [
@@ -145,6 +145,8 @@ export function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTabl
       },
     ];
   }
+
+  if (!isFuture) return [];
 
   if (status === "approved") {
     return [
