@@ -217,7 +217,10 @@ function buildTeamTimeOffRequestsPayload(
       return request.status === status;
     })
     .sort(compareByStartDate)
-    .map((request) => formatRequest(ctx.employees, request));
+    .map((request) => {
+      const { employeeId, ...rest } = formatRequest(ctx.employees, request);
+      return rest;
+    });
 
   return {
     ok: true,

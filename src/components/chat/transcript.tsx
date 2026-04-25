@@ -427,6 +427,18 @@ function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction
     ];
   }
 
+  if (status === "rejected") {
+    return [
+      {
+        label: "Approve",
+        prompt: requestQuery
+          ? `Approve this rejected team request: ${requestQuery}. Comment: Approved.`
+          : "Please approve the selected rejected team request. Ask me for missing request details before continuing.",
+        tone: "success",
+      },
+    ];
+  }
+
   return [];
 }
 
@@ -455,14 +467,14 @@ function getMemberRowActions(member: UnknownRecord): ToolOutputTableAction[] {
   if (pendingCount > 0) {
     actions.push({
       label: "View pending",
-      prompt: `Show ${employeeName}'s pending time-off requests.`,
+      prompt: `List pending time-off requests. employeeQuery: "${employeeName}", status: pending.`,
       tone: "neutral",
     });
   }
 
   actions.push({
     label: "View all",
-    prompt: `Show all time-off requests for ${employeeName}.`,
+    prompt: `List all time-off requests. employeeQuery: "${employeeName}", status: all.`,
     tone: "neutral",
   });
 
@@ -967,6 +979,7 @@ function getGenericTableModel(params: {
 
   const excludedKeys = new Set<string>();
   if (includeEmployeeColumn) {
+    excludedKeys.add("employeeId");
     excludedKeys.add("employeeName");
     excludedKeys.add("employeeAvatar");
     excludedKeys.add("team");
