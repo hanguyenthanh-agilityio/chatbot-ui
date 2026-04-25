@@ -3,12 +3,12 @@
     {
       "teamId": "TEAM-ID-1",
       "name": "Flash",
-      "id": "loWqZV4w-yQ"
+      "id": "qb6L3T44UXs"
     },
     {
       "teamId": "TEAM-ID-2",
       "name": "Space",
-      "id": "cQIMWgsEsGw"
+      "id": "7CNXGv-cRxg"
     }
   ],
   "employees": [
@@ -20,7 +20,7 @@
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
       "timeZone": "Asia/Ho_Chi_Minh",
-      "id": "MvmxjiYGQCU"
+      "id": "0Hndw8wANdE"
     },
     {
       "employeeId": "EMP-1006",
@@ -30,7 +30,7 @@
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1010",
       "timeZone": "Asia/Ho_Chi_Minh",
-      "id": "hmmSWelPQk8"
+      "id": "TtqYwRT3nHU"
     },
     {
       "employeeId": "EMP-1007",
@@ -40,7 +40,7 @@
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
       "timeZone": "Asia/Ho_Chi_Minh",
-      "id": "5I6k3yyiFSQ"
+      "id": "bKHTe2m1nws"
     },
     {
       "employeeId": "EMP-1008",
@@ -50,17 +50,17 @@
       "teamId": "TEAM-ID-1",
       "managerEmployeeId": "EMP-1006",
       "timeZone": "Asia/Ho_Chi_Minh",
-      "id": "QQilkyMI5Mc"
+      "id": "5VAyLcCe7zw"
     },
     {
       "employeeId": "EMP-1010",
-      "name": "Tho Pham",
-      "email": "tho.pham@asnet.com.vn",
-      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=tho.pham%40asnet.com.vn",
+      "name": "Avery Ross",
+      "email": "avery.ross@asnet.com.vn",
+      "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=avery.ross%40asnet.com.vn",
       "teamId": "TEAM-ID-2",
       "managerEmployeeId": null,
       "timeZone": "Asia/Ho_Chi_Minh",
-      "id": "nV3npsh6IcA"
+      "id": "oW4RsGFJDbA"
     }
   ],
   "leave-entitlements": [
@@ -69,47 +69,47 @@
       "annual": 14,
       "sick": 5,
       "personal": 2,
-      "id": "w4eTj1yGt0U"
+      "id": "5QZ95MKjY5g"
     },
     {
       "employeeId": "EMP-1006",
       "annual": 16,
       "sick": 5,
       "personal": 3,
-      "id": "VqjQVPgpUkk"
+      "id": "m84qfT_1ahY"
     },
     {
       "employeeId": "EMP-1007",
       "annual": 12,
       "sick": 4,
       "personal": 2,
-      "id": "PbvqIrpERHs"
+      "id": "g7AEPNlKfPw"
     },
     {
       "employeeId": "EMP-1008",
       "annual": 13,
       "sick": 5,
       "personal": 2,
-      "id": "aeQxeHM-_Eo"
+      "id": "nxM9z0yr6Jg"
     },
     {
       "employeeId": "EMP-1010",
       "annual": 18,
       "sick": 6,
       "personal": 3,
-      "id": "jV7DxJZJNbQ"
+      "id": "A69HY7IT7Qo"
     }
   ],
   "role-profiles": [
     {
       "role": "user",
       "employeeId": "EMP-1001",
-      "id": "4UA8pbav3fc"
+      "id": "KP2jMZUyhSQ"
     },
     {
       "role": "manager",
       "employeeId": "EMP-1006",
-      "id": "_eNxvkZl9-w"
+      "id": "Pv9Amazn7K8"
     }
   ],
   "time-off-requests": [
@@ -120,11 +120,11 @@
       "startDate": "2026-05-08",
       "endDate": "2026-05-09",
       "days": 2,
-      "status": "cancelled",
+      "status": "approved",
       "reason": "Family trip",
       "reviewComment": "Approved. Enjoy your trip.",
       "createdAt": "2026-04-01T08:15:00.000Z",
-      "updatedAt": "2026-04-25T11:26:59.688Z"
+      "updatedAt": "2026-04-02T03:10:00.000Z"
     },
     {
       "id": "REQ-3002",
@@ -146,11 +146,10 @@
       "startDate": "2026-06-15",
       "endDate": "2026-06-16",
       "days": 2,
-      "status": "cancelled",
+      "status": "pending",
       "reason": "Beach vacation",
       "createdAt": "2026-04-16T01:00:00.000Z",
-      "updatedAt": "2026-04-25T11:23:22.640Z",
-      "reviewComment": "Approved."
+      "updatedAt": "2026-04-16T01:00:00.000Z"
     },
     {
       "id": "REQ-3004",
@@ -159,11 +158,11 @@
       "startDate": "2026-05-27",
       "endDate": "2026-05-27",
       "days": 1,
-      "status": "cancelled",
+      "status": "approved",
       "reason": "Family appointment",
       "reviewComment": "Approved.",
       "createdAt": "2026-04-14T02:10:00.000Z",
-      "updatedAt": "2026-04-25T11:18:28.827Z"
+      "updatedAt": "2026-04-14T05:30:00.000Z"
     },
     {
       "id": "REQ-3005",
@@ -172,11 +171,10 @@
       "startDate": "2026-05-12",
       "endDate": "2026-05-13",
       "days": 2,
-      "status": "approved",
+      "status": "pending",
       "reason": "Family wedding",
       "createdAt": "2026-04-18T03:10:00.000Z",
-      "updatedAt": "2026-04-24T10:28:27.581Z",
-      "reviewComment": "Approved"
+      "updatedAt": "2026-04-18T03:10:00.000Z"
     },
     {
       "id": "REQ-3006",
@@ -185,11 +183,10 @@
       "startDate": "2026-04-24",
       "endDate": "2026-04-24",
       "days": 1,
-      "status": "approved",
+      "status": "pending",
       "reason": "Apartment paperwork",
       "createdAt": "2026-04-19T06:30:00.000Z",
-      "updatedAt": "2026-04-24T09:30:53.210Z",
-      "reviewComment": "Approved."
+      "updatedAt": "2026-04-19T06:30:00.000Z"
     },
     {
       "id": "REQ-3007",
@@ -211,11 +208,11 @@
       "startDate": "2026-05-20",
       "endDate": "2026-05-21",
       "days": 2,
-      "status": "rejected",
+      "status": "approved",
       "reason": "Long weekend with friends",
-      "reviewComment": "Rejected because the sprint release window is too tight.",
+      "reviewComment": "Approved",
       "createdAt": "2026-04-11T02:00:00.000Z",
-      "updatedAt": "2026-04-11T09:00:00.000Z"
+      "updatedAt": "2026-04-25T15:17:20.762Z"
     }
   ],
   "updatedAt": "2026-04-22T08:49:39.560Z",
