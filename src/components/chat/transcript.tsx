@@ -390,9 +390,26 @@ function getSelfRequestRowActions(request: UnknownRecord): ToolOutputTableAction
   ];
 }
 
+function buildTeamActionPrompt(
+  request: UnknownRecord,
+  action: "approve" | "reject",
+): string {
+  const name = asOptionalString(request.employeeName)?.trim() ?? "";
+  const leaveType = compactLeaveTypeLabel(
+    asString(request.leaveTypeLabel, asString(request.leaveType, "")),
+  );
+  const startDate = asOptionalString(request.startDate)?.trim() ?? "";
+  const endDate = asOptionalString(request.endDate)?.trim() ?? "";
+  const dateRange = formatHumanDateRange(startDate, endDate);
+  if (!name || !leaveType || leaveType === "—" || !dateRange) return "";
+  if (action === "approve") {
+    return `Approve ${name}'s ${leaveType} leave ${dateRange}. Comment: Approved.`;
+  }
+  return `Reject ${name}'s ${leaveType} leave ${dateRange}. Reason: Not approved.`;
+}
+
 function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
   const status = normalizeRequestStatus(request.status);
-  const requestQuery = buildRequestQueryText(request);
 
   if (!isFutureOrTodayDate(request.startDate)) return [];
 
@@ -400,16 +417,14 @@ function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction
     return [
       {
         label: "Approve",
-        prompt: requestQuery
-          ? `Approve this pending team request: ${requestQuery}. Comment: Approved.`
-          : "Please approve the selected pending team request. Ask me for missing request details before continuing.",
+        prompt: buildTeamActionPrompt(request, "approve") ||
+          "Please approve the selected pending team request.",
         tone: "success",
       },
       {
         label: "Reject",
-        prompt: requestQuery
-          ? `Reject this pending team request: ${requestQuery}.`
-          : "Please reject the selected pending team request. Ask me for a short rejection reason and any missing request details before continuing.",
+        prompt: buildTeamActionPrompt(request, "reject") ||
+          "Please reject the selected pending team request.",
         tone: "danger",
       },
     ];
@@ -419,9 +434,8 @@ function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction
     return [
       {
         label: "Reject",
-        prompt: requestQuery
-          ? `Reject this approved team request: ${requestQuery}.`
-          : "Please reject the selected approved team request. Ask me for a short rejection reason and any missing request details before continuing.",
+        prompt: buildTeamActionPrompt(request, "reject") ||
+          "Please reject the selected approved team request.",
         tone: "danger",
       },
     ];
@@ -431,9 +445,8 @@ function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction
     return [
       {
         label: "Approve",
-        prompt: requestQuery
-          ? `Approve this rejected team request: ${requestQuery}. Comment: Approved.`
-          : "Please approve the selected rejected team request. Ask me for missing request details before continuing.",
+        prompt: buildTeamActionPrompt(request, "approve") ||
+          "Please approve the selected rejected team request.",
         tone: "success",
       },
     ];
@@ -467,14 +480,14 @@ function getMemberRowActions(member: UnknownRecord): ToolOutputTableAction[] {
   if (pendingCount > 0) {
     actions.push({
       label: "View pending",
-      prompt: `List pending time-off requests. employeeQuery: "${employeeName}", status: pending.`,
+      prompt: `Show ${employeeName}'s pending time-off requests.`,
       tone: "neutral",
     });
   }
 
   actions.push({
     label: "View all",
-    prompt: `List all time-off requests. employeeQuery: "${employeeName}", status: all.`,
+    prompt: `Show all time-off requests for ${employeeName}.`,
     tone: "neutral",
   });
 
