@@ -88,7 +88,10 @@ function requireManagerRole(session: MockAuthSession) {
  * @param {TimeOffRequest[]} requests
  * @returns {TimeOffContext}
  */
-function withRequests(ctx: TimeOffContext, requests: TimeOffRequest[]): TimeOffContext {
+function withRequests(
+  ctx: TimeOffContext,
+  requests: TimeOffRequest[],
+): TimeOffContext {
   return { ...ctx, requests };
 }
 
@@ -96,12 +99,9 @@ function normalizeInlineWhitespace(value: string) {
   return value.replace(/\s+/g, " ").trim();
 }
 
-function parseMutationRequestInput(
-  requestQuery: string,
-  comment?: string,
-) {
+function parseMutationRequestInput(requestQuery: string, comment?: string) {
   const extractedCommentMatch = requestQuery.match(
-    /\b(?:use\s+)?comment\s*:\s*["“]?([^"”\n]+?)["”]?(?=$|[.?!])/i,
+    /\b(?:use\s+)?(?:comment|reason)\s*:\s*[""]?([^””\n]+?)[""]?(?=$|[.?!])/i,
   );
   const extractedComment = extractedCommentMatch?.[1]?.trim();
 
@@ -119,18 +119,21 @@ function parseMutationRequestInput(
 
   normalizedQuery = normalizedQuery
     .replace(
-      /\b(?:use\s+)?comment\s*:\s*["“]?([^"”\n]+?)["”]?(?=$|[.?!])/gi,
+      /\b(?:use\s+)?(?:comment|reason)\s*:\s*[“""]?([^”""\n]+?)[“""]?(?=$|[.?!])/gi,
       "",
     )
     .replace(
-      /^\s*(?:please\s+)?(?:approve|reject)\s+(?:this\s+)?(?:pending\s+)?(?:team\s+)?request\s*:?\s*/i,
+      /^\s*(?:please\s+)?(?:approve|reject)\s+(?:this\s+)?(?:(?:pending|approved|rejected)\s+)?(?:team\s+)?request\s*:?\s*/i,
       "",
     )
     .replace(/^\s*request\s*:?\s*/i, "");
 
   const sanitizedQuery = normalizeInlineWhitespace(normalizedQuery);
   const resolvedComment =
-    comment?.trim() || (extractedComment ? normalizeInlineWhitespace(extractedComment) : undefined);
+    comment?.trim() ||
+    (extractedComment
+      ? normalizeInlineWhitespace(extractedComment)
+      : undefined);
 
   return {
     requestQuery: sanitizedQuery || normalizeInlineWhitespace(requestQuery),
@@ -244,7 +247,10 @@ async function reviewTeamTimeOffRequest(
   ctx: TimeOffContext,
   input: ReviewTeamRequestInput,
 ) {
-  const parsedInput = parseMutationRequestInput(input.requestQuery, input.comment);
+  const parsedInput = parseMutationRequestInput(
+    input.requestQuery,
+    input.comment,
+  );
   const query = parsedInput.requestQuery;
   const comment = parsedInput.comment;
 
@@ -264,14 +270,22 @@ async function reviewTeamTimeOffRequest(
     };
   }
 
-  const allowedStatuses: ("pending" | "approved")[] =
-    input.nextStatus === "rejected" ? ["pending", "approved"] : ["pending"];
-  const matches = findTeamRequestsMatchingQuery(ctx, session, query, allowedStatuses);
+  const allowedStatuses: ("pending" | "approved" | "rejected")[] =
+    input.nextStatus === "rejected"
+      ? ["pending", "approved"]
+      : ["pending", "rejected"];
+  const matches = findTeamRequestsMatchingQuery(
+    ctx,
+    session,
+    query,
+    allowedStatuses,
+  );
   if (matches.length === 0) {
     return {
       ok: false,
       code: "NOT_FOUND",
-      message: "I couldn't find a pending team request that matches that description.",
+      message:
+        "I couldn't find a pending team request that matches that description.",
     };
   }
 
@@ -279,7 +293,8 @@ async function reviewTeamTimeOffRequest(
     return {
       ok: false,
       code: "AMBIGUOUS_REQUEST",
-      message: "I found more than one matching pending team request. Please be more specific.",
+      message:
+        "I found more than one matching pending team request. Please be more specific.",
       matches: matches.map((request) => toRequestMatch(ctx.employees, request)),
     };
   }
@@ -296,14 +311,25 @@ async function reviewTeamTimeOffRequest(
 
   if (input.nextStatus === "approved" && updatedRequest) {
     const formatted = formatRequest(ctx.employees, updatedRequest);
-    void notifyTimeOffApproved(formatted.employeeName, formatted.startDate, formatted.endDate);
+    void notifyTimeOffApproved(
+      formatted.employeeName,
+      formatted.startDate,
+      formatted.endDate,
+    );
   }
+
+  const reviewedEmployee = ctx.employees.find(
+    (e) => e.employeeId === matches[0].employeeId,
+  );
 
   return {
     ok: true,
-    request: updatedRequest ? formatRequest(ctx.employees, updatedRequest) : null,
+    request: updatedRequest
+      ? formatRequest(ctx.employees, updatedRequest)
+      : null,
     teamRequests: buildTeamTimeOffRequestsPayload(session, nextCtx, {
-      status: "pending",
+      status: "all",
+      employeeQuery: reviewedEmployee?.name,
     }),
   };
 }
@@ -320,16 +346,22 @@ export async function listTeamMembers(session: MockAuthSession) {
 
   const ctx = await loadContext();
   const teamRequests = getTeamRequestsForManager(ctx.requests, session);
-  const todayDay = parseIsoDateToUtcDay(getTodayIsoDate(session.timeZone));
 
   const members = session.managedEmployees.map((e) => {
-    const employeeRequests = teamRequests.filter((r) => r.employeeId === e.employeeId);
-    const pendingCount = employeeRequests.filter((r) => r.status === "pending").length;
-    const approvedCount = employeeRequests.filter((r) => r.status === "approved").length;
-    const cancelledCount = employeeRequests.filter((r) => r.status === "cancelled" || r.status === "rejected").length;
+    const employeeRequests = teamRequests.filter(
+      (r) => r.employeeId === e.employeeId,
+    );
+    const pendingCount = employeeRequests.filter(
+      (r) => r.status === "pending",
+    ).length;
+    const approvedCount = employeeRequests.filter(
+      (r) => r.status === "approved",
+    ).length;
+    const cancelledCount = employeeRequests.filter(
+      (r) => r.status === "cancelled" || r.status === "rejected",
+    ).length;
 
     return {
-      employeeId: e.employeeId,
       employeeName: e.name,
       employeeAvatar: e.avatar,
       team: e.team,
@@ -359,13 +391,20 @@ export async function listAllEmployees(session: MockAuthSession) {
   const projectEmployees = ctx.employees.filter((e) => e.team === session.team);
 
   const employees = projectEmployees.map((e) => {
-    const employeeRequests = ctx.requests.filter((r) => r.employeeId === e.employeeId);
-    const pendingCount = employeeRequests.filter((r) => r.status === "pending").length;
-    const approvedCount = employeeRequests.filter((r) => r.status === "approved").length;
-    const cancelledCount = employeeRequests.filter((r) => r.status === "cancelled" || r.status === "rejected").length;
+    const employeeRequests = ctx.requests.filter(
+      (r) => r.employeeId === e.employeeId,
+    );
+    const pendingCount = employeeRequests.filter(
+      (r) => r.status === "pending",
+    ).length;
+    const approvedCount = employeeRequests.filter(
+      (r) => r.status === "approved",
+    ).length;
+    const cancelledCount = employeeRequests.filter(
+      (r) => r.status === "cancelled" || r.status === "rejected",
+    ).length;
 
     return {
-      employeeId: e.employeeId,
       employeeName: e.name,
       employeeAvatar: e.avatar,
       team: e.team,
@@ -460,7 +499,8 @@ export async function submitMyTimeOffRequest(
     return {
       ok: false,
       code: "OVERLAP",
-      message: "This request overlaps with an existing non-cancelled time-off request.",
+      message:
+        "This request overlaps with an existing non-cancelled time-off request.",
       conflictingRequests: overlappingRequests,
     };
   }
@@ -532,7 +572,8 @@ export async function cancelMyTimeOffRequest(
     return {
       ok: false,
       code: "NOT_FOUND",
-      message: "I couldn't find a cancellable request that matches that description.",
+      message:
+        "I couldn't find a cancellable request that matches that description.",
     };
   }
 
@@ -540,7 +581,8 @@ export async function cancelMyTimeOffRequest(
     return {
       ok: false,
       code: "AMBIGUOUS_REQUEST",
-      message: "I found more than one matching request. Please choose one request more specifically.",
+      message:
+        "I found more than one matching request. Please choose one request more specifically.",
       matches: matches.map((request) => toRequestMatch(ctx.employees, request)),
     };
   }
@@ -553,7 +595,8 @@ export async function cancelMyTimeOffRequest(
     return {
       ok: false,
       code: "ALREADY_STARTED",
-      message: "That approved request has already started, so it can't be cancelled here.",
+      message:
+        "That approved request has already started, so it can't be cancelled here.",
     };
   }
 
@@ -568,12 +611,18 @@ export async function cancelMyTimeOffRequest(
   );
   const persistedRequests = await replaceTimeOffRequests(nextRequests);
   const nextCtx = withRequests(ctx, persistedRequests);
-  const cancelledRequest = persistedRequests.find((item) => item.id === request.id);
+  const cancelledRequest = persistedRequests.find(
+    (item) => item.id === request.id,
+  );
 
   return {
     ok: true,
-    request: cancelledRequest ? formatRequest(ctx.employees, cancelledRequest) : null,
-    requests: buildMyTimeOffRequestsPayload(session, nextCtx, { status: "all" }),
+    request: cancelledRequest
+      ? formatRequest(ctx.employees, cancelledRequest)
+      : null,
+    requests: buildMyTimeOffRequestsPayload(session, nextCtx, {
+      status: "all",
+    }),
   };
 }
 
