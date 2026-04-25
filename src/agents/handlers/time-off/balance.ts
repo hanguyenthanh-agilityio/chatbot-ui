@@ -1,16 +1,18 @@
 import type { MockAuthSession } from "@/lib/auth/session";
 import type { EmployeeRecord, TimeOffRequest } from "@/lib/db/schema";
 import {
-  compareByStartDate,
   formatRequest,
   getEmployeeOrThrow,
   getEmployeeSummary,
-  getOpenRequestsForEmployee,
-  getRequestsForEmployee,
   loadContext,
   type BalanceRow,
   type TimeOffContext,
 } from "./context";
+import {
+  compareByStartDate,
+  getOpenRequestsForEmployee,
+  getRequestsForEmployee,
+} from "./queries";
 import { getTodayIsoDate } from "@/agents/handlers/common/date";
 
 /**
