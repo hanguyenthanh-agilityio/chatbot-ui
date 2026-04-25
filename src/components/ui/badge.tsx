@@ -2,8 +2,8 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/utils/class-name";
 
 const BADGE_VARIANT_CLASSES = {
-  neutral: "border-white/[.2] bg-white/[.08] text-white/80",
-  subtle: "border-white/[.16] bg-white/[.05] text-white/62",
+  neutral: "border-white/20 bg-white/8 text-white/80",
+  subtle: "border-white/16 bg-white/5 text-white/62",
   brand: "border-violet-400/35 bg-violet-500/16 text-violet-200",
   info: "border-cyan-400/30 bg-cyan-500/14 text-cyan-100",
   success: "border-emerald-400/35 bg-emerald-500/15 text-emerald-100",

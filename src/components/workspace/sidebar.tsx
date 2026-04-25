@@ -40,8 +40,8 @@ export function ThreadSidebar({
   onDeleteThread,
 }: ThreadSidebarProps) {
   return (
-    <aside className="flex w-full flex-col rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] text-white backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm">
-      <div className="border-b border-white/[.08] p-5">
+    <aside className="flex w-full flex-col rounded-[1.75rem] border border-white/9 bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] text-white backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm">
+      <div className="border-b border-white/8 p-5">
         <div className="space-y-1">
           <Text as="p" variant="eyebrow">
             {SIDEBAR_COPY.eyebrow}
@@ -55,9 +55,9 @@ export function ThreadSidebar({
         </div>
       </div>
 
-      <div className="border-b border-white/[.08] p-5">{accountPanel}</div>
+      <div className="border-b border-white/8 p-5">{accountPanel}</div>
 
-      <div className="border-b border-white/[.08] p-5">{providerPanel}</div>
+      <div className="border-b border-white/8 p-5">{providerPanel}</div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
         <div className="mb-3 px-2">
@@ -68,7 +68,7 @@ export function ThreadSidebar({
 
         <Card
           variant="soft"
-          className="group border-white/[.1] bg-white/[.06] shadow-[0_8px_26px_rgba(8,12,30,0.22)] transition hover:border-white/[.16] hover:bg-white/[.09]"
+          className="group border-white/10 bg-white/6 shadow-[0_8px_26px_rgba(8,12,30,0.22)] transition hover:border-white/16 hover:bg-white/9"
         >
           <div className="px-4 py-3">
             <div className="flex items-start justify-between gap-3">

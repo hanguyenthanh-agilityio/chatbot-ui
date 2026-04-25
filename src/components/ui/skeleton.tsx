@@ -7,7 +7,7 @@ export function Skeleton({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-white/[.1]", className)}
+      className={cn("animate-pulse rounded-md bg-white/10", className)}
       {...props}
     />
   );
