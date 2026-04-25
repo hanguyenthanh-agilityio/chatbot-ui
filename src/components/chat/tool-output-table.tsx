@@ -92,7 +92,7 @@ const ACTION_TONE_CLASS: Record<
   string
 > = {
   neutral:
-    "border-white/22 bg-white/[.08] text-white/82 hover:border-white/34 hover:bg-white/[.14]",
+    "border-white/22 bg-white/8 text-white/82 hover:border-white/34 hover:bg-white/14",
   success:
     "border-emerald-400/36 bg-emerald-500/16 text-emerald-100 hover:border-emerald-300/46 hover:bg-emerald-500/24",
   danger:
@@ -153,8 +153,8 @@ export function ToolOutputTable({
       variant="glass"
       className="overflow-hidden border-white/12 bg-[linear-gradient(165deg,rgba(140,142,170,0.22),rgba(62,60,94,0.36))] shadow-[0_14px_34px_rgba(6,10,30,0.34)]"
     >
-      <div className="flex items-center justify-between gap-2 border-b border-white/[.10] px-3.5 py-2.5">
-        <p className="font-syne text-[11px] font-semibold uppercase tracking-[0.16em] text-white/78">
+      <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3.5 py-2.5">
+        <p className="font-syne text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-white/78">
           {title}
         </p>
         <Badge variant="subtle" size="sm">
@@ -163,10 +163,10 @@ export function ToolOutputTable({
       </div>
       <div className="p-2.5">
         {rows.length > 0 ? (
-          <div className="overflow-hidden rounded-xl border border-white/[.09] bg-[#1c1b38]/60">
+          <div className="overflow-hidden rounded-xl border border-white/9 bg-[#1c1b38]/60">
             <div
               className={cn(
-                "hidden sm:grid items-center border-b border-white/[.08] bg-white/[.05] px-3 py-2",
+                "hidden sm:grid items-center border-b border-white/8 bg-white/5 px-3 py-2",
                 gridClassName,
               )}
             >
@@ -174,7 +174,7 @@ export function ToolOutputTable({
                 <p
                   key={`${title}-header-${column.key}`}
                   className={cn(
-                    "font-dm-sans text-[10px] uppercase tracking-[0.14em] text-white/45",
+                    "font-dm-sans text-[0.625rem] uppercase tracking-[0.14em] text-white/45",
                     getAlignClass(column.align),
                   )}
                 >
@@ -207,21 +207,21 @@ export function ToolOutputTable({
                     }
                     className={cn(
                       "px-3 py-2.5",
-                      rowIndex > 0 && "border-t border-white/[.07]",
-                      rowIndex % 2 === 0 ? "bg-white/[.015]" : "bg-white/[.035]",
-                      hasRowActions && rowHasActions && "cursor-pointer transition hover:bg-white/[.05]",
-                      isSelected && "bg-violet-500/[.11] ring-1 ring-inset ring-violet-300/30",
+                      rowIndex > 0 && "border-t border-white/7",
+                      rowIndex % 2 === 0 ? "bg-white/[1.5]" : "bg-white/[3.5]",
+                      hasRowActions && rowHasActions && "cursor-pointer transition hover:bg-white/5",
+                      isSelected && "bg-violet-500/11 ring-1 ring-inset ring-violet-300/30",
                     )}
                   >
                     <div className={cn(gridClassName, "items-center gap-y-1.5")}>
                       {columns.map((column) => (
                         <div key={`${rowIndex}-${column.key}`} className="min-w-0">
-                          <p className="font-dm-sans text-[10px] uppercase tracking-[0.14em] text-white/45 sm:hidden">
+                          <p className="font-dm-sans text-[0.625rem] uppercase tracking-[0.14em] text-white/45 sm:hidden">
                             {column.label}
                           </p>
                           <div
                             className={cn(
-                              "font-dm-sans text-[13px] leading-[1.35] text-white/90 break-words",
+                              "font-dm-sans text-[0.8125rem] leading-[1.35] text-white/90 break-words",
                               getAlignClass(column.align),
                               column.className,
                             )}
@@ -234,9 +234,9 @@ export function ToolOutputTable({
                   </div>
 
                   {isSelected && rowSelectedActions.length > 0 ? (
-                    <div className="border-t border-white/[.08] bg-violet-500/[.1] px-3 py-2.5">
+                    <div className="border-t border-white/8 bg-violet-500/10 px-3 py-2.5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="font-dm-sans text-[12px] text-white/75">
+                        <p className="font-dm-sans text-xs text-white/75">
                           <span className="text-white/58">Selected:</span>{" "}
                           {rowSummary}
                         </p>
@@ -249,7 +249,7 @@ export function ToolOutputTable({
                               disabled={disableActions}
                               onClick={() => onActionClick?.(action.prompt)}
                               className={cn(
-                                "inline-flex h-7 items-center rounded-md border px-2.5 font-dm-sans text-[11px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+                                "inline-flex h-7 items-center rounded-md border px-2.5 font-dm-sans text-[0.6875rem] font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                                 ACTION_TONE_CLASS[action.tone ?? "neutral"],
                               )}
                             >
@@ -265,7 +265,7 @@ export function ToolOutputTable({
             })}
           </div>
         ) : (
-          <div className="rounded-xl border border-white/[.08] bg-white/[.04] px-3 py-3 text-sm text-white/55">
+          <div className="rounded-xl border border-white/8 bg-white/4 px-3 py-3 text-sm text-white/55">
             {emptyLabel}
           </div>
         )}

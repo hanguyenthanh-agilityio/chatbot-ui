@@ -34,10 +34,10 @@ export function LoadingIndicator({
 
       <Card
         variant="glass"
-        className="w-[300px] max-w-full border-white/10 bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.05))] px-4 py-3.5 shadow-[0_10px_28px_rgba(7,12,30,0.28)]"
+        className="w-[18.75rem] max-w-full border-white/10 bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.05))] px-4 py-3.5 shadow-[0_10px_28px_rgba(7,12,30,0.28)]"
       >
         <div className="mb-2.5">
-          <span className="font-syne text-[14px] font-semibold tracking-wide text-white/82">
+          <span className="font-syne text-sm font-semibold tracking-wide text-white/82">
             {APP_NAME}
           </span>
         </div>
@@ -59,7 +59,7 @@ export function LoadingIndicator({
 
         <div className="flex flex-col gap-2">
           {SKELETON_WIDTHS.map((width, i) => (
-            <Skeleton key={i} className={`h-2.5 rounded-full bg-white/[.09] ${width}`} />
+            <Skeleton key={i} className={`h-2.5 rounded-full bg-white/9 ${width}`} />
           ))}
         </div>
       </Card>

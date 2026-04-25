@@ -58,8 +58,8 @@ export function WorkspaceApp({ authRole = "user", authSessions }: WorkspaceAppPr
     return (
       <main className="min-h-screen min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
         <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
-          <div className="h-[70vh] w-full rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px] lg:max-w-sm" />
-          <div className="h-[70vh] flex-1 rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px]" />
+          <div className="h-[70vh] w-full rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px] lg:max-w-sm" />
+          <div className="h-[70vh] flex-1 rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px]" />
         </div>
       </main>
     );
@@ -329,8 +329,8 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           onDeleteThread={handleDeleteChat}
         />
 
-        <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/[.09] bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]">
-          <header className="border-b border-white/[.08] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]">
+        <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]">
+          <header className="border-b border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]">
             <div className="mx-auto w-full max-w-3xl">
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <Text as="p" variant="eyebrow">
@@ -380,7 +380,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             helperText={helperText}
             errorMessage={requestError}
             onInputChange={setInput}
-            onSubmit={handleSubmit}
+            onSubmitAction={handleSubmit}
           />
         </section>
       </div>

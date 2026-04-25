@@ -31,7 +31,7 @@ export function ToolApprovalCard({
         <Button type="button" size="sm" variant="primary" onClick={onConfirm}>
           {confirmLabel}
         </Button>
-        <Button type="button" size="sm" variant="ghost" className="border border-white/[.12] font-dm-sans text-white/60 hover:bg-white/[.08]" onClick={onCancel}>
+        <Button type="button" size="sm" variant="ghost" className="border border-white/12 font-dm-sans text-white/60 hover:bg-white/8" onClick={onCancel}>
           {cancelLabel}
         </Button>
       </div>
