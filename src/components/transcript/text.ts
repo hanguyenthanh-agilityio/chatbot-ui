@@ -85,6 +85,16 @@ export type TableTextPlacement = {
   afterTables: string | null;
 };
 
+// Removes paragraphs that look like table lead-ins from text that appears
+// after tables — they are orphaned because no table follows them in the UI.
+function dropOrphanedLeadIns(text: string): string | null {
+  const filtered = splitParagraphs(text).filter(
+    (p) => !TABLE_LEAD_IN_PARAGRAPH_REGEX.test(p.trim()),
+  );
+  const result = filtered.join("\n\n").trim();
+  return result || null;
+}
+
 export function splitTextBeforeAndAfterTables(text: string): TableTextPlacement {
   if (!text.trim()) {
     return { beforeTables: "", afterTables: null };
@@ -106,7 +116,7 @@ export function splitTextBeforeAndAfterTables(text: string): TableTextPlacement 
   if (shouldPlaceAfterFirstParagraph) {
     return {
       beforeTables: firstParagraph,
-      afterTables: remainingParagraphs.join("\n\n"),
+      afterTables: dropOrphanedLeadIns(remainingParagraphs.join("\n\n")),
     };
   }
 
@@ -123,7 +133,7 @@ export function splitTextBeforeAndAfterTables(text: string): TableTextPlacement 
     const afterText = paragraphs.slice(lastLeadInIndex + 1).join("\n\n");
     return {
       beforeTables: paragraphs.slice(0, lastLeadInIndex + 1).join("\n\n"),
-      afterTables: afterText || null,
+      afterTables: dropOrphanedLeadIns(afterText),
     };
   }
 
