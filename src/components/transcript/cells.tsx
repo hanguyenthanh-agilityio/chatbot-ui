@@ -6,7 +6,6 @@ import type { ToolOutputTableAction } from "@/components/chat/tool-output-table"
 import {
   asString,
   asOptionalString,
-  asNumber,
   formatStatus,
   compactLeaveTypeLabel,
   normalizeRequestStatus,

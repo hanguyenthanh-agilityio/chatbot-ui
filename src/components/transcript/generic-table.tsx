@@ -9,7 +9,6 @@ import {
   hasRenderableColumnValue,
   isNumericColumn,
   formatGenericCellValue,
-  GENERIC_NUMERIC_COLUMN_KEY_REGEX,
   type UnknownRecord,
 } from "./utils";
 import {

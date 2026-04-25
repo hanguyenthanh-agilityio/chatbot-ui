@@ -7,6 +7,7 @@ import {
 import { useChat } from "@ai-sdk/react";
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -57,22 +58,25 @@ export function useWorkspaceApp(
     ...provider.requestBody,
     authRole: selectedRole,
   });
-  chatRequestBodyRef.current = {
-    ...provider.requestBody,
-    authRole: selectedRole,
-  };
+  useLayoutEffect(() => {
+    chatRequestBodyRef.current = {
+      ...provider.requestBody,
+      authRole: selectedRole,
+    };
+  });
 
   // Transport is created once. Body reads from a ref so auto-submissions
   // (sendAutomaticallyWhen) always use the current role, not a stale closure.
+  /* eslint-disable react-hooks/refs */
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: API_ROUTE_PATH.chat,
         body: () => chatRequestBodyRef.current,
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+  /* eslint-enable react-hooks/refs */
 
   const {
     messages,

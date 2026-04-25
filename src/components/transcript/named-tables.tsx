@@ -7,7 +7,6 @@ import { formatHumanDateRange } from "@/utils/date";
 import { leaveTypeLabel } from "@/utils/leave";
 import {
   asString,
-  asOptionalString,
   asNumber,
   asRecordArray,
   compactLeaveTypeLabel,

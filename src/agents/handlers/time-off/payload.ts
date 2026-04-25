@@ -96,6 +96,7 @@ export function buildTeamTimeOffRequestsPayload(
     })
     .sort(compareByStartDate)
     .map((request) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { employeeId, ...rest } = formatRequest(ctx.employees, request);
       return rest;
     });
