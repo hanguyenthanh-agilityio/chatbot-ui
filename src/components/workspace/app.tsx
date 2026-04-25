@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { ProviderSelector } from "@/components/chat/provider-selector";
 import { ChatComposer } from "@/components/chat/composer";
-import { ChatTranscript } from "@/components/chat/transcript";
+import { ChatTranscript } from "@/components/transcript";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { AuthPanel } from "@/components/workspace/auth-panel";

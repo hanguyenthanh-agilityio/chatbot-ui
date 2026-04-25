@@ -12,7 +12,7 @@ import {
   normalizeRequestStatus,
   isFutureOrTodayDate,
   type UnknownRecord,
-} from "./transcript-utils";
+} from "./utils";
 
 export function renderLeaveTypeChip(label: string) {
   return <Badge variant="info" className="px-2.5 py-0.5 text-xs">{label}</Badge>;

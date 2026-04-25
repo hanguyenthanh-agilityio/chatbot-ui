@@ -15,13 +15,13 @@ import {
   getBalanceRowSummary,
   getMemberRowSummary,
   type UnknownRecord,
-} from "./transcript-utils";
+} from "./utils";
 import {
   renderLeaveTypeChip,
   renderStatusChip,
   renderEmployeeCell,
   getMemberRowActions,
-} from "./transcript-cells";
+} from "./cells";
 
 export type ToolOutputTableModel = {
   id: string;

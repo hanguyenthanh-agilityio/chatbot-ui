@@ -5,26 +5,26 @@ import {
   asOptionalString,
   isBalanceLikeRecord,
   isRequestLikeRecord,
-} from "./transcript-utils";
-import { getToolName, getFriendlyToolLabelByName } from "./transcript-tool";
+} from "./utils";
+import { getToolName, getFriendlyToolLabelByName } from "./tool";
 import {
   getSelfRequestRowActions,
   getTeamRequestRowActions,
   getBalanceRowActions,
   getRequestRowActionBuilder,
-} from "./transcript-cells";
+} from "./cells";
 import {
   buildMembersTableModel,
   getRequestTableModel,
   getBalanceTableModel,
   type ToolOutputTableModel,
-} from "./transcript-named-tables";
+} from "./named-tables";
 import {
   collectRecordCollections,
   getCollectionId,
   getCollectionTitle,
   getGenericTableModel,
-} from "./transcript-generic-table";
+} from "./generic-table";
 
 function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
   const collections = collectRecordCollections(output);

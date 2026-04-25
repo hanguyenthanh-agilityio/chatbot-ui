@@ -13,7 +13,7 @@ import {
   asString,
   asOptionalString,
   compactLeaveTypeLabel,
-} from "./transcript-utils";
+} from "./utils";
 import { leaveTypeLabel } from "@/utils/leave";
 
 export const TOOL_STATUS_TONE_CLASS: Record<"success" | "error" | "neutral", string> = {

@@ -19,8 +19,8 @@ import {
   getAssistantInitials,
   TOOL_STATUS_TONE_CLASS,
   type MutationSuccessCard,
-} from "./transcript-tool";
-import { getToolOutputTables } from "./transcript-tool-output";
+} from "./tool";
+import { getToolOutputTables } from "./tool-output";
 import {
   stripRedundantStructuredListText,
   shouldUseTableLeadInLayout,
@@ -28,7 +28,7 @@ import {
   extractTableLeadInFollowUp,
   splitTextBeforeAndAfterTables,
   getTableLeadInText,
-} from "./transcript-text";
+} from "./text";
 type TableWithKey = ReturnType<typeof getToolOutputTables>[number] & { key: string };
 
 type SecondContentProps = {

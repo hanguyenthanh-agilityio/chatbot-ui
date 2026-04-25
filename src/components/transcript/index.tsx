@@ -4,7 +4,7 @@ import { LoadingIndicator } from "@/components/chat/loading-indicator";
 import { ChatEmptyState } from "@/components/chat/empty-state";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
 import type { QuickAction } from "@/types/chat";
-import { ChatMessage } from "./transcript-message";
+import { ChatMessage } from "./message";
 
 type ChatTranscriptProps = {
   containerRef: RefObject<HTMLDivElement | null>;

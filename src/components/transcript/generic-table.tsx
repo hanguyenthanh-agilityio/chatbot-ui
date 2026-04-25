@@ -11,14 +11,14 @@ import {
   formatGenericCellValue,
   GENERIC_NUMERIC_COLUMN_KEY_REGEX,
   type UnknownRecord,
-} from "./transcript-utils";
+} from "./utils";
 import {
   renderLeaveTypeChip,
   renderStatusChip,
   renderEmployeeCell,
-} from "./transcript-cells";
-import type { ToolOutputTableModel } from "./transcript-named-tables";
-import { getFriendlyToolLabelByName } from "./transcript-tool";
+} from "./cells";
+import type { ToolOutputTableModel } from "./named-tables";
+import { getFriendlyToolLabelByName } from "./tool";
 
 export type RecordCollection = {
   path: string[];
