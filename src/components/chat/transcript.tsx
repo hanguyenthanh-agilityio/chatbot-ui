@@ -394,6 +394,8 @@ function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction
   const status = normalizeRequestStatus(request.status);
   const requestQuery = buildRequestQueryText(request);
 
+  if (!isFutureOrTodayDate(request.startDate)) return [];
+
   if (status === "pending") {
     return [
       {
