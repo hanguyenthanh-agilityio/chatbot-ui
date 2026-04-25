@@ -120,11 +120,11 @@
       "startDate": "2026-05-08",
       "endDate": "2026-05-09",
       "days": 2,
-      "status": "approved",
+      "status": "cancelled",
       "reason": "Family trip",
       "reviewComment": "Approved. Enjoy your trip.",
       "createdAt": "2026-04-01T08:15:00.000Z",
-      "updatedAt": "2026-04-02T03:10:00.000Z"
+      "updatedAt": "2026-04-25T11:26:59.688Z"
     },
     {
       "id": "REQ-3002",
@@ -146,10 +146,10 @@
       "startDate": "2026-06-15",
       "endDate": "2026-06-16",
       "days": 2,
-      "status": "approved",
+      "status": "cancelled",
       "reason": "Beach vacation",
       "createdAt": "2026-04-16T01:00:00.000Z",
-      "updatedAt": "2026-04-24T09:31:29.596Z",
+      "updatedAt": "2026-04-25T11:23:22.640Z",
       "reviewComment": "Approved."
     },
     {
@@ -159,11 +159,11 @@
       "startDate": "2026-05-27",
       "endDate": "2026-05-27",
       "days": 1,
-      "status": "approved",
+      "status": "cancelled",
       "reason": "Family appointment",
       "reviewComment": "Approved.",
       "createdAt": "2026-04-14T02:10:00.000Z",
-      "updatedAt": "2026-04-14T05:30:00.000Z"
+      "updatedAt": "2026-04-25T11:18:28.827Z"
     },
     {
       "id": "REQ-3005",
