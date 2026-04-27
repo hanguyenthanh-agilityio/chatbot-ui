@@ -7,6 +7,10 @@ import {
 } from "@/agents/handlers/time-off";
 import { EMPLOYEE_TOOL_DESCRIPTION, EMPLOYEE_TOOL_NAME } from "../common/definitions";
 
+const leaveTypeSchema = z
+  .enum(["annual", "sick", "personal", "unpaid"])
+  .describe("Type of leave.");
+
 const OPTIONAL_STATUS_SCHEMA = z.preprocess(
   (value) => (value == null ? undefined : value),
   z
@@ -27,9 +31,13 @@ const OPTIONAL_QUERY_SCHEMA = z.preprocess(
 /**
  * Creates employee read tools.
  * @param {MockAuthSession} session
+ * @param {{ skipDatePicker?: boolean }} options
  */
-export function createEmployeeReadTools(session: MockAuthSession) {
-  return {
+export function createEmployeeReadTools(
+  session: MockAuthSession,
+  options?: { skipDatePicker?: boolean },
+) {
+  const base = {
     [EMPLOYEE_TOOL_NAME.GET_MY_TIME_OFF_BALANCE]: tool({
       description: EMPLOYEE_TOOL_DESCRIPTION.GET_MY_TIME_OFF_BALANCE,
       inputSchema: z.object({}),
@@ -46,6 +54,22 @@ export function createEmployeeReadTools(session: MockAuthSession) {
       }),
       execute: async ({ status, query }) =>
         listMyTimeOffRequests(session, { status, query }),
+    }),
+  };
+
+  if (options?.skipDatePicker) {
+    return base;
+  }
+
+  return {
+    ...base,
+    [EMPLOYEE_TOOL_NAME.COLLECT_DATE_RANGE]: tool({
+      description: EMPLOYEE_TOOL_DESCRIPTION.COLLECT_DATE_RANGE,
+      inputSchema: z.object({
+        leaveType: leaveTypeSchema,
+        reason: z.string().trim().min(1).describe("Short reason for the leave."),
+      }),
+      execute: async () => ({ ok: true }),
     }),
   };
 }
