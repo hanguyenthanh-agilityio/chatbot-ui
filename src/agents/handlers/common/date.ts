@@ -107,7 +107,57 @@ export function parseRelativeDateToUtcDay(value: string, timeZone: string): numb
     return todayDay + delta;
   }
 
+  const monthMap: Record<string, number> = {
+    january: 1, jan: 1,
+    february: 2, feb: 2,
+    march: 3, mar: 3,
+    april: 4, apr: 4,
+    may: 5,
+    june: 6, jun: 6,
+    july: 7, jul: 7,
+    august: 8, aug: 8,
+    september: 9, sep: 9, sept: 9,
+    october: 10, oct: 10,
+    november: 11, nov: 11,
+    december: 12, dec: 12,
+  };
+
+  // "April 30", "May 1", "April 30 2026", "April 30, 2026"
+  const monthDayMatch = normalized.match(/^([a-z]+)\s+(\d{1,2})(?:[,\s]+(\d{4}))?$/);
+  if (monthDayMatch) {
+    const monthNum = monthMap[monthDayMatch[1]];
+    const day = Number(monthDayMatch[2]);
+    const explicitYear = monthDayMatch[3] ? Number(monthDayMatch[3]) : null;
+
+    if (monthNum && day >= 1 && day <= 31) {
+      const todayYear = new Date(todayDay * MS_PER_DAY).getUTCFullYear();
+      let year = explicitYear ?? todayYear;
+
+      if (!explicitYear) {
+        const candidate = parseIsoDateToUtcDay(
+          `${year}-${String(monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+        );
+        if (Number.isFinite(candidate) && candidate < todayDay) year = todayYear + 1;
+      }
+
+      const iso = `${year}-${String(monthNum).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const result = parseIsoDateToUtcDay(iso);
+      if (Number.isFinite(result)) return result;
+    }
+  }
+
   return Number.NaN;
+}
+
+/**
+ * Strips time-of-day qualifiers (morning, afternoon, evening, midday, AM, PM, end of)
+ * so the remaining string can be parsed as a plain date.
+ */
+export function stripTimeOfDay(value: string): string {
+  return value
+    .replace(/\b(morning|afternoon|evening|midday|mid-day|end\s+of|am|pm)\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /**
@@ -120,7 +170,16 @@ export function parseDateInputToUtcDay(value: string, timeZone: string): number 
   const trimmed = value.trim();
   const absoluteDay = parseIsoDateToUtcDay(trimmed);
   if (Number.isFinite(absoluteDay)) return absoluteDay;
-  return parseRelativeDateToUtcDay(trimmed, timeZone);
+  const relative = parseRelativeDateToUtcDay(trimmed, timeZone);
+  if (Number.isFinite(relative)) return relative;
+  // Strip time-of-day qualifiers and retry (e.g. "morning of April 30", "afternoon today")
+  const stripped = stripTimeOfDay(trimmed).replace(/^of\s+/i, "");
+  if (stripped && stripped !== trimmed) {
+    const strippedAbsolute = parseIsoDateToUtcDay(stripped);
+    if (Number.isFinite(strippedAbsolute)) return strippedAbsolute;
+    return parseRelativeDateToUtcDay(stripped, timeZone);
+  }
+  return Number.NaN;
 }
 
 /**
