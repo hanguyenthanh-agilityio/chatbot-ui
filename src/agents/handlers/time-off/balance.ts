@@ -63,7 +63,6 @@ export function buildMyTimeOffBalancePayload(
   const upcomingRequests = getOpenRequestsForEmployee(ctx.requests, employee.employeeId)
     .filter((r) => r.startDate >= getTodayIsoDate(employee.timeZone))
     .sort(compareByStartDate)
-    .slice(0, 3)
     .map((r) => formatRequest(ctx.employees, r));
 
   return {

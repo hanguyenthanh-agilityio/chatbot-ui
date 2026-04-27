@@ -96,7 +96,11 @@ export async function streamAgent(input: StreamAgentInput) {
   };
 
   return result.toUIMessageStreamResponse({
-    onError: (error) => getErrorMessage(error),
+    onError: (error) => {
+      // Log full technical details server-side only — never send them to the client.
+      console.error("[agent:stream-error]", getErrorMessage(error));
+      return "";
+    },
     messageMetadata: ({ part }) =>
       part.type === "start" || part.type === "finish"
         ? messageMetadata
