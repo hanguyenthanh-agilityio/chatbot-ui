@@ -1,4 +1,5 @@
 import type { MockAuthSession } from "@/lib/auth/session";
+import { getTodayIsoDate } from "@/agents/handlers/common/date";
 import { EMPLOYEE_AGENT_SYSTEM_PROMPT } from "./system";
 
 /**
@@ -7,8 +8,10 @@ import { EMPLOYEE_AGENT_SYSTEM_PROMPT } from "./system";
  * @returns {string}
  */
 export function buildEmployeeConversationPrompt(session: MockAuthSession): string {
+  const today = getTodayIsoDate(session.timeZone);
   return `${EMPLOYEE_AGENT_SYSTEM_PROMPT}
 
+Today's date: ${today}
 Current access role: ${session.roleLabel}
 Current user:
 - name: ${session.name}
