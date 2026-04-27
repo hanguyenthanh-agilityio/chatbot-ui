@@ -232,6 +232,8 @@ export function extractTableLeadInFollowUp(text: string, renderedLeadIns: string
       (line) => !suppressedLines.has(normalizeComparableLine(line)),
     );
 
-  const nonHeadingLines = remainingLines.filter((line) => !line.endsWith(":"));
-  return nonHeadingLines.at(-1) ?? remainingLines.at(-1) ?? null;
+  const nonLeadInLines = remainingLines.filter(
+    (line) => !line.endsWith(":") && !TABLE_LEAD_IN_PARAGRAPH_REGEX.test(line),
+  );
+  return nonLeadInLines.at(-1) ?? null;
 }

@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { type UIMessage } from "ai";
 import { LoadingIndicator } from "@/components/chat/loading-indicator";
 import { MessageAvatar, MessageBubble } from "@/components/chat/message-bubble";
+import { DateRangePickerCard } from "@/components/chat/date-range-picker-card";
 import { ToolApprovalCard } from "@/components/chat/tool-approval-card";
 import { ToolOutputTable } from "@/components/chat/tool-output-table";
 import { Avatar } from "@/components/ui/avatar";
@@ -13,6 +14,8 @@ import {
   getToolParts,
   getToolStepText,
   isApprovalRequestedToolPart,
+  isDatePickerToolPart,
+  getDatePickerLeaveType,
   getApprovalCardContent,
   getToolStatusCopy,
   getMutationSuccessCard,
@@ -45,6 +48,7 @@ type SecondContentProps = {
   shouldShowThinkingSkeleton: boolean;
   thinkingLabel: string;
   approvalParts: Extract<UIMessage["parts"][number], { approval: { id: string } }>[];
+  datePickerParts: { key: string; leaveType: string }[];
   statusParts: { tone: "success" | "error" | "neutral"; text: string }[];
   onSelectPrompt: (prompt: string) => void;
   onToolApproval: (id: string, approved: boolean) => void;
@@ -53,8 +57,8 @@ type SecondContentProps = {
 function MessageSecondContent({
   message, isUser, isLoading, shouldRenderBubble, embedOutputTablesInBubble,
   text, visibleOutputTables, tableIds, useTableLeadInLayout, textPlacement,
-  shouldShowThinkingSkeleton, thinkingLabel, approvalParts, statusParts,
-  onSelectPrompt, onToolApproval,
+  shouldShowThinkingSkeleton, thinkingLabel, approvalParts, datePickerParts,
+  statusParts, onSelectPrompt, onToolApproval,
 }: SecondContentProps) {
   return (
     <>
@@ -101,6 +105,17 @@ function MessageSecondContent({
               />
             );
           })}
+        </div>
+      ) : null}
+      {datePickerParts.length > 0 ? (
+        <div className="mt-3 space-y-3">
+          {datePickerParts.map((part) => (
+            <DateRangePickerCard
+              key={part.key}
+              disabled={isLoading}
+              onSubmit={onSelectPrompt}
+            />
+          ))}
         </div>
       ) : null}
       {!embedOutputTablesInBubble && visibleOutputTables.length > 0 ? (
@@ -185,6 +200,14 @@ export function ChatMessage({
   const toolParts = getToolParts(message);
   const isUser = message.role === "user";
   const approvalParts = toolParts.filter(isApprovalRequestedToolPart);
+  const datePickerParts = isLastMessage && !isLoading
+    ? toolParts
+        .filter(isDatePickerToolPart)
+        .map((part, i) => ({
+          key: `${message.id}-datepicker-${i}`,
+          leaveType: getDatePickerLeaveType(part),
+        }))
+    : [];
   const outputTables = toolParts.flatMap((part, partIndex) =>
     getToolOutputTables(part).map((table) => ({
       ...table,
@@ -242,14 +265,15 @@ export function ChatMessage({
     shouldRenderBubble ||
     shouldShowThinkingSkeleton ||
     approvalParts.length > 0 ||
+    datePickerParts.length > 0 ||
     (!embedOutputTablesInBubble && visibleOutputTables.length > 0) ||
     statusParts.length > 0;
 
   const secondContentProps: SecondContentProps = {
     message, isUser, isLoading, shouldRenderBubble, embedOutputTablesInBubble,
     text, visibleOutputTables, tableIds, useTableLeadInLayout, textPlacement,
-    shouldShowThinkingSkeleton, thinkingLabel, approvalParts, statusParts,
-    onSelectPrompt, onToolApproval,
+    shouldShowThinkingSkeleton, thinkingLabel, approvalParts, datePickerParts,
+    statusParts, onSelectPrompt, onToolApproval,
   };
 
   // When a mutation success card exists alongside other content, render
@@ -287,6 +311,10 @@ export function ChatMessage({
           <div className={mutationSuccessCards.length > 0 ? "mt-3" : undefined}>
             <MessageSecondContent {...secondContentProps} />
           </div>
+        ) : (!isUser && !isLoading && isLastMessage && mutationSuccessCards.length === 0) ? (
+          <p className="font-dm-sans text-sm text-white/50">
+            Something went wrong. Please try again.
+          </p>
         ) : null}
       </div>
       {isUser ? (

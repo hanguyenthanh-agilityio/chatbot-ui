@@ -81,6 +81,20 @@ export function getToolStepText(part: UIMessage["parts"][number]) {
   }
 }
 
+export function isDatePickerToolPart(part: UIMessage["parts"][number]): boolean {
+  return (
+    isToolUIPart(part) &&
+    getToolName(part) === "collect_date_range" &&
+    part.state === "output-available"
+  );
+}
+
+export function getDatePickerLeaveType(part: UIMessage["parts"][number]): string {
+  if (!isToolUIPart(part)) return "";
+  const input = part.input as Record<string, unknown> | null;
+  return typeof input?.leaveType === "string" ? input.leaveType : "";
+}
+
 export function isApprovalRequestedToolPart(
   part: UIMessage["parts"][number],
 ): part is Extract<UIMessage["parts"][number], { approval: { id: string } }> {
@@ -158,10 +172,9 @@ export function getToolStatusCopy(part: UIMessage["parts"][number]) {
           : `${shortLabel} ${CHAT_TRANSCRIPT_COPY.toolStatus.cancelledSuffix}`,
       };
     case "output-error":
-      return {
-        tone: "error" as const,
-        text: part.errorText || `${shortLabel} ${CHAT_TRANSCRIPT_COPY.toolStatus.failedSuffix}`,
-      };
+      // Never surface raw errorText (may contain Zod/JSON validation details).
+      // The agent's text response already explains what went wrong to the user.
+      return null;
     case "output-denied":
       return {
         tone: "neutral" as const,
