@@ -1,6 +1,6 @@
 import type { UIMessage } from "ai";
 import type { MockAuthSession } from "@/lib/auth/session";
-import type { CoordinatorDecision } from "./types";
+import type { CoordinatorDecision } from "../types";
 import { getTextParts } from "@/utils/message";
 
 const MANAGER_INTENT_PATTERNS = [

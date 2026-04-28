@@ -10,18 +10,38 @@ import {
 import {
   buildConversationRuntimeContext,
   buildRuntimeSystemPrompt,
-} from "./prompt/builder";
-import { resolveAgentRunPolicy } from "./pipeline/policy";
+} from "../prompt/builder";
+import { resolveAgentRunPolicy } from "../observers/policy";
 import {
   buildTokenBreakdown,
   estimateToolExchangeTokens,
   extractToolNamesFromSteps,
   toTokenUsageSnapshot,
-} from "./pipeline/metrics";
-import { getAgentMetadata } from "./response";
-import type { AgentLogger, AgentName, MessageMetadata } from "./types";
+} from "../observers/metrics";
+import { getAgentMetadata } from "../utils/response";
+import type { AgentLogger, AgentName, MessageMetadata } from "../types";
 import type { AppRole } from "@/lib/auth/session";
 import { getErrorMessage } from "@/utils/error";
+
+const CONNECTION_ERROR_PATTERNS = [
+  "ECONNREFUSED",
+  "ENOTFOUND",
+  "ECONNRESET",
+  "fetch failed",
+  "Failed to fetch",
+  "Network request failed",
+  "network error",
+];
+
+function toClientErrorMessage(error: unknown): string {
+  const msg = getErrorMessage(error);
+  const isConnectionError = CONNECTION_ERROR_PATTERNS.some((p) =>
+    msg.toLowerCase().includes(p.toLowerCase()),
+  );
+  return isConnectionError
+    ? "Could not reach the AI provider. Make sure Ollama is running or your provider is configured correctly."
+    : "";
+}
 
 type AgentToolSet = NonNullable<Parameters<typeof streamText>[0]["tools"]>;
 type StreamAgentInput = {
@@ -97,9 +117,8 @@ export async function streamAgent(input: StreamAgentInput) {
 
   return result.toUIMessageStreamResponse({
     onError: (error) => {
-      // Log full technical details server-side only — never send them to the client.
       console.error("[agent:stream-error]", getErrorMessage(error));
-      return "";
+      return toClientErrorMessage(error);
     },
     messageMetadata: ({ part }) =>
       part.type === "start" || part.type === "finish"

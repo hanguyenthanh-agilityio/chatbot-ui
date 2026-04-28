@@ -1,21 +1,17 @@
 import { streamAgent } from "./streaming";
-import type { AgentName, AgentRunInput } from "./types";
+import type { AgentName, AgentRunInput } from "../types";
 
 type SpecialistAgentName = Exclude<AgentName, "coordinator">;
 type StreamAgentInput = Parameters<typeof streamAgent>[0];
 
-type RunSpecialistAgentInput = {
+type RunAgentInput = {
   agent: SpecialistAgentName;
   input: AgentRunInput;
   system: string;
   tools: StreamAgentInput["tools"];
 };
 
-/**
- * runSpecialistAgent helper.
- * @param {RunSpecialistAgentInput} input
- */
-export async function runSpecialistAgent(input: RunSpecialistAgentInput) {
+export async function runAgent(input: RunAgentInput) {
   return streamAgent({
     model: input.input.model,
     messages: input.input.messages,
