@@ -18,10 +18,14 @@ export type UseProviderSelectionResult = {
   providerStatus: string;
   isOpenAISelected: boolean;
   isOpenAIReady: boolean;
+  isOpenAIKeyVerified: boolean;
+  isOllamaUrlVerified: boolean;
   isProviderReady: boolean;
   isValidatingKey: boolean;
   isValidatingOllamaBaseUrl: boolean;
   validationError: string | null;
+  successMessage: string | null;
+  dismissSuccessMessage: () => void;
   requestBody: ProviderRequestBody;
   selectProvider: (provider: AIProviderName) => void;
   updateOpenAIApiKeyInput: (value: string) => void;

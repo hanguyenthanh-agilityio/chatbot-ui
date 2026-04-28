@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { API_HEADER_COPY, API_ROUTE_PATH } from "@/constants/api";
 import { PROVIDER_STORAGE_KEYS } from "@/constants/storage";
 import { PROVIDER_STATUS_COPY } from "@/constants/provider";
@@ -79,6 +79,8 @@ export function useProviderSelection({
   const [isValidatingKey, setIsValidatingKey] = useState(false);
   const [isValidatingOllamaBaseUrl, setIsValidatingOllamaBaseUrl] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const dismissSuccessMessage = useCallback(() => setSuccessMessage(null), []);
 
   const isOpenAISelected = selectedProvider === "openai";
   const isOpenAIBypassReady = IS_SERVER_OPENAI_READY && !requireOpenAIApiKeyVerification;
@@ -208,6 +210,7 @@ export function useProviderSelection({
       if (response.ok && data.ok) {
         setVerifiedOpenAIKey(key);
         setSelectedProvider("openai");
+        setSuccessMessage("OpenAI API key verified successfully.");
         return;
       }
 
@@ -248,6 +251,7 @@ export function useProviderSelection({
       }
 
       setVerifiedOllamaBaseUrl(data.normalizedBaseUrl ?? baseUrl);
+      setSuccessMessage("Ollama URL verified successfully.");
     } catch (error) {
       setVerifiedOllamaBaseUrl(null);
       setValidationError(getErrorMessage(error));
@@ -263,10 +267,14 @@ export function useProviderSelection({
     providerStatus,
     isOpenAISelected,
     isOpenAIReady,
+    isOpenAIKeyVerified: Boolean(verifiedOpenAIKey),
+    isOllamaUrlVerified: Boolean(verifiedOllamaBaseUrl),
     isProviderReady,
     isValidatingKey,
     isValidatingOllamaBaseUrl,
     validationError,
+    successMessage,
+    dismissSuccessMessage,
     requestBody,
     selectProvider,
     updateOpenAIApiKeyInput,
