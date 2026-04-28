@@ -239,8 +239,8 @@ export async function cancelMyTimeOffRequest(
     request: cancelledRequest
       ? formatRequest(ctx.employees, cancelledRequest)
       : null,
-    requests: buildMyTimeOffRequestsPayload(session, nextCtx, {
-      status: "all",
+    cancelledRequests: buildMyTimeOffRequestsPayload(session, nextCtx, {
+      status: "cancelled",
     }),
   };
 }

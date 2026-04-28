@@ -11,22 +11,11 @@ const leaveTypeSchema = z
   .enum(["annual", "sick", "personal", "unpaid"])
   .describe("Type of leave.");
 
-const OPTIONAL_STATUS_SCHEMA = z.preprocess(
-  (value) => (value == null ? undefined : value),
-  z
-    .enum(["all", "upcoming", "pending", "approved", "cancelled", "rejected"])
-    .optional(),
-);
+const OPTIONAL_STATUS_SCHEMA = z
+  .enum(["all", "upcoming", "pending", "approved", "cancelled", "rejected"])
+  .nullish();
 
-const OPTIONAL_QUERY_SCHEMA = z.preprocess(
-  (value) => {
-    if (value == null) return undefined;
-    if (typeof value !== "string") return value;
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : undefined;
-  },
-  z.string().min(1).optional(),
-);
+const OPTIONAL_QUERY_SCHEMA = z.string().min(1).nullish();
 
 /**
  * Creates employee read tools.
@@ -53,7 +42,7 @@ export function createEmployeeReadTools(
         ),
       }),
       execute: async ({ status, query }) =>
-        listMyTimeOffRequests(session, { status, query }),
+        listMyTimeOffRequests(session, { status: status ?? undefined, query: query ?? undefined }),
     }),
   };
 

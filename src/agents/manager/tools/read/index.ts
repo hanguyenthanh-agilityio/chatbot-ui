@@ -4,22 +4,11 @@ import type { MockAuthSession } from "@/lib/auth/session";
 import { listAllEmployees, listTeamMembers, listTeamTimeOffRequests } from "@/agents/handlers/time-off";
 import { MANAGER_TOOL_DESCRIPTION, MANAGER_TOOL_NAME } from "../common/definitions";
 
-const OPTIONAL_STATUS_SCHEMA = z.preprocess(
-  (value) => (value == null ? undefined : value),
-  z
-    .enum(["all", "upcoming", "pending", "approved", "cancelled", "rejected"])
-    .optional(),
-);
+const OPTIONAL_STATUS_SCHEMA = z
+  .enum(["all", "upcoming", "pending", "approved", "cancelled", "rejected"])
+  .nullish();
 
-const OPTIONAL_EMPLOYEE_QUERY_SCHEMA = z.preprocess(
-  (value) => {
-    if (value == null) return undefined;
-    if (typeof value !== "string") return value;
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : undefined;
-  },
-  z.string().min(1).optional(),
-);
+const OPTIONAL_EMPLOYEE_QUERY_SCHEMA = z.string().min(1).nullish();
 
 /**
  * Creates manager read tools.
@@ -48,7 +37,7 @@ export function createManagerReadTools(session: MockAuthSession) {
         ),
       }),
       execute: async ({ status, employeeQuery }) =>
-        listTeamTimeOffRequests(session, { status, employeeQuery }),
+        listTeamTimeOffRequests(session, { status: status ?? undefined, employeeQuery: employeeQuery ?? undefined }),
     }),
   };
 }

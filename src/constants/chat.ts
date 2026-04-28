@@ -39,12 +39,11 @@ export const QUICK_ACTIONS_BY_ROLE: Record<AppRole, QuickAction[]> = {
   user: [
     {
       label: "Check balance",
-      prompt:
-        "How many annual, sick, and personal leave days do I have left?",
+      prompt: "How many annual, sick, and personal leave days do I have left?",
     },
     {
       label: "Review pending",
-      prompt: "List my pending and upcoming time-off requests first.",
+      prompt: "List my pending time-off requests first.",
     },
     {
       label: "All requests",
