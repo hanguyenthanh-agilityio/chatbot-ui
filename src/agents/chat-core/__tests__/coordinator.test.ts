@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { routeConversation } from "@/agents/chat-core/coordinator";
+import { routeConversation } from "@/agents/chat-core/services/coordinator";
 import type { MockAuthSession } from "@/lib/auth/session";
 
 /**

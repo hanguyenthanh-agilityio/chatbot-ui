@@ -1,4 +1,4 @@
-import { runSpecialistAgent, type AgentRunInput } from "@/agents/chat-core";
+import { runAgent, type AgentRunInput } from "@/agents/chat-core";
 import { buildManagerConversationPrompt } from "@/agents/manager/prompt/conversation";
 import { createManagerTools } from "@/agents/manager/tools";
 
@@ -7,7 +7,7 @@ import { createManagerTools } from "@/agents/manager/tools";
  * @param {AgentRunInput} input
  */
 export async function runManagerAgent(input: AgentRunInput) {
-  return runSpecialistAgent({
+  return runAgent({
     agent: "manager",
     input,
     system: buildManagerConversationPrompt(input.session),

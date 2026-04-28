@@ -1,6 +1,6 @@
 import {
   createStaticAgentResponse,
-  logAgentLogger,
+  logAgent,
   routeConversation,
 } from "@/agents/chat-core";
 import { runManagerAgent } from "@/agents/manager/run";
@@ -22,7 +22,7 @@ import { getErrorMessage } from "@/utils/error";
 export const maxDuration = 60;
 export const runtime = "nodejs";
 
-const handleAgentLogger = logAgentLogger;
+const handleAgentLogger = logAgent;
 
 function badRequest(message: string) {
   return Response.json({ error: message }, { status: 400 });

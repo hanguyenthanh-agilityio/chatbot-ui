@@ -1,5 +1,5 @@
 import type { UIMessage } from "ai";
-import { runSpecialistAgent, type AgentRunInput } from "@/agents/chat-core";
+import { runAgent, type AgentRunInput } from "@/agents/chat-core";
 import { buildEmployeeConversationPrompt } from "@/agents/employee/prompt/conversation";
 import { createEmployeeTools } from "@/agents/employee/tools";
 
@@ -21,7 +21,7 @@ export async function runEmployeeAgent(input: AgentRunInput) {
   const userText = latestUserText(input.messages);
   const skipDatePicker = DATE_HINT_REGEX.test(userText);
 
-  return runSpecialistAgent({
+  return runAgent({
     agent: "employee",
     input,
     system: buildEmployeeConversationPrompt(input.session),
