@@ -18,11 +18,13 @@ import {
 type OptionalCommentRequestInput = {
   requestQuery: string;
   comment?: string;
+  showTeamPending?: boolean;
 };
 
 type RequiredCommentRequestInput = {
   requestQuery: string;
   comment: string;
+  showTeamPending?: boolean;
 };
 
 /**

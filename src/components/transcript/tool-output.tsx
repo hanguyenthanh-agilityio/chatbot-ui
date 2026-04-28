@@ -127,6 +127,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
     }
 
     case "list_team_time_off_requests": {
+
       const requests = getRequestTableModel({
         id: "team-time-off-requests",
         title: "Team time-off requests",
@@ -190,32 +191,62 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
     }
 
     case "cancel_my_time_off_request": {
-      const requests = asRecord(output.requests);
-      if (!requests) return dynamicTables;
-
       const table = getRequestTableModel({
-        id: "my-time-off-requests",
-        title: "My time-off requests",
-        payload: requests,
+        id: "my-cancelled-requests",
+        title: "Cancelled requests",
+        payload: asRecord(output.cancelledRequests) ?? {},
         showEmployee: false,
         getRowActions: getSelfRequestRowActions,
-        emptyLabel: "No time-off requests found.",
+        emptyLabel: "No cancelled requests.",
       });
       return table ? [table] : dynamicTables;
     }
 
     case "approve_team_time_off_request":
     case "reject_team_time_off_request": {
+      const reviewedEmployeeRequests = asRecord(output.reviewedEmployeeRequests);
+      const pendingTeamRequests = asRecord(output.pendingTeamRequests);
+
+      if (reviewedEmployeeRequests || pendingTeamRequests) {
+        const tables: ToolOutputTableModel[] = [];
+
+        if (reviewedEmployeeRequests) {
+          const table = getRequestTableModel({
+            id: "reviewed-employee-requests",
+            title: `${reviewedEmployeeRequests.query ?? "Employee"}'s requests`,
+            payload: reviewedEmployeeRequests,
+            showEmployee: true,
+            getRowActions: getTeamRequestRowActions,
+            emptyLabel: "No requests found.",
+          });
+          if (table) tables.push(table);
+        }
+
+        if (pendingTeamRequests) {
+          const table = getRequestTableModel({
+            id: "pending-team-requests",
+            title: "Pending team requests",
+            payload: pendingTeamRequests,
+            showEmployee: true,
+            getRowActions: getTeamRequestRowActions,
+            emptyLabel: "No pending team requests.",
+          });
+          if (table) tables.push(table);
+        }
+
+        return tables.length > 0 ? tables : dynamicTables;
+      }
+
       const teamRequests = asRecord(output.teamRequests);
       if (!teamRequests) return dynamicTables;
 
       const requests = getRequestTableModel({
-        id: "pending-team-time-off-requests",
-        title: "Pending team requests",
+        id: "team-time-off-requests",
+        title: "Team time-off requests",
         payload: teamRequests,
         showEmployee: true,
         getRowActions: getTeamRequestRowActions,
-        emptyLabel: "No pending team requests.",
+        emptyLabel: "No team requests found.",
       });
       return requests ? [requests] : dynamicTables;
     }

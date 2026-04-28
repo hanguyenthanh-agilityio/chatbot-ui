@@ -7,15 +7,7 @@ import {
 } from "@/agents/handlers/time-off";
 import { MANAGER_TOOL_DESCRIPTION, MANAGER_TOOL_NAME } from "../common/definitions";
 
-const OPTIONAL_COMMENT_SCHEMA = z.preprocess(
-  (value) => {
-    if (value == null) return undefined;
-    if (typeof value !== "string") return value;
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : undefined;
-  },
-  z.string().optional(),
-);
+const OPTIONAL_COMMENT_SCHEMA = z.string().nullish();
 
 /**
  * Creates manager mutation tools.
@@ -35,9 +27,19 @@ export function createManagerMutationTools(session: MockAuthSession) {
             "A team request description such as latest pending request, Mia annual leave on 2026-05-12, or apartment paperwork request.",
           ),
         comment: OPTIONAL_COMMENT_SCHEMA,
+        showTeamPending: z
+          .boolean()
+          .optional()
+          .describe(
+            "Set to true if the context is the team pending queue. Set to false if focusing on a specific member's history.",
+          ),
       }),
-      execute: async ({ requestQuery, comment }) =>
-        approveTeamTimeOffRequest(session, { requestQuery, comment }),
+      execute: async ({ requestQuery, comment, showTeamPending }) =>
+        approveTeamTimeOffRequest(session, {
+          requestQuery,
+          comment: comment ?? undefined,
+          showTeamPending,
+        }),
     }),
 
     [MANAGER_TOOL_NAME.REJECT_TEAM_TIME_OFF_REQUEST]: tool({
@@ -56,9 +58,19 @@ export function createManagerMutationTools(session: MockAuthSession) {
           .trim()
           .min(1)
           .describe("Short reason for the rejection."),
+        showTeamPending: z
+          .boolean()
+          .optional()
+          .describe(
+            "Set to true if the context is the team pending queue. Set to false if focusing on a specific member's history.",
+          ),
       }),
-      execute: async ({ requestQuery, comment }) =>
-        rejectTeamTimeOffRequest(session, { requestQuery, comment }),
+      execute: async ({ requestQuery, comment, showTeamPending }) =>
+        rejectTeamTimeOffRequest(session, {
+          requestQuery,
+          comment,
+          showTeamPending,
+        }),
     }),
   };
 }

@@ -17,6 +17,7 @@ export type ReviewTeamRequestInput = {
   requestQuery: string;
   comment?: string;
   nextStatus: "approved" | "rejected";
+  showTeamPending?: boolean;
 };
 
 function normalizeInlineWhitespace(value: string) {
@@ -163,6 +164,22 @@ export async function reviewTeamTimeOffRequest(
   const reviewedEmployee = ctx.employees.find(
     (e) => e.employeeId === matches[0].employeeId,
   );
+
+  if (input.showTeamPending) {
+    return {
+      ok: true,
+      request: updatedRequest
+        ? formatRequest(ctx.employees, updatedRequest)
+        : null,
+      reviewedEmployeeRequests: buildTeamTimeOffRequestsPayload(session, nextCtx, {
+        status: input.nextStatus,
+        employeeQuery: reviewedEmployee?.name,
+      }),
+      pendingTeamRequests: buildTeamTimeOffRequestsPayload(session, nextCtx, {
+        status: "pending",
+      }),
+    };
+  }
 
   return {
     ok: true,
