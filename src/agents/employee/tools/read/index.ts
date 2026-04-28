@@ -67,7 +67,12 @@ export function createEmployeeReadTools(
       description: EMPLOYEE_TOOL_DESCRIPTION.COLLECT_DATE_RANGE,
       inputSchema: z.object({
         leaveType: leaveTypeSchema,
-        reason: z.string().trim().min(1).describe("Short reason for the leave."),
+        reason: z
+          .string()
+          .trim()
+          .min(1)
+          .optional()
+          .describe("Short reason for the leave, if already stated by the user."),
       }),
       execute: async () => ({ ok: true }),
     }),
