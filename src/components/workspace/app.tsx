@@ -6,6 +6,7 @@ import { ChatComposer } from "@/components/chat/composer";
 import { ChatTranscript } from "@/components/transcript";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Toast } from "@/components/ui/toast";
 import { AuthPanel } from "@/components/workspace/auth-panel";
 import { ThreadSidebar } from "@/components/workspace/sidebar";
 import { APP_NAME, APP_HEADER_REVIEW_BADGE_LABEL } from "@/constants/app";
@@ -82,19 +83,8 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
       className="p-4 text-white shadow-[0_8px_30px_rgba(5,10,30,0.25)]"
     >
       <ProviderSelector
-        selectedProvider={provider.selectedProvider}
-        openaiApiKeyInput={provider.openaiApiKeyInput}
-        ollamaBaseUrlInput={provider.ollamaBaseUrlInput}
-        isOpenAISelected={provider.isOpenAISelected}
-        isValidatingKey={provider.isValidatingKey}
-        isValidatingOllamaBaseUrl={provider.isValidatingOllamaBaseUrl}
-        providerStatus={provider.providerStatus}
+        provider={provider}
         withContainer={false}
-        onProviderChange={provider.selectProvider}
-        onOpenAIApiKeyChange={provider.updateOpenAIApiKeyInput}
-        onOllamaBaseUrlChange={provider.updateOllamaBaseUrlInput}
-        onVerifyOpenAIKey={provider.verifyOpenAIKey}
-        onVerifyOllamaBaseUrl={provider.verifyOllamaBaseUrl}
       />
       {provider.validationError ? (
         <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
@@ -106,6 +96,13 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
 
   return (
     <main className="min-h-screen min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
+      {provider.successMessage ? (
+        <Toast
+          message={provider.successMessage}
+          variant="success"
+          onDismiss={provider.dismissSuccessMessage}
+        />
+      ) : null}
       <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
         <ThreadSidebar
           thread={activeThread}

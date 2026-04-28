@@ -10,39 +10,18 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
+import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
-  selectedProvider: AIProviderName;
+  provider: UseProviderSelectionResult;
   allowedProviders?: AIProviderName[];
-  openaiApiKeyInput: string;
-  ollamaBaseUrlInput: string;
-  isOpenAISelected: boolean;
-  isValidatingKey: boolean;
-  isValidatingOllamaBaseUrl: boolean;
-  providerStatus: string;
   withContainer?: boolean;
-  onProviderChange: (provider: AIProviderName) => void;
-  onOpenAIApiKeyChange: (value: string) => void;
-  onOllamaBaseUrlChange: (value: string) => void;
-  onVerifyOpenAIKey: () => void | Promise<void>;
-  onVerifyOllamaBaseUrl: () => void | Promise<void>;
 };
 
 export function ProviderSelector({
-  selectedProvider,
+  provider,
   allowedProviders = DEFAULT_PROVIDER_OPTIONS,
-  openaiApiKeyInput,
-  ollamaBaseUrlInput,
-  isOpenAISelected,
-  isValidatingKey,
-  isValidatingOllamaBaseUrl,
-  providerStatus,
   withContainer = true,
-  onProviderChange,
-  onOpenAIApiKeyChange,
-  onOllamaBaseUrlChange,
-  onVerifyOpenAIKey,
-  onVerifyOllamaBaseUrl,
 }: ProviderSelectorProps) {
   const isProviderSelectDisabled = allowedProviders.length <= 1;
 
@@ -58,9 +37,9 @@ export function ProviderSelector({
       </div>
 
       <Select
-        value={selectedProvider}
+        value={provider.selectedProvider}
         onChange={(event) =>
-          onProviderChange(event.target.value as AIProviderName)
+          provider.selectProvider(event.target.value as AIProviderName)
         }
         disabled={isProviderSelectDisabled}
         fullWidth
@@ -76,15 +55,15 @@ export function ProviderSelector({
       </Select>
 
       <Text variant="captionStrong" className="min-h-4" aria-live="polite">
-        {providerStatus}
+        {provider.providerStatus}
       </Text>
 
-      {isOpenAISelected ? (
+      {provider.isOpenAISelected ? (
         <div className="flex flex-col gap-2">
           <Input
             type="password"
-            value={openaiApiKeyInput}
-            onChange={(event) => onOpenAIApiKeyChange(event.target.value)}
+            value={provider.openaiApiKeyInput}
+            onChange={(event) => provider.updateOpenAIApiKeyInput(event.target.value)}
             placeholder={PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder}
             fullWidth
             controlSize="md"
@@ -92,13 +71,14 @@ export function ProviderSelector({
           />
           <Button
             type="button"
-            onClick={onVerifyOpenAIKey}
-            isLoading={isValidatingKey}
+            onClick={provider.verifyOpenAIKey}
+            isLoading={provider.isValidatingKey}
+            disabled={provider.isOpenAIKeyVerified}
             variant="primary"
             size="md"
             fullWidth
           >
-            {isValidatingKey
+            {provider.isValidatingKey
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
               : PROVIDER_PANEL_COPY.verifyOpenAIButtonLabel}
           </Button>
@@ -107,8 +87,8 @@ export function ProviderSelector({
         <div className="flex flex-col gap-2">
           <Input
             type="url"
-            value={ollamaBaseUrlInput}
-            onChange={(event) => onOllamaBaseUrlChange(event.target.value)}
+            value={provider.ollamaBaseUrlInput}
+            onChange={(event) => provider.updateOllamaBaseUrlInput(event.target.value)}
             placeholder={PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder}
             fullWidth
             controlSize="md"
@@ -116,14 +96,15 @@ export function ProviderSelector({
           />
           <Button
             type="button"
-            onClick={onVerifyOllamaBaseUrl}
-            isLoading={isValidatingOllamaBaseUrl}
+            onClick={provider.verifyOllamaBaseUrl}
+            isLoading={provider.isValidatingOllamaBaseUrl}
+            disabled={provider.isOllamaUrlVerified}
             variant="ghost"
             size="md"
             fullWidth
             className="font-dm-sans border border-white/12 text-white/60 hover:bg-white/8"
           >
-            {isValidatingOllamaBaseUrl
+            {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
               : PROVIDER_PANEL_COPY.verifyOllamaButtonLabel}
           </Button>
