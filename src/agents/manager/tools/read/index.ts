@@ -40,9 +40,11 @@ export function createManagerReadTools(session: MockAuthSession) {
     [MANAGER_TOOL_NAME.LIST_TEAM_TIME_OFF_REQUESTS]: tool({
       description: MANAGER_TOOL_DESCRIPTION.LIST_TEAM_TIME_OFF_REQUESTS,
       inputSchema: z.object({
-        status: OPTIONAL_STATUS_SCHEMA,
+        status: OPTIONAL_STATUS_SCHEMA.describe(
+          "Filter by request status. Use 'pending' for approval queue, 'all' for everything, 'upcoming' for future approved leave. Omit when no status filter is needed.",
+        ),
         employeeQuery: OPTIONAL_EMPLOYEE_QUERY_SCHEMA.describe(
-          "Optional employee or request filter such as Thang, annual, pending, or 2026-05-12.",
+          "A specific employee name to filter by (e.g. 'An Pham', 'Thang'). Only set this when the user explicitly names an individual employee. Leave unset for all-team queries.",
         ),
       }),
       execute: async ({ status, employeeQuery }) =>
