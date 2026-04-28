@@ -68,9 +68,9 @@ function ollamaConfig(overrides: ChatModelOverrides): ChatModelConfig {
   const openaiCompatible = createOpenAI({
     baseURL:
       overrides.baseUrl ??
-      process.env.OPENAI_BASE_URL ??
+      process.env.OLLAMA_BASE_URL ??
       "http://localhost:11434/v1",
-    apiKey: process.env.OPENAI_API_KEY ?? "ollama",
+    apiKey: "ollama",
   });
   // Ollama OpenAI-compatible endpoint works best with chat mode.
   return { provider: "ollama", modelId, model: openaiCompatible.chat(modelId) };
