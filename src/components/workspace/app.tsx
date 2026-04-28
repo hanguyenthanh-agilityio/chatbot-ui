@@ -10,10 +10,17 @@ import { Toast } from "@/components/ui/toast";
 import { AuthPanel } from "@/components/workspace/auth-panel";
 import { ThreadSidebar } from "@/components/workspace/sidebar";
 import { APP_NAME, APP_HEADER_REVIEW_BADGE_LABEL } from "@/constants/app";
+import { CHAT_COMPOSER_COPY } from "@/constants/chat";
+import { DEFAULT_PROVIDER_OPTIONS } from "@/constants/provider";
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
+import { isProductionLike } from "@/lib/runtime-env";
 import { Text } from "@/components/ui/text";
 import { getInitialsFromName } from "@/utils/avatar";
 import { useWorkspaceApp } from "@/hooks/use-workspace-app";
+
+const ALLOWED_PROVIDERS = isProductionLike()
+  ? (["openai"] as const)
+  : DEFAULT_PROVIDER_OPTIONS;
 
 type WorkspaceAppProps = {
   authRole?: AppRole;
@@ -84,6 +91,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     >
       <ProviderSelector
         provider={provider}
+        allowedProviders={ALLOWED_PROVIDERS}
         withContainer={false}
       />
       {provider.validationError ? (
@@ -164,6 +172,11 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             canSend={canSend}
             isLoading={isLoading}
             isProviderReady={provider.isProviderReady}
+            inputTooltip={
+              !provider.isProviderReady
+                ? CHAT_COMPOSER_COPY.verifyProviderTooltip
+                : undefined
+            }
             helperText={helperText}
             errorMessage={requestError}
             onInputChange={setInput}
