@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     });
 
     await generateText({
-      model: openai.chat(OPENAI_VALIDATION_API_COPY.testModel),
+      model: openai.chat(process.env.OPENAI_MODEL ?? OPENAI_VALIDATION_API_COPY.testModel),
       prompt: OPENAI_VALIDATION_API_COPY.testPrompt,
     });
 
