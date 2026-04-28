@@ -3,6 +3,7 @@
 import {
   useEffect,
   useRef,
+  useState,
   type FormEventHandler,
   type KeyboardEvent,
 } from "react";
@@ -15,6 +16,7 @@ type ChatComposerProps = {
   canSend: boolean;
   isLoading: boolean;
   isProviderReady: boolean;
+  inputTooltip?: string;
   helperText?: string;
   errorMessage?: string | null;
   onInputChange: (value: string) => void;
@@ -26,12 +28,14 @@ export function ChatComposer({
   canSend,
   isLoading,
   isProviderReady,
+  inputTooltip,
   helperText,
   errorMessage,
   onInputChange,
   onSubmitAction,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -62,6 +66,18 @@ export function ChatComposer({
           </div>
         ) : null}
 
+        <div
+          className="relative"
+          onMouseEnter={() => !isProviderReady && setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+          onClick={() => !isProviderReady && setShowTooltip(true)}
+        >
+          {showTooltip && !isProviderReady && inputTooltip && (
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-3 py-1.5 font-dm-sans text-xs text-white shadow-lg">
+              {inputTooltip}
+              <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+            </div>
+          )}
         <form
           onSubmit={onSubmitAction}
           className="flex w-full items-center gap-3 rounded-[1.125rem] border border-white/13 bg-[linear-gradient(165deg,rgba(255,255,255,0.08),rgba(255,255,255,0.04))] px-4 py-2.5 shadow-[0_8px_26px_rgba(7,12,30,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55"
@@ -100,6 +116,7 @@ export function ChatComposer({
             )}
           </button>
         </form>
+        </div>
 
         <Text variant="helper" className="px-1 text-center text-white/55">
           {helperText ?? CHAT_COMPOSER_COPY.defaultHelperText}
