@@ -1,6 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import type { LanguageModel } from "ai";
 import { isProductionLike } from "@/lib/runtime-env";
+import { normalizeOllamaBaseUrl } from "@/lib/ollama-url";
 
 export const SUPPORTED_AI_PROVIDERS = ["openai", "ollama"] as const;
 
@@ -63,13 +64,18 @@ function ollamaModelId(overrides: ChatModelOverrides): string {
   );
 }
 
+const OLLAMA_DEFAULT_BASE_URL = "http://localhost:11434/v1";
+
+function resolveOllamaBaseUrl(overrides: ChatModelOverrides): string {
+  const raw = overrides.baseUrl ?? process.env.OLLAMA_BASE_URL;
+  // normalizeOllamaBaseUrl appends /v1 if missing — guards against bare host:port in env.
+  return (raw ? normalizeOllamaBaseUrl(raw) : null) ?? OLLAMA_DEFAULT_BASE_URL;
+}
+
 function ollamaConfig(overrides: ChatModelOverrides): ChatModelConfig {
   const modelId = ollamaModelId(overrides);
   const openaiCompatible = createOpenAI({
-    baseURL:
-      overrides.baseUrl ??
-      process.env.OLLAMA_BASE_URL ??
-      "http://localhost:11434/v1",
+    baseURL: resolveOllamaBaseUrl(overrides),
     apiKey: "ollama",
   });
   // Ollama OpenAI-compatible endpoint works best with chat mode.
