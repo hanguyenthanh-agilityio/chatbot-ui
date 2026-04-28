@@ -1,4 +1,4 @@
-import type { AgentLogger } from "./types";
+import type { AgentLogger } from "../types";
 
 const RUN_STATS_LOG_ENV = "AGENT_RUN_STATS_LOG";
 const LEGACY_RUN_STATS_LOG_ENV = "AGENT_TELEMETRY_LOG";
@@ -30,7 +30,7 @@ function shouldLogger() {
  * - Development: always logs
  * - Production: logs only when AGENT_RUN_STATS_LOG=1 (or legacy AGENT_TELEMETRY_LOG=1)
  */
-export function logAgentLogger(stats: AgentLogger) {
+export function logAgent(stats: AgentLogger) {
   if (!shouldLogger()) return;
 
   console.info("[agent-logger]", JSON.stringify(stats));

@@ -8,7 +8,7 @@ import type {
   AgentMetadata,
   AgentName,
   MessageMetadata,
-} from "./types";
+} from "../types";
 
 type CreateStaticAgentResponseInput = {
   text: string;
