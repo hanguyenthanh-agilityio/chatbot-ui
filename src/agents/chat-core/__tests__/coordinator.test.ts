@@ -89,3 +89,13 @@ test("routes manager intent to manager specialist in manager mode", async () => 
 
   assert.deepEqual(decision, { type: "delegate", specialist: "manager" });
 });
+
+test("routes employee intent to employee specialist in manager mode", async () => {
+  const decision = await routeConversation({
+    model: mockModel("employee"),
+    session: createSession("manager"),
+    messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "check my balance" }] }],
+  });
+
+  assert.deepEqual(decision, { type: "delegate", specialist: "employee" });
+});
