@@ -14,12 +14,13 @@ import { CHAT_COMPOSER_COPY } from "@/constants/chat";
 import { DEFAULT_PROVIDER_OPTIONS } from "@/constants/provider";
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
 import { isProductionLike } from "@/lib/runtime-env";
+import type { AIProviderName } from "@/lib/ai-provider";
 import { Text } from "@/components/ui/text";
 import { getInitialsFromName } from "@/utils/avatar";
 import { useWorkspaceApp } from "@/hooks/use-workspace-app";
 
-const ALLOWED_PROVIDERS = isProductionLike()
-  ? (["openai"] as const)
+const ALLOWED_PROVIDERS: AIProviderName[] = isProductionLike()
+  ? ["openai"]
   : DEFAULT_PROVIDER_OPTIONS;
 
 type WorkspaceAppProps = {
