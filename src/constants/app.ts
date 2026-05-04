@@ -30,6 +30,8 @@ export const SIDEBAR_COPY = {
   description:
     "Your assistant for balance checks, requests, and team approvals.",
   currentChatLabel: "Current chat",
+  recentChatsLabel: "Recent chats",
+  newChatLabel: "New chat",
   deleteChatLabel: "Delete chat",
 } as const;
 
