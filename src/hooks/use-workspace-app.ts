@@ -118,7 +118,13 @@ export function useWorkspaceApp(
       return true;
     },
   });
-  const { activeThread, clearThread } = useChatThreads({
+  const {
+    activeThread,
+    allThreads,
+    switchThread,
+    createNewThread,
+    deleteThread,
+  } = useChatThreads({
     messages,
     setMessages,
     provider: provider.selectedProvider,
@@ -227,13 +233,6 @@ export function useWorkspaceApp(
     setSelectedRole(role);
   }
 
-  function handleDeleteChat() {
-    clearError();
-    setInput("");
-    clearThread();
-    autoSubmittedApprovalIdsRef.current.clear();
-  }
-
   const helperText = useMemo(() => {
     if (isSubmitting) return CHAT_COMPOSER_COPY.submitHint;
     if (provider.isOpenAISelected && !provider.isOpenAIReady) {
@@ -268,11 +267,14 @@ export function useWorkspaceApp(
     helperText,
     messagesContainerRef,
     activeThread,
+    allThreads,
+    switchThread,
+    createNewThread,
+    deleteThread,
     submitTextMessage,
     handleSubmit,
     handlePromptSelect,
     handleToolApproval,
     handleRoleChange,
-    handleDeleteChat,
   };
 }
