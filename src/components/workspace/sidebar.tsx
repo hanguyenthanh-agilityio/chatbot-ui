@@ -74,7 +74,7 @@ export function ThreadSidebar({
             size="sm"
             className="w-full justify-center gap-2"
             onClick={onCreateThread}
-            disabled={disabled}
+            disabled={disabled || activeThread.messages.length === 0}
           >
             <svg
               viewBox="0 0 16 16"
