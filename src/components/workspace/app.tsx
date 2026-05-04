@@ -69,11 +69,14 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     helperText,
     messagesContainerRef,
     activeThread,
+    allThreads,
+    switchThread,
+    createNewThread,
+    deleteThread,
     handleSubmit,
     handlePromptSelect,
     handleToolApproval,
     handleRoleChange,
-    handleDeleteChat,
   } = useWorkspaceApp(authRole ?? "user", authSessions);
 
   const accountPanel = (
@@ -114,11 +117,14 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
       ) : null}
       <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
         <ThreadSidebar
-          thread={activeThread}
+          activeThread={activeThread}
+          allThreads={allThreads}
           disabled={isLoading}
           accountPanel={accountPanel}
           providerPanel={sidebarProviderPanel}
-          onDeleteThread={handleDeleteChat}
+          onSwitchThread={switchThread}
+          onCreateThread={createNewThread}
+          onDeleteThread={deleteThread}
         />
 
         <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]">

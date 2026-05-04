@@ -2,11 +2,13 @@ import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
+import { Button } from "@/components/ui/button";
 import { SIDEBAR_COPY } from "@/constants/app";
 import {
   THREAD_TIMESTAMP_FORMAT,
   THREAD_TIMESTAMP_LOCALE,
 } from "@/constants/date-time";
+import { cn } from "@/utils/class-name";
 import type { ChatThread } from "@/types/thread";
 
 function formatTimestamp(value: string) {
@@ -25,18 +27,24 @@ function formatTimestamp(value: string) {
 }
 
 type ThreadSidebarProps = {
-  thread: ChatThread;
+  activeThread: ChatThread;
+  allThreads: ChatThread[];
   disabled?: boolean;
   accountPanel: ReactNode;
   providerPanel: ReactNode;
-  onDeleteThread: () => void;
+  onSwitchThread: (id: string) => void;
+  onCreateThread: () => void;
+  onDeleteThread: (id: string) => void;
 };
 
 export function ThreadSidebar({
-  thread,
+  activeThread,
+  allThreads,
   disabled = false,
   accountPanel,
   providerPanel,
+  onSwitchThread,
+  onCreateThread,
   onDeleteThread,
 }: ThreadSidebarProps) {
   return (
@@ -60,51 +68,128 @@ export function ThreadSidebar({
       <div className="border-b border-white/8 p-5">{providerPanel}</div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
-        <div className="mb-3 px-2">
-          <Text as="p" variant="eyebrowMuted">
-            {SIDEBAR_COPY.currentChatLabel}
-          </Text>
+        <div className="mb-4 px-2">
+          <Button
+            variant="primary"
+            size="sm"
+            className="w-full justify-center gap-2"
+            onClick={onCreateThread}
+            disabled={disabled}
+          >
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-3.5 w-3.5"
+            >
+              <path d="M8 3v10M3 8h10" />
+            </svg>
+            {SIDEBAR_COPY.newChatLabel}
+          </Button>
         </div>
 
-        <Card
-          variant="soft"
-          className="group border-white/10 bg-white/6 shadow-[0_8px_26px_rgba(8,12,30,0.22)] transition hover:border-white/16 hover:bg-white/9"
-        >
-          <div className="px-4 py-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <Text as="p" variant="bodyStrong" className="truncate">
-                  {thread.title}
-                </Text>
-                <Text variant="caption" className="mt-1 line-clamp-2">
-                  {thread.preview}
-                </Text>
-              </div>
-              <Badge variant="subtle" size="sm" className="uppercase tracking-wide">
-                {thread.provider}
-              </Badge>
+        <div className="space-y-4">
+          <div>
+            <div className="mb-2 px-2">
+              <Text as="p" variant="eyebrowMuted">
+                {SIDEBAR_COPY.currentChatLabel}
+              </Text>
             </div>
-            <Text
-              variant="helper"
-              className="mt-2 block"
-              suppressHydrationWarning
-            >
-              {formatTimestamp(thread.updatedAt)}
-            </Text>
+            <ThreadCard
+              thread={activeThread}
+              isActive
+              disabled={disabled}
+              onSelect={() => {}}
+              onDelete={() => onDeleteThread(activeThread.id)}
+            />
           </div>
 
-          <div className="px-4 pb-3">
-            <button
-              type="button"
-              className="font-dm-sans text-xs text-white/55 transition hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
-              onClick={onDeleteThread}
-              disabled={disabled}
-            >
-              {SIDEBAR_COPY.deleteChatLabel}
-            </button>
-          </div>
-        </Card>
+          {allThreads.length > 1 && (
+            <div>
+              <div className="mb-2 px-2">
+                <Text as="p" variant="eyebrowMuted">
+                  {SIDEBAR_COPY.recentChatsLabel}
+                </Text>
+              </div>
+              <div className="space-y-2">
+                {allThreads
+                  .filter((t) => t.id !== activeThread.id)
+                  .map((thread) => (
+                    <ThreadCard
+                      key={thread.id}
+                      thread={thread}
+                      disabled={disabled}
+                      onSelect={() => onSwitchThread(thread.id)}
+                      onDelete={() => onDeleteThread(thread.id)}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </aside>
+  );
+}
+
+function ThreadCard({
+  thread,
+  isActive = false,
+  disabled = false,
+  onSelect,
+  onDelete,
+}: {
+  thread: ChatThread;
+  isActive?: boolean;
+  disabled?: boolean;
+  onSelect: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <Card
+      variant={isActive ? "soft" : "panel"}
+      className={cn(
+        "group cursor-pointer border-white/10 transition hover:border-white/16 hover:bg-white/9",
+        isActive ? "bg-white/10 shadow-[0_8px_26px_rgba(8,12,30,0.22)]" : "bg-white/4",
+      )}
+      onClick={onSelect}
+    >
+      <div className="px-4 py-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <Text as="p" variant="bodyStrong" className="truncate">
+              {thread.title}
+            </Text>
+            <Text variant="caption" className="mt-1 line-clamp-1">
+              {thread.preview}
+            </Text>
+          </div>
+          <Badge
+            variant={isActive ? "brand" : "subtle"}
+            size="sm"
+            className="uppercase tracking-wide"
+          >
+            {thread.provider}
+          </Badge>
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <Text variant="helper" suppressHydrationWarning>
+            {formatTimestamp(thread.updatedAt)}
+          </Text>
+          <button
+            type="button"
+            className="font-dm-sans text-[10px] uppercase tracking-wider text-white/30 transition hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            disabled={disabled}
+          >
+            {SIDEBAR_COPY.deleteChatLabel}
+          </button>
+        </div>
+      </div>
+    </Card>
   );
 }
