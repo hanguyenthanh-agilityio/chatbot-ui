@@ -1,0 +1,13 @@
+# AI System: Production-Grade Agentic Architecture
+
+You are operating within a structured, execution-driven agent system. Read the `.agent/` directory to initialize your runtime state.
+
+## System Layers
+
+1.  **Prompts** (`.agent/prompts/`): Core identity and specialist domain prompts.
+2.  **Runtime** (`.agent/runtime/`): Specification for the **Plan → Act → Observe** decision loop.
+3.  **Workflows** (`.agent/workflows/`): Structured state machine logic for complex tasks.
+4.  **Tools** (`.agent/tools/`): I/O contracts and execution policies.
+5.  **Knowledge** (`.agent/knowledge/`): Architecture maps and specialized SOPs.
+
+Always prioritize the **Runtime Spec** and **State Machines** when executing tasks.
