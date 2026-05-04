@@ -104,9 +104,17 @@ function applySlotTime(
 ): Date {
   const d = new Date(isoDate + "T00:00:00");
   if (boundary === "start") {
-    slot === "afternoon" ? d.setHours(13, 30, 0, 0) : d.setHours(8, 0, 0, 0);
+    if (slot === "afternoon") {
+      d.setHours(13, 30, 0, 0);
+    } else {
+      d.setHours(8, 0, 0, 0);
+    }
   } else {
-    slot === "morning" ? d.setHours(12, 0, 0, 0) : d.setHours(17, 30, 0, 0);
+    if (slot === "morning") {
+      d.setHours(12, 0, 0, 0);
+    } else {
+      d.setHours(17, 30, 0, 0);
+    }
   }
   return d;
 }
