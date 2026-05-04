@@ -23,8 +23,6 @@ export default meta;
 
 type Story = StoryObj<typeof Toast>;
 
-
-
 export const Success: Story = {
   args: {
     message: "Action completed successfully",
@@ -48,9 +46,6 @@ export const Info: Story = {
     onDismiss: () => {},
   },
 };
-
-
-
 
 export const Interactive: Story = {
   render: (args) => {

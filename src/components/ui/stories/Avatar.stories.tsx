@@ -13,14 +13,12 @@ export default meta;
 
 type Story = StoryObj<typeof Avatar>;
 
-
 export const Assistant: Story = {
   args: {
     variant: "assistant",
     size: "md",
   },
 };
-
 
 export const UserWithImage: Story = {
   args: {
@@ -32,7 +30,6 @@ export const UserWithImage: Story = {
   },
 };
 
-
 export const UserWithInitials: Story = {
   args: {
     variant: "user",
@@ -42,7 +39,6 @@ export const UserWithInitials: Story = {
   },
 };
 
-
 export const Sizes = () => (
   <div className="flex items-center gap-4">
     <Avatar variant="assistant" size="sm" />
@@ -50,7 +46,6 @@ export const Sizes = () => (
     <Avatar variant="assistant" size="lg" />
   </div>
 );
-
 
 export const UserStates = () => (
   <div className="flex items-center gap-4">
