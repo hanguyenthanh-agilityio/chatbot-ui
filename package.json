@@ -21,6 +21,7 @@
     "build-storybook": "storybook build",
     "test": "vitest run --project unit",
     "test:coverage": "vitest run --project unit --coverage",
+    "deploy:coverage": "wrangler deploy -c wrangler.coverage.jsonc",
     "test:storybook": "vitest run --project storybook"
   },
   "dependencies": {
