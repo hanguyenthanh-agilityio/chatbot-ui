@@ -36,6 +36,8 @@ html[data-theme="light"] {
   --theme-light-surface-5: rgba(248, 245, 255, 0.95);
   --theme-light-surface-6: rgba(255, 255, 255, 0.88);
   --theme-light-surface-8: rgba(255, 255, 255, 0.9);
+  --theme-light-hover-fill: rgba(124, 58, 237, 0.1);
+  --theme-light-hover-border: rgba(124, 58, 237, 0.45);
 }
 
 html[data-theme="light"] body {
@@ -116,6 +118,10 @@ html[data-theme="light"] .text-white\/30 {
   color: var(--theme-light-muted-30);
 }
 
+html[data-theme="light"] .placeholder\:text-white\/30::placeholder {
+  color: var(--theme-light-muted-50);
+}
+
 html[data-theme="light"] .border-white\/9 {
   border-color: var(--theme-light-border-9);
 }
@@ -125,6 +131,7 @@ html[data-theme="light"] .border-white\/8 {
 }
 
 html[data-theme="light"] .border-white\/10,
+html[data-theme="light"] .border-white\/12,
 html[data-theme="light"] .border-white\/16 {
   border-color: var(--theme-light-border-10);
 }
@@ -146,8 +153,41 @@ html[data-theme="light"] .bg-white\/10 {
   background-color: var(--theme-light-surface-6);
 }
 
+html[data-theme="light"] .app-form-field {
+  background-color: #f3efff !important;
+  border-color: var(--theme-light-border-10) !important;
+  color: var(--theme-light-fg-80) !important;
+}
+
+html[data-theme="light"] .app-form-field::placeholder {
+  color: var(--theme-light-muted-50);
+}
+
+html[data-theme="light"] .app-provider-verify-primary {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%) !important;
+  color: #fff !important;
+}
+
+html[data-theme="light"] .app-provider-verify-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+html[data-theme="light"] .app-provider-verify-primary:disabled {
+  background: rgba(76, 56, 140, 0.35) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
 html[data-theme="light"] .bg-white\/8 {
   background-color: var(--theme-light-surface-8);
+}
+
+html[data-theme="light"] .hover\:bg-white\/8:hover,
+html[data-theme="light"] .hover\:bg-white\/10:hover {
+  background-color: var(--theme-light-hover-fill);
+}
+
+html[data-theme="light"] .hover\:border-violet-500\/50:hover {
+  border-color: var(--theme-light-hover-border);
 }
 
 /* Chat cards: instant color swap on theme change */

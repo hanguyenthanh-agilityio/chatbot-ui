@@ -77,6 +77,7 @@ export function ProviderSelector({
             variant="primary"
             size="md"
             fullWidth
+            className="app-provider-verify-primary"
           >
             {provider.isValidatingKey
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel

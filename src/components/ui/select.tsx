@@ -10,7 +10,7 @@ const SELECT_VARIANT_CLASSES = {
   ghost:
     "border-transparent bg-transparent text-slate-900 hover:border-slate-200",
   dark:
-    "border-white/12 bg-white/6 text-white/80 hover:border-violet-500/50 [&>option]:text-slate-900",
+    "app-form-field border-white/12 bg-white/6 text-white/80 hover:border-violet-500/50 [&>option]:text-slate-900",
 } as const;
 
 const SELECT_SIZE_CLASSES = {

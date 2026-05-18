@@ -12,7 +12,7 @@ const INPUT_VARIANT_CLASSES = {
   error:
     "border-red-300 bg-red-50/70 text-red-900 shadow-sm hover:border-red-400",
   dark:
-    "border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50",
+    "app-form-field border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50",
 } as const;
 
 const INPUT_SIZE_CLASSES = {
