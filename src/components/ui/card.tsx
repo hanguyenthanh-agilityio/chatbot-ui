@@ -23,7 +23,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={cn("rounded-2xl", CARD_VARIANT_CLASSES[variant], className)}
+      className={cn("rounded-2xl transition-none", CARD_VARIANT_CLASSES[variant], className)}
       {...props}
     />
   );
@@ -42,4 +42,3 @@ export function CardContent({
 }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("px-4 py-3", className)} {...props} />;
 }
-
