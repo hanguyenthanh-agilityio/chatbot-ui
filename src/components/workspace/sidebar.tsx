@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // Constants
 import { SIDEBAR_COPY } from "@/constants/app";
-import { appTheme, THEME_SHELL_CLASSES } from "@/constants/theme";
+import { THEME_SHELL_CLASSES } from "@/constants/theme";
 import {
   THREAD_TIMESTAMP_FORMAT,
   THREAD_TIMESTAMP_LOCALE,
@@ -62,11 +62,11 @@ export function ThreadSidebar({
       className={cn(
         THEME_SHELL_CLASSES.sidebar,
         "flex w-full flex-col rounded-[1.75rem] border bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm",
-        appTheme.border.b9,
-        appTheme.text.fg,
+        "border-white/9 light:border-app-border-9",
+        "text-white light:text-app-fg",
       )}
     >
-      <div className={cn("border-b p-5", appTheme.border.b8)}>
+      <div className="border-b border-white/8 p-5 light:border-app-border-8">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-1">
             <Text as="p" variant="eyebrow">
@@ -81,11 +81,11 @@ export function ThreadSidebar({
         </div>
       </div>
 
-      <div className={cn("border-b p-5", appTheme.border.b8)}>
+      <div className="border-b border-white/8 p-5 light:border-app-border-8">
         {accountPanel}
       </div>
 
-      <div className={cn("border-b p-5", appTheme.border.b8)}>
+      <div className="border-b border-white/8 p-5 light:border-app-border-8">
         {providerPanel}
       </div>
 
@@ -173,12 +173,12 @@ function ThreadCard({
       variant={isActive ? "soft" : "panel"}
       className={cn(
         "group cursor-pointer transition-[box-shadow,transform] duration-200",
-        appTheme.border.b10,
-        appTheme.hover.b16,
-        appTheme.hover.bg9,
+        "border-white/10 light:border-app-border-10",
+        "hover:border-white/16 light:hover:border-app-border-10",
+        "hover:bg-white/9 light:hover:bg-app-hover",
         isActive
-          ? cn(appTheme.bg.s10, "shadow-[0_8px_26px_rgba(8,12,30,0.22)]")
-          : appTheme.bg.s4,
+          ? "bg-white/10 shadow-[0_8px_26px_rgba(8,12,30,0.22)] light:bg-app-surface-6"
+          : "bg-white/4 light:bg-app-surface-4",
       )}
       onClick={onSelect}
     >
@@ -208,7 +208,7 @@ function ThreadCard({
             type="button"
             className={cn(
               "font-dm-sans text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
-              appTheme.text.muted30,
+              "text-white/30 light:text-app-muted-30",
             )}
             onClick={(e) => {
               e.stopPropagation();
