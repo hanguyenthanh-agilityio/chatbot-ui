@@ -1,14 +1,24 @@
 import type { ReactNode } from "react";
+
+// Components
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+
+// Constants
 import { SIDEBAR_COPY } from "@/constants/app";
+import { appTheme, THEME_SHELL_CLASSES } from "@/constants/theme";
 import {
   THREAD_TIMESTAMP_FORMAT,
   THREAD_TIMESTAMP_LOCALE,
 } from "@/constants/date-time";
+
+// Utils
 import { cn } from "@/utils/class-name";
+
+// Types
 import type { ChatThread } from "@/types/thread";
 
 function formatTimestamp(value: string) {
@@ -48,24 +58,36 @@ export function ThreadSidebar({
   onDeleteThread,
 }: ThreadSidebarProps) {
   return (
-    <aside className="flex w-full flex-col rounded-[1.75rem] border border-white/9 bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] text-white backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm">
-      <div className="border-b border-white/8 p-5">
-        <div className="space-y-1">
-          <Text as="p" variant="eyebrow">
-            {SIDEBAR_COPY.eyebrow}
-          </Text>
-          <Text as="h1" variant="title">
-            {SIDEBAR_COPY.title}
-          </Text>
-          <Text variant="captionStrong">
-            {SIDEBAR_COPY.description}
-          </Text>
+    <aside
+      className={cn(
+        THEME_SHELL_CLASSES.sidebar,
+        "flex w-full flex-col rounded-[1.75rem] border bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm",
+        appTheme.border.b9,
+        appTheme.text.fg,
+      )}
+    >
+      <div className={cn("border-b p-5", appTheme.border.b8)}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1 space-y-1">
+            <Text as="p" variant="eyebrow">
+              {SIDEBAR_COPY.eyebrow}
+            </Text>
+            <Text as="h1" variant="title">
+              {SIDEBAR_COPY.title}
+            </Text>
+            <Text variant="captionStrong">{SIDEBAR_COPY.description}</Text>
+          </div>
+          <ThemeToggle />
         </div>
       </div>
 
-      <div className="border-b border-white/8 p-5">{accountPanel}</div>
+      <div className={cn("border-b p-5", appTheme.border.b8)}>
+        {accountPanel}
+      </div>
 
-      <div className="border-b border-white/8 p-5">{providerPanel}</div>
+      <div className={cn("border-b p-5", appTheme.border.b8)}>
+        {providerPanel}
+      </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
         <div className="mb-4 px-2">
@@ -150,8 +172,13 @@ function ThreadCard({
     <Card
       variant={isActive ? "soft" : "panel"}
       className={cn(
-        "group cursor-pointer border-white/10 transition hover:border-white/16 hover:bg-white/9",
-        isActive ? "bg-white/10 shadow-[0_8px_26px_rgba(8,12,30,0.22)]" : "bg-white/4",
+        "group cursor-pointer transition-[box-shadow,transform] duration-200",
+        appTheme.border.b10,
+        appTheme.hover.b16,
+        appTheme.hover.bg9,
+        isActive
+          ? cn(appTheme.bg.s10, "shadow-[0_8px_26px_rgba(8,12,30,0.22)]")
+          : appTheme.bg.s4,
       )}
       onClick={onSelect}
     >
@@ -179,7 +206,10 @@ function ThreadCard({
           </Text>
           <button
             type="button"
-            className="font-dm-sans text-[10px] uppercase tracking-wider text-white/30 transition hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className={cn(
+              "font-dm-sans text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
+              appTheme.text.muted30,
+            )}
             onClick={(e) => {
               e.stopPropagation();
               onDelete();
