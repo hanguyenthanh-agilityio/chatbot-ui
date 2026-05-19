@@ -10,6 +10,7 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
+import { appTheme } from "@/constants/theme";
 import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
@@ -77,7 +78,7 @@ export function ProviderSelector({
             variant="primary"
             size="md"
             fullWidth
-            className="app-provider-verify-primary"
+            className={appTheme.provider.verifyPrimary}
           >
             {provider.isValidatingKey
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
@@ -103,7 +104,7 @@ export function ProviderSelector({
             variant="ghost"
             size="md"
             fullWidth
-            className="font-dm-sans border border-white/12 text-white/60 hover:bg-white/8"
+            className={appTheme.btn.ghostOutline}
           >
             {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
