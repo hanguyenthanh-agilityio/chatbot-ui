@@ -28,6 +28,7 @@ export default meta;
 
 type Story = StoryObj<typeof ThemeToggle>;
 
+/** Switch shown while app is in dark mode (aria + data-state). */
 export const Dark: Story = {
   globals: { theme: "dark" },
   play: async ({ canvasElement }) => {
@@ -42,6 +43,7 @@ export const Dark: Story = {
   },
 };
 
+/** Switch shown while app is in light mode. */
 export const Light: Story = {
   globals: { theme: "light" },
   play: async ({ canvasElement }) => {
@@ -54,6 +56,7 @@ export const Light: Story = {
   },
 };
 
+/** Click toggles data-theme on <html> (dark ↔ light), same as production. */
 export const Interactive: Story = {
   globals: { theme: "dark" },
   play: async ({ canvasElement }) => {
