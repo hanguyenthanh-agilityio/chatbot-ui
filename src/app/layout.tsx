@@ -30,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme={DEFAULT_THEME} suppressHydrationWarning>
       <body className="antialiased">
+        {/* Inline script: avoid flash of wrong theme on first load. */}
         <Script
           id="theme-init"
           strategy="beforeInteractive"

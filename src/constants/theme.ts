@@ -1,3 +1,4 @@
+/** Theme mode: dark (default) | light. Persisted in localStorage; applied on <html data-theme>. */
 export const THEME_STORAGE_KEY = "employee-assistant:theme";
 export const THEME_CHANGE_EVENT = "employee-assistant:theme-change";
 
