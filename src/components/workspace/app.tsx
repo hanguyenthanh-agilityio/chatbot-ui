@@ -15,7 +15,7 @@ import { ThreadSidebar } from "@/components/workspace/sidebar";
 
 // Constants
 import { APP_NAME, APP_HEADER_REVIEW_BADGE_LABEL } from "@/constants/app";
-import { THEME_SHELL_CLASSES } from "@/constants/theme";
+import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
 import { DEFAULT_PROVIDER_OPTIONS } from "@/constants/provider";
 
@@ -57,14 +57,14 @@ export function WorkspaceApp({
             className={cn(
               "h-[70vh] w-full rounded-[1.75rem] border backdrop-blur-[28px] lg:max-w-sm",
               "bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))]",
-              "border-white/9 light:border-app-border-9",
+              THEME_SHELL_UTILITIES.border,
             )}
           />
           <div
             className={cn(
               "h-[70vh] flex-1 rounded-[1.75rem] border backdrop-blur-[28px]",
               "bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))]",
-              "border-white/9 light:border-app-border-9",
+              THEME_SHELL_UTILITIES.border,
             )}
           />
         </div>
@@ -115,7 +115,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
       variant="panel"
       className={cn(
         "p-4 shadow-[0_8px_30px_rgba(5,10,30,0.25)]",
-        "text-white light:text-app-fg",
+        THEME_SHELL_UTILITIES.text,
       )}
     >
       <ProviderSelector
@@ -156,14 +156,14 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           className={cn(
             THEME_SHELL_CLASSES.chatPanel,
             "flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]",
-            "border-white/9 light:border-app-border-9",
+            THEME_SHELL_UTILITIES.border,
           )}
         >
           <header
             className={cn(
               THEME_SHELL_CLASSES.chatHeader,
               "border-b bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]",
-              "border-white/8 light:border-app-border-8",
+              THEME_SHELL_UTILITIES.borderSubtle,
             )}
           >
             <div className="mx-auto w-full max-w-3xl">

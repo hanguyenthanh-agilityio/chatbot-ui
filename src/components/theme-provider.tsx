@@ -13,6 +13,8 @@ import {
 import {
   DEFAULT_THEME,
   THEME_CHANGE_EVENT,
+  isDarkTheme,
+  ThemeMode,
   type Theme,
 } from "@/constants/theme";
 
@@ -45,7 +47,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    setTheme(isDarkTheme(theme) ? ThemeMode.Light : ThemeMode.Dark);
   }, [setTheme, theme]);
 
   const value = useMemo(
