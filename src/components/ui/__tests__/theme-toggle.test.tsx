@@ -18,6 +18,7 @@ import {
 // Libs
 import { persistTheme } from "@/lib/theme";
 
+/** Start each test with a known theme on <html> and in localStorage. */
 function resetThemeStorage(theme: Theme = DEFAULT_THEME) {
   localStorage.clear();
   persistTheme(theme);

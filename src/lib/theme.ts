@@ -36,4 +36,10 @@ export function persistTheme(theme: Theme) {
   });
 }
 
+/**
+ * It runs as soon as the HTML loads
+ * (before React), reads light/dark from localStorage, and sets
+ * <html data-theme="light|dark"> so the first screen already matches the
+ * user's last choice — avoids a brief flash of the wrong theme on refresh.
+ */
 export const THEME_INIT_SCRIPT = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var t=localStorage.getItem(k);document.documentElement.dataset.theme=(t==="light"||t==="dark")?t:${JSON.stringify(DEFAULT_THEME)}}catch(e){document.documentElement.dataset.theme=${JSON.stringify(DEFAULT_THEME)}}})();`;

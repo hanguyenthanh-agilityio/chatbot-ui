@@ -13,6 +13,8 @@ const BUTTON_VARIANT_CLASSES = {
     "bg-transparent text-slate-900 hover:bg-slate-100 disabled:text-slate-400",
   danger:
     "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-300 disabled:text-red-50",
+  /** Theme switch shell */
+  switch: "theme-toggle",
 } as const;
 
 const BUTTON_SIZE_CLASSES = {
@@ -23,6 +25,8 @@ const BUTTON_SIZE_CLASSES = {
 
 type ButtonVariant = keyof typeof BUTTON_VARIANT_CLASSES;
 type ButtonSize = keyof typeof BUTTON_SIZE_CLASSES;
+
+const CUSTOM_SHELL_VARIANTS = new Set<ButtonVariant>(["switch"]);
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
@@ -49,10 +53,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       disabled={disabled || isLoading}
       className={cn(
-        "inline-flex items-center justify-center rounded-lg font-medium transition disabled:cursor-not-allowed",
+        !CUSTOM_SHELL_VARIANTS.has(variant) &&
+          "inline-flex items-center justify-center rounded-lg font-medium transition disabled:cursor-not-allowed",
         BUTTON_VARIANT_CLASSES[variant],
-        BUTTON_SIZE_CLASSES[size],
-        fullWidth && "w-full",
+        !CUSTOM_SHELL_VARIANTS.has(variant) && BUTTON_SIZE_CLASSES[size],
+        !CUSTOM_SHELL_VARIANTS.has(variant) && fullWidth && "w-full",
         className,
       )}
       {...props}
