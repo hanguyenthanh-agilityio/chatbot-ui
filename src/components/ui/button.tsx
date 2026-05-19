@@ -22,7 +22,6 @@ const BUTTON_SIZE_CLASSES = {
   md: "h-10 px-4 text-sm",
   lg: "h-11 px-5 text-sm",
 } as const;
-
 type ButtonVariant = keyof typeof BUTTON_VARIANT_CLASSES;
 type ButtonSize = keyof typeof BUTTON_SIZE_CLASSES;
 

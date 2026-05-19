@@ -15,7 +15,7 @@ import { ThreadSidebar } from "@/components/workspace/sidebar";
 
 // Constants
 import { APP_NAME, APP_HEADER_REVIEW_BADGE_LABEL } from "@/constants/app";
-import { THEME_SHELL_CLASSES } from "@/constants/theme";
+import { appTheme, THEME_SHELL_CLASSES } from "@/constants/theme";
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
 import { DEFAULT_PROVIDER_OPTIONS } from "@/constants/provider";
 
@@ -54,8 +54,20 @@ export function WorkspaceApp({
     return (
       <main className="min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
         <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:gap-4 lg:flex-row">
-          <div className="h-[70vh] w-full rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px] lg:max-w-sm" />
-          <div className="h-[70vh] flex-1 rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px]" />
+          <div
+            className={cn(
+              "h-[70vh] w-full rounded-[1.75rem] border backdrop-blur-[28px] lg:max-w-sm",
+              "bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))]",
+              appTheme.border.b9,
+            )}
+          />
+          <div
+            className={cn(
+              "h-[70vh] flex-1 rounded-[1.75rem] border backdrop-blur-[28px]",
+              "bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))]",
+              appTheme.border.b9,
+            )}
+          />
         </div>
       </main>
     );
@@ -99,11 +111,13 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
       onRoleChange={handleRoleChange}
     />
   );
-
   const sidebarProviderPanel = (
     <Card
       variant="panel"
-      className="p-4 text-white shadow-[0_8px_30px_rgba(5,10,30,0.25)]"
+      className={cn(
+        "p-4 shadow-[0_8px_30px_rgba(5,10,30,0.25)]",
+        appTheme.text.fg,
+      )}
     >
       <ProviderSelector
         provider={provider}
@@ -142,13 +156,15 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
         <section
           className={cn(
             THEME_SHELL_CLASSES.chatPanel,
-            "flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]",
+            "flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]",
+            appTheme.border.b9,
           )}
         >
           <header
             className={cn(
               THEME_SHELL_CLASSES.chatHeader,
-              "border-b border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]",
+              "border-b bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]",
+              appTheme.border.b8,
             )}
           >
             <div className="mx-auto w-full max-w-3xl">
@@ -195,7 +211,6 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             onSelectPrompt={handlePromptSelect}
             onToolApproval={handleToolApproval}
           />
-
           <ChatComposer
             input={input}
             canSend={canSend}
