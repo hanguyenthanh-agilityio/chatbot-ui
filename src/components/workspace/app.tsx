@@ -39,7 +39,6 @@ type WorkspaceAppProps = {
   authRole?: AppRole;
   authSessions: Record<AppRole, MockAuthSession>;
 };
-
 export function WorkspaceApp({
   authRole = "user",
   authSessions,
