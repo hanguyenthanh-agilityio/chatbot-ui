@@ -41,6 +41,7 @@
 }
 
 @theme inline {
+  --font-syne: "Syne", sans-serif;
   --font-dm-sans: "DM Sans", sans-serif;
 }
 
