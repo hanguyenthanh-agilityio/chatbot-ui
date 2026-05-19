@@ -3,7 +3,7 @@ import Script from "next/script";
 
 // Constants
 import { APP_METADATA_DESCRIPTION, APP_METADATA_TITLE } from "@/constants/app";
-import { appTheme, DEFAULT_THEME } from "@/constants/theme";
+import { DEFAULT_THEME } from "@/constants/theme";
 
 // Components
 import { ThemeProvider } from "@/components/theme-provider";
@@ -41,19 +41,19 @@ export default function RootLayout({
           <div
             className={cn(
               "absolute -left-28 -top-24 h-[500px] w-[500px] rounded-full blur-[78px]",
-              appTheme.blob.violet,
+              "bg-violet-500/14 light:bg-app-blob-violet",
             )}
           />
           <div
             className={cn(
               "absolute -bottom-24 -left-16 h-[520px] w-[520px] rounded-full blur-[78px]",
-              appTheme.blob.indigo,
+              "bg-indigo-600/16 light:bg-app-blob-indigo",
             )}
           />
           <div
             className={cn(
               "absolute -right-24 top-1/4 h-[500px] w-[500px] rounded-full blur-[82px]",
-              appTheme.blob.cyan,
+              "bg-cyan-500/12 light:bg-app-blob-cyan",
             )}
           />
         </div>
