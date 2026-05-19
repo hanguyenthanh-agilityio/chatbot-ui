@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // Constants
 import { SIDEBAR_COPY } from "@/constants/app";
+import { PROVIDER_BADGE_VARIANT } from "@/constants/provider";
 import { THEME_SHELL_CLASSES } from "@/constants/theme";
 import {
   THREAD_TIMESTAMP_FORMAT,
@@ -184,7 +185,7 @@ function ThreadCard({
             </Text>
           </div>
           <Badge
-            variant={isActive ? "brand" : "subtle"}
+            variant={PROVIDER_BADGE_VARIANT[thread.provider]}
             size="sm"
             className="uppercase tracking-wide"
           >

@@ -22,6 +22,12 @@ export const PROVIDER_OPTION_LABEL = {
   openai: "OpenAI",
 } as const;
 
+/** `Badge` variant per provider — readable in dark and light (`app/theme.css`). */
+export const PROVIDER_BADGE_VARIANT = {
+  openai: "providerOpenai",
+  ollama: "providerOllama",
+} as const;
+
 export const PROVIDER_STATUS_COPY = {
   ollamaDefault: "Using Ollama with local/default config.",
   ollamaCustomUrl:

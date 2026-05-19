@@ -163,6 +163,20 @@ html[data-theme="light"] .app-form-field::placeholder {
   color: var(--theme-light-muted-50);
 }
 
+html[data-theme="light"] .app-button-primary {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%) !important;
+  color: #fff !important;
+}
+
+html[data-theme="light"] .app-button-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+html[data-theme="light"] .app-button-primary:disabled {
+  background: rgba(76, 56, 140, 0.35) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
 html[data-theme="light"] .app-provider-verify-primary {
   background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%) !important;
   color: #fff !important;
@@ -188,6 +202,60 @@ html[data-theme="light"] .hover\:bg-white\/10:hover {
 
 html[data-theme="light"] .hover\:border-violet-500\/50:hover {
   border-color: var(--theme-light-hover-border);
+}
+
+/* Badges — `html` + `[data-theme]` for Storybook side-by-side previews */
+html[data-theme="light"] .app-badge-neutral,
+[data-theme="light"] .app-badge-neutral {
+  border-color: var(--theme-light-border-20);
+  background-color: var(--theme-light-surface-5);
+  color: var(--theme-light-fg-80);
+}
+
+html[data-theme="light"] .app-badge-subtle,
+[data-theme="light"] .app-badge-subtle {
+  border-color: var(--theme-light-border-10);
+  background-color: var(--theme-light-surface-4);
+  color: var(--theme-light-muted-62);
+}
+
+html[data-theme="light"] .app-badge-brand,
+html[data-theme="light"] .app-badge-provider-ollama,
+[data-theme="light"] .app-badge-brand,
+[data-theme="light"] .app-badge-provider-ollama {
+  border-color: rgba(109, 40, 217, 0.38);
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+
+html[data-theme="light"] .app-badge-provider-openai,
+html[data-theme="light"] .app-badge-success,
+[data-theme="light"] .app-badge-provider-openai,
+[data-theme="light"] .app-badge-success {
+  border-color: rgba(5, 150, 105, 0.35);
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+html[data-theme="light"] .app-badge-info,
+[data-theme="light"] .app-badge-info {
+  border-color: rgba(8, 145, 178, 0.35);
+  background-color: #ecfeff;
+  color: #0e7490;
+}
+
+html[data-theme="light"] .app-badge-warning,
+[data-theme="light"] .app-badge-warning {
+  border-color: rgba(217, 119, 6, 0.35);
+  background-color: #fffbeb;
+  color: #b45309;
+}
+
+html[data-theme="light"] .app-badge-danger,
+[data-theme="light"] .app-badge-danger {
+  border-color: rgba(225, 29, 72, 0.3);
+  background-color: #fff1f2;
+  color: #be123c;
 }
 
 /* Chat cards: instant color swap on theme change */

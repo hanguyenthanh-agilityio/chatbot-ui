@@ -4,7 +4,7 @@ import { cn } from "@/utils/class-name";
 
 const BUTTON_VARIANT_CLASSES = {
   primary:
-    "bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-400 disabled:text-white",
+    "app-button-primary bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-400 disabled:text-white",
   secondary:
     "bg-slate-200 text-slate-900 hover:bg-slate-300 disabled:bg-slate-100 disabled:text-slate-400",
   outline:
