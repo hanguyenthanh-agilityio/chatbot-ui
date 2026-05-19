@@ -5,16 +5,16 @@ import { useTheme } from "@/components/theme-provider";
 // Components
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "@/components/ui/icons";
-import { getThemeToggleAriaLabel } from "@/constants/theme";
+import { getThemeToggleAriaLabel, isDarkTheme } from "@/constants/theme";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
-  const isDark = theme === "dark";
+  const isDark = isDarkTheme(theme);
 
   return (
     <Button
       type="button"
-      variant="switch"
+      variant="themeToggle"
       role="switch"
       aria-checked={isDark}
       aria-label={getThemeToggleAriaLabel(theme)}
@@ -22,13 +22,8 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={toggleTheme}
       className={className}
     >
-      <span className="theme-toggle-thumb" aria-hidden />
-      <span className="theme-toggle-slot">
-        <SunIcon className="theme-toggle-icon" />
-      </span>
-      <span className="theme-toggle-slot">
-        <MoonIcon className="theme-toggle-icon" />
-      </span>
+      <SunIcon className="theme-toggle-icon" aria-hidden />
+      <MoonIcon className="theme-toggle-icon" aria-hidden />
     </Button>
   );
 }

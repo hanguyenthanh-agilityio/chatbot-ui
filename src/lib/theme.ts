@@ -3,6 +3,7 @@ import {
   THEME_CHANGE_EVENT,
   THEME_STORAGE_KEY,
   THEMES,
+  ThemeMode,
   type Theme,
 } from "@/constants/theme";
 
@@ -42,4 +43,4 @@ export function persistTheme(theme: Theme) {
  * <html data-theme="light|dark"> so the first screen already matches the
  * user's last choice — avoids a brief flash of the wrong theme on refresh.
  */
-export const THEME_INIT_SCRIPT = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var t=localStorage.getItem(k);document.documentElement.dataset.theme=(t==="light"||t==="dark")?t:${JSON.stringify(DEFAULT_THEME)}}catch(e){document.documentElement.dataset.theme=${JSON.stringify(DEFAULT_THEME)}}})();`;
+export const THEME_INIT_SCRIPT = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var t=localStorage.getItem(k);document.documentElement.dataset.theme=(t===${JSON.stringify(ThemeMode.Light)}||t===${JSON.stringify(ThemeMode.Dark)})?t:${JSON.stringify(DEFAULT_THEME)}}catch(e){document.documentElement.dataset.theme=${JSON.stringify(DEFAULT_THEME)}}})();`;

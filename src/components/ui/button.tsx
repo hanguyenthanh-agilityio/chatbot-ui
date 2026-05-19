@@ -13,8 +13,7 @@ const BUTTON_VARIANT_CLASSES = {
     "bg-transparent text-slate-900 hover:bg-slate-100 disabled:text-slate-400",
   danger:
     "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-300 disabled:text-red-50",
-  /** Theme switch shell */
-  switch: "theme-toggle",
+  themeToggle: "theme-toggle",
 } as const;
 
 const BUTTON_SIZE_CLASSES = {
@@ -25,7 +24,7 @@ const BUTTON_SIZE_CLASSES = {
 type ButtonVariant = keyof typeof BUTTON_VARIANT_CLASSES;
 type ButtonSize = keyof typeof BUTTON_SIZE_CLASSES;
 
-const CUSTOM_SHELL_VARIANTS = new Set<ButtonVariant>(["switch"]);
+const CUSTOM_SHELL_VARIANTS = new Set<ButtonVariant>(["themeToggle"]);
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
