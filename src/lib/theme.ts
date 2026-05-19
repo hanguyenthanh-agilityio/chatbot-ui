@@ -2,12 +2,11 @@ import {
   DEFAULT_THEME,
   THEME_CHANGE_EVENT,
   THEME_STORAGE_KEY,
+  THEME_SWITCHING_CLASS,
   THEMES,
   ThemeMode,
   type Theme,
 } from "@/constants/theme";
-
-const THEME_SWITCHING_CLASS = "theme-switching";
 
 export function isTheme(value: string | null | undefined): value is Theme {
   return (THEMES as readonly string[]).includes(value ?? "");

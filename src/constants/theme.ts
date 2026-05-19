@@ -19,11 +19,21 @@ export const THEME_TOGGLE_ARIA_LABEL = {
   toDark: "Switch to dark mode",
 } as const;
 
+/** CSS class hooks (must match globals.css selectors) */
+export const THEME_TOGGLE_CLASS = "theme-toggle";
+export const THEME_SWITCHING_CLASS = "theme-switching";
+
 /** Shell hook classes; light gradients in globals.css `@variant light` */
 export const THEME_SHELL_CLASSES = {
   sidebar: "app-sidebar",
   chatPanel: "app-chat-panel",
   chatHeader: "app-chat-header",
+} as const;
+
+export const THEME_SHELL_UTILITIES = {
+  border: "border-white/9 light:border-app-border-9",
+  borderSubtle: "border-white/8 light:border-app-border-8",
+  text: "text-white light:text-app-fg",
 } as const;
 
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */

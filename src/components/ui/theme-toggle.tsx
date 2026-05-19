@@ -22,8 +22,8 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={toggleTheme}
       className={className}
     >
-      <SunIcon className="theme-toggle-icon" aria-hidden />
-      <MoonIcon className="theme-toggle-icon" aria-hidden />
+      <SunIcon className="theme-toggle-icon" />
+      <MoonIcon className="theme-toggle-icon" />
     </Button>
   );
 }

@@ -40,6 +40,10 @@
   --foreground: #f8fafc;
 }
 
+@theme inline {
+  --font-dm-sans: "DM Sans", sans-serif;
+}
+
 html,
 body {
   min-height: 100%;
