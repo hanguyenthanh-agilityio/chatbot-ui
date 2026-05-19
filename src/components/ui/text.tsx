@@ -14,38 +14,25 @@ import { cn } from "@/utils/class-name";
  *   inherit / error / warning — special-purpose
  */
 const TEXT_VARIANT_CLASSES = {
-  // ── Headings (Syne) ──────────────────────────────────────────────────────
-  display: "font-syne text-3xl font-bold tracking-tight text-white",
-  title: "font-syne text-2xl font-bold text-white",
-  /** Uppercase section label: "EMPLOYEE ASSISTANT", "CURRENT CHAT" */
+  display:
+    "font-syne text-3xl font-bold tracking-tight text-white light:text-app-fg",
+  title: "font-syne text-2xl font-bold text-white light:text-app-fg",
   eyebrow:
-    "font-syne text-xs font-semibold uppercase tracking-[0.2em] text-white/55",
-  /** Quiet uppercase section label */
+    "font-syne text-xs font-semibold uppercase tracking-[0.2em] text-white/55 light:text-app-muted-55",
   eyebrowMuted:
-    "font-syne text-xs font-semibold uppercase tracking-[0.2em] text-white/50",
-  /** Panel / card heading: "User mode selection", "Provider" */
-  sectionTitle: "font-syne text-sm font-semibold text-white/80",
-
-  // ── Body copy (DM Sans) ──────────────────────────────────────────────────
-  /** Long-form subtitle under a heading */
-  subtitle: "font-dm-sans text-[15px] leading-7 text-white/70",
-  /** Default body text */
-  body: "font-dm-sans text-sm text-white/80",
-  /** Emphasized body text (same size, stronger weight) */
-  bodyStrong: "font-dm-sans text-sm font-medium text-white/80",
-  /** One step quieter than body — descriptions, secondary info */
-  muted: "font-dm-sans text-sm text-white/65",
-  /** Small supporting text — timestamps, previews, labels */
-  caption: "font-dm-sans text-xs text-white/60",
-  /** Small supporting text with stronger contrast */
-  captionStrong: "font-dm-sans text-xs text-white/65",
-  /** Small supporting text with softer contrast */
-  captionMuted: "font-dm-sans text-xs text-white/55",
-  /** Tiny disclaimer / hint text under inputs */
-  helper: "font-dm-sans text-[11px] text-white/50",
-
-  // ── Special-purpose ──────────────────────────────────────────────────────
-  /** Inherits color from parent — useful inside colored containers */
+    "font-syne text-xs font-semibold uppercase tracking-[0.2em] text-white/50 light:text-app-muted-50",
+  sectionTitle:
+    "font-syne text-sm font-semibold text-white/80 light:text-app-fg-muted",
+  subtitle:
+    "font-dm-sans text-[15px] leading-7 text-white/70 light:text-app-muted-70",
+  body: "font-dm-sans text-sm text-white/80 light:text-app-fg-muted",
+  bodyStrong:
+    "font-dm-sans text-sm font-medium text-white/80 light:text-app-fg-muted",
+  muted: "font-dm-sans text-sm text-white/65 light:text-app-muted-65",
+  caption: "font-dm-sans text-xs text-white/60 light:text-app-muted-60",
+  captionStrong: "font-dm-sans text-xs text-white/65 light:text-app-muted-65",
+  captionMuted: "font-dm-sans text-xs text-white/55 light:text-app-muted-55",
+  helper: "font-dm-sans text-[11px] text-white/50 light:text-app-muted-50",
   inherit: "text-sm text-inherit",
   error: "font-dm-sans text-sm text-red-400",
   warning: "font-dm-sans text-xs text-amber-400",

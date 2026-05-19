@@ -10,8 +10,13 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
-import { appTheme } from "@/constants/theme";
 import type { UseProviderSelectionResult } from "@/types/provider";
+
+const OPENAI_VERIFY_BUTTON_CLASSES =
+  "light:bg-[linear-gradient(135deg,#7c3aed,#6366f1)] light:text-white light:hover:brightness-105 light:disabled:bg-[rgba(76,56,140,0.35)] light:disabled:text-white/85";
+
+const OLLAMA_VERIFY_BUTTON_CLASSES =
+  "border font-dm-sans text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-60 light:hover:bg-app-hover";
 
 type ProviderSelectorProps = {
   provider: UseProviderSelectionResult;
@@ -78,7 +83,7 @@ export function ProviderSelector({
             variant="primary"
             size="md"
             fullWidth
-            className={appTheme.provider.verifyPrimary}
+            className={OPENAI_VERIFY_BUTTON_CLASSES}
           >
             {provider.isValidatingKey
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
@@ -104,7 +109,7 @@ export function ProviderSelector({
             variant="ghost"
             size="md"
             fullWidth
-            className={appTheme.btn.ghostOutline}
+            className={OLLAMA_VERIFY_BUTTON_CLASSES}
           >
             {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
