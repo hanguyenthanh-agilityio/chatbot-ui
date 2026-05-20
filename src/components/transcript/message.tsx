@@ -90,7 +90,7 @@ function MessageSecondContent({
         </MessageBubble>
       ) : null}
       {shouldShowThinkingSkeleton ? (
-        <LoadingIndicator showAvatar={false} label={thinkingLabel} className="max-w-[72%]" />
+        <LoadingIndicator showAvatar={false} label={thinkingLabel} className="max-w-thread-thinking" />
       ) : null}
       {approvalParts.length > 0 ? (
         <div className="mt-3 space-y-3">
@@ -305,7 +305,7 @@ export function ChatMessage({
   return (
     <article key={message.id} className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser ? <MessageAvatar initials={getAssistantInitials(message)} isUser={false} /> : null}
-      <div className={`min-w-0 ${isUser ? "max-w-[85%]" : "max-w-full flex-1"}`}>
+      <div className={`min-w-0 ${isUser ? "max-w-message-column-user" : "max-w-full flex-1"}`}>
         {mutationSuccessCards.length > 0 ? (
           <div className="space-y-2">{successCardContent}</div>
         ) : null}

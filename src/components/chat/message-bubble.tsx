@@ -21,7 +21,7 @@ export function MessageBubble({
     return (
       <div
         className={cn(
-          "ml-auto max-w-[78%] rounded-[1.125rem_0.375rem_1.125rem_1.125rem] border border-violet-300/28 px-[0.9375rem] py-2.5 text-sm leading-relaxed break-words text-white/90 shadow-[0_8px_26px_rgba(56,32,140,0.34)] backdrop-blur-lg",
+          "ml-auto max-w-bubble-user rounded-bubble-user border border-violet-300/28 px-[0.9375rem] py-2.5 text-sm leading-relaxed break-words text-white/90 shadow-bubble-user backdrop-blur-lg",
           "bg-bubble-user",
         )}
       >
@@ -33,9 +33,9 @@ export function MessageBubble({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-white/11 px-4 py-2.5 text-sm leading-relaxed text-white/88 shadow-[0_8px_24px_rgba(6,10,30,0.24)] backdrop-blur-md",
+        "rounded-2xl border border-white/11 px-4 py-2.5 text-sm leading-relaxed text-white/88 shadow-bubble-assistant backdrop-blur-md",
         "bg-bubble-assistant",
-        fullWidth ? "max-w-full" : "max-w-[72%]",
+        fullWidth ? "max-w-full" : "max-w-bubble-assistant",
       )}
     >
       {text ? <span className="whitespace-pre-wrap">{text}</span> : null}

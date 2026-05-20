@@ -60,7 +60,7 @@ export function ChatComposer({
   return (
     <div
       className={cn(
-        "border-t border-white/8 backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-[0_-1px_0_rgba(255,255,255,0.04),0_-10px_34px_rgba(0,0,0,0.2)]",
+        "border-t border-white/8 backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-composer-bar",
         "bg-glass-composer",
       )}
     >
@@ -86,7 +86,7 @@ export function ChatComposer({
         <form
           onSubmit={onSubmitAction}
           className={cn(
-            "flex w-full items-center gap-3 rounded-[1.125rem] border border-white/13 px-4 py-2.5 shadow-[0_8px_26px_rgba(7,12,30,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55",
+            "flex w-full items-center gap-3 rounded-composer-field border border-white/13 px-4 py-2.5 shadow-composer-input backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55",
             "bg-glass-input",
           )}
         >
@@ -99,7 +99,7 @@ export function ChatComposer({
             aria-label={CHAT_COMPOSER_COPY.ariaLabel}
             disabled={!isProviderReady}
             rows={1}
-            className="max-h-[9.375rem] flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
+            className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
           />
 
           <button
@@ -109,7 +109,7 @@ export function ChatComposer({
             className={cn(
               "self-end grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-all duration-200",
               "disabled:opacity-30 disabled:cursor-not-allowed",
-              "hover:scale-[1.04] hover:shadow-[0_6px_20px_rgba(99,60,220,0.4)]",
+              "hover:scale-[1.04] hover:shadow-btn-brand",
               canSend
                 ? "bg-btn-active text-white"
                 : "bg-btn-disabled text-white/75",

@@ -17,7 +17,7 @@ export function ChatEmptyState({
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-4 py-12">
       <div
         className={cn(
-          "flex w-full max-w-[32.5rem] flex-col items-center gap-6 rounded-3xl border border-white/10 p-8 shadow-[0_24px_64px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[2rem]",
+          "flex w-full max-w-chat-empty flex-col items-center gap-6 rounded-3xl border border-white/10 p-8 shadow-glass-hero backdrop-blur-[2rem]",
           "bg-glass",
         )}
       >
@@ -43,7 +43,7 @@ export function ChatEmptyState({
             <button
               key={action.label}
               type="button"
-              className="cursor-pointer rounded-full border border-white/18 bg-white/6 px-3.5 py-1.5 text-xs text-white/78 backdrop-blur-[0.625rem] transition-all duration-200 hover:border-violet-300/55 hover:bg-violet-600/20 hover:text-white hover:shadow-[0_4px_12px_rgba(99,60,220,0.2)]"
+              className="cursor-pointer rounded-full border border-white/18 bg-white/6 px-3.5 py-1.5 text-xs text-white/78 backdrop-blur-[0.625rem] transition-all duration-200 hover:border-violet-300/55 hover:bg-violet-600/20 hover:text-white hover:shadow-chip-brand"
               onClick={() => onSelectPrompt(action.prompt)}
             >
               {action.label}

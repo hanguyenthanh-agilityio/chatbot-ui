@@ -52,17 +52,17 @@ export function WorkspaceApp({
   if (!isHydrated) {
     return (
       <main className="min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
-        <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:gap-4 lg:flex-row">
+        <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-md sm:gap-4 lg:flex-row">
           <div
             className={cn(
-              "h-[70vh] w-full rounded-[1.75rem] border backdrop-blur-[28px] lg:max-w-sm",
+              "h-chat-viewport w-full rounded-shell border backdrop-blur-[28px] lg:max-w-sm",
               "bg-glass-panel-alt",
               THEME_SHELL_UTILITIES.border,
             )}
           />
           <div
             className={cn(
-              "h-[70vh] flex-1 rounded-[1.75rem] border backdrop-blur-[28px]",
+              "h-chat-viewport flex-1 rounded-shell border backdrop-blur-[28px]",
               "bg-glass-panel-alt",
               THEME_SHELL_UTILITIES.border,
             )}
@@ -114,7 +114,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     <Card
       variant="panel"
       className={cn(
-        "p-4 shadow-[0_8px_30px_rgba(5,10,30,0.25)]",
+        "p-4 shadow-panel",
         THEME_SHELL_UTILITIES.text,
       )}
     >
@@ -140,7 +140,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           onDismiss={provider.dismissSuccessMessage}
         />
       ) : null}
-      <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
+      <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-dvh sm:gap-4 lg:flex-row">
         <ThreadSidebar
           activeThread={activeThread}
           allThreads={allThreads}
@@ -155,7 +155,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
         <section
           className={cn(
             THEME_SHELL_CLASSES.chatPanel,
-            "flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]",
+            "flex min-h-chat-viewport flex-1 flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel",
             "bg-glass-panel-chat",
             THEME_SHELL_UTILITIES.border,
           )}
@@ -163,7 +163,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           <header
             className={cn(
               THEME_SHELL_CLASSES.chatHeader,
-              "border-b px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]",
+              "border-b px-4 py-5 sm:px-6 lg:px-8 shadow-shell-header",
               "bg-glass-header",
               THEME_SHELL_UTILITIES.borderSubtle,
             )}

@@ -2,7 +2,6 @@
 
 @import "tailwindcss";
 
-/* Layout blobs (size/blur shared across themes; colors use app-blob-* tokens) */
 @theme {
   --size-app-blob: 500px;
   --size-app-blob-alt: 520px;
@@ -10,24 +9,18 @@
   --blur-app-blob-accent: 82px;
 }
 
-/* ── Theme variants: dark = default classes; light = `light:` utilities ── */
 @variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
 @variant light {
   @theme {
     --color-app-fg: #1a1035;
     --color-app-fg-muted: #463f62;
-    --color-app-muted-70: #675f85;
-    --color-app-muted-65: #6f678c;
-    --color-app-muted-60: #7b7396;
-    --color-app-muted-55: #837c9d;
     --color-app-muted-50: #938dab;
     --color-app-muted-30: #aba6bf;
     --color-app-border-9: #e3def1;
     --color-app-border-8: #e7e2f4;
     --color-app-border-10: #e0dbef;
     --color-app-hover-border: #c0a1f7;
-    /* Glass / overlay / blobs — rgba only where alpha is required */
     --color-app-surface-4: rgba(255, 255, 255, 0.72);
     --color-app-surface-6: rgba(255, 255, 255, 0.88);
     --color-app-hover: rgba(124, 58, 237, 0.1);
@@ -37,17 +30,12 @@
   }
 }
 
-/* ── App base (dark default) ── */
 :root {
   --foreground: #f8fafc;
-
-  /* Solid backgrounds → Tailwind `bg-primary`, `bg-btn-disabled`, … */
-  --bg-primary: #0c1024;
+  --bg-selection: rgba(124, 58, 237, 0.3);
   --bg-btn-disabled: rgba(255, 255, 255, 0.18);
   --bg-surface-muted: rgba(28, 27, 56, 0.6);
-  --bg-selection: rgba(124, 58, 237, 0.3);
 
-  /* Page shell (radial + base) → `bg-app-shell` */
   --bg-radial-violet: radial-gradient(
     1200px 700px at -10% -15%,
     rgba(139, 92, 246, 0.2) 0%,
@@ -64,10 +52,9 @@
     #1a1739 42%,
     #102033 100%
   );
-  --bg-app-shell: var(--bg-radial-violet), var(--bg-radial-cyan),
-    var(--bg-gradient-base);
+  --bg-app-shell:
+    var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
 
-  /* Glass / panels → `bg-glass`, `bg-glass-panel`, … */
   --bg-glass: linear-gradient(
     165deg,
     rgba(255, 255, 255, 0.09),
@@ -103,11 +90,6 @@
     rgba(255, 255, 255, 0.08),
     rgba(255, 255, 255, 0.04)
   );
-  --bg-glass-strong: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.09),
-    rgba(255, 255, 255, 0.06)
-  );
   --bg-glass-loading: linear-gradient(165deg, #ffffff17, #ffffff0d);
   --bg-glass-table: linear-gradient(
     165deg,
@@ -120,33 +102,84 @@
     rgba(79, 70, 229, 0.44),
     rgba(14, 165, 233, 0.22)
   );
-  --bg-bubble-assistant: var(--bg-glass-strong);
+  --bg-bubble-assistant: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.09),
+    rgba(255, 255, 255, 0.06)
+  );
   --bg-btn-active: linear-gradient(135deg, #8b5cf6, #6366f1, #0ea5e9);
 
-  /* Light shell panels (overridden in `@variant light`) */
-  --bg-shell-sidebar: var(--bg-glass-panel);
-  --bg-shell-chat-panel: var(--bg-glass-panel-chat);
-  --bg-shell-chat-header: var(--bg-glass-header);
+  --shadow-glass: 0 10px 30px rgba(7, 12, 30, 0.26);
+  --shadow-glass-elevated: 0 10px 28px rgba(7, 12, 30, 0.28);
+  --shadow-glass-compact: 0 10px 26px rgba(7, 12, 30, 0.25);
+  --shadow-glass-hero:
+    0 24px 64px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-panel: 0 8px 30px rgba(5, 10, 30, 0.25);
+  --shadow-panel-sm: 0 8px 24px rgba(7, 12, 30, 0.22);
+  --shadow-shell: 0 16px 60px rgba(7, 12, 32, 0.32);
+  --shadow-shell-panel: 0 16px 60px rgba(7, 12, 32, 0.36);
+  --shadow-shell-header:
+    0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 32px rgba(0, 0, 0, 0.2);
+  --shadow-composer-bar:
+    0 -1px 0 rgba(255, 255, 255, 0.04), 0 -10px 34px rgba(0, 0, 0, 0.2);
+  --shadow-composer-input:
+    0 8px 26px rgba(7, 12, 30, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-bubble-user: 0 8px 26px rgba(56, 32, 140, 0.34);
+  --shadow-bubble-assistant: 0 8px 24px rgba(6, 10, 30, 0.24);
+  --shadow-table: 0 14px 34px rgba(6, 10, 30, 0.34);
+  --shadow-thread-active: 0 8px 26px rgba(8, 12, 30, 0.22);
+  --shadow-btn-brand: 0 6px 20px rgba(99, 60, 220, 0.4);
+  --shadow-chip-brand: 0 4px 12px rgba(99, 60, 220, 0.2);
+  --shadow-avatar-brand:
+    0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(124, 58, 237, 0.18);
+  --shadow-avatar-placeholder:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-avatar-photo: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-toast-success: 0 8px 32px rgba(16, 185, 129, 0.18);
+  --shadow-toast-error: 0 8px 32px rgba(239, 68, 68, 0.18);
+  --shadow-toast-info: 0 8px 32px rgba(14, 165, 233, 0.18);
+  --shadow-tool-rose: 0 8px 20px #5a0c243d;
+  --shadow-tool-emerald: 0 8px 20px #08462a38;
+  --shadow-tool-neutral: 0 8px 20px rgba(7, 12, 30, 0.2);
+  --shadow-toggle:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.28);
+  --shadow-toggle-light:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 4px 14px rgba(91, 33, 182, 0.1);
+  --shadow-toggle-thumb:
+    0 2px 10px rgba(88, 28, 135, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --shadow-toggle-thumb-light:
+    0 2px 10px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+  /* Layout: width / height / max / radius / border (→ w-*, max-w-*, rounded-*, border-*) */
+  --layout-shell-max: 1600px;
+  --layout-chat-empty-max: 32.5rem;
+  --layout-loading-card-width: 18.75rem;
+  --layout-composer-textarea-max-height: 9.375rem;
+  --layout-chat-viewport-height: 70vh;
+  --layout-page-min-sm: calc(100vh - 1.5rem);
+  --layout-page-min-md: calc(100vh - 2.5rem);
+  --layout-page-min-dvh: calc(100dvh - 2.5rem);
+  --layout-avatar-sm: 30px;
+  --layout-max-bubble-user: 78%;
+  --layout-max-bubble-assistant: 72%;
+  --layout-max-thread-thinking: 72%;
+  --layout-max-message-column-user: 85%;
+  --layout-radius-shell: 1.75rem;
+  --layout-radius-composer-field: 1.125rem;
+  --layout-radius-bubble-user: 1.125rem 0.375rem 1.125rem 1.125rem;
 
   --font-primary: "Syne", sans-serif;
   --font-secondary:
     "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-
-  /* Legacy alias */
-  --background: var(--bg-primary);
 }
 
+/* Tailwind utilities used in JSX (values from :root above) */
 @theme inline {
   --font-primary: var(--font-primary);
   --font-secondary: var(--font-secondary);
-
-  --color-primary: var(--bg-primary);
   --color-btn-disabled: var(--bg-btn-disabled);
   --color-surface-muted: var(--bg-surface-muted);
-  --color-foreground: var(--foreground);
-
-  --background-image-app-shell: var(--bg-app-shell);
   --background-image-glass: var(--bg-glass);
   --background-image-glass-panel: var(--bg-glass-panel);
   --background-image-glass-panel-chat: var(--bg-glass-panel-chat);
@@ -154,15 +187,55 @@
   --background-image-glass-header: var(--bg-glass-header);
   --background-image-glass-composer: var(--bg-glass-composer);
   --background-image-glass-input: var(--bg-glass-input);
-  --background-image-glass-strong: var(--bg-glass-strong);
   --background-image-glass-loading: var(--bg-glass-loading);
   --background-image-glass-table: var(--bg-glass-table);
   --background-image-bubble-user: var(--bg-bubble-user);
   --background-image-bubble-assistant: var(--bg-bubble-assistant);
   --background-image-btn-active: var(--bg-btn-active);
-  --background-image-shell-sidebar: var(--bg-shell-sidebar);
-  --background-image-shell-chat-panel: var(--bg-shell-chat-panel);
-  --background-image-shell-chat-header: var(--bg-shell-chat-header);
+  --shadow-glass: var(--shadow-glass);
+  --shadow-glass-elevated: var(--shadow-glass-elevated);
+  --shadow-glass-compact: var(--shadow-glass-compact);
+  --shadow-glass-hero: var(--shadow-glass-hero);
+  --shadow-panel: var(--shadow-panel);
+  --shadow-panel-sm: var(--shadow-panel-sm);
+  --shadow-shell: var(--shadow-shell);
+  --shadow-shell-panel: var(--shadow-shell-panel);
+  --shadow-shell-header: var(--shadow-shell-header);
+  --shadow-composer-bar: var(--shadow-composer-bar);
+  --shadow-composer-input: var(--shadow-composer-input);
+  --shadow-bubble-user: var(--shadow-bubble-user);
+  --shadow-bubble-assistant: var(--shadow-bubble-assistant);
+  --shadow-table: var(--shadow-table);
+  --shadow-thread-active: var(--shadow-thread-active);
+  --shadow-btn-brand: var(--shadow-btn-brand);
+  --shadow-chip-brand: var(--shadow-chip-brand);
+  --shadow-avatar-brand: var(--shadow-avatar-brand);
+  --shadow-avatar-placeholder: var(--shadow-avatar-placeholder);
+  --shadow-avatar-photo: var(--shadow-avatar-photo);
+  --shadow-toast-success: var(--shadow-toast-success);
+  --shadow-toast-error: var(--shadow-toast-error);
+  --shadow-toast-info: var(--shadow-toast-info);
+  --shadow-tool-rose: var(--shadow-tool-rose);
+  --shadow-tool-emerald: var(--shadow-tool-emerald);
+  --shadow-tool-neutral: var(--shadow-tool-neutral);
+
+  --width-loading-card: var(--layout-loading-card-width);
+  --size-avatar-sm: var(--layout-avatar-sm);
+  --max-width-shell: var(--layout-shell-max);
+  --max-width-chat-empty: var(--layout-chat-empty-max);
+  --max-width-bubble-user: var(--layout-max-bubble-user);
+  --max-width-bubble-assistant: var(--layout-max-bubble-assistant);
+  --max-width-thread-thinking: var(--layout-max-thread-thinking);
+  --max-width-message-column-user: var(--layout-max-message-column-user);
+  --height-chat-viewport: var(--layout-chat-viewport-height);
+  --min-height-chat-viewport: var(--layout-chat-viewport-height);
+  --min-height-page-sm: var(--layout-page-min-sm);
+  --min-height-page-md: var(--layout-page-min-md);
+  --min-height-page-dvh: var(--layout-page-min-dvh);
+  --max-height-composer-textarea: var(--layout-composer-textarea-max-height);
+  --radius-shell: var(--layout-radius-shell);
+  --radius-composer-field: var(--layout-radius-composer-field);
+  --radius-bubble-user: var(--layout-radius-bubble-user);
 }
 
 html,
@@ -192,7 +265,6 @@ select {
   background: var(--bg-selection);
 }
 
-/* ── Theme switching (suppress flash on toggle) ── */
 html.theme-switching body :not(.theme-toggle, .theme-toggle *) {
   transition: none !important;
 }
@@ -212,10 +284,8 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
     -webkit-backdrop-filter !important;
 }
 
-/* ── Light mode: page shell + layout panels ── */
 @variant light {
   & {
-    --bg-primary: #f8f6ff;
     --foreground: #1a1035;
     --bg-selection: rgba(124, 58, 237, 0.18);
     --bg-radial-violet: radial-gradient(
@@ -234,8 +304,8 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
       #ede8ff 42%,
       #eef6ff 100%
     );
-    --bg-app-shell: var(--bg-radial-violet), var(--bg-radial-cyan),
-      var(--bg-gradient-base);
+    --bg-app-shell:
+      var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
     --bg-shell-sidebar: linear-gradient(
       165deg,
       rgba(255, 255, 255, 0.92),
@@ -251,14 +321,13 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
       rgba(255, 255, 255, 0.95),
       rgba(248, 245, 255, 0.82)
     );
-  }
-
-  &::selection {
-    background: var(--bg-selection);
+    --shadow-shell: 0 16px 48px rgba(76, 56, 140, 0.12);
+    --shadow-shell-panel: var(--shadow-shell);
+    --shadow-shell-header:
+      0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 24px rgba(76, 56, 140, 0.08);
   }
 
   & body {
-    background: var(--bg-app-shell);
     color: var(--color-app-fg);
   }
 
@@ -266,21 +335,19 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
     color: var(--color-app-fg);
     border-color: var(--color-app-border-9);
     background: var(--bg-shell-sidebar);
-    box-shadow: 0 16px 48px rgba(76, 56, 140, 0.12);
+    box-shadow: var(--shadow-shell);
   }
 
   & .app-chat-panel {
     border-color: var(--color-app-border-9);
     background: var(--bg-shell-chat-panel);
-    box-shadow: 0 16px 48px rgba(76, 56, 140, 0.12);
+    box-shadow: var(--shadow-shell-panel);
   }
 
   & .app-chat-header {
     border-color: var(--color-app-border-8);
     background: var(--bg-shell-chat-header);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.9),
-      0 8px 24px rgba(76, 56, 140, 0.08);
+    box-shadow: var(--shadow-shell-header);
   }
 }
 
@@ -289,7 +356,6 @@ aside .rounded-2xl .inline-flex.rounded-full {
   transition-property: transform, box-shadow, opacity;
 }
 
-/* ── Theme toggle UI ── */
 .theme-toggle {
   --theme-toggle-duration: 420ms;
   --theme-toggle-ease: cubic-bezier(0.4, 0, 0.2, 1);
@@ -305,9 +371,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(15, 12, 35, 0.55);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 4px 16px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--shadow-toggle);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
@@ -319,27 +383,22 @@ aside .rounded-2xl .inline-flex.rounded-full {
 .theme-toggle[data-state="light"] {
   border-color: rgba(124, 58, 237, 0.22);
   background-color: rgba(248, 245, 255, 0.95);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 4px 14px rgba(91, 33, 182, 0.1);
+  box-shadow: var(--shadow-toggle-light);
 }
 
 .theme-toggle:focus-visible {
   outline: none;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 4px 16px rgba(0, 0, 0, 0.28),
+    var(--shadow-toggle),
     0 0 0 2px rgba(167, 139, 250, 0.55);
 }
 
 .theme-toggle[data-state="light"]:focus-visible {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 4px 14px rgba(91, 33, 182, 0.1),
+    var(--shadow-toggle-light),
     0 0 0 2px rgba(124, 58, 237, 0.4);
 }
 
-/* Sliding thumb (decorative) */
 .theme-toggle::before {
   content: "";
   position: absolute;
@@ -350,9 +409,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
   height: 1.5rem;
   border-radius: 9999px;
   background-color: #7c3aed;
-  box-shadow:
-    0 2px 10px rgba(88, 28, 135, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: var(--shadow-toggle-thumb);
   transform: translate3d(0, 0, 0);
   transition:
     transform var(--theme-toggle-duration) var(--theme-toggle-ease),
@@ -363,9 +420,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
 
 .theme-toggle[data-state="light"]::before {
   background-color: #f59e0b;
-  box-shadow:
-    0 2px 10px rgba(245, 158, 11, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  box-shadow: var(--shadow-toggle-thumb-light);
 }
 
 .theme-toggle[data-state="dark"]::before {

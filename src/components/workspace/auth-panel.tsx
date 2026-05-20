@@ -25,7 +25,7 @@ export function AuthPanel({
   }
 
   return (
-    <Card className="p-4 text-white shadow-[0_8px_24px_rgba(7,12,30,0.22)]">
+    <Card className="p-4 text-white shadow-panel-sm">
       <div className="space-y-1">
         <Text as="p" variant="sectionTitle">
           {AUTH_PANEL_COPY.title}

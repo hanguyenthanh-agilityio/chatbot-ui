@@ -152,7 +152,7 @@ export function ToolOutputTable({
     <Card
       variant="glass"
       className={cn(
-        "overflow-hidden border-white/12 shadow-[0_14px_34px_rgba(6,10,30,0.34)]",
+        "overflow-hidden border-white/12 shadow-table",
         "bg-glass-table",
       )}
     >
