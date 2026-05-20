@@ -1,5 +1,8 @@
 /**
  * Theme: `data-theme` on <html>. Dark = default classes; light = `light:` utilities.
+ * Fonts: `--font-primary` (Syne) / `--font-secondary` (DM Sans) in globals.css `:root`.
+ * Body uses `var(--font-secondary)`; use Tailwind `font-primary` only where Syne is required.
+ * Backgrounds: `--bg-*` in globals.css; use Tailwind classes (`bg-glass`, `bg-btn-active`, …) in JSX.
  */
 export const THEME_STORAGE_KEY = "employee-assistant:theme";
 export const THEME_CHANGE_EVENT = "employee-assistant:theme-change";
@@ -38,7 +41,7 @@ export const THEME_SHELL_UTILITIES = {
 
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
 export const FORM_FIELD_PANEL_CLASSES =
-  "border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-[#f3efff] light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-app-hover-border";
+  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-[#f3efff] light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-app-hover-border";
 
 export function isDarkTheme(theme: Theme): boolean {
   return theme === ThemeMode.Dark;

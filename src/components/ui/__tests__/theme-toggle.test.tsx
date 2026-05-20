@@ -83,14 +83,14 @@ describe("ThemeToggle", () => {
     expect(toggle).toHaveAttribute("data-state", "light");
     expect(toggle).toHaveAccessibleName(THEME_TOGGLE_ARIA_LABEL.toDark);
     expect(document.documentElement.dataset.theme).toBe("light");
-    expect(readStoredTheme()).toBe("light");
-    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe("light");
+    expect(readStoredTheme()).toBe(ThemeMode.Light);
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe(ThemeMode.Light);
 
     await user.click(toggle);
 
     expect(toggle).toHaveAttribute("data-state", "dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
-    expect(readStoredTheme()).toBe("dark");
+    expect(readStoredTheme()).toBe(ThemeMode.Dark);
   });
 
   it("merges optional className onto the button", () => {

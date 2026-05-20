@@ -26,7 +26,7 @@ export const OPENAI_VERIFY_BUTTON_CLASSES =
   "light:bg-[linear-gradient(135deg,#7c3aed,#6366f1)] light:text-white light:hover:brightness-105 light:disabled:bg-[rgba(76,56,140,0.35)] light:disabled:text-white/85";
 
 export const OLLAMA_VERIFY_BUTTON_CLASSES =
-  "border font-dm-sans text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-60 light:hover:bg-app-hover";
+  "border font-secondary text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-60 light:hover:bg-app-hover";
 
 export const PROVIDER_STATUS_COPY = {
   ollamaDefault: "Using Ollama with local/default config.",

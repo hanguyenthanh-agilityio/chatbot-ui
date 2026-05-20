@@ -56,11 +56,11 @@ export function renderEmployeeCell(request: UnknownRecord) {
       />
 
       <div className="min-w-0">
-        <p className="whitespace-nowrap font-dm-sans text-sm font-semibold leading-[1.25] text-white/92">
+        <p className="whitespace-nowrap text-sm font-semibold leading-[1.25] text-white/92">
           {employeeName}
         </p>
         {employeeTeam ? (
-          <p className="mt-0.5 whitespace-nowrap font-dm-sans text-xs leading-[1.25] text-white/60">
+          <p className="mt-0.5 whitespace-nowrap text-xs leading-[1.25] text-white/60">
             {employeeTeam}
           </p>
         ) : null}

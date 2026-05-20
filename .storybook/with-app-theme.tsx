@@ -1,6 +1,6 @@
 import type { Decorator } from "@storybook/nextjs-vite";
 import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 // Components
 import { ThemeProvider } from "@/components/theme-provider";
@@ -9,10 +9,13 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { DEFAULT_THEME, THEME_CHANGE_EVENT, type Theme } from "@/constants/theme";
 
 // Libs
-import { applyTheme } from "@/lib/theme";
+import { applyTheme, isTheme } from "@/lib/theme";
 
 function resolveStorybookTheme(value: unknown): Theme {
-  return value === "dark" || value === "light" ? value : DEFAULT_THEME;
+  if (typeof value === "string" && isTheme(value)) {
+    return value;
+  }
+  return DEFAULT_THEME;
 }
 
 function syncDocumentTheme(theme: Theme) {
@@ -27,7 +30,7 @@ function AppThemeShell({
   theme: Theme;
   children: ReactNode;
 }) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     syncDocumentTheme(theme);
   }, [theme]);
 
@@ -35,12 +38,18 @@ function AppThemeShell({
 }
 AppThemeShell.displayName = "AppThemeShell";
 
-export const withAppTheme: Decorator = (Story, { globals }) => {
-  const theme = resolveStorybookTheme(globals.theme);
+export const withAppTheme: Decorator = (Story, context) => {
+  const theme = resolveStorybookTheme(context.globals?.theme);
+
+  // Before ThemeProvider's first paint, `useSyncExternalStore` reads
+  // `document.documentElement.dataset.theme` — sync here, not only in useEffect.
+  if (typeof document !== "undefined") {
+    syncDocumentTheme(theme);
+  }
 
   return (
     <AppThemeShell theme={theme}>
-      <div className="min-h-[120px] w-full p-6">
+      <div className="min-h-preview w-full p-6">
         <Story />
       </div>
     </AppThemeShell>

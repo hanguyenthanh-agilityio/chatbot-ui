@@ -20,7 +20,8 @@ const preview: Preview = {
     },
   },
   initialGlobals: {
-    theme: DEFAULT_THEME,
+    // Toolbar stores string values; keep literal for Storybook URL/state round-trip.
+    theme: DEFAULT_THEME satisfies string,
   },
   parameters: {
     layout: "centered",
