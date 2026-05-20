@@ -209,8 +209,9 @@ function ThreadCard({
           <button
             type="button"
             className={cn(
-              "text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
-              "text-white/30 light:text-app-muted-30",
+              "text-[10px] uppercase tracking-wider disabled:cursor-not-allowed disabled:opacity-50",
+              "text-white/30 hover:text-rose-300",
+              "light:text-app-muted-60 light:hover:text-rose-600",
             )}
             onClick={(e) => {
               e.stopPropagation();

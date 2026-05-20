@@ -10,10 +10,7 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
-import {
-  OLLAMA_VERIFY_BUTTON_CLASSES,
-  OPENAI_VERIFY_BUTTON_CLASSES,
-} from "@/constants/theme";
+import { OLLAMA_VERIFY_BUTTON_CLASSES } from "@/constants/theme";
 import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
@@ -81,7 +78,6 @@ export function ProviderSelector({
             variant="primary"
             size="md"
             fullWidth
-            className={OPENAI_VERIFY_BUTTON_CLASSES}
           >
             {provider.isValidatingKey
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel

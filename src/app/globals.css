@@ -6,19 +6,20 @@
   @theme {
     --color-app-fg: #1a1035;
     --color-app-fg-muted: #463f62;
-    --color-app-muted-50: #938dab;
-    --color-app-muted-30: #aba6bf;
-    --color-app-muted-55: #928db0;
-    --color-app-muted-60: #8a85a8;
-    --color-app-muted-65: #827d9e;
-    --color-app-muted-70: #7a7596;
-    --color-app-border-9: #e3def1;
-    --color-app-border-8: #e7e2f4;
-    --color-app-border-10: #e0dbef;
-    --color-app-hover-border: #c0a1f7;
-    --color-app-surface-4: #ffffffb8;
-    --color-app-surface-6: #ffffffe0;
-    --color-app-hover: #7c3aed1a;
+    --color-app-muted-50: #857d9c;
+    --color-app-muted-30: #7a7390;
+    --color-app-muted-55: #867e9c;
+    --color-app-muted-60: #787196;
+    --color-app-muted-65: #6f688f;
+    --color-app-muted-70: #676185;
+    --color-app-border-9: #cec5e2;
+    --color-app-border-8: #d1c8e5;
+    --color-app-border-10: #c9bfe0;
+    --color-app-hover-border: #b18df0;
+    --color-app-surface-4: #f0ebf8;
+    --color-app-surface-6: #e4dcf2;
+    --color-app-field-panel: #e4daf5;
+    --color-app-hover: #7c3aed22;
     --color-app-btn-brand-disabled: #4c388c59;
     --color-app-blob-violet: #a78bfa47;
     --color-app-blob-indigo: #818cf838;
@@ -56,6 +57,8 @@ html[data-theme="light"] {
   --shadow-shell-panel: var(--shadow-shell);
   --shadow-shell-header: 0 1px 0 #ffffffe6, 0 8px 24px #4c388c14;
   --shadow-glass: 0 10px 30px #4c388c1f;
+  --shadow-card-surface: 0 2px 12px #4c388c12;
+  --shadow-card-surface-soft: 0 2px 12px #4c388c14;
 }
 
 html[data-theme="light"] body {
@@ -124,6 +127,8 @@ html[data-theme="light"] .app-chat-header {
   --shadow-glass-hero: 0 24px 64px #00000061, inset 0 1px 0 #ffffff1a;
   --shadow-panel: 0 8px 30px #050a1e40;
   --shadow-panel-sm: 0 8px 24px #070c1e38;
+  --shadow-card-surface: 0 2px 12px #070c1e28;
+  --shadow-card-surface-soft: 0 2px 12px #070c1e2a;
   --shadow-shell: 0 16px 60px #070c2052;
   --shadow-shell-panel: 0 16px 60px #070c205c;
   --shadow-shell-header: 0 1px 0 #ffffff0f, 0 8px 32px #00000033;
@@ -206,6 +211,8 @@ html[data-theme="light"] .app-chat-header {
   --shadow-glass-hero: var(--shadow-glass-hero);
   --shadow-panel: var(--shadow-panel);
   --shadow-panel-sm: var(--shadow-panel-sm);
+  --shadow-card-surface: var(--shadow-card-surface);
+  --shadow-card-surface-soft: var(--shadow-card-surface-soft);
   --shadow-shell: var(--shadow-shell);
   --shadow-shell-panel: var(--shadow-shell-panel);
   --shadow-shell-header: var(--shadow-shell-header);

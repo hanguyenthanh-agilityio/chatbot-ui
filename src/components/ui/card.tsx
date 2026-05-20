@@ -5,8 +5,8 @@ const CARD_VARIANT_CLASSES = {
   glass:
     "border border-white/10 bg-glass shadow-glass backdrop-blur-md light:border-app-border-10 light:bg-[image:var(--bg-shell-sidebar)] light:shadow-glass",
   panel:
-    "border border-white/8 bg-white/4 backdrop-blur-[20px] light:border-app-border-8 light:bg-app-surface-4",
-  soft: "border border-white/8 bg-white/6 light:border-app-border-8 light:bg-app-surface-6",
+    "border border-white/8 bg-white/4 backdrop-blur-[20px] light:border-app-border-8 light:bg-app-surface-4 light:shadow-card-surface",
+  soft: "border border-white/8 bg-white/6 light:border-app-border-8 light:bg-app-surface-6 light:shadow-card-surface-soft",
   success: "border border-emerald-400/28 bg-emerald-500/10",
   danger: "border border-rose-400/28 bg-rose-500/10",
 } as const;
@@ -20,7 +20,11 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
 export function Card({ variant = "glass", className, ...props }: CardProps) {
   return (
     <div
-      className={cn("rounded-2xl transition-none", CARD_VARIANT_CLASSES[variant], className)}
+      className={cn(
+        "rounded-2xl transition-none",
+        CARD_VARIANT_CLASSES[variant],
+        className,
+      )}
       {...props}
     />
   );

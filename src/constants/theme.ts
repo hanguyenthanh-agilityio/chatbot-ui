@@ -41,10 +41,7 @@ export const THEME_SHELL_UTILITIES = {
 
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
 export const FORM_FIELD_PANEL_CLASSES =
-  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-[#f3efff] light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-app-hover-border";
-
-export const OPENAI_VERIFY_BUTTON_CLASSES =
-  "light:bg-btn-active light:text-white light:hover:brightness-105 light:disabled:bg-app-btn-brand-disabled light:disabled:text-white/85";
+  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-app-field-panel light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-app-hover-border";
 
 export const OLLAMA_VERIFY_BUTTON_CLASSES =
   "border font-secondary text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-60 light:hover:bg-app-hover";
