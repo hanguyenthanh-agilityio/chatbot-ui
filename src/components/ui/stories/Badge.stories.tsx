@@ -94,9 +94,9 @@ export const ThemeComparison: Story = {
       </div>
       <div
         data-theme="light"
-        className="space-y-3 rounded-2xl border border-violet-200/40 bg-[linear-gradient(165deg,#fff,#f8f6ff)] p-4 text-brand-dark-100"
+        className="space-y-3 rounded-2xl border border-violet-200/40 bg-[linear-gradient(165deg,#fff,#f8f6ff)] p-4 light:text-app-fg"
       >
-        <p className="font-dm-sans text-xs font-medium uppercase tracking-wider text-brand-dark-100/50">
+        <p className="font-dm-sans text-xs font-medium uppercase tracking-wider light:text-app-muted-55">
           Light
         </p>
         <VariantGrid />

@@ -3,21 +3,22 @@ import { cn } from "@/utils/class-name";
 
 const BADGE_VARIANT_CLASSES = {
   neutral:
-    "app-badge-neutral border-white/20 bg-white/8 text-white/80",
+    "app-badge-neutral border-white/20 bg-white/8 text-white/80 light:border-app-border-10 light:bg-app-surface-6 light:text-app-fg-muted",
   subtle:
-    "app-badge-subtle border-white/16 bg-white/5 text-white/62",
+    "app-badge-subtle border-white/16 bg-white/5 text-white/62 light:border-app-border-8 light:bg-app-surface-4 light:text-app-muted-65",
   brand:
-    "app-badge-brand border-violet-400/35 bg-violet-500/16 text-violet-200",
+    "app-badge-brand border-violet-400/35 bg-violet-500/16 text-violet-200 light:text-violet-900",
   providerOllama:
-    "app-badge-provider-ollama border-violet-400/35 bg-violet-500/16 text-violet-200",
+    "app-badge-provider-ollama border-violet-400/35 bg-violet-500/16 text-violet-200 light:text-violet-900",
   providerOpenai:
-    "app-badge-provider-openai border-emerald-400/35 bg-emerald-500/15 text-emerald-100",
-  info: "app-badge-info border-cyan-400/30 bg-cyan-500/14 text-cyan-100",
+    "app-badge-provider-openai border-emerald-400/35 bg-emerald-500/15 text-emerald-100 light:text-emerald-900",
+  info: "app-badge-info border-cyan-400/30 bg-cyan-500/14 text-cyan-100 light:text-cyan-900",
   success:
-    "app-badge-success border-emerald-400/35 bg-emerald-500/15 text-emerald-100",
+    "app-badge-success border-emerald-400/35 bg-emerald-500/15 text-emerald-100 light:text-emerald-900",
   warning:
-    "app-badge-warning border-amber-300/35 bg-amber-500/15 text-amber-100",
-  danger: "app-badge-danger border-rose-400/35 bg-rose-500/15 text-rose-100",
+    "app-badge-warning border-amber-300/35 bg-amber-500/15 text-amber-100 light:text-amber-900",
+  danger:
+    "app-badge-danger border-rose-400/35 bg-rose-500/15 text-rose-100 light:text-rose-900",
 } as const;
 
 const BADGE_SIZE_CLASSES = {
