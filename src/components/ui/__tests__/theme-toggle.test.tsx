@@ -12,11 +12,12 @@ import {
   DEFAULT_THEME,
   THEME_STORAGE_KEY,
   THEME_TOGGLE_ARIA_LABEL,
+  ThemeMode,
   type Theme,
 } from "@/constants/theme";
 
 // Libs
-import { persistTheme } from "@/lib/theme";
+import { isTheme, persistTheme } from "@/lib/theme";
 
 /** Start each test with a known theme on <html> and in localStorage. */
 function resetThemeStorage(theme: Theme = DEFAULT_THEME) {
@@ -39,7 +40,7 @@ function renderThemeToggle(theme: Theme = DEFAULT_THEME) {
 
 function readStoredTheme(): Theme | null {
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  return stored === "dark" || stored === "light" ? stored : null;
+  return isTheme(stored) ? stored : null;
 }
 
 describe("ThemeToggle", () => {
@@ -48,11 +49,11 @@ describe("ThemeToggle", () => {
   });
 
   beforeEach(() => {
-    resetThemeStorage("dark");
+    resetThemeStorage(ThemeMode.Dark);
   });
 
   it("renders as an accessible switch in dark mode", () => {
-    renderThemeToggle("dark");
+    renderThemeToggle(ThemeMode.Dark);
 
     const toggle = screen.getByRole("switch");
 
@@ -63,7 +64,7 @@ describe("ThemeToggle", () => {
   });
 
   it("renders in light mode with correct aria state", () => {
-    renderThemeToggle("light");
+    renderThemeToggle(ThemeMode.Light);
 
     const toggle = screen.getByRole("switch");
 
@@ -74,7 +75,7 @@ describe("ThemeToggle", () => {
 
   it("toggles theme on click and persists to localStorage", async () => {
     const user = userEvent.setup();
-    renderThemeToggle("dark");
+    renderThemeToggle(ThemeMode.Dark);
 
     const toggle = screen.getByRole("switch");
     await user.click(toggle);
@@ -93,7 +94,7 @@ describe("ThemeToggle", () => {
   });
 
   it("merges optional className onto the button", () => {
-    renderWithTheme(<ThemeToggle className="ml-2" />, "dark");
+    renderWithTheme(<ThemeToggle className="ml-2" />, ThemeMode.Dark);
 
     expect(screen.getByRole("switch")).toHaveClass("theme-toggle", "ml-2");
   });
