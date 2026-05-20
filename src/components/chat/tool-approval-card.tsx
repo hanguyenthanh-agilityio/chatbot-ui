@@ -20,7 +20,7 @@ export function ToolApprovalCard({
   onCancel,
 }: ToolApprovalCardProps) {
   return (
-    <Card className="w-fit max-w-full px-4 py-3 shadow-[0_10px_26px_rgba(7,12,30,0.25)]">
+    <Card className="w-fit max-w-full px-4 py-3 shadow-glass-compact">
       <Text as="p" variant="sectionTitle">
         {title}
       </Text>
@@ -31,7 +31,7 @@ export function ToolApprovalCard({
         <Button type="button" size="sm" variant="primary" onClick={onConfirm}>
           {confirmLabel}
         </Button>
-        <Button type="button" size="sm" variant="ghost" className="border border-white/12 font-dm-sans text-white/60 hover:bg-white/8" onClick={onCancel}>
+        <Button type="button" size="sm" variant="ghost" className="border border-white/12 text-white/60 hover:bg-white/8" onClick={onCancel}>
           {cancelLabel}
         </Button>
       </div>

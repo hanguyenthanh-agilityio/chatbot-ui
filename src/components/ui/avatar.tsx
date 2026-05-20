@@ -5,7 +5,7 @@ import {
 } from "@/constants/app";
 
 const SIZE = {
-  sm: { box: "h-[30px] w-[30px]", text: "text-[10px] tracking-wide" },
+  sm: { box: "size-avatar-sm", text: "text-[10px] tracking-wide" },
   md: { box: "h-9 w-9",           text: "text-[11px] tracking-wide" },
   lg: { box: "h-14 w-14",         text: "text-sm tracking-wider"    },
 } as const;
@@ -36,7 +36,7 @@ export function Avatar(props: AvatarProps) {
         className={cn(
           BASE,
           SIZE[size].box,
-          "border border-white/20 shadow-[0_2px_8px_rgba(0,0,0,0.35),0_0_0_1px_rgba(124,58,237,0.18)]",
+          "border border-white/20 shadow-avatar-brand",
           className,
         )}
         style={{
@@ -58,8 +58,8 @@ export function Avatar(props: AvatarProps) {
         SIZE[size].box,
         "bg-[radial-gradient(circle_at_30%_30%,rgba(99,102,241,0.45),rgba(109,40,217,0.35))]",
         "ring-[1.5px] ring-indigo-400/35",
-        !hasImage && "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.25)]",
-        hasImage && "shadow-[0_2px_6px_rgba(0,0,0,0.3)]",
+        !hasImage && "shadow-avatar-placeholder",
+        hasImage && "shadow-avatar-photo",
         className,
       )}
       style={hasImage ? { backgroundImage: `url(${src})` } : undefined}
@@ -67,7 +67,7 @@ export function Avatar(props: AvatarProps) {
       {hasImage ? null : (
         <span
           className={cn(
-            "absolute inset-0 flex items-center justify-center font-dm-sans font-semibold text-white/90",
+            "absolute inset-0 flex items-center justify-center font-semibold text-white/90",
             SIZE[size].text,
           )}
         >

@@ -61,7 +61,8 @@ export function ThreadSidebar({
     <aside
       className={cn(
         THEME_SHELL_CLASSES.sidebar,
-        "flex w-full flex-col rounded-[1.75rem] border bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm",
+        "flex w-full flex-col rounded-shell border backdrop-blur-[28px] shadow-shell lg:max-w-sm",
+        "bg-glass-panel",
         THEME_SHELL_UTILITIES.border,
         THEME_SHELL_UTILITIES.text,
       )}
@@ -177,7 +178,7 @@ function ThreadCard({
         "hover:border-white/16 light:hover:border-app-border-10",
         "hover:bg-white/9 light:hover:bg-app-hover",
         isActive
-          ? "bg-white/10 shadow-[0_8px_26px_rgba(8,12,30,0.22)] light:bg-app-surface-6"
+          ? "bg-white/10 shadow-thread-active light:bg-app-surface-6"
           : "bg-white/4 light:bg-app-surface-4",
       )}
       onClick={onSelect}
@@ -207,7 +208,7 @@ function ThreadCard({
           <button
             type="button"
             className={cn(
-              "font-dm-sans text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
+              "text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
               "text-white/30 light:text-app-muted-30",
             )}
             onClick={(e) => {
