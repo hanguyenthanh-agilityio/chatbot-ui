@@ -3,7 +3,7 @@ import { cn } from "@/utils/class-name";
 
 const CARD_VARIANT_CLASSES = {
   glass:
-    "border border-white/10 bg-glass shadow-glass backdrop-blur-md light:border-app-border-10 light:bg-[linear-gradient(165deg,rgba(255,255,255,0.95),rgba(248,245,255,0.88))] light:shadow-[0_10px_30px_rgba(76,56,140,0.12)]",
+    "border border-white/10 bg-glass shadow-glass backdrop-blur-md light:border-app-border-10 light:bg-[image:var(--bg-shell-sidebar)] light:shadow-glass",
   panel:
     "border border-white/8 bg-white/4 backdrop-blur-[20px] light:border-app-border-8 light:bg-app-surface-4",
   soft: "border border-white/8 bg-white/6 light:border-app-border-8 light:bg-app-surface-6",

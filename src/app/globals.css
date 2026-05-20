@@ -19,6 +19,7 @@
     --color-app-surface-4: #ffffffb8;
     --color-app-surface-6: #ffffffe0;
     --color-app-hover: #7c3aed1a;
+    --color-app-btn-brand-disabled: #4c388c59;
     --color-app-blob-violet: #a78bfa47;
     --color-app-blob-indigo: #818cf838;
     --color-app-blob-cyan: #38bdf833;
@@ -54,6 +55,7 @@ html[data-theme="light"] {
   --shadow-shell: 0 16px 48px #4c388c1f;
   --shadow-shell-panel: var(--shadow-shell);
   --shadow-shell-header: 0 1px 0 #ffffffe6, 0 8px 24px #4c388c14;
+  --shadow-glass: 0 10px 30px #4c388c1f;
 }
 
 html[data-theme="light"] body {

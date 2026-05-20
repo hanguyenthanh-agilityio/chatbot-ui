@@ -7,11 +7,13 @@ import { Select } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
 import {
   DEFAULT_PROVIDER_OPTIONS,
-  OLLAMA_VERIFY_BUTTON_CLASSES,
-  OPENAI_VERIFY_BUTTON_CLASSES,
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
+import {
+  OLLAMA_VERIFY_BUTTON_CLASSES,
+  OPENAI_VERIFY_BUTTON_CLASSES,
+} from "@/constants/theme";
 import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
