@@ -441,7 +441,7 @@ export function DateRangePickerCard({
             <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" />
           </svg>
         </button>
-        <span className="font-dm-sans text-sm font-bold text-white">
+        <span className="text-sm font-bold text-white">
           {MONTHS[viewMonth]} {viewYear}
         </span>
         <button
@@ -469,7 +469,7 @@ export function DateRangePickerCard({
           <div
             key={`hdr-${i}`}
             className={cn(
-              "py-1 text-center font-dm-sans text-xs font-bold uppercase tracking-wide",
+              "py-1 text-center text-xs font-bold uppercase tracking-wide",
               i >= 5 ? "text-white/18" : "text-white/40",
             )}
           >
@@ -516,7 +516,7 @@ export function DateRangePickerCard({
                 onClick={() => handleDay(iso)}
                 disabled={disabled || isDisabledCell}
                 className={cn(
-                  "relative z-10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-full font-dm-sans text-xs transition",
+                  "relative z-10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs transition",
                   // Full white pill when selected without half-day slot.
                   isSelected &&
                     !showHalf &&
@@ -588,7 +588,7 @@ export function DateRangePickerCard({
                   disabled={isDisabledSlot}
                   onClick={() => handleSelectTimeSlot(value)}
                   className={cn(
-                    "flex-1 rounded border py-2 font-dm-sans text-sm font-medium transition",
+                    "flex-1 rounded border py-2 text-sm font-medium transition",
                     isActive && !isDisabledSlot
                       ? "border-white/30 bg-white/16 text-white"
                       : "border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70",
@@ -608,10 +608,10 @@ export function DateRangePickerCard({
         <>
           <div className="mt-3 h-px bg-white/10" />
           <div className="mt-2 flex flex-col items-end gap-0.5">
-            <span className="font-dm-sans text-sm text-white/50">
+            <span className="text-sm text-white/50">
               {summaryDateText}
             </span>
-            <span className="font-dm-sans text-sm font-bold text-white">
+            <span className="text-sm font-bold text-white">
               {summaryValueText}
             </span>
           </div>
@@ -625,7 +625,7 @@ export function DateRangePickerCard({
             type="button"
             disabled={disabled}
             onClick={handleClear}
-            className="shrink-0 font-dm-sans text-xs text-white/30 transition hover:text-white/60"
+            className="shrink-0 text-xs text-white/30 transition hover:text-white/60"
           >
             Clear
           </button>

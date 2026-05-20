@@ -102,7 +102,7 @@ export function ProviderSelector({
             variant="ghost"
             size="md"
             fullWidth
-            className="font-dm-sans border border-white/12 text-white/60 hover:bg-white/8"
+            className="border border-white/12 text-white/60 hover:bg-white/8"
           >
             {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel

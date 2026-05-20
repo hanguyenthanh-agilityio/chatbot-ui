@@ -70,7 +70,7 @@ function MessageSecondContent({
               {visibleOutputTables.map((table) => (
                 <div key={table.key} className="space-y-2">
                   {useTableLeadInLayout ? (
-                    <p className="font-dm-sans text-sm text-white/82">
+                    <p className="text-sm text-white/82">
                       {getTableLeadInText(table.id, tableIds)}
                     </p>
                   ) : null}
@@ -81,7 +81,7 @@ function MessageSecondContent({
                 </div>
               ))}
               {textPlacement.afterTables ? (
-                <p className="whitespace-pre-wrap font-dm-sans text-sm text-white/78">
+                <p className="whitespace-pre-wrap text-sm text-white/78">
                   {textPlacement.afterTables}
                 </p>
               ) : null}
@@ -148,7 +148,7 @@ function MutationSuccessCardItem({ card }: { card: MutationSuccessCard }) {
   return (
     <div className="w-fit max-w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/6">
       <div className="border-b border-emerald-400/20 bg-emerald-500/8 px-4 py-2">
-        <p className="font-dm-sans text-sm font-semibold text-emerald-100">{card.title}</p>
+        <p className="text-sm font-semibold text-emerald-100">{card.title}</p>
       </div>
       <div className="flex items-center justify-between gap-4 px-4 py-2.5">
         <div className="flex items-center gap-2.5">
@@ -157,25 +157,25 @@ function MutationSuccessCardItem({ card }: { card: MutationSuccessCard }) {
             size="sm" className="ring-emerald-400/20"
           />
           <div>
-            <p className="font-dm-sans text-sm font-semibold leading-tight text-emerald-100">
+            <p className="text-sm font-semibold leading-tight text-emerald-100">
               {card.employeeName}
             </p>
             {card.team ? (
-              <p className="font-dm-sans text-xs leading-tight text-emerald-100/60">{card.team}</p>
+              <p className="text-xs leading-tight text-emerald-100/60">{card.team}</p>
             ) : null}
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
           <Badge variant="success" className="px-2.5 py-0.5 text-xs">{card.leaveTypeLabel}</Badge>
-          <span className="font-dm-sans text-xs text-emerald-100/80">{card.dateRange}</span>
-          <span className="font-dm-sans text-xs text-emerald-100/80">
+          <span className="text-xs text-emerald-100/80">{card.dateRange}</span>
+          <span className="text-xs text-emerald-100/80">
             {card.days} {card.days === 1 ? "day" : "days"}
           </span>
         </div>
       </div>
       {card.reviewComment ? (
         <div className="border-t border-emerald-400/15 px-4 py-2">
-          <p className="font-dm-sans text-xs text-emerald-100/65">Comment: {card.reviewComment}</p>
+          <p className="text-xs text-emerald-100/65">Comment: {card.reviewComment}</p>
         </div>
       ) : null}
     </div>
@@ -314,7 +314,7 @@ export function ChatMessage({
             <MessageSecondContent {...secondContentProps} />
           </div>
         ) : (!isUser && !isLoading && isLastMessage && mutationSuccessCards.length === 0) ? (
-          <p className="font-dm-sans text-sm text-white/50">
+          <p className="text-sm text-white/50">
             Something went wrong. Please try again.
           </p>
         ) : null}

@@ -67,7 +67,7 @@ export function Avatar(props: AvatarProps) {
       {hasImage ? null : (
         <span
           className={cn(
-            "absolute inset-0 flex items-center justify-center font-dm-sans font-semibold text-white/90",
+            "absolute inset-0 flex items-center justify-center font-semibold text-white/90",
             SIZE[size].text,
           )}
         >

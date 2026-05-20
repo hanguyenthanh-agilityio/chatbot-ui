@@ -34,7 +34,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex rounded-full border font-dm-sans font-medium",
+        "inline-flex rounded-full border font-medium",
         BADGE_VARIANT_CLASSES[variant],
         BADGE_SIZE_CLASSES[size],
         className,
@@ -43,4 +43,3 @@ export function Badge({
     />
   );
 }
-

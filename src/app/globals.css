@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+
 @import "tailwindcss";
 
 /* Layout blobs (size/blur shared across themes; colors use app-blob-* tokens) */
@@ -14,20 +16,21 @@
 @variant light {
   @theme {
     --color-app-fg: #1a1035;
-    --color-app-fg-muted: rgba(36, 28, 68, 0.84);
-    --color-app-muted-70: rgba(46, 36, 86, 0.72);
-    --color-app-muted-65: rgba(46, 36, 86, 0.68);
-    --color-app-muted-60: rgba(46, 36, 86, 0.62);
-    --color-app-muted-55: rgba(46, 36, 86, 0.58);
-    --color-app-muted-50: rgba(46, 36, 86, 0.5);
-    --color-app-muted-30: rgba(46, 36, 86, 0.38);
-    --color-app-border-9: rgba(76, 56, 140, 0.12);
-    --color-app-border-8: rgba(76, 56, 140, 0.1);
-    --color-app-border-10: rgba(76, 56, 140, 0.14);
+    --color-app-fg-muted: #463f62;
+    --color-app-muted-70: #675f85;
+    --color-app-muted-65: #6f678c;
+    --color-app-muted-60: #7b7396;
+    --color-app-muted-55: #837c9d;
+    --color-app-muted-50: #938dab;
+    --color-app-muted-30: #aba6bf;
+    --color-app-border-9: #e3def1;
+    --color-app-border-8: #e7e2f4;
+    --color-app-border-10: #e0dbef;
+    --color-app-hover-border: #c0a1f7;
+    /* Glass / overlay / blobs — rgba only where alpha is required */
     --color-app-surface-4: rgba(255, 255, 255, 0.72);
     --color-app-surface-6: rgba(255, 255, 255, 0.88);
     --color-app-hover: rgba(124, 58, 237, 0.1);
-    --color-app-hover-border: rgba(124, 58, 237, 0.45);
     --color-app-blob-violet: rgba(167, 139, 250, 0.28);
     --color-app-blob-indigo: rgba(129, 140, 248, 0.22);
     --color-app-blob-cyan: rgba(56, 189, 248, 0.2);
@@ -38,11 +41,16 @@
 :root {
   --background: #0c1024;
   --foreground: #f8fafc;
+
+  --font-primary: "Syne", sans-serif;
+  --font-secondary:
+    "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
 
 @theme inline {
-  --font-syne: "Syne", sans-serif;
-  --font-dm-sans: "DM Sans", sans-serif;
+  --font-primary: var(--font-primary);
+  --font-secondary: var(--font-secondary);
 }
 
 html,
@@ -65,13 +73,7 @@ body {
     linear-gradient(135deg, #0c1024 0%, #1a1739 42%, #102033 100%);
   background-attachment: fixed;
   color: var(--foreground);
-  font-family:
-    "DM Sans",
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: var(--font-secondary);
 }
 
 * {
@@ -266,7 +268,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="dark"] .theme-toggle-icon:first-of-type {
-  color: rgba(255, 255, 255, 0.58);
+  color: #9a99a3;
 }
 
 .theme-toggle[data-state="dark"] .theme-toggle-icon:last-of-type {
@@ -280,7 +282,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="light"] .theme-toggle-icon:last-of-type {
-  color: rgba(91, 33, 182, 0.52);
+  color: #a687d9;
 }
 
 @media (prefers-reduced-motion: reduce) {

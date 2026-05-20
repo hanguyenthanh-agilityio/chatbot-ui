@@ -73,7 +73,7 @@ export function ChatComposer({
           onClick={() => !isProviderReady && setShowTooltip(true)}
         >
           {showTooltip && !isProviderReady && inputTooltip && (
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-3 py-1.5 font-dm-sans text-xs text-white shadow-lg">
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-3 py-1.5 text-xs text-white shadow-lg">
               {inputTooltip}
               <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
             </div>
@@ -91,7 +91,7 @@ export function ChatComposer({
             aria-label={CHAT_COMPOSER_COPY.ariaLabel}
             disabled={!isProviderReady}
             rows={1}
-            className="max-h-[9.375rem] flex-1 resize-none overflow-y-auto border-none bg-transparent font-dm-sans text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
+            className="max-h-[9.375rem] flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
           />
 
           <button

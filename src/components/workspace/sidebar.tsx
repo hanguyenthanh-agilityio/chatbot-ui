@@ -207,7 +207,7 @@ function ThreadCard({
           <button
             type="button"
             className={cn(
-              "font-dm-sans text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
+              "text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
               "text-white/30 light:text-app-muted-30",
             )}
             onClick={(e) => {

@@ -79,7 +79,7 @@ export function Toast({
       >
         {ICON_BY_VARIANT[variant]}
       </span>
-      <span className="font-dm-sans text-sm font-medium leading-snug">
+      <span className="text-sm font-medium leading-snug">
         {message}
       </span>
       <button

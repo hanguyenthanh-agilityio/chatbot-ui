@@ -16,10 +16,16 @@ import {
 } from "./utils";
 import { leaveTypeLabel } from "@/utils/leave";
 
-export const TOOL_STATUS_TONE_CLASS: Record<"success" | "error" | "neutral", string> = {
-  error:   "border border-rose-400/28 bg-rose-500/12 text-rose-200 font-dm-sans shadow-[0_8px_20px_rgba(90,12,36,0.24)]",
-  success: "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 font-dm-sans shadow-[0_8px_20px_rgba(8,70,42,0.22)]",
-  neutral: "border border-white/10 bg-white/7 text-white/72 font-dm-sans shadow-[0_8px_20px_rgba(7,12,30,0.2)]",
+export const TOOL_STATUS_TONE_CLASS: Record<
+  "success" | "error" | "neutral",
+  string
+> = {
+  error:
+    "border border-rose-400/28 bg-rose-500/12 text-rose-200 shadow-[0_8px_20px_#5a0c243d]",
+  success:
+    "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 shadow-[0_8px_20px_#08462a38]",
+  neutral:
+    "border border-white/10 bg-white/7 text-white/72 shadow-[0_8px_20px_rgba(7,12,30,0.2)]",
 };
 
 export const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {
@@ -39,7 +45,10 @@ export function getToolParts(message: UIMessage) {
 
   return Array.from(
     new Map(
-      toolParts.map((part, index) => [part.toolCallId ?? `tool-${index}`, part]),
+      toolParts.map((part, index) => [
+        part.toolCallId ?? `tool-${index}`,
+        part,
+      ]),
     ).values(),
   );
 }
@@ -81,7 +90,9 @@ export function getToolStepText(part: UIMessage["parts"][number]) {
   }
 }
 
-export function isDatePickerToolPart(part: UIMessage["parts"][number]): boolean {
+export function isDatePickerToolPart(
+  part: UIMessage["parts"][number],
+): boolean {
   return (
     isToolUIPart(part) &&
     getToolName(part) === "collect_date_range" &&
@@ -89,7 +100,9 @@ export function isDatePickerToolPart(part: UIMessage["parts"][number]): boolean 
   );
 }
 
-export function getDatePickerLeaveType(part: UIMessage["parts"][number]): string {
+export function getDatePickerLeaveType(
+  part: UIMessage["parts"][number],
+): string {
   if (!isToolUIPart(part)) return "";
   const input = part.input as Record<string, unknown> | null;
   return typeof input?.leaveType === "string" ? input.leaveType : "";
@@ -114,8 +127,10 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest.title,
         description: `${leaveTypeLabel(i.leaveType)} from ${i.startDate ?? "—"} to ${i.endDate ?? "—"}${i.reason ? `. Reason: ${i.reason}.` : "."}`,
-        confirmLabel: CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest.confirmLabel,
-        cancelLabel: CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest.cancelLabel,
+        confirmLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest.confirmLabel,
+        cancelLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest.cancelLabel,
       };
     }
     case "cancel_my_time_off_request": {
@@ -123,8 +138,10 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.title,
         description: `${CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.descriptionPrefix} ${i.requestQuery ?? CHAT_TRANSCRIPT_COPY.toolApproval.selectedRequestFallback}.`,
-        confirmLabel: CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.confirmLabel,
-        cancelLabel: CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.cancelLabel,
+        confirmLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.confirmLabel,
+        cancelLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.cancelLabel,
       };
     }
     case "approve_team_time_off_request": {
@@ -132,8 +149,10 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.title,
         description: `${CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.descriptionPrefix} ${i.requestQuery ?? CHAT_TRANSCRIPT_COPY.toolApproval.selectedRequestFallback}${i.comment ? `. ${CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.commentLabel} ${i.comment}.` : "."}`,
-        confirmLabel: CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.confirmLabel,
-        cancelLabel: CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.cancelLabel,
+        confirmLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.confirmLabel,
+        cancelLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.cancelLabel,
       };
     }
     case "reject_team_time_off_request": {
@@ -141,8 +160,10 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.title,
         description: `${CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.descriptionPrefix} ${i.requestQuery ?? CHAT_TRANSCRIPT_COPY.toolApproval.selectedRequestFallback}${i.comment ? `. ${CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.reasonLabel} ${i.comment}.` : "."}`,
-        confirmLabel: CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.confirmLabel,
-        cancelLabel: CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.cancelLabel,
+        confirmLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.confirmLabel,
+        cancelLabel:
+          CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.cancelLabel,
       };
     }
     default:
@@ -201,7 +222,11 @@ export type MutationSuccessCard = {
 };
 
 export function getMutationSuccessCard(part: UIMessage["parts"][number]) {
-  if (!isToolUIPart(part) || part.state !== "output-available" || part.preliminary) {
+  if (
+    !isToolUIPart(part) ||
+    part.state !== "output-available" ||
+    part.preliminary
+  ) {
     return null;
   }
 
@@ -219,13 +244,17 @@ export function getMutationSuccessCard(part: UIMessage["parts"][number]) {
 
   let title: string;
   if (toolName === "approve_team_time_off_request") title = "Request approved";
-  else if (toolName === "reject_team_time_off_request") title = "Request rejected";
-  else if (toolName === "cancel_my_time_off_request") title = "Request cancelled";
-  else if (toolName === "submit_my_time_off_request") title = "Request submitted";
+  else if (toolName === "reject_team_time_off_request")
+    title = "Request rejected";
+  else if (toolName === "cancel_my_time_off_request")
+    title = "Request cancelled";
+  else if (toolName === "submit_my_time_off_request")
+    title = "Request submitted";
   else return null;
 
   const employeeName = asString(request.employeeName, "Employee");
-  const employeeAvatar = asOptionalString(request.employeeAvatar)?.trim() || undefined;
+  const employeeAvatar =
+    asOptionalString(request.employeeAvatar)?.trim() || undefined;
   const team = asOptionalString(request.team)?.trim() || undefined;
   const label = compactLeaveTypeLabel(
     asString(request.leaveTypeLabel, asString(request.leaveType, "Leave")),
@@ -239,7 +268,8 @@ export function getMutationSuccessCard(part: UIMessage["parts"][number]) {
       ? (request.days as number)
       : 0;
   const rawStatus = asString(request.status, "");
-  const reviewComment = asOptionalString(request.reviewComment)?.trim() || undefined;
+  const reviewComment =
+    asOptionalString(request.reviewComment)?.trim() || undefined;
 
   return {
     title,
