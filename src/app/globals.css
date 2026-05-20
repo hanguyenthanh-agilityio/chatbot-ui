@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
-
 @import "tailwindcss";
 
 @variant light (&:where([data-theme="light"], [data-theme="light"] *));
@@ -135,6 +133,8 @@
   --size-app-blob-alt: 520px;
   --blur-app-blob: 78px;
   --blur-app-blob-accent: 82px;
+
+  --text-tool-label: 0.6875rem;
 
   --font-primary: var(--font-primary);
   --font-secondary: var(--font-secondary);

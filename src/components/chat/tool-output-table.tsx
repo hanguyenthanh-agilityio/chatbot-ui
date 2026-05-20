@@ -120,7 +120,9 @@ export function ToolOutputTable({
   );
   const hasRowActions =
     Boolean(onActionClick) && actionableRowIndexes.length > 0;
-  const [manualSelectedRowIndex, setManualSelectedRowIndex] = useState<number | null>(null);
+  const [manualSelectedRowIndex, setManualSelectedRowIndex] = useState<
+    number | null
+  >(null);
   const selectedRowIndex = hasRowActions
     ? manualSelectedRowIndex !== null &&
       actionableRowIndexes.includes(manualSelectedRowIndex)
@@ -157,7 +159,7 @@ export function ToolOutputTable({
       )}
     >
       <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3.5 py-2.5">
-        <p className="font-primary text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-white/78">
+        <p className="font-primary text-tool-label font-semibold uppercase tracking-[0.16em] text-white/78">
           {title}
         </p>
         <Badge variant="subtle" size="sm">
@@ -217,13 +219,21 @@ export function ToolOutputTable({
                       "px-3 py-2.5",
                       rowIndex > 0 && "border-t border-white/7",
                       rowIndex % 2 === 0 ? "bg-white/[1.5]" : "bg-white/[3.5]",
-                      hasRowActions && rowHasActions && "cursor-pointer transition hover:bg-white/5",
-                      isSelected && "bg-violet-500/11 ring-1 ring-inset ring-violet-300/30",
+                      hasRowActions &&
+                        rowHasActions &&
+                        "cursor-pointer transition hover:bg-white/5",
+                      isSelected &&
+                        "bg-violet-500/11 ring-1 ring-inset ring-violet-300/30",
                     )}
                   >
-                    <div className={cn(gridClassName, "items-center gap-y-1.5")}>
+                    <div
+                      className={cn(gridClassName, "items-center gap-y-1.5")}
+                    >
                       {columns.map((column) => (
-                        <div key={`${rowIndex}-${column.key}`} className="min-w-0">
+                        <div
+                          key={`${rowIndex}-${column.key}`}
+                          className="min-w-0"
+                        >
                           <p className="text-[0.625rem] uppercase tracking-[0.14em] text-white/45 sm:hidden">
                             {column.label}
                           </p>
@@ -257,7 +267,7 @@ export function ToolOutputTable({
                               disabled={disableActions}
                               onClick={() => onActionClick?.(action.prompt)}
                               className={cn(
-                                "inline-flex h-7 items-center rounded-md border px-2.5 text-[0.6875rem] font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+                                "inline-flex h-7 items-center rounded-md border px-2.5 text-tool-label font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                                 ACTION_TONE_CLASS[action.tone ?? "neutral"],
                               )}
                             >
