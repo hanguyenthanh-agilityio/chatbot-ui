@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@variant light (&:where([data-theme="light"], [data-theme="light"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
 @variant light {
   @theme {
@@ -19,6 +19,60 @@
     --color-app-blob-indigo: #818cf838;
     --color-app-blob-cyan: #38bdf833;
   }
+}
+
+/* Light :root tokens + shell — plain `html[data-theme]` so page chrome
+   updates even if variant ordering changes. */
+html[data-theme="light"] {
+  --foreground: #1a1035;
+  --bg-selection: #7c3aed2e;
+  --bg-radial-violet: radial-gradient(
+    1000px 620px at -8% -12%,
+    #a78bfa38 0%,
+    transparent 58%
+  );
+  --bg-radial-cyan: radial-gradient(
+    980px 600px at 108% 18%,
+    #38bdf829 0%,
+    transparent 60%
+  );
+  --bg-gradient-base: linear-gradient(
+    135deg,
+    #f8f6ff 0%,
+    #ede8ff 42%,
+    #eef6ff 100%
+  );
+  --bg-app-shell:
+    var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
+  --bg-shell-sidebar: linear-gradient(165deg, #ffffffeb, #f8f5ffe0);
+  --bg-shell-chat-panel: linear-gradient(170deg, #ffffffeb, #f8f5ffe0);
+  --bg-shell-chat-header: linear-gradient(180deg, #fffffff2, #f8f5ffd1);
+  --shadow-shell: 0 16px 48px #4c388c1f;
+  --shadow-shell-panel: var(--shadow-shell);
+  --shadow-shell-header: 0 1px 0 #ffffffe6, 0 8px 24px #4c388c14;
+}
+
+html[data-theme="light"] body {
+  color: var(--color-app-fg);
+}
+
+html[data-theme="light"] .app-sidebar {
+  color: var(--color-app-fg);
+  border-color: var(--color-app-border-9);
+  background: var(--bg-shell-sidebar);
+  box-shadow: var(--shadow-shell);
+}
+
+html[data-theme="light"] .app-chat-panel {
+  border-color: var(--color-app-border-9);
+  background: var(--bg-shell-chat-panel);
+  box-shadow: var(--shadow-shell-panel);
+}
+
+html[data-theme="light"] .app-chat-header {
+  border-color: var(--color-app-border-8);
+  background: var(--bg-shell-chat-header);
+  box-shadow: var(--shadow-shell-header);
 }
 
 :root {
@@ -98,6 +152,8 @@
   --layout-page-min-sm: calc(100vh - 1.5rem);
   --layout-page-min-md: calc(100vh - 2.5rem);
   --layout-page-min-dvh: calc(100dvh - 2.5rem);
+  /* Storybook / small preview surfaces */
+  --layout-min-preview: 120px;
   --layout-avatar-sm: 30px;
   --layout-max-bubble-user: 78%;
   --layout-max-narrow: 72%;
@@ -178,6 +234,7 @@
   --min-height-page-sm: var(--layout-page-min-sm);
   --min-height-page-md: var(--layout-page-min-md);
   --min-height-page-dvh: var(--layout-page-min-dvh);
+  --min-height-preview: var(--layout-min-preview);
   --max-height-composer-textarea: var(--layout-composer-textarea-max-height);
   --radius-shell: var(--layout-radius-shell);
   --radius-composer-field: var(--layout-radius-composer-field);
@@ -228,60 +285,6 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
     filter,
     backdrop-filter,
     -webkit-backdrop-filter !important;
-}
-
-@variant light {
-  & {
-    --foreground: #1a1035;
-    --bg-selection: #7c3aed2e;
-    --bg-radial-violet: radial-gradient(
-      1000px 620px at -8% -12%,
-      #a78bfa38 0%,
-      transparent 58%
-    );
-    --bg-radial-cyan: radial-gradient(
-      980px 600px at 108% 18%,
-      #38bdf829 0%,
-      transparent 60%
-    );
-    --bg-gradient-base: linear-gradient(
-      135deg,
-      #f8f6ff 0%,
-      #ede8ff 42%,
-      #eef6ff 100%
-    );
-    --bg-app-shell:
-      var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
-    --bg-shell-sidebar: linear-gradient(165deg, #ffffffeb, #f8f5ffe0);
-    --bg-shell-chat-panel: linear-gradient(170deg, #ffffffeb, #f8f5ffe0);
-    --bg-shell-chat-header: linear-gradient(180deg, #fffffff2, #f8f5ffd1);
-    --shadow-shell: 0 16px 48px #4c388c1f;
-    --shadow-shell-panel: var(--shadow-shell);
-    --shadow-shell-header: 0 1px 0 #ffffffe6, 0 8px 24px #4c388c14;
-  }
-
-  & body {
-    color: var(--color-app-fg);
-  }
-
-  & .app-sidebar {
-    color: var(--color-app-fg);
-    border-color: var(--color-app-border-9);
-    background: var(--bg-shell-sidebar);
-    box-shadow: var(--shadow-shell);
-  }
-
-  & .app-chat-panel {
-    border-color: var(--color-app-border-9);
-    background: var(--bg-shell-chat-panel);
-    box-shadow: var(--shadow-shell-panel);
-  }
-
-  & .app-chat-header {
-    border-color: var(--color-app-border-8);
-    background: var(--bg-shell-chat-header);
-    box-shadow: var(--shadow-shell-header);
-  }
 }
 
 aside .rounded-2xl,
