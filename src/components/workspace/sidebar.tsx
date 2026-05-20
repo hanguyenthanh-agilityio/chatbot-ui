@@ -9,12 +9,12 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // Constants
 import { SIDEBAR_COPY } from "@/constants/app";
-import { PROVIDER_BADGE_VARIANT } from "@/constants/provider";
-import { THEME_SHELL_CLASSES } from "@/constants/theme";
+import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
 import {
   THREAD_TIMESTAMP_FORMAT,
   THREAD_TIMESTAMP_LOCALE,
 } from "@/constants/date-time";
+import { PROVIDER_BADGE_VARIANT } from "@/constants/provider";
 
 // Utils
 import { cn } from "@/utils/class-name";
@@ -62,10 +62,13 @@ export function ThreadSidebar({
     <aside
       className={cn(
         THEME_SHELL_CLASSES.sidebar,
-        "flex w-full flex-col rounded-[1.75rem] border border-white/9 bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] text-white backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm",
+        "flex w-full flex-col rounded-shell border backdrop-blur-[28px] shadow-shell lg:max-w-sm",
+        "bg-glass-panel",
+        THEME_SHELL_UTILITIES.border,
+        THEME_SHELL_UTILITIES.text,
       )}
     >
-      <div className="border-b border-white/8 p-5">
+      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-1">
             <Text as="p" variant="eyebrow">
@@ -74,17 +77,19 @@ export function ThreadSidebar({
             <Text as="h1" variant="title">
               {SIDEBAR_COPY.title}
             </Text>
-            <Text variant="captionStrong">
-              {SIDEBAR_COPY.description}
-            </Text>
+            <Text variant="captionStrong">{SIDEBAR_COPY.description}</Text>
           </div>
           <ThemeToggle />
         </div>
       </div>
 
-      <div className="border-b border-white/8 p-5">{accountPanel}</div>
+      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
+        {accountPanel}
+      </div>
 
-      <div className="border-b border-white/8 p-5">{providerPanel}</div>
+      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
+        {providerPanel}
+      </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
         <div className="mb-4 px-2">
@@ -169,8 +174,13 @@ function ThreadCard({
     <Card
       variant={isActive ? "soft" : "panel"}
       className={cn(
-        "group cursor-pointer border-white/10 transition-[box-shadow,transform] duration-200 hover:border-white/16 hover:bg-white/9",
-        isActive ? "bg-white/10 shadow-[0_8px_26px_rgba(8,12,30,0.22)]" : "bg-white/4",
+        "group cursor-pointer transition-[box-shadow,transform] duration-200",
+        "border-white/10 light:border-app-border-10",
+        "hover:border-white/16 light:hover:border-app-border-10",
+        "hover:bg-white/9 light:hover:bg-app-hover",
+        isActive
+          ? "bg-white/10 shadow-thread-active light:bg-app-surface-6"
+          : "bg-white/4 light:bg-app-surface-4",
       )}
       onClick={onSelect}
     >
@@ -198,7 +208,10 @@ function ThreadCard({
           </Text>
           <button
             type="button"
-            className="font-dm-sans text-[10px] uppercase tracking-wider text-white/30 hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className={cn(
+              "text-[10px] uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
+              "text-white/30 light:text-app-muted-30",
+            )}
             onClick={(e) => {
               e.stopPropagation();
               onDelete();

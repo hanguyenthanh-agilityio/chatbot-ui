@@ -120,7 +120,9 @@ export function ToolOutputTable({
   );
   const hasRowActions =
     Boolean(onActionClick) && actionableRowIndexes.length > 0;
-  const [manualSelectedRowIndex, setManualSelectedRowIndex] = useState<number | null>(null);
+  const [manualSelectedRowIndex, setManualSelectedRowIndex] = useState<
+    number | null
+  >(null);
   const selectedRowIndex = hasRowActions
     ? manualSelectedRowIndex !== null &&
       actionableRowIndexes.includes(manualSelectedRowIndex)
@@ -151,10 +153,13 @@ export function ToolOutputTable({
   return (
     <Card
       variant="glass"
-      className="overflow-hidden border-white/12 bg-[linear-gradient(165deg,rgba(140,142,170,0.22),rgba(62,60,94,0.36))] shadow-[0_14px_34px_rgba(6,10,30,0.34)]"
+      className={cn(
+        "overflow-hidden border-white/12 shadow-table",
+        "bg-glass-table",
+      )}
     >
       <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3.5 py-2.5">
-        <p className="font-syne text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-white/78">
+        <p className="font-primary text-compact-11 font-semibold uppercase tracking-[0.16em] text-white/78">
           {title}
         </p>
         <Badge variant="subtle" size="sm">
@@ -163,7 +168,12 @@ export function ToolOutputTable({
       </div>
       <div className="p-2.5">
         {rows.length > 0 ? (
-          <div className="overflow-hidden rounded-xl border border-white/9 bg-[#1c1b38]/60">
+          <div
+            className={cn(
+              "overflow-hidden rounded-xl border border-white/9",
+              "bg-surface-muted",
+            )}
+          >
             <div
               className={cn(
                 "hidden sm:grid items-center border-b border-white/8 bg-white/5 px-3 py-2",
@@ -174,7 +184,7 @@ export function ToolOutputTable({
                 <p
                   key={`${title}-header-${column.key}`}
                   className={cn(
-                    "font-dm-sans text-[0.625rem] uppercase tracking-[0.14em] text-white/45",
+                    "text-[0.625rem] uppercase tracking-[0.14em] text-white/45",
                     getAlignClass(column.align),
                   )}
                 >
@@ -208,20 +218,28 @@ export function ToolOutputTable({
                     className={cn(
                       "px-3 py-2.5",
                       rowIndex > 0 && "border-t border-white/7",
-                      rowIndex % 2 === 0 ? "bg-white/[1.5]" : "bg-white/[3.5]",
-                      hasRowActions && rowHasActions && "cursor-pointer transition hover:bg-white/5",
-                      isSelected && "bg-violet-500/11 ring-1 ring-inset ring-violet-300/30",
+                      rowIndex % 2 === 0 ? "bg-white/150" : "bg-white/350",
+                      hasRowActions &&
+                        rowHasActions &&
+                        "cursor-pointer transition hover:bg-white/5",
+                      isSelected &&
+                        "bg-violet-500/11 ring-1 ring-inset ring-violet-300/30",
                     )}
                   >
-                    <div className={cn(gridClassName, "items-center gap-y-1.5")}>
+                    <div
+                      className={cn(gridClassName, "items-center gap-y-1.5")}
+                    >
                       {columns.map((column) => (
-                        <div key={`${rowIndex}-${column.key}`} className="min-w-0">
-                          <p className="font-dm-sans text-[0.625rem] uppercase tracking-[0.14em] text-white/45 sm:hidden">
+                        <div
+                          key={`${rowIndex}-${column.key}`}
+                          className="min-w-0"
+                        >
+                          <p className="text-[0.625rem] uppercase tracking-[0.14em] text-white/45 sm:hidden">
                             {column.label}
                           </p>
                           <div
                             className={cn(
-                              "font-dm-sans text-[0.8125rem] leading-[1.35] text-white/90 break-words",
+                              "text-[0.8125rem] leading-[1.35] text-white/90 break-words",
                               getAlignClass(column.align),
                               column.className,
                             )}
@@ -236,7 +254,7 @@ export function ToolOutputTable({
                   {isSelected && rowSelectedActions.length > 0 ? (
                     <div className="border-t border-white/8 bg-violet-500/10 px-3 py-2.5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="font-dm-sans text-xs text-white/75">
+                        <p className="text-xs text-white/75">
                           <span className="text-white/58">Selected:</span>{" "}
                           {rowSummary}
                         </p>
@@ -249,7 +267,7 @@ export function ToolOutputTable({
                               disabled={disableActions}
                               onClick={() => onActionClick?.(action.prompt)}
                               className={cn(
-                                "inline-flex h-7 items-center rounded-md border px-2.5 font-dm-sans text-[0.6875rem] font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+                                "inline-flex h-7 items-center rounded-md border px-2.5 text-compact-11 font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                                 ACTION_TONE_CLASS[action.tone ?? "neutral"],
                               )}
                             >

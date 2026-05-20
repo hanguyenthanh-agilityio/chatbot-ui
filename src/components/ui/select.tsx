@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { SelectHTMLAttributes } from "react";
+import { FORM_FIELD_PANEL_CLASSES } from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 const SELECT_VARIANT_CLASSES = {
@@ -9,8 +10,7 @@ const SELECT_VARIANT_CLASSES = {
     "border-slate-200 bg-slate-50/90 text-slate-900 hover:border-slate-300",
   ghost:
     "border-transparent bg-transparent text-slate-900 hover:border-slate-200",
-  dark:
-    "app-form-field border-white/12 bg-white/6 text-white/80 hover:border-violet-500/50 [&>option]:text-slate-900",
+  panel: cn(FORM_FIELD_PANEL_CLASSES, "[&>option]:text-slate-900"),
 } as const;
 
 const SELECT_SIZE_CLASSES = {
@@ -45,7 +45,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         ref={ref}
         className={cn(
           "peer w-full appearance-none rounded-xl border pr-10 outline-none transition duration-200",
-          variant === "dark"
+          variant === "panel"
             ? "focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
             : "focus:border-sky-400 focus:ring-2 focus:ring-sky-100",
           "disabled:cursor-not-allowed disabled:opacity-60",

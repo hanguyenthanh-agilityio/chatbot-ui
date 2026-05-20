@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { InputHTMLAttributes } from "react";
+import { FORM_FIELD_PANEL_CLASSES } from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 const INPUT_VARIANT_CLASSES = {
@@ -11,8 +12,7 @@ const INPUT_VARIANT_CLASSES = {
     "border-transparent bg-transparent text-slate-900 hover:border-slate-200",
   error:
     "border-red-300 bg-red-50/70 text-red-900 shadow-sm hover:border-red-400",
-  dark:
-    "app-form-field border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50",
+  panel: FORM_FIELD_PANEL_CLASSES,
 } as const;
 
 const INPUT_SIZE_CLASSES = {
@@ -46,7 +46,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       className={cn(
         "rounded-xl border outline-none transition duration-200",
         "placeholder:text-slate-400",
-        variant === "dark"
+        variant === "panel"
           ? "focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
           : "focus:border-sky-400 focus:ring-2 focus:ring-sky-100",
         "disabled:cursor-not-allowed disabled:opacity-60",

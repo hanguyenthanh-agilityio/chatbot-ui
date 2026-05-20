@@ -19,11 +19,11 @@ const ICON_BY_VARIANT: Record<ToastVariant, string> = {
 
 const STYLE_BY_VARIANT: Record<ToastVariant, string> = {
   success:
-    "border-emerald-500/30 bg-emerald-500/12 text-emerald-300 shadow-[0_8px_32px_rgba(16,185,129,0.18)]",
+    "border-emerald-500/30 bg-emerald-500/12 text-emerald-300 shadow-toast-success",
   error:
-    "border-red-500/30 bg-red-500/12 text-red-300 shadow-[0_8px_32px_rgba(239,68,68,0.18)]",
+    "border-red-500/30 bg-red-500/12 text-red-300 shadow-toast-error",
   info:
-    "border-sky-500/30 bg-sky-500/12 text-sky-300 shadow-[0_8px_32px_rgba(14,165,233,0.18)]",
+    "border-sky-500/30 bg-sky-500/12 text-sky-300 shadow-toast-info",
 };
 
 const ICON_BG_BY_VARIANT: Record<ToastVariant, string> = {
@@ -79,7 +79,7 @@ export function Toast({
       >
         {ICON_BY_VARIANT[variant]}
       </span>
-      <span className="font-dm-sans text-sm font-medium leading-snug">
+      <span className="text-sm font-medium leading-snug">
         {message}
       </span>
       <button

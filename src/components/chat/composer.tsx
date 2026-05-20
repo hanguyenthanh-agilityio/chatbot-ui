@@ -58,7 +58,12 @@ export function ChatComposer({
   }
 
   return (
-    <div className="border-t border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.06))] backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-[0_-1px_0_rgba(255,255,255,0.04),0_-10px_34px_rgba(0,0,0,0.2)]">
+    <div
+      className={cn(
+        "border-t border-white/8 backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-composer-bar",
+        "bg-glass-composer",
+      )}
+    >
       <div className="mx-auto w-full max-w-3xl flex flex-col gap-2">
         {errorMessage ? (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
@@ -73,14 +78,17 @@ export function ChatComposer({
           onClick={() => !isProviderReady && setShowTooltip(true)}
         >
           {showTooltip && !isProviderReady && inputTooltip && (
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-3 py-1.5 font-dm-sans text-xs text-white shadow-lg">
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-3 py-1.5 text-xs text-white shadow-lg">
               {inputTooltip}
               <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
             </div>
           )}
         <form
           onSubmit={onSubmitAction}
-          className="flex w-full items-center gap-3 rounded-[1.125rem] border border-white/13 bg-[linear-gradient(165deg,rgba(255,255,255,0.08),rgba(255,255,255,0.04))] px-4 py-2.5 shadow-[0_8px_26px_rgba(7,12,30,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55"
+          className={cn(
+            "flex w-full items-center gap-3 rounded-composer-field border border-white/13 px-4 py-2.5 shadow-composer-input backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55",
+            "bg-glass-input",
+          )}
         >
           <textarea
             ref={textareaRef}
@@ -91,7 +99,7 @@ export function ChatComposer({
             aria-label={CHAT_COMPOSER_COPY.ariaLabel}
             disabled={!isProviderReady}
             rows={1}
-            className="max-h-[9.375rem] flex-1 resize-none overflow-y-auto border-none bg-transparent font-dm-sans text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
+            className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
           />
 
           <button
@@ -101,10 +109,10 @@ export function ChatComposer({
             className={cn(
               "self-end grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-all duration-200",
               "disabled:opacity-30 disabled:cursor-not-allowed",
-              "hover:scale-[1.04] hover:shadow-[0_6px_20px_rgba(99,60,220,0.4)]",
+              "hover:scale-[1.04] hover:shadow-btn-brand",
               canSend
-                ? "bg-[linear-gradient(135deg,#8b5cf6,#6366f1,#0ea5e9)] text-white"
-                : "bg-white/18 text-white/75",
+                ? "bg-btn-active text-white"
+                : "bg-btn-disabled text-white/75",
             )}
           >
             {isLoading ? (

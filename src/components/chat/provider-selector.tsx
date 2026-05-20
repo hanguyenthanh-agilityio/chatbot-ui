@@ -10,6 +10,10 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
+import {
+  OLLAMA_VERIFY_BUTTON_CLASSES,
+  OPENAI_VERIFY_BUTTON_CLASSES,
+} from "@/constants/theme";
 import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
@@ -44,7 +48,7 @@ export function ProviderSelector({
         disabled={isProviderSelectDisabled}
         fullWidth
         controlSize="md"
-        variant="dark"
+        variant="panel"
       >
         {allowedProviders.includes("ollama") ? (
           <option value="ollama">{PROVIDER_OPTION_LABEL.ollama}</option>
@@ -67,7 +71,7 @@ export function ProviderSelector({
             placeholder={PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder}
             fullWidth
             controlSize="md"
-            variant="dark"
+            variant="panel"
           />
           <Button
             type="button"
@@ -77,7 +81,7 @@ export function ProviderSelector({
             variant="primary"
             size="md"
             fullWidth
-            className="app-provider-verify-primary"
+            className={OPENAI_VERIFY_BUTTON_CLASSES}
           >
             {provider.isValidatingKey
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
@@ -93,7 +97,7 @@ export function ProviderSelector({
             placeholder={PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder}
             fullWidth
             controlSize="md"
-            variant="dark"
+            variant="panel"
           />
           <Button
             type="button"
@@ -103,7 +107,7 @@ export function ProviderSelector({
             variant="ghost"
             size="md"
             fullWidth
-            className="font-dm-sans border border-white/12 text-white/60 hover:bg-white/8"
+            className={OLLAMA_VERIFY_BUTTON_CLASSES}
           >
             {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
