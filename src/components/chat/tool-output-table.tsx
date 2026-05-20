@@ -159,7 +159,7 @@ export function ToolOutputTable({
       )}
     >
       <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3.5 py-2.5">
-        <p className="font-primary text-tool-label font-semibold uppercase tracking-[0.16em] text-white/78">
+        <p className="font-primary text-compact-11 font-semibold uppercase tracking-[0.16em] text-white/78">
           {title}
         </p>
         <Badge variant="subtle" size="sm">
@@ -218,7 +218,7 @@ export function ToolOutputTable({
                     className={cn(
                       "px-3 py-2.5",
                       rowIndex > 0 && "border-t border-white/7",
-                      rowIndex % 2 === 0 ? "bg-white/[1.5]" : "bg-white/[3.5]",
+                      rowIndex % 2 === 0 ? "bg-white/150" : "bg-white/350",
                       hasRowActions &&
                         rowHasActions &&
                         "cursor-pointer transition hover:bg-white/5",
@@ -267,7 +267,7 @@ export function ToolOutputTable({
                               disabled={disableActions}
                               onClick={() => onActionClick?.(action.prompt)}
                               className={cn(
-                                "inline-flex h-7 items-center rounded-md border px-2.5 text-tool-label font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+                                "inline-flex h-7 items-center rounded-md border px-2.5 text-compact-11 font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                                 ACTION_TONE_CLASS[action.tone ?? "neutral"],
                               )}
                             >
