@@ -45,7 +45,7 @@ export function AuthPanel({
           disabled={disabled}
           fullWidth
           controlSize="md"
-          variant="dark"
+          variant="panel"
         >
           <option value="user">{AUTH_PANEL_COPY.userModeLabel}</option>
           <option value="manager">{AUTH_PANEL_COPY.managerModeLabel}</option>

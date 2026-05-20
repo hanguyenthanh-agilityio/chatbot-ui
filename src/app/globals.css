@@ -2,6 +2,14 @@
 
 @import "tailwindcss";
 
+/* Layout blobs (size/blur shared across themes; colors use app-blob-* tokens) */
+@theme {
+  --size-app-blob: 500px;
+  --size-app-blob-alt: 520px;
+  --blur-app-blob: 78px;
+  --blur-app-blob-accent: 82px;
+}
+
 /* ── Theme variants: dark = default classes; light = `light:` utilities ── */
 @variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
@@ -11,7 +19,6 @@
     --color-app-fg-muted: rgba(36, 28, 68, 0.84);
     --color-app-muted-70: rgba(46, 36, 86, 0.72);
     --color-app-muted-65: rgba(46, 36, 86, 0.68);
-    --color-app-muted-62: rgba(46, 36, 86, 0.65);
     --color-app-muted-60: rgba(46, 36, 86, 0.62);
     --color-app-muted-55: rgba(46, 36, 86, 0.58);
     --color-app-muted-50: rgba(46, 36, 86, 0.5);
@@ -19,11 +26,8 @@
     --color-app-border-9: rgba(76, 56, 140, 0.12);
     --color-app-border-8: rgba(76, 56, 140, 0.1);
     --color-app-border-10: rgba(76, 56, 140, 0.14);
-    --color-app-border-20: rgba(76, 56, 140, 0.16);
     --color-app-surface-4: rgba(255, 255, 255, 0.72);
-    --color-app-surface-5: rgba(248, 245, 255, 0.95);
     --color-app-surface-6: rgba(255, 255, 255, 0.88);
-    --color-app-surface-8: rgba(255, 255, 255, 0.9);
     --color-app-hover: rgba(124, 58, 237, 0.1);
     --color-app-hover-border: rgba(124, 58, 237, 0.45);
     --color-app-blob-violet: rgba(167, 139, 250, 0.28);
@@ -218,7 +222,9 @@ aside .rounded-2xl .inline-flex.rounded-full {
     0 0 0 2px rgba(124, 58, 237, 0.4);
 }
 
-.theme-toggle-thumb {
+/* Sliding thumb (decorative) */
+.theme-toggle::before {
+  content: "";
   position: absolute;
   z-index: 1;
   top: 0.25rem;
@@ -238,64 +244,50 @@ aside .rounded-2xl .inline-flex.rounded-full {
   will-change: transform;
 }
 
-.theme-toggle[data-state="light"] .theme-toggle-thumb {
+.theme-toggle[data-state="light"]::before {
   background-color: #f59e0b;
   box-shadow:
     0 2px 10px rgba(245, 158, 11, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
-.theme-toggle[data-state="dark"] .theme-toggle-thumb {
+.theme-toggle[data-state="dark"]::before {
   transform: translate3d(1.625rem, 0, 0);
 }
 
-.theme-toggle-slot {
+.theme-toggle-icon {
   position: relative;
   z-index: 2;
-  display: flex;
-  height: 1.5rem;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.theme-toggle-icon {
+  justify-self: center;
   display: block;
   width: 0.9375rem;
   height: 0.9375rem;
   flex-shrink: 0;
+  pointer-events: none;
   transition: color var(--theme-toggle-duration) var(--theme-toggle-ease);
 }
 
-.theme-toggle[data-state="dark"]
-  .theme-toggle-slot:first-child
-  .theme-toggle-icon {
+.theme-toggle[data-state="dark"] .theme-toggle-icon:first-of-type {
   color: rgba(255, 255, 255, 0.58);
 }
 
-.theme-toggle[data-state="dark"]
-  .theme-toggle-slot:last-child
-  .theme-toggle-icon {
+.theme-toggle[data-state="dark"] .theme-toggle-icon:last-of-type {
   color: #ffffff;
   filter: drop-shadow(0 1px 1px rgba(15, 10, 40, 0.45));
 }
 
-.theme-toggle[data-state="light"]
-  .theme-toggle-slot:first-child
-  .theme-toggle-icon {
+.theme-toggle[data-state="light"] .theme-toggle-icon:first-of-type {
   color: #7c2d12;
   filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.35));
 }
 
-.theme-toggle[data-state="light"]
-  .theme-toggle-slot:last-child
-  .theme-toggle-icon {
+.theme-toggle[data-state="light"] .theme-toggle-icon:last-of-type {
   color: rgba(91, 33, 182, 0.52);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle,
-  .theme-toggle-thumb,
+  .theme-toggle::before,
   .theme-toggle-icon {
     transition: none;
   }

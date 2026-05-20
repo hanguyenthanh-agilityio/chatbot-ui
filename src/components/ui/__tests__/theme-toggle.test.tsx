@@ -59,7 +59,7 @@ describe("ThemeToggle", () => {
     expect(toggle).toHaveAttribute("data-state", "dark");
     expect(toggle).toHaveAttribute("aria-checked", "true");
     expect(toggle).toHaveAccessibleName(THEME_TOGGLE_ARIA_LABEL.toLight);
-    expect(toggle.querySelector(".theme-toggle-thumb")).toBeInTheDocument();
+    expect(toggle.querySelectorAll(".theme-toggle-icon")).toHaveLength(2);
   });
 
   it("renders in light mode with correct aria state", () => {

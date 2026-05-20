@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // Constants
 import { SIDEBAR_COPY } from "@/constants/app";
-import { THEME_SHELL_CLASSES } from "@/constants/theme";
+import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
 import {
   THREAD_TIMESTAMP_FORMAT,
   THREAD_TIMESTAMP_LOCALE,
@@ -62,11 +62,11 @@ export function ThreadSidebar({
       className={cn(
         THEME_SHELL_CLASSES.sidebar,
         "flex w-full flex-col rounded-[1.75rem] border bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.32)] lg:max-w-sm",
-        "border-white/9 light:border-app-border-9",
-        "text-white light:text-app-fg",
+        THEME_SHELL_UTILITIES.border,
+        THEME_SHELL_UTILITIES.text,
       )}
     >
-      <div className="border-b border-white/8 p-5 light:border-app-border-8">
+      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-1">
             <Text as="p" variant="eyebrow">
@@ -81,11 +81,11 @@ export function ThreadSidebar({
         </div>
       </div>
 
-      <div className="border-b border-white/8 p-5 light:border-app-border-8">
+      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
         {accountPanel}
       </div>
 
-      <div className="border-b border-white/8 p-5 light:border-app-border-8">
+      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
         {providerPanel}
       </div>
 

@@ -7,16 +7,12 @@ import { Select } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
 import {
   DEFAULT_PROVIDER_OPTIONS,
+  OLLAMA_VERIFY_BUTTON_CLASSES,
+  OPENAI_VERIFY_BUTTON_CLASSES,
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
 import type { UseProviderSelectionResult } from "@/types/provider";
-
-const OPENAI_VERIFY_BUTTON_CLASSES =
-  "light:bg-[linear-gradient(135deg,#7c3aed,#6366f1)] light:text-white light:hover:brightness-105 light:disabled:bg-[rgba(76,56,140,0.35)] light:disabled:text-white/85";
-
-const OLLAMA_VERIFY_BUTTON_CLASSES =
-  "border font-dm-sans text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-60 light:hover:bg-app-hover";
 
 type ProviderSelectorProps = {
   provider: UseProviderSelectionResult;
@@ -50,7 +46,7 @@ export function ProviderSelector({
         disabled={isProviderSelectDisabled}
         fullWidth
         controlSize="md"
-        variant="dark"
+        variant="panel"
       >
         {allowedProviders.includes("ollama") ? (
           <option value="ollama">{PROVIDER_OPTION_LABEL.ollama}</option>
@@ -73,7 +69,7 @@ export function ProviderSelector({
             placeholder={PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder}
             fullWidth
             controlSize="md"
-            variant="dark"
+            variant="panel"
           />
           <Button
             type="button"
@@ -99,7 +95,7 @@ export function ProviderSelector({
             placeholder={PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder}
             fullWidth
             controlSize="md"
-            variant="dark"
+            variant="panel"
           />
           <Button
             type="button"
