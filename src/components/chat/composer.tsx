@@ -58,7 +58,12 @@ export function ChatComposer({
   }
 
   return (
-    <div className="border-t border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.06))] backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-[0_-1px_0_rgba(255,255,255,0.04),0_-10px_34px_rgba(0,0,0,0.2)]">
+    <div
+      className={cn(
+        "border-t border-white/8 backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-[0_-1px_0_rgba(255,255,255,0.04),0_-10px_34px_rgba(0,0,0,0.2)]",
+        "bg-glass-composer",
+      )}
+    >
       <div className="mx-auto w-full max-w-3xl flex flex-col gap-2">
         {errorMessage ? (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
@@ -80,7 +85,10 @@ export function ChatComposer({
           )}
         <form
           onSubmit={onSubmitAction}
-          className="flex w-full items-center gap-3 rounded-[1.125rem] border border-white/13 bg-[linear-gradient(165deg,rgba(255,255,255,0.08),rgba(255,255,255,0.04))] px-4 py-2.5 shadow-[0_8px_26px_rgba(7,12,30,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55"
+          className={cn(
+            "flex w-full items-center gap-3 rounded-[1.125rem] border border-white/13 px-4 py-2.5 shadow-[0_8px_26px_rgba(7,12,30,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55",
+            "bg-glass-input",
+          )}
         >
           <textarea
             ref={textareaRef}
@@ -103,8 +111,8 @@ export function ChatComposer({
               "disabled:opacity-30 disabled:cursor-not-allowed",
               "hover:scale-[1.04] hover:shadow-[0_6px_20px_rgba(99,60,220,0.4)]",
               canSend
-                ? "bg-[linear-gradient(135deg,#8b5cf6,#6366f1,#0ea5e9)] text-white"
-                : "bg-white/18 text-white/75",
+                ? "bg-btn-active text-white"
+                : "bg-btn-disabled text-white/75",
             )}
           >
             {isLoading ? (

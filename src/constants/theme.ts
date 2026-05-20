@@ -2,6 +2,7 @@
  * Theme: `data-theme` on <html>. Dark = default classes; light = `light:` utilities.
  * Fonts: `--font-primary` (Syne) / `--font-secondary` (DM Sans) in globals.css `:root`.
  * Body uses `var(--font-secondary)`; use Tailwind `font-primary` only where Syne is required.
+ * Backgrounds: `--bg-*` in globals.css; use Tailwind classes (`bg-glass`, `bg-btn-active`, …) in JSX.
  */
 export const THEME_STORAGE_KEY = "employee-assistant:theme";
 export const THEME_CHANGE_EVENT = "employee-assistant:theme-change";

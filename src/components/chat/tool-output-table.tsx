@@ -151,7 +151,10 @@ export function ToolOutputTable({
   return (
     <Card
       variant="glass"
-      className="overflow-hidden border-white/12 bg-[linear-gradient(165deg,rgba(140,142,170,0.22),rgba(62,60,94,0.36))] shadow-[0_14px_34px_rgba(6,10,30,0.34)]"
+      className={cn(
+        "overflow-hidden border-white/12 shadow-[0_14px_34px_rgba(6,10,30,0.34)]",
+        "bg-glass-table",
+      )}
     >
       <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3.5 py-2.5">
         <p className="font-primary text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-white/78">
@@ -163,7 +166,12 @@ export function ToolOutputTable({
       </div>
       <div className="p-2.5">
         {rows.length > 0 ? (
-          <div className="overflow-hidden rounded-xl border border-white/9 bg-[#1c1b38]/60">
+          <div
+            className={cn(
+              "overflow-hidden rounded-xl border border-white/9",
+              "bg-surface-muted",
+            )}
+          >
             <div
               className={cn(
                 "hidden sm:grid items-center border-b border-white/8 bg-white/5 px-3 py-2",

@@ -1,6 +1,7 @@
 import { Avatar } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
 import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
+import { cn } from "@/utils/class-name";
 import type { QuickAction } from "@/types/chat";
 
 type ChatEmptyStateProps = {
@@ -14,7 +15,12 @@ export function ChatEmptyState({
 }: ChatEmptyStateProps) {
   return (
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-4 py-12">
-      <div className="flex w-full max-w-[32.5rem] flex-col items-center gap-6 rounded-3xl border border-white/10 bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.04))] p-8 shadow-[0_24px_64px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[2rem]">
+      <div
+        className={cn(
+          "flex w-full max-w-[32.5rem] flex-col items-center gap-6 rounded-3xl border border-white/10 p-8 shadow-[0_24px_64px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[2rem]",
+          "bg-glass",
+        )}
+      >
         <div className="flex items-center justify-center">
           <Avatar variant="assistant" size="lg" />
         </div>

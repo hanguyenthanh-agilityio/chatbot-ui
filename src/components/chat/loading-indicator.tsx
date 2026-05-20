@@ -34,7 +34,10 @@ export function LoadingIndicator({
 
       <Card
         variant="glass"
-        className="w-[18.75rem] max-w-full border-white/10 bg-[linear-gradient(165deg,#ffffff17,#ffffff0d)] px-4 py-3.5 shadow-[0_10px_28px_rgba(7,12,30,0.28)]"
+        className={cn(
+          "w-[18.75rem] max-w-full border-white/10 px-4 py-3.5 shadow-[0_10px_28px_rgba(7,12,30,0.28)]",
+          "bg-glass-loading",
+        )}
       >
         <div className="mb-2.5">
           <span className="font-primary text-sm font-semibold tracking-wide text-white/82">
