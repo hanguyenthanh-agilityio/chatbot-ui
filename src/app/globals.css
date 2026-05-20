@@ -2,13 +2,6 @@
 
 @import "tailwindcss";
 
-@theme {
-  --size-app-blob: 500px;
-  --size-app-blob-alt: 520px;
-  --blur-app-blob: 78px;
-  --blur-app-blob-accent: 82px;
-}
-
 @variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
 @variant light {
@@ -21,30 +14,30 @@
     --color-app-border-8: #e7e2f4;
     --color-app-border-10: #e0dbef;
     --color-app-hover-border: #c0a1f7;
-    --color-app-surface-4: rgba(255, 255, 255, 0.72);
-    --color-app-surface-6: rgba(255, 255, 255, 0.88);
-    --color-app-hover: rgba(124, 58, 237, 0.1);
-    --color-app-blob-violet: rgba(167, 139, 250, 0.28);
-    --color-app-blob-indigo: rgba(129, 140, 248, 0.22);
-    --color-app-blob-cyan: rgba(56, 189, 248, 0.2);
+    --color-app-surface-4: #ffffffb8;
+    --color-app-surface-6: #ffffffe0;
+    --color-app-hover: #7c3aed1a;
+    --color-app-blob-violet: #a78bfa47;
+    --color-app-blob-indigo: #818cf838;
+    --color-app-blob-cyan: #38bdf833;
   }
 }
 
 :root {
   --foreground: #f8fafc;
-  --bg-selection: rgba(124, 58, 237, 0.3);
-  --bg-btn-disabled: rgba(255, 255, 255, 0.18);
-  --bg-surface-muted: rgba(28, 27, 56, 0.6);
+  --bg-selection: #7c3aed4d;
+  --bg-btn-disabled: #ffffff2e;
+  --bg-surface-muted: #1c1b3899;
 
   --bg-radial-violet: radial-gradient(
     1200px 700px at -10% -15%,
-    rgba(139, 92, 246, 0.2) 0%,
-    rgba(139, 92, 246, 0) 60%
+    #8b5cf633 0%,
+    transparent 60%
   );
   --bg-radial-cyan: radial-gradient(
     1100px 650px at 110% 20%,
-    rgba(14, 165, 233, 0.18) 0%,
-    rgba(14, 165, 233, 0) 62%
+    #0ea5e92e 0%,
+    transparent 62%
   );
   --bg-gradient-base: linear-gradient(
     135deg,
@@ -55,102 +48,65 @@
   --bg-app-shell:
     var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
 
-  --bg-glass: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.09),
-    rgba(255, 255, 255, 0.04)
-  );
-  --bg-glass-panel: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.03)
-  );
-  --bg-glass-panel-chat: linear-gradient(
-    170deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.03)
-  );
-  --bg-glass-panel-alt: linear-gradient(
-    170deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.03)
-  );
-  --bg-glass-header: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.03)
-  );
-  --bg-glass-composer: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0.06)
-  );
-  --bg-glass-input: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.04)
-  );
+  --bg-glass: linear-gradient(165deg, #ffffff17, #ffffff0a);
+  --bg-glass-panel: linear-gradient(165deg, #ffffff0f, #ffffff08);
+  --bg-glass-panel-alt: linear-gradient(170deg, #ffffff0d, #ffffff08);
+  --bg-glass-header: linear-gradient(180deg, #ffffff14, #ffffff08);
+  --bg-glass-composer: linear-gradient(180deg, #ffffff05, #ffffff0f);
+  --bg-glass-input: linear-gradient(165deg, #ffffff14, #ffffff0a);
   --bg-glass-loading: linear-gradient(165deg, #ffffff17, #ffffff0d);
-  --bg-glass-table: linear-gradient(
-    165deg,
-    rgba(140, 142, 170, 0.22),
-    rgba(62, 60, 94, 0.36)
-  );
+  --bg-glass-table: linear-gradient(165deg, #8c8eaa38, #3e3c5e5c);
   --bg-bubble-user: linear-gradient(
     135deg,
-    rgba(124, 58, 237, 0.5),
-    rgba(79, 70, 229, 0.44),
-    rgba(14, 165, 233, 0.22)
+    #7c3aed80,
+    #4f46e670,
+    #0ea5e938
   );
-  --bg-bubble-assistant: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.09),
-    rgba(255, 255, 255, 0.06)
-  );
+  --bg-bubble-assistant: linear-gradient(165deg, #ffffff17, #ffffff0f);
   --bg-btn-active: linear-gradient(135deg, #8b5cf6, #6366f1, #0ea5e9);
 
-  --shadow-glass: 0 10px 30px rgba(7, 12, 30, 0.26);
-  --shadow-glass-elevated: 0 10px 28px rgba(7, 12, 30, 0.28);
-  --shadow-glass-compact: 0 10px 26px rgba(7, 12, 30, 0.25);
+  --shadow-glass: 0 10px 30px #070c1e42;
+  --shadow-glass-elevated: 0 10px 28px #070c1e47;
+  --shadow-glass-compact: 0 10px 26px #070c1e40;
   --shadow-glass-hero:
-    0 24px 64px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  --shadow-panel: 0 8px 30px rgba(5, 10, 30, 0.25);
-  --shadow-panel-sm: 0 8px 24px rgba(7, 12, 30, 0.22);
-  --shadow-shell: 0 16px 60px rgba(7, 12, 32, 0.32);
-  --shadow-shell-panel: 0 16px 60px rgba(7, 12, 32, 0.36);
+    0 24px 64px #00000061, inset 0 1px 0 #ffffff1a;
+  --shadow-panel: 0 8px 30px #050a1e40;
+  --shadow-panel-sm: 0 8px 24px #070c1e38;
+  --shadow-shell: 0 16px 60px #070c2052;
+  --shadow-shell-panel: 0 16px 60px #070c205c;
   --shadow-shell-header:
-    0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 32px rgba(0, 0, 0, 0.2);
+    0 1px 0 #ffffff0f, 0 8px 32px #00000033;
   --shadow-composer-bar:
-    0 -1px 0 rgba(255, 255, 255, 0.04), 0 -10px 34px rgba(0, 0, 0, 0.2);
+    0 -1px 0 #ffffff0a, 0 -10px 34px #00000033;
   --shadow-composer-input:
-    0 8px 26px rgba(7, 12, 30, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --shadow-bubble-user: 0 8px 26px rgba(56, 32, 140, 0.34);
-  --shadow-bubble-assistant: 0 8px 24px rgba(6, 10, 30, 0.24);
-  --shadow-table: 0 14px 34px rgba(6, 10, 30, 0.34);
-  --shadow-thread-active: 0 8px 26px rgba(8, 12, 30, 0.22);
-  --shadow-btn-brand: 0 6px 20px rgba(99, 60, 220, 0.4);
-  --shadow-chip-brand: 0 4px 12px rgba(99, 60, 220, 0.2);
+    0 8px 26px #070c1e33, inset 0 1px 0 #ffffff14;
+  --shadow-bubble-user: 0 8px 26px #38208c57;
+  --shadow-bubble-assistant: 0 8px 24px #060a1e3d;
+  --shadow-table: 0 14px 34px #060a1e57;
+  --shadow-thread-active: 0 8px 26px #080c1e38;
+  --shadow-btn-brand: 0 6px 20px #633cdc66;
+  --shadow-chip-brand: 0 4px 12px #633cdc33;
   --shadow-avatar-brand:
-    0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(124, 58, 237, 0.18);
+    0 2px 8px #00000059, 0 0 0 1px #7c3aed2e;
   --shadow-avatar-placeholder:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.25);
-  --shadow-avatar-photo: 0 2px 6px rgba(0, 0, 0, 0.3);
-  --shadow-toast-success: 0 8px 32px rgba(16, 185, 129, 0.18);
-  --shadow-toast-error: 0 8px 32px rgba(239, 68, 68, 0.18);
-  --shadow-toast-info: 0 8px 32px rgba(14, 165, 233, 0.18);
+    inset 0 1px 0 #ffffff1f, 0 2px 6px #00000040;
+  --shadow-avatar-photo: 0 2px 6px #0000004d;
+  --shadow-toast-success: 0 8px 32px #10b9812e;
+  --shadow-toast-error: 0 8px 32px #ef44442e;
+  --shadow-toast-info: 0 8px 32px #0ea5e92e;
   --shadow-tool-rose: 0 8px 20px #5a0c243d;
   --shadow-tool-emerald: 0 8px 20px #08462a38;
-  --shadow-tool-neutral: 0 8px 20px rgba(7, 12, 30, 0.2);
+  --shadow-tool-neutral: 0 8px 20px #070c1e33;
   --shadow-toggle:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.28);
+    inset 0 1px 0 #ffffff14, 0 4px 16px #00000047;
   --shadow-toggle-light:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 4px 14px rgba(91, 33, 182, 0.1);
+    inset 0 1px 0 #fffffff2, 0 4px 14px #5b21b61a;
   --shadow-toggle-thumb:
-    0 2px 10px rgba(88, 28, 135, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    0 2px 10px #581c878c, inset 0 1px 0 #ffffff59;
   --shadow-toggle-thumb-light:
-    0 2px 10px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    0 2px 10px #f59e0b73, inset 0 1px 0 #ffffffa6;
 
-  /* Layout: width / height / max / radius / border (→ w-*, max-w-*, rounded-*, border-*) */
+  /* Layout → w-*, max-w-*, min-h-*, rounded-* */
   --layout-shell-max: 1600px;
   --layout-chat-empty-max: 32.5rem;
   --layout-loading-card-width: 18.75rem;
@@ -161,8 +117,7 @@
   --layout-page-min-dvh: calc(100dvh - 2.5rem);
   --layout-avatar-sm: 30px;
   --layout-max-bubble-user: 78%;
-  --layout-max-bubble-assistant: 72%;
-  --layout-max-thread-thinking: 72%;
+  --layout-max-narrow: 72%;
   --layout-max-message-column-user: 85%;
   --layout-radius-shell: 1.75rem;
   --layout-radius-composer-field: 1.125rem;
@@ -174,15 +129,20 @@
     sans-serif;
 }
 
-/* Tailwind utilities used in JSX (values from :root above) */
+/* Tailwind utilities (values from :root / light @theme) */
 @theme inline {
+  --size-app-blob: 500px;
+  --size-app-blob-alt: 520px;
+  --blur-app-blob: 78px;
+  --blur-app-blob-accent: 82px;
+
   --font-primary: var(--font-primary);
   --font-secondary: var(--font-secondary);
   --color-btn-disabled: var(--bg-btn-disabled);
   --color-surface-muted: var(--bg-surface-muted);
   --background-image-glass: var(--bg-glass);
   --background-image-glass-panel: var(--bg-glass-panel);
-  --background-image-glass-panel-chat: var(--bg-glass-panel-chat);
+  --background-image-glass-panel-chat: var(--bg-glass-panel);
   --background-image-glass-panel-alt: var(--bg-glass-panel-alt);
   --background-image-glass-header: var(--bg-glass-header);
   --background-image-glass-composer: var(--bg-glass-composer);
@@ -224,8 +184,8 @@
   --max-width-shell: var(--layout-shell-max);
   --max-width-chat-empty: var(--layout-chat-empty-max);
   --max-width-bubble-user: var(--layout-max-bubble-user);
-  --max-width-bubble-assistant: var(--layout-max-bubble-assistant);
-  --max-width-thread-thinking: var(--layout-max-thread-thinking);
+  --max-width-bubble-assistant: var(--layout-max-narrow);
+  --max-width-thread-thinking: var(--layout-max-narrow);
   --max-width-message-column-user: var(--layout-max-message-column-user);
   --height-chat-viewport: var(--layout-chat-viewport-height);
   --min-height-chat-viewport: var(--layout-chat-viewport-height);
@@ -287,16 +247,16 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
 @variant light {
   & {
     --foreground: #1a1035;
-    --bg-selection: rgba(124, 58, 237, 0.18);
+    --bg-selection: #7c3aed2e;
     --bg-radial-violet: radial-gradient(
       1000px 620px at -8% -12%,
-      rgba(167, 139, 250, 0.22) 0%,
-      rgba(167, 139, 250, 0) 58%
+      #a78bfa38 0%,
+      transparent 58%
     );
     --bg-radial-cyan: radial-gradient(
       980px 600px at 108% 18%,
-      rgba(56, 189, 248, 0.16) 0%,
-      rgba(56, 189, 248, 0) 60%
+      #38bdf829 0%,
+      transparent 60%
     );
     --bg-gradient-base: linear-gradient(
       135deg,
@@ -306,25 +266,13 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
     );
     --bg-app-shell:
       var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
-    --bg-shell-sidebar: linear-gradient(
-      165deg,
-      rgba(255, 255, 255, 0.92),
-      rgba(248, 245, 255, 0.88)
-    );
-    --bg-shell-chat-panel: linear-gradient(
-      170deg,
-      rgba(255, 255, 255, 0.92),
-      rgba(248, 245, 255, 0.88)
-    );
-    --bg-shell-chat-header: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.95),
-      rgba(248, 245, 255, 0.82)
-    );
-    --shadow-shell: 0 16px 48px rgba(76, 56, 140, 0.12);
+    --bg-shell-sidebar: linear-gradient(165deg, #ffffffeb, #f8f5ffe0);
+    --bg-shell-chat-panel: linear-gradient(170deg, #ffffffeb, #f8f5ffe0);
+    --bg-shell-chat-header: linear-gradient(180deg, #fffffff2, #f8f5ffd1);
+    --shadow-shell: 0 16px 48px #4c388c1f;
     --shadow-shell-panel: var(--shadow-shell);
     --shadow-shell-header:
-      0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 24px rgba(76, 56, 140, 0.08);
+      0 1px 0 #ffffffe6, 0 8px 24px #4c388c14;
   }
 
   & body {
@@ -369,8 +317,8 @@ aside .rounded-2xl .inline-flex.rounded-full {
   padding: 0.25rem;
   overflow: hidden;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(15, 12, 35, 0.55);
+  border: 1px solid #ffffff33;
+  background-color: #0f0c238c;
   box-shadow: var(--shadow-toggle);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -381,8 +329,8 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="light"] {
-  border-color: rgba(124, 58, 237, 0.22);
-  background-color: rgba(248, 245, 255, 0.95);
+  border-color: #7c3aed38;
+  background-color: #f8f5fff2;
   box-shadow: var(--shadow-toggle-light);
 }
 
@@ -390,13 +338,13 @@ aside .rounded-2xl .inline-flex.rounded-full {
   outline: none;
   box-shadow:
     var(--shadow-toggle),
-    0 0 0 2px rgba(167, 139, 250, 0.55);
+    0 0 0 2px #a78bfa8c;
 }
 
 .theme-toggle[data-state="light"]:focus-visible {
   box-shadow:
     var(--shadow-toggle-light),
-    0 0 0 2px rgba(124, 58, 237, 0.4);
+    0 0 0 2px #7c3aed66;
 }
 
 .theme-toggle::before {
@@ -445,12 +393,12 @@ aside .rounded-2xl .inline-flex.rounded-full {
 
 .theme-toggle[data-state="dark"] .theme-toggle-icon:last-of-type {
   color: #ffffff;
-  filter: drop-shadow(0 1px 1px rgba(15, 10, 40, 0.45));
+  filter: drop-shadow(0 1px 1px #0f0a2873);
 }
 
 .theme-toggle[data-state="light"] .theme-toggle-icon:first-of-type {
   color: #7c2d12;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.35));
+  filter: drop-shadow(0 0 1px #ffffff59);
 }
 
 .theme-toggle[data-state="light"] .theme-toggle-icon:last-of-type {

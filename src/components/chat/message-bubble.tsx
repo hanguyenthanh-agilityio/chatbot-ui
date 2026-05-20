@@ -21,7 +21,7 @@ export function MessageBubble({
     return (
       <div
         className={cn(
-          "ml-auto max-w-bubble-user rounded-bubble-user border border-violet-300/28 px-[0.9375rem] py-2.5 text-sm leading-relaxed break-words text-white/90 shadow-bubble-user backdrop-blur-lg",
+          "ml-auto max-w-bubble-user rounded-bubble-user border border-violet-300/28 px-3.75 py-2.5 text-sm leading-relaxed wrap-break-word text-white/90 shadow-bubble-user backdrop-blur-lg",
           "bg-bubble-user",
         )}
       >
