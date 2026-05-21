@@ -9,6 +9,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getAvatarUrl, getInitialsFromName } from "@/utils/avatar";
+import { cn } from "@/utils/class-name";
 import { getTextParts } from "@/utils/message";
 import {
   getToolParts,
@@ -33,7 +34,19 @@ import {
   splitTextBeforeAndAfterTables,
   getTableLeadInText,
 } from "./text";
-type TableWithKey = ReturnType<typeof getToolOutputTables>[number] & { key: string };
+type TableWithKey = ReturnType<typeof getToolOutputTables>[number] & {
+  key: string;
+};
+
+const TOOL_STATUS_LIGHT_CLASS: Record<"success" | "error" | "neutral", string> =
+  {
+    error:
+      "light:border-rose-300/70 light:bg-rose-50 light:text-rose-800 light:shadow-none",
+    success:
+      "light:border-emerald-300/70 light:bg-emerald-50 light:text-emerald-900 light:shadow-none",
+    neutral:
+      "light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:shadow-none",
+  };
 
 type SecondContentProps = {
   message: UIMessage;
@@ -48,7 +61,10 @@ type SecondContentProps = {
   textPlacement: { beforeTables: string; afterTables: string | null };
   shouldShowThinkingSkeleton: boolean;
   thinkingLabel: string;
-  approvalParts: Extract<UIMessage["parts"][number], { approval: { id: string } }>[];
+  approvalParts: Extract<
+    UIMessage["parts"][number],
+    { approval: { id: string } }
+  >[];
   datePickerParts: { key: string; leaveType: string }[];
   statusParts: { tone: "success" | "error" | "neutral"; text: string }[];
   onSelectPrompt: (prompt: string) => void;
@@ -56,32 +72,55 @@ type SecondContentProps = {
 };
 
 function MessageSecondContent({
-  message, isUser, isLoading, shouldRenderBubble, embedOutputTablesInBubble,
-  text, visibleOutputTables, tableIds, useTableLeadInLayout, textPlacement,
-  shouldShowThinkingSkeleton, thinkingLabel, approvalParts, datePickerParts,
-  statusParts, onSelectPrompt, onToolApproval,
+  message,
+  isUser,
+  isLoading,
+  shouldRenderBubble,
+  embedOutputTablesInBubble,
+  text,
+  visibleOutputTables,
+  tableIds,
+  useTableLeadInLayout,
+  textPlacement,
+  shouldShowThinkingSkeleton,
+  thinkingLabel,
+  approvalParts,
+  datePickerParts,
+  statusParts,
+  onSelectPrompt,
+  onToolApproval,
 }: SecondContentProps) {
   return (
     <>
       {shouldRenderBubble ? (
-        <MessageBubble isUser={isUser} text={text || undefined} fullWidth={embedOutputTablesInBubble}>
+        <MessageBubble
+          isUser={isUser}
+          text={text || undefined}
+          fullWidth={embedOutputTablesInBubble}
+        >
           {embedOutputTablesInBubble ? (
             <div className="space-y-3">
               {visibleOutputTables.map((table) => (
                 <div key={table.key} className="space-y-2">
                   {useTableLeadInLayout ? (
-                    <p className="text-sm text-white/82">
+                    <p className="text-sm text-white/82 light:text-app-fg-muted">
                       {getTableLeadInText(table.id, tableIds)}
                     </p>
                   ) : null}
-                  <ToolOutputTable title={table.title} columns={table.columns} rows={table.rows}
-                    rowActions={table.rowActions} rowActionSummaries={table.rowActionSummaries}
-                    onActionClick={onSelectPrompt} disableActions={isLoading} emptyLabel={table.emptyLabel}
+                  <ToolOutputTable
+                    title={table.title}
+                    columns={table.columns}
+                    rows={table.rows}
+                    rowActions={table.rowActions}
+                    rowActionSummaries={table.rowActionSummaries}
+                    onActionClick={onSelectPrompt}
+                    disableActions={isLoading}
+                    emptyLabel={table.emptyLabel}
                   />
                 </div>
               ))}
               {textPlacement.afterTables ? (
-                <p className="whitespace-pre-wrap text-sm text-white/78">
+                <p className="whitespace-pre-wrap text-sm text-white/78 light:text-app-fg-muted">
                   {textPlacement.afterTables}
                 </p>
               ) : null}
@@ -90,7 +129,11 @@ function MessageSecondContent({
         </MessageBubble>
       ) : null}
       {shouldShowThinkingSkeleton ? (
-        <LoadingIndicator showAvatar={false} label={thinkingLabel} className="max-w-thread-thinking" />
+        <LoadingIndicator
+          showAvatar={false}
+          label={thinkingLabel}
+          className="max-w-thread-thinking"
+        />
       ) : null}
       {approvalParts.length > 0 ? (
         <div className="mt-3 space-y-3">
@@ -98,9 +141,12 @@ function MessageSecondContent({
             const content = getApprovalCardContent(part);
             if (!content) return null;
             return (
-              <ToolApprovalCard key={`${message.id}-approval-${part.toolCallId ?? index}`}
-                title={content.title} description={content.description}
-                confirmLabel={content.confirmLabel} cancelLabel={content.cancelLabel}
+              <ToolApprovalCard
+                key={`${message.id}-approval-${part.toolCallId ?? index}`}
+                title={content.title}
+                description={content.description}
+                confirmLabel={content.confirmLabel}
+                cancelLabel={content.cancelLabel}
                 onConfirm={() => onToolApproval(part.approval.id, true)}
                 onCancel={() => onToolApproval(part.approval.id, false)}
               />
@@ -122,9 +168,16 @@ function MessageSecondContent({
       {!embedOutputTablesInBubble && visibleOutputTables.length > 0 ? (
         <div className="mt-3 space-y-3">
           {visibleOutputTables.map((table) => (
-            <ToolOutputTable key={table.key} title={table.title} columns={table.columns}
-              rows={table.rows} rowActions={table.rowActions} rowActionSummaries={table.rowActionSummaries}
-              onActionClick={onSelectPrompt} disableActions={isLoading} emptyLabel={table.emptyLabel}
+            <ToolOutputTable
+              key={table.key}
+              title={table.title}
+              columns={table.columns}
+              rows={table.rows}
+              rowActions={table.rowActions}
+              rowActionSummaries={table.rowActionSummaries}
+              onActionClick={onSelectPrompt}
+              disableActions={isLoading}
+              emptyLabel={table.emptyLabel}
             />
           ))}
         </div>
@@ -132,8 +185,13 @@ function MessageSecondContent({
       {statusParts.length > 0 ? (
         <div className="mt-3 space-y-2">
           {statusParts.map((statusPart, index) => (
-            <Card key={`${message.id}-status-${index}`}
-              className={`px-4 py-3 text-sm leading-relaxed ${TOOL_STATUS_TONE_CLASS[statusPart.tone]}`}
+            <Card
+              key={`${message.id}-status-${index}`}
+              className={cn(
+                "px-4 py-3 text-sm leading-relaxed",
+                TOOL_STATUS_TONE_CLASS[statusPart.tone],
+                TOOL_STATUS_LIGHT_CLASS[statusPart.tone],
+              )}
             >
               {statusPart.text}
             </Card>
@@ -146,36 +204,65 @@ function MessageSecondContent({
 
 function MutationSuccessCardItem({ card }: { card: MutationSuccessCard }) {
   return (
-    <div className="w-fit max-w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/6">
-      <div className="border-b border-emerald-400/20 bg-emerald-500/8 px-4 py-2">
-        <p className="text-sm font-semibold text-emerald-100">{card.title}</p>
+    <div
+      className={cn(
+        "w-fit max-w-full overflow-hidden rounded-xl border border-emerald-400/28 bg-emerald-500/6",
+        "light:border-emerald-300/70 light:bg-emerald-50 light:shadow-card-surface",
+      )}
+    >
+      <div
+        className={cn(
+          "border-b border-emerald-400/20 bg-emerald-500/8 px-4 py-2",
+          "light:border-emerald-200/80 light:bg-emerald-100/60",
+        )}
+      >
+        <p className="text-sm font-semibold text-emerald-100 light:text-emerald-900">
+          {card.title}
+        </p>
       </div>
       <div className="flex items-center justify-between gap-4 px-4 py-2.5">
         <div className="flex items-center gap-2.5">
-          <Avatar variant="user" src={card.employeeAvatar ?? getAvatarUrl(card.employeeName)}
-            alt={`${card.employeeName} avatar`} initials={getInitialsFromName(card.employeeName)}
-            size="sm" className="ring-emerald-400/20"
+          <Avatar
+            variant="user"
+            src={card.employeeAvatar ?? getAvatarUrl(card.employeeName)}
+            alt={`${card.employeeName} avatar`}
+            initials={getInitialsFromName(card.employeeName)}
+            size="sm"
+            className="ring-emerald-400/20 light:ring-emerald-300/50"
           />
           <div>
-            <p className="text-sm font-semibold leading-tight text-emerald-100">
+            <p className="text-sm font-semibold leading-tight text-emerald-100 light:text-emerald-900">
               {card.employeeName}
             </p>
             {card.team ? (
-              <p className="text-xs leading-tight text-emerald-100/60">{card.team}</p>
+              <p className="text-xs leading-tight text-emerald-100/60 light:text-emerald-800/70">
+                {card.team}
+              </p>
             ) : null}
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
-          <Badge variant="success" className="px-2.5 py-0.5 text-xs">{card.leaveTypeLabel}</Badge>
-          <span className="text-xs text-emerald-100/80">{card.dateRange}</span>
-          <span className="text-xs text-emerald-100/80">
+          <Badge variant="success" className="px-2.5 py-0.5 text-xs">
+            {card.leaveTypeLabel}
+          </Badge>
+          <span className="text-xs text-emerald-100/80 light:text-emerald-800">
+            {card.dateRange}
+          </span>
+          <span className="text-xs text-emerald-100/80 light:text-emerald-800">
             {card.days} {card.days === 1 ? "day" : "days"}
           </span>
         </div>
       </div>
       {card.reviewComment ? (
-        <div className="border-t border-emerald-400/15 px-4 py-2">
-          <p className="text-xs text-emerald-100/65">Comment: {card.reviewComment}</p>
+        <div
+          className={cn(
+            "border-t border-emerald-400/15 px-4 py-2",
+            "light:border-emerald-200/70",
+          )}
+        >
+          <p className="text-xs text-emerald-100/65 light:text-emerald-800/80">
+            Comment: {card.reviewComment}
+          </p>
         </div>
       ) : null}
     </div>
@@ -194,21 +281,26 @@ type ChatMessageProps = {
 };
 
 export function ChatMessage({
-  message, isLastMessage, isLoading, userAvatarUrl, userAvatarLabel,
-  userInitials, onSelectPrompt, onToolApproval,
+  message,
+  isLastMessage,
+  isLoading,
+  userAvatarUrl,
+  userAvatarLabel,
+  userInitials,
+  onSelectPrompt,
+  onToolApproval,
 }: ChatMessageProps) {
   const rawText = getTextParts(message).join("\n").trim();
   const toolParts = getToolParts(message);
   const isUser = message.role === "user";
   const approvalParts = toolParts.filter(isApprovalRequestedToolPart);
-  const datePickerParts = isLastMessage && !isLoading
-    ? toolParts
-        .filter(isDatePickerToolPart)
-        .map((part, i) => ({
+  const datePickerParts =
+    isLastMessage && !isLoading
+      ? toolParts.filter(isDatePickerToolPart).map((part, i) => ({
           key: `${message.id}-datepicker-${i}`,
           leaveType: getDatePickerLeaveType(part),
         }))
-    : [];
+      : [];
   const outputTables = toolParts.flatMap((part, partIndex) =>
     getToolOutputTables(part).map((table) => ({
       ...table,
@@ -220,7 +312,8 @@ export function ChatMessage({
     .map((part) => getToolStepText(part))
     .find((step): step is string => Boolean(step));
   const agentLabel = readMessageMeta(message)?.agentLabel ?? null;
-  const thinkingLabel = currentToolStep ?? (agentLabel ? `Assign: ${agentLabel}` : "Thinking");
+  const thinkingLabel =
+    currentToolStep ?? (agentLabel ? `Assign: ${agentLabel}` : "Thinking");
   const shouldDeferOutputTables = !isUser && isLastMessage && isLoading;
   const visibleOutputTables = shouldDeferOutputTables
     ? []
@@ -228,7 +321,9 @@ export function ChatMessage({
   const embedOutputTablesInBubble = !isUser && visibleOutputTables.length > 0;
   const tableIds = visibleOutputTables.map((table) => table.id);
   const useTableLeadInLayout = !isUser && shouldUseTableLeadInLayout(tableIds);
-  const renderedTableLeadIns = useTableLeadInLayout ? getRenderedTableLeadIns(tableIds) : [];
+  const renderedTableLeadIns = useTableLeadInLayout
+    ? getRenderedTableLeadIns(tableIds)
+    : [];
   const normalizedText =
     !isUser && visibleOutputTables.length > 0
       ? stripRedundantStructuredListText(rawText)
@@ -236,7 +331,8 @@ export function ChatMessage({
   const tableLeadInFollowUp = useTableLeadInLayout
     ? extractTableLeadInFollowUp(normalizedText, renderedTableLeadIns)
     : null;
-  const shouldSplitTextAroundTables = !isUser && visibleOutputTables.length > 0 && !useTableLeadInLayout;
+  const shouldSplitTextAroundTables =
+    !isUser && visibleOutputTables.length > 0 && !useTableLeadInLayout;
   const textPlacement = useTableLeadInLayout
     ? { beforeTables: "", afterTables: tableLeadInFollowUp }
     : shouldSplitTextAroundTables
@@ -244,12 +340,19 @@ export function ChatMessage({
       : { beforeTables: normalizedText, afterTables: null };
   const text = textPlacement.beforeTables;
   const shouldShowThinkingSkeleton =
-    !isUser && isLastMessage && isLoading && text.length === 0 && approvalParts.length === 0;
+    !isUser &&
+    isLastMessage &&
+    isLoading &&
+    text.length === 0 &&
+    approvalParts.length === 0;
   const mutationSuccessCards = toolParts
     .map((part, partIndex) => {
       const success = getMutationSuccessCard(part);
       if (!success) return null;
-      return { ...success, key: `${message.id}-success-${part.toolCallId ?? partIndex}` } as MutationSuccessCard;
+      return {
+        ...success,
+        key: `${message.id}-success-${part.toolCallId ?? partIndex}`,
+      } as MutationSuccessCard;
     })
     .filter((item): item is MutationSuccessCard => item !== null);
   const statusParts = toolParts
@@ -272,28 +375,48 @@ export function ChatMessage({
     statusParts.length > 0;
 
   const secondContentProps: SecondContentProps = {
-    message, isUser, isLoading, shouldRenderBubble, embedOutputTablesInBubble,
-    text, visibleOutputTables, tableIds, useTableLeadInLayout, textPlacement,
-    shouldShowThinkingSkeleton, thinkingLabel, approvalParts, datePickerParts,
-    statusParts, onSelectPrompt, onToolApproval,
+    message,
+    isUser,
+    isLoading,
+    shouldRenderBubble,
+    embedOutputTablesInBubble,
+    text,
+    visibleOutputTables,
+    tableIds,
+    useTableLeadInLayout,
+    textPlacement,
+    shouldShowThinkingSkeleton,
+    thinkingLabel,
+    approvalParts,
+    datePickerParts,
+    statusParts,
+    onSelectPrompt,
+    onToolApproval,
   };
 
   // When a mutation success card exists alongside other content, render
   // two separate visual messages so the card and the follow-up text/table
   // appear as distinct chat bubbles.
-  const shouldSplitMessage = !isUser && mutationSuccessCards.length > 0 && hasSecondContent;
+  const shouldSplitMessage =
+    !isUser && mutationSuccessCards.length > 0 && hasSecondContent;
 
   if (shouldSplitMessage) {
     return (
       <Fragment key={message.id}>
         <article className="flex gap-3 justify-start">
-          <MessageAvatar initials={getAssistantInitials(message)} isUser={false} />
+          <MessageAvatar
+            initials={getAssistantInitials(message)}
+            isUser={false}
+          />
           <div className="min-w-0 max-w-full flex-1">
             <div className="space-y-2">{successCardContent}</div>
           </div>
         </article>
         <article className="flex gap-3 justify-start">
-          <MessageAvatar initials={getAssistantInitials(message)} isUser={false} />
+          <MessageAvatar
+            initials={getAssistantInitials(message)}
+            isUser={false}
+          />
           <div className="min-w-0 max-w-full flex-1">
             <MessageSecondContent {...secondContentProps} />
           </div>
@@ -303,9 +426,19 @@ export function ChatMessage({
   }
 
   return (
-    <article key={message.id} className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
-      {!isUser ? <MessageAvatar initials={getAssistantInitials(message)} isUser={false} /> : null}
-      <div className={`min-w-0 ${isUser ? "max-w-message-column-user" : "max-w-full flex-1"}`}>
+    <article
+      key={message.id}
+      className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}
+    >
+      {!isUser ? (
+        <MessageAvatar
+          initials={getAssistantInitials(message)}
+          isUser={false}
+        />
+      ) : null}
+      <div
+        className={`min-w-0 ${isUser ? "max-w-message-column-user" : "max-w-full flex-1"}`}
+      >
         {mutationSuccessCards.length > 0 ? (
           <div className="space-y-2">{successCardContent}</div>
         ) : null}
@@ -313,15 +446,21 @@ export function ChatMessage({
           <div className={mutationSuccessCards.length > 0 ? "mt-3" : undefined}>
             <MessageSecondContent {...secondContentProps} />
           </div>
-        ) : (!isUser && !isLoading && isLastMessage && mutationSuccessCards.length === 0) ? (
-          <p className="text-sm text-white/50">
+        ) : !isUser &&
+          !isLoading &&
+          isLastMessage &&
+          mutationSuccessCards.length === 0 ? (
+          <p className="text-sm text-white/50 light:text-app-muted-50">
             Something went wrong. Please try again.
           </p>
         ) : null}
       </div>
       {isUser ? (
-        <MessageAvatar initials={userInitials ?? ""} isUser={true}
-          avatarUrl={userAvatarUrl} avatarLabel={userAvatarLabel}
+        <MessageAvatar
+          initials={userInitials ?? ""}
+          isUser={true}
+          avatarUrl={userAvatarUrl}
+          avatarLabel={userAvatarLabel}
         />
       ) : null}
     </article>
