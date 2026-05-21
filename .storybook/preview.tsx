@@ -41,7 +41,7 @@ function WithAppTheme(Story: () => ReactNode) {
   return (
     <ThemeProvider key={theme}>
       <div
-        className="flex min-h-dvh w-full items-center justify-center p-6"
+        className="flex min-h-sm w-full items-center justify-center p-6"
         style={{
           background: "var(--bg-app-shell)",
           backgroundAttachment: "fixed",

@@ -21,7 +21,7 @@ const inSidebarShell: Decorator = (Story) => (
   <aside
     className={cn(
       THEME_SHELL_CLASSES.sidebar,
-      "mx-auto flex w-full max-w-sm flex-col rounded-shell border backdrop-blur-[28px] shadow-shell",
+      "mx-auto flex w-full max-w-sm flex-col rounded-shell border backdrop-blur-shell shadow-shell",
       "bg-glass-panel",
       THEME_SHELL_UTILITIES.border,
       THEME_SHELL_UTILITIES.text,

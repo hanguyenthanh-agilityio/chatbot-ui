@@ -15,7 +15,7 @@ const inAppShell: Decorator = (Story) => (
   <aside
     className={cn(
       THEME_SHELL_CLASSES.sidebar,
-      "mx-auto w-full max-w-sm rounded-shell border p-5 backdrop-blur-[28px] shadow-shell",
+      "mx-auto w-full max-w-sm rounded-shell border p-5 backdrop-blur-shell shadow-shell",
       "bg-glass-panel",
       THEME_SHELL_UTILITIES.border,
       THEME_SHELL_UTILITIES.text,
@@ -93,42 +93,6 @@ export const AllVariants: Story = {
   ),
 };
 
-export const ThemeComparison: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => (
-    <div className="grid gap-6 sm:grid-cols-2">
-      <div
-        data-theme="dark"
-        className={cn(
-          "space-y-3 rounded-shell border p-4 shadow-shell",
-          "border-white/9 bg-glass-panel backdrop-blur-[28px]",
-          THEME_SHELL_UTILITIES.text,
-        )}
-      >
-        <p className="font-dm-sans text-xs font-medium uppercase tracking-wider text-white/50">
-          Dark
-        </p>
-        <VariantSample variant="panel" label="Provider / Auth" />
-        <VariantSample variant="soft" label="Active thread" />
-      </div>
-      <div
-        data-theme="light"
-        className={cn(
-          "space-y-3 rounded-shell border p-4 shadow-shell",
-          "light:border-app-border-9 light:bg-(image:--bg-shell-sidebar)",
-          THEME_SHELL_UTILITIES.text,
-        )}
-      >
-        <p className="font-dm-sans text-xs font-medium uppercase tracking-wider light:text-app-muted-55">
-          Light
-        </p>
-        <VariantSample variant="panel" label="Provider / Auth" />
-        <VariantSample variant="soft" label="Active thread" />
-      </div>
-    </div>
-  ),
-};
-
 export const ProviderPanel: Story = {
   args: {
     variant: "panel",
@@ -163,61 +127,6 @@ export const AuthPanelLayout: Story = {
       <Card variant="panel" className="mt-4 px-4 py-3">
         <Text variant="bodyStrong">Thang Ho Quang</Text>
       </Card>
-    </Card>
-  ),
-};
-
-/** Thread list — inactive `panel` vs active `soft`. */
-export const ThreadCards: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => (
-    <div className="flex w-full flex-col gap-2">
-      <Card
-        variant="soft"
-        className="cursor-pointer px-4 py-3 shadow-thread-active"
-      >
-        <Text variant="bodyStrong">Active chat</Text>
-        <Text variant="caption" className="mt-1 line-clamp-1">
-          Preview line…
-        </Text>
-      </Card>
-      <Card variant="panel" className="cursor-pointer px-4 py-3">
-        <Text variant="bodyStrong">Recent chat</Text>
-        <Text variant="caption" className="mt-1 line-clamp-1">
-          Another preview…
-        </Text>
-      </Card>
-    </div>
-  ),
-};
-
-export const WithHeaderAndContent: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => (
-    <Card variant="panel" className="w-full max-w-sm overflow-hidden">
-      <CardHeader>
-        <Text variant="sectionTitle">Section title</Text>
-      </CardHeader>
-      <CardContent>
-        <Text variant="body">Body copy inside CardContent.</Text>
-      </CardContent>
-    </Card>
-  ),
-};
-
-/** Tool table / loading — `variant="glass"`. */
-export const GlassSurface: Story = {
-  args: {
-    variant: "glass",
-    className: "overflow-hidden border-white/12 p-4 shadow-table",
-    children: null,
-  },
-  render: (args) => (
-    <Card {...args}>
-      <Text variant="sectionTitle">Tool output</Text>
-      <Text variant="caption" className="mt-2 block">
-        Glass card on chat surface
-      </Text>
     </Card>
   ),
 };

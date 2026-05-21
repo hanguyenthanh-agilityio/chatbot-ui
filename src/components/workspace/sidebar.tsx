@@ -62,7 +62,7 @@ export function ThreadSidebar({
     <aside
       className={cn(
         THEME_SHELL_CLASSES.sidebar,
-        "flex w-full flex-col rounded-shell border backdrop-blur-[28px] shadow-shell lg:max-w-sm",
+        "flex w-full flex-col rounded-shell border backdrop-blur-shell shadow-shell lg:max-w-sm",
         "bg-glass-panel",
         THEME_SHELL_UTILITIES.border,
         THEME_SHELL_UTILITIES.text,
@@ -209,7 +209,7 @@ function ThreadCard({
           <button
             type="button"
             className={cn(
-              "text-[10px] uppercase tracking-wider disabled:cursor-not-allowed disabled:opacity-50",
+              "text-compact-10 uppercase tracking-wider disabled:cursor-not-allowed disabled:opacity-50",
               "text-white/30 hover:text-rose-300",
               "light:text-app-muted-60 light:hover:text-rose-600",
             )}
