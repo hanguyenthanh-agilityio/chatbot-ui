@@ -34,7 +34,7 @@ const dirname =
         extends: true,
         test: {
           name: "unit",
-          environment: "happy-dom",
+          environment: "jsdom",
           setupFiles: [path.join(dirname, "vitest.setup.ts")],
           include: ["src/components/**/*.test.{ts,tsx}"],
         },

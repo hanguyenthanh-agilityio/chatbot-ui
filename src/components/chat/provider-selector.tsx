@@ -10,8 +10,6 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
-import { SIDEBAR_CARD_CLASSES } from "@/constants/theme";
-import { cn } from "@/utils/class-name";
 import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
@@ -125,7 +123,7 @@ export function ProviderSelector({
   if (!withContainer) return content;
 
   return (
-    <Card variant="panel" className={cn("p-4", SIDEBAR_CARD_CLASSES)}>
+    <Card variant="panel" className="p-4">
       {content}
     </Card>
   );

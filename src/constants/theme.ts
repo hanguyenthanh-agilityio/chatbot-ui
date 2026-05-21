@@ -17,6 +17,8 @@ export type Theme = (typeof THEMES)[number];
 
 export const DEFAULT_THEME: Theme = ThemeMode.Dark;
 
+export const STORYBOOK_THEME_GLOBAL = "theme";
+
 export const THEME_TOGGLE_ARIA_LABEL = {
   toLight: "Switch to light mode",
   toDark: "Switch to dark mode",
@@ -42,10 +44,6 @@ export const THEME_SHELL_UTILITIES = {
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
 export const FORM_FIELD_PANEL_CLASSES =
   "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-app-field-panel light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-amber-800/35";
-
-/** Sidebar section cards — same surface in light (auth, provider, thread list) */
-export const SIDEBAR_CARD_CLASSES =
-  "light:border-app-border-10 light:bg-app-surface-4 light:shadow-card-surface";
 
 export function isDarkTheme(theme: Theme): boolean {
   return theme === ThemeMode.Dark;
