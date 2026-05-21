@@ -171,13 +171,15 @@ function ThreadCard({
 }) {
   return (
     <Card
-      variant="panel"
+      variant={isActive ? "soft" : "panel"}
       className={cn(
         "group cursor-pointer transition-[box-shadow,transform] duration-200",
         "border-white/10 light:border-app-border-10",
         "hover:border-white/16 light:hover:border-app-border-10",
         "hover:bg-white/9 light:hover:bg-app-hover",
-        isActive && "shadow-thread-active light:ring-1 light:ring-app-border-10",
+        isActive
+          ? "bg-white/10 shadow-thread-active light:bg-app-surface-6"
+          : "bg-white/4 light:bg-app-surface-4",
       )}
       onClick={onSelect}
     >
