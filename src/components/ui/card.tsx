@@ -17,6 +17,7 @@ type CardVariant = keyof typeof CARD_VARIANT_CLASSES;
 export type CardProps = HTMLAttributes<HTMLDivElement> & {
   variant?: CardVariant;
 };
+
 export function Card({ variant = "glass", className, ...props }: CardProps) {
   return (
     <div
