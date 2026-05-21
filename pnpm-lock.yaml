@@ -9,6 +9,7 @@ specifiers:
   '@storybook/addon-vitest': ^10.3.6
   '@storybook/nextjs-vite': ^10.3.6
   '@tailwindcss/postcss': ^4
+  '@testing-library/dom': ^10.4.1
   '@testing-library/jest-dom': ^6.9.1
   '@testing-library/react': ^16.3.2
   '@testing-library/user-event': ^14.6.1
@@ -54,9 +55,10 @@ devDependencies:
   '@storybook/addon-vitest': 10.4.0_gjspttj6b6i7gtg2zafe7tvdgq
   '@storybook/nextjs-vite': 10.4.0_noyuyy2r5ljgvcibqgxy3ylgkq
   '@tailwindcss/postcss': 4.3.0
+  '@testing-library/dom': 10.4.1
   '@testing-library/jest-dom': 6.9.1
-  '@testing-library/react': 16.3.2_rmci7anmlqygm7fistpcnedtvq
-  '@testing-library/user-event': 14.6.1
+  '@testing-library/react': 16.3.2_ob3lf7xkcbiuci44ox7bleiq7u
+  '@testing-library/user-event': 14.6.1_rwcxf7kajngkz26znmtz643644
   '@types/node': 20.19.41
   '@types/react': 19.2.15
   '@types/react-dom': 19.2.3_@types+react@19.2.15
@@ -68,7 +70,7 @@ devDependencies:
   jsdom: 29.1.1
   json-server: 1.0.0-beta.15
   playwright: 1.60.0
-  storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+  storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
   tailwindcss: 4.3.0
   typescript: 5.9.3
   vite: 8.0.13_@types+node@20.19.41
@@ -354,7 +356,7 @@ packages:
       '@neoconfetti/react': 1.0.0
       chromatic: 16.10.0
       jsonfile: 6.2.1
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       strip-ansi: 7.2.0
     transitivePeerDependencies:
       - '@chromatic-com/cypress'
@@ -1856,7 +1858,7 @@ packages:
     dependencies:
       '@storybook/global': 5.0.0
       axe-core: 4.11.4
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
     dev: true
 
   /@storybook/addon-docs/10.4.0_zsfsxwlghc7er75reygfsotcla:
@@ -1875,7 +1877,7 @@ packages:
       '@types/react': 19.2.15
       react: 19.2.3
       react-dom: 19.2.3_react@19.2.3
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - '@types/react-dom'
@@ -1906,7 +1908,7 @@ packages:
       '@storybook/global': 5.0.0
       '@storybook/icons': 2.0.2_lyaf5xrb6vrc2axgtpensqbuh4
       '@vitest/browser-playwright': 4.1.7_objy6akykzwzgvqusnxhq4vile
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       vitest: 4.1.7_oaxafqigctkqw4r6lvpks6re34
     transitivePeerDependencies:
       - react
@@ -1920,7 +1922,7 @@ packages:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
       '@storybook/csf-plugin': 10.4.0_knchl56ubsn57mg7oxz5ziieui
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       ts-dedent: 2.2.0
       vite: 8.0.13_@types+node@20.19.41
     transitivePeerDependencies:
@@ -1947,7 +1949,7 @@ packages:
       webpack:
         optional: true
     dependencies:
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       unplugin: 2.3.11
       vite: 8.0.13_@types+node@20.19.41
     dev: true
@@ -1993,7 +1995,7 @@ packages:
       next: 16.1.6_lyaf5xrb6vrc2axgtpensqbuh4
       react: 19.2.3
       react-dom: 19.2.3_react@19.2.3
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       styled-jsx: 5.1.6_react@19.2.3
       typescript: 5.9.3
       vite: 8.0.13_@types+node@20.19.41
@@ -2025,7 +2027,7 @@ packages:
       '@types/react-dom': 19.2.3_@types+react@19.2.15
       react: 19.2.3
       react-dom: 19.2.3_react@19.2.3
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
     dev: true
 
   /@storybook/react-vite/10.4.0_7bgfsal4n5rfh5jefsddwwa4tu:
@@ -2046,7 +2048,7 @@ packages:
       react-docgen: 8.0.3
       react-dom: 19.2.3_react@19.2.3
       resolve: 1.22.12
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       tsconfig-paths: 4.2.0
       vite: 8.0.13_@types+node@20.19.41
     transitivePeerDependencies:
@@ -2084,7 +2086,7 @@ packages:
       react-docgen: 8.0.3
       react-docgen-typescript: 2.4.0_typescript@5.9.3
       react-dom: 19.2.3_react@19.2.3
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -2249,6 +2251,20 @@ packages:
       tailwindcss: 4.3.0
     dev: true
 
+  /@testing-library/dom/10.4.1:
+    resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@babel/code-frame': 7.29.0
+      '@babel/runtime': 7.29.2
+      '@types/aria-query': 5.0.4
+      aria-query: 5.3.0
+      dom-accessibility-api: 0.5.16
+      lz-string: 1.5.0
+      picocolors: 1.1.1
+      pretty-format: 27.5.1
+    dev: true
+
   /@testing-library/jest-dom/6.9.1:
     resolution: {integrity: sha512-zIcONa+hVtVSSep9UT3jZ5rizo2BsxgyDYU7WFD5eICBE7no3881HGeb/QkGfsJs6JTkY1aQhT7rIPC7e+0nnA==}
     engines: {node: '>=14', npm: '>=6', yarn: '>=1'}
@@ -2261,7 +2277,7 @@ packages:
       redent: 3.0.0
     dev: true
 
-  /@testing-library/react/16.3.2_rmci7anmlqygm7fistpcnedtvq:
+  /@testing-library/react/16.3.2_ob3lf7xkcbiuci44ox7bleiq7u:
     resolution: {integrity: sha512-XU5/SytQM+ykqMnAnvB2umaJNIOsLF3PVv//1Ew4CTcpz0/BRyy/af40qqrt7SjKpDdT1saBMc42CUok5gaw+g==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -2277,17 +2293,20 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.29.2
+      '@testing-library/dom': 10.4.1
       '@types/react': 19.2.15
       '@types/react-dom': 19.2.3_@types+react@19.2.15
       react: 19.2.3
       react-dom: 19.2.3_react@19.2.3
     dev: true
 
-  /@testing-library/user-event/14.6.1:
+  /@testing-library/user-event/14.6.1_rwcxf7kajngkz26znmtz643644:
     resolution: {integrity: sha512-vq7fv0rnt+QTXgPxr5Hjc210p6YKq2kmdziLgnsZGgLJ9e6VAShx1pACLuRjd/AS/sr7phAR58OIIpf0LlmQNw==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
+    dependencies:
+      '@testing-library/dom': 10.4.1
     dev: true
 
   /@tinyhttp/accepts/2.3.0:
@@ -2433,6 +2452,10 @@ packages:
       tslib: 2.8.1
     dev: true
     optional: true
+
+  /@types/aria-query/5.0.4:
+    resolution: {integrity: sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==}
+    dev: true
 
   /@types/babel__core/7.20.5:
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -3041,6 +3064,11 @@ packages:
       uri-js: 4.4.1
     dev: true
 
+  /ansi-regex/5.0.1:
+    resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
+    engines: {node: '>=8'}
+    dev: true
+
   /ansi-regex/6.2.2:
     resolution: {integrity: sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg==}
     engines: {node: '>=12'}
@@ -3053,6 +3081,11 @@ packages:
       color-convert: 2.0.1
     dev: true
 
+  /ansi-styles/5.2.0:
+    resolution: {integrity: sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==}
+    engines: {node: '>=10'}
+    dev: true
+
   /argparse/1.0.10:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
     dependencies:
@@ -3061,6 +3094,12 @@ packages:
 
   /argparse/2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+    dev: true
+
+  /aria-query/5.3.0:
+    resolution: {integrity: sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A==}
+    dependencies:
+      dequal: 2.0.3
     dev: true
 
   /aria-query/5.3.2:
@@ -3541,7 +3580,6 @@ packages:
   /dequal/2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
     engines: {node: '>=6'}
-    dev: false
 
   /detect-libc/2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
@@ -3563,6 +3601,10 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       esutils: 2.0.3
+    dev: true
+
+  /dom-accessibility-api/0.5.16:
+    resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
     dev: true
 
   /dom-accessibility-api/0.6.3:
@@ -3993,7 +4035,7 @@ packages:
     dependencies:
       '@typescript-eslint/utils': 8.59.4_hszckgzgst4ngbfmk3puyacue4
       eslint: 9.39.4
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -5078,6 +5120,11 @@ packages:
       yallist: 3.1.1
     dev: true
 
+  /lz-string/1.5.0:
+    resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
+    hasBin: true
+    dev: true
+
   /magic-string/0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
     dependencies:
@@ -5566,6 +5613,15 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
+  /pretty-format/27.5.1:
+    resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
+    engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    dependencies:
+      ansi-regex: 5.0.1
+      ansi-styles: 5.2.0
+      react-is: 17.0.2
+    dev: true
+
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
     dev: false
@@ -5623,6 +5679,10 @@ packages:
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+    dev: true
+
+  /react-is/17.0.2:
+    resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
     dev: true
 
   /react/19.2.3:
@@ -6007,7 +6067,7 @@ packages:
       internal-slot: 1.1.0
     dev: true
 
-  /storybook/10.4.0_liwfgo7hfkwugx2czyu27wi6ta:
+  /storybook/10.4.0_4jkdjd3322rljob4hfebf5njwa:
     resolution: {integrity: sha512-zrtctbVa6xEXCXuE3vsiR0At31zLOtzj8QudN/GaBJLZl0Z2DfF1rDPtTxdAbAp11M2J/7JVHaTIQKXauQPbmg==}
     hasBin: true
     peerDependencies:
@@ -6025,7 +6085,7 @@ packages:
       '@storybook/global': 5.0.0
       '@storybook/icons': 2.0.2_lyaf5xrb6vrc2axgtpensqbuh4
       '@testing-library/jest-dom': 6.9.1
-      '@testing-library/user-event': 14.6.1
+      '@testing-library/user-event': 14.6.1_rwcxf7kajngkz26znmtz643644
       '@types/react': 19.2.15
       '@vitest/expect': 3.2.4
       '@vitest/spy': 3.2.4
@@ -6522,7 +6582,7 @@ packages:
       magic-string: 0.30.21
       module-alias: 2.3.4
       next: 16.1.6_lyaf5xrb6vrc2axgtpensqbuh4
-      storybook: 10.4.0_liwfgo7hfkwugx2czyu27wi6ta
+      storybook: 10.4.0_4jkdjd3322rljob4hfebf5njwa
       ts-dedent: 2.2.0
       vite: 8.0.13_@types+node@20.19.41
       vite-tsconfig-paths: 5.1.4_7th7bazbeta35egovimhkhcm5y
