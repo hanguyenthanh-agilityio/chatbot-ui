@@ -1,4 +1,6 @@
 import { Card } from "@/components/ui/card";
+import { SIDEBAR_CARD_CLASSES } from "@/constants/theme";
+import { cn } from "@/utils/class-name";
 import { isAppRole, type AppRole, type MockAuthSession } from "@/lib/auth/session";
 import { Select } from "@/components/ui/select";
 import { AUTH_PANEL_COPY, ROLE_HELPER_COPY_BY_ROLE } from "@/constants/auth";
@@ -25,7 +27,7 @@ export function AuthPanel({
   }
 
   return (
-    <Card className="p-4 text-white shadow-panel-sm">
+    <Card variant="panel" className={cn("p-4 shadow-panel-sm", SIDEBAR_CARD_CLASSES)}>
       <div className="space-y-1">
         <Text as="p" variant="sectionTitle">
           {AUTH_PANEL_COPY.title}

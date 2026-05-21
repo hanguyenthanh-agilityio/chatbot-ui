@@ -155,7 +155,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
         <section
           className={cn(
             THEME_SHELL_CLASSES.chatPanel,
-            "flex min-h-chat-viewport flex-1 flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel",
+            "flex min-h-chat-viewport flex-1 flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel light:backdrop-blur-none",
             "bg-glass-panel-chat",
             THEME_SHELL_UTILITIES.border,
           )}

@@ -10,6 +10,8 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
+import { SIDEBAR_CARD_CLASSES } from "@/constants/theme";
+import { cn } from "@/utils/class-name";
 import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
@@ -31,9 +33,7 @@ export function ProviderSelector({
         <Text as="label" variant="sectionTitle">
           {PROVIDER_PANEL_COPY.label}
         </Text>
-        <Text variant="captionStrong">
-          {PROVIDER_PANEL_COPY.description}
-        </Text>
+        <Text variant="captionStrong">{PROVIDER_PANEL_COPY.description}</Text>
       </div>
 
       <Select
@@ -63,7 +63,9 @@ export function ProviderSelector({
           <Input
             type="password"
             value={provider.openaiApiKeyInput}
-            onChange={(event) => provider.updateOpenAIApiKeyInput(event.target.value)}
+            onChange={(event) =>
+              provider.updateOpenAIApiKeyInput(event.target.value)
+            }
             placeholder={PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder}
             fullWidth
             controlSize="md"
@@ -88,7 +90,9 @@ export function ProviderSelector({
           <Input
             type="url"
             value={provider.ollamaBaseUrlInput}
-            onChange={(event) => provider.updateOllamaBaseUrlInput(event.target.value)}
+            onChange={(event) =>
+              provider.updateOllamaBaseUrlInput(event.target.value)
+            }
             placeholder={PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder}
             fullWidth
             controlSize="md"
@@ -102,7 +106,7 @@ export function ProviderSelector({
             variant="ghost"
             size="md"
             fullWidth
-            className="border border-white/12 text-white/60 hover:bg-white/8"
+            className="border font-secondary text-white/60 hover:bg-white/8 light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:hover:bg-app-hover"
           >
             {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
@@ -121,7 +125,7 @@ export function ProviderSelector({
   if (!withContainer) return content;
 
   return (
-    <Card variant="panel" className="p-4">
+    <Card variant="panel" className={cn("p-4", SIDEBAR_CARD_CLASSES)}>
       {content}
     </Card>
   );

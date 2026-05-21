@@ -2,9 +2,12 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/utils/class-name";
 
 const CARD_VARIANT_CLASSES = {
-  glass: "border border-white/10 bg-glass shadow-glass backdrop-blur-md",
-  panel: "border border-white/8 bg-white/4 backdrop-blur-[20px]",
-  soft: "border border-white/8 bg-white/6",
+  glass:
+    "border border-white/10 bg-glass shadow-glass backdrop-blur-md light:border-app-border-10 light:bg-app-surface-4 light:shadow-card-surface",
+  panel:
+    "border border-white/8 bg-white/4 backdrop-blur-[20px] light:border-app-border-10 light:bg-app-surface-4 light:shadow-card-surface",
+  soft:
+    "border border-white/8 bg-white/6 light:border-app-border-10 light:bg-app-surface-4 light:shadow-card-surface",
   success: "border border-emerald-400/28 bg-emerald-500/10",
   danger: "border border-rose-400/28 bg-rose-500/10",
 } as const;
@@ -30,7 +33,10 @@ export function CardHeader({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("border-b border-white/8 px-4 py-3", className)}
+      className={cn(
+        "border-b border-white/8 px-4 py-3 light:border-app-border-8",
+        className,
+      )}
       {...props}
     />
   );
