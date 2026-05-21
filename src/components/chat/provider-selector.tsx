@@ -10,6 +10,7 @@ import {
   PROVIDER_OPTION_LABEL,
   PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
+import { OLLAMA_VERIFY_BUTTON_CLASSES } from "@/constants/theme";
 import type { UseProviderSelectionResult } from "@/types/provider";
 
 type ProviderSelectorProps = {
@@ -102,7 +103,7 @@ export function ProviderSelector({
             variant="ghost"
             size="md"
             fullWidth
-            className="border border-white/12 text-white/60 hover:bg-white/8"
+            className={OLLAMA_VERIFY_BUTTON_CLASSES}
           >
             {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel

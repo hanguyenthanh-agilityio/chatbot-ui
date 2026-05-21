@@ -9,6 +9,11 @@ import {
 } from "react";
 import { Text } from "@/components/ui/text";
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
+import {
+  COMPOSER_BAR_CLASSES,
+  COMPOSER_FIELD_CLASSES,
+  COMPOSER_INPUT_CLASSES,
+} from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 type ChatComposerProps = {
@@ -60,8 +65,8 @@ export function ChatComposer({
   return (
     <div
       className={cn(
-        "border-t border-white/8 backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-composer-bar",
-        "bg-glass-composer",
+        COMPOSER_BAR_CLASSES,
+        "px-4 py-3 sm:px-6 lg:px-8",
       )}
     >
       <div className="mx-auto w-full max-w-3xl flex flex-col gap-2">
@@ -85,10 +90,7 @@ export function ChatComposer({
           )}
         <form
           onSubmit={onSubmitAction}
-          className={cn(
-            "flex w-full items-center gap-3 rounded-composer-field border border-white/13 px-4 py-2.5 shadow-composer-input backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55",
-            "bg-glass-input",
-          )}
+          className={COMPOSER_FIELD_CLASSES}
         >
           <textarea
             ref={textareaRef}
@@ -99,7 +101,7 @@ export function ChatComposer({
             aria-label={CHAT_COMPOSER_COPY.ariaLabel}
             disabled={!isProviderReady}
             rows={1}
-            className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
+            className={COMPOSER_INPUT_CLASSES}
           />
 
           <button
@@ -126,7 +128,7 @@ export function ChatComposer({
         </form>
         </div>
 
-        <Text variant="helper" className="px-1 text-center text-white/55">
+        <Text variant="helper" className="px-1 text-center">
           {helperText ?? CHAT_COMPOSER_COPY.defaultHelperText}
         </Text>
       </div>
