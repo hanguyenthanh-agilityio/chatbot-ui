@@ -2,12 +2,13 @@ import "@/app/globals.css";
 
 import type { Decorator, Preview } from "@storybook/nextjs-vite";
 import { useLayoutEffect, type ReactNode } from "react";
+import { useGlobals, useParameter } from "storybook/preview-api";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import {
   DEFAULT_THEME,
-  THEME_CHANGE_EVENT,
   STORYBOOK_THEME_GLOBAL,
+  THEME_CHANGE_EVENT,
   ThemeMode,
   type Theme,
 } from "@/constants/theme";
@@ -18,48 +19,50 @@ function resolveStorybookTheme(value: unknown): Theme {
   return typeof value === "string" && isTheme(value) ? value : DEFAULT_THEME;
 }
 
-function syncDocumentTheme(theme: Theme) {
+function syncStorybookTheme(theme: Theme) {
+  if (!isBrowser()) {
+    return;
+  }
   applyTheme(theme);
   window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }
 
-function StorybookThemeRoot({
-  theme,
-  children,
-}: {
-  theme: Theme;
-  children: ReactNode;
-}) {
+/** Syncs `html[data-theme]` when the preview toolbar changes. */
+function WithAppTheme(Story: () => ReactNode) {
+  const [globals] = useGlobals();
+  const theme = resolveStorybookTheme(globals[STORYBOOK_THEME_GLOBAL]);
+
   useLayoutEffect(() => {
-    syncDocumentTheme(theme);
+    syncStorybookTheme(theme);
   }, [theme]);
 
-  return <ThemeProvider>{children}</ThemeProvider>;
-}
-
-/** Syncs `data-theme` before paint and when the toolbar changes. */
-export const withAppTheme: Decorator = (Story, { globals }) => {
-  const theme = resolveStorybookTheme(globals?.[STORYBOOK_THEME_GLOBAL]);
-
-  if (isBrowser()) {
-    syncDocumentTheme(theme);
-  }
+  syncStorybookTheme(theme);
 
   return (
-    <StorybookThemeRoot theme={theme}>
-      <div className="min-h-preview w-full p-6">
+    <ThemeProvider key={theme}>
+      <div
+        className="flex min-h-dvh w-full items-center justify-center p-6"
+        style={{
+          background: "var(--bg-app-shell)",
+          backgroundAttachment: "fixed",
+          color: "var(--foreground)",
+        }}
+      >
         <Story />
       </div>
-    </StorybookThemeRoot>
+    </ThemeProvider>
   );
-};
+}
+
+export const withAppTheme: Decorator = WithAppTheme;
 
 const preview: Preview = {
   globalTypes: {
     [STORYBOOK_THEME_GLOBAL]: {
+      name: "App theme",
       description: "App light / dark mode",
       toolbar: {
-        title: "Theme",
+        title: "App theme",
         icon: "circlehollow",
         items: [
           { value: ThemeMode.Dark, title: "Dark", icon: "moon" },

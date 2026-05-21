@@ -17,7 +17,7 @@ export type Theme = (typeof THEMES)[number];
 
 export const DEFAULT_THEME: Theme = ThemeMode.Dark;
 
-export const STORYBOOK_THEME_GLOBAL = "theme";
+export const STORYBOOK_THEME_GLOBAL = "appTheme";
 
 export const THEME_TOGGLE_ARIA_LABEL = {
   toLight: "Switch to light mode",

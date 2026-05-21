@@ -246,122 +246,107 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
     -webkit-backdrop-filter !important;
 }
 
-@variant light {
-  & {
-    /* Warm Paper light palette */
-    --foreground: #292524;
-    --bg-selection: #d9770629;
+html[data-theme="light"] {
+  --foreground: #292524;
+  --bg-selection: #d9770629;
 
-    --bg-radial-violet: radial-gradient(
-      920px 540px at 0% -5%,
-      #d9770612 0%,
-      transparent 58%
-    );
-    --bg-radial-cyan: radial-gradient(
-      880px 500px at 100% 8%,
-      #78716c10 0%,
-      transparent 58%
-    );
-    --bg-gradient-base: linear-gradient(
-      180deg,
-      #f7f5f2 0%,
-      #faf8f5 48%,
-      #f5f4f1 100%
-    );
-    --bg-app-shell:
-      var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
+  --bg-radial-violet: radial-gradient(
+    920px 540px at 0% -5%,
+    #d9770612 0%,
+    transparent 58%
+  );
+  --bg-radial-cyan: radial-gradient(
+    880px 500px at 100% 8%,
+    #78716c10 0%,
+    transparent 58%
+  );
+  --bg-gradient-base: linear-gradient(
+    180deg,
+    #f7f5f2 0%,
+    #faf8f5 48%,
+    #f5f4f1 100%
+  );
+  --bg-app-shell:
+    var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
 
-    --bg-glass: linear-gradient(180deg, #fffefce0 0%, #faf9f7ad 100%);
-    --bg-glass-panel: linear-gradient(180deg, #fffefceb 0%, #f5f4f1c7 100%);
-    --bg-glass-panel-alt: var(--bg-glass-panel);
-    --bg-glass-header: linear-gradient(180deg, #fffefcf5 0%, #faf9f7e8 100%);
-    --bg-glass-composer: linear-gradient(180deg, #fffefc59 0%, #faf9f7c9 100%);
-    --bg-glass-input: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1e3 100%);
-    --bg-glass-loading: var(--bg-glass-panel);
-    --bg-glass-table: linear-gradient(180deg, #fffefcf0 0%, #f5f4f1d9 100%);
+  --bg-glass: linear-gradient(180deg, #fffefce0 0%, #faf9f7ad 100%);
+  --bg-glass-panel: linear-gradient(180deg, #fffefceb 0%, #f5f4f1c7 100%);
+  --bg-glass-panel-alt: var(--bg-glass-panel);
+  --bg-glass-header: linear-gradient(180deg, #fffefcf5 0%, #faf9f7e8 100%);
+  --bg-glass-composer: linear-gradient(180deg, #fffefc59 0%, #faf9f7c9 100%);
+  --bg-glass-input: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1e3 100%);
+  --bg-glass-loading: var(--bg-glass-panel);
+  --bg-glass-table: linear-gradient(180deg, #fffefcf0 0%, #f5f4f1d9 100%);
 
-    --bg-shell-sidebar: linear-gradient(180deg, #fffefce3 0%, #f5f4f1b8 100%);
-    --bg-shell-chat-panel: linear-gradient(
-      180deg,
-      #fffefce8 0%,
-      #f5f4f1ba 100%
-    );
-    --bg-shell-chat-header: linear-gradient(
-      180deg,
-      #fffefcf9 0%,
-      #faf9f7ed 100%
-    );
+  --bg-shell-sidebar: linear-gradient(180deg, #fffefce3 0%, #f5f4f1b8 100%);
+  --bg-shell-chat-panel: linear-gradient(180deg, #fffefce8 0%, #f5f4f1ba 100%);
+  --bg-shell-chat-header: linear-gradient(180deg, #fffefcf9 0%, #faf9f7ed 100%);
 
-    --bg-bubble-user: linear-gradient(
-      135deg,
-      #57534e 0%,
-      #44403c 52%,
-      #78716c 100%
-    );
-    --bg-bubble-assistant: linear-gradient(
-      180deg,
-      #fffefcf2 0%,
-      #f5f4f1db 100%
-    );
-    --bg-btn-active: linear-gradient(
-      90deg,
-      #332b24 0%,
-      #3a322b 6%,
-      #4a3b31 11%,
-      #5c4334 16%,
-      #7a5638 22%,
-      #a8732c 30%,
-      #d97706 48%,
-      #de8408 72%,
-      #e18f0c 100%
-    );
+  --bg-bubble-user: linear-gradient(
+    135deg,
+    #57534e 0%,
+    #44403c 52%,
+    #78716c 100%
+  );
+  --bg-bubble-assistant: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1db 100%);
+  --bg-btn-active: linear-gradient(
+    90deg,
+    #332b24 0%,
+    #3a322b 6%,
+    #4a3b31 11%,
+    #5c4334 16%,
+    #7a5638 22%,
+    #a8732c 30%,
+    #d97706 48%,
+    #de8408 72%,
+    #e18f0c 100%
+  );
 
-    --shadow-glass: 0 1px 2px #1c19170a, 0 14px 40px #1c19170c;
-    --shadow-glass-elevated: 0 2px 6px #1c19170b, 0 18px 48px #1c19170f;
-    --shadow-glass-compact: 0 1px 2px #1c191708, 0 8px 26px #1c19170c;
-    --shadow-glass-hero: 0 20px 56px #1c191710, inset 0 1px 0 #fffefcd9;
-    --shadow-panel: 0 1px 2px #1c191708, 0 10px 32px #1c19170d;
-    --shadow-panel-sm: 0 1px 2px #1c191706, 0 6px 20px #1c19170a;
-    --shadow-shell: 0 1px 0 #fffefcd1, 0 20px 52px #1c191710;
-    --shadow-shell-panel: var(--shadow-shell);
-    --shadow-shell-header: 0 1px 0 #fffefceb, 0 4px 16px #1c191708;
-    --shadow-composer-bar: 0 -1px 0 #1c191708, 0 -8px 26px #1c19170a;
-    --shadow-composer-input: 0 2px 8px #1c19170a, inset 0 1px 0 #fffefceb;
-    --shadow-composer-field: 0 1px 3px #1c19170a;
-    --shadow-bubble-user: 0 4px 14px #29252433;
-    --shadow-bubble-assistant: 0 2px 10px #1c19170a;
-    --shadow-table: 0 4px 18px #1c19170c;
-    --shadow-thread-active: 0 2px 10px #1c19170e, 0 8px 22px #1c19170a;
-    --shadow-card-surface: 0 1px 2px #1c191706, 0 4px 12px #1c191708;
-    --shadow-card-surface-soft: 0 1px 2px #1c191705, 0 6px 16px #1c19170a;
-    --shadow-btn-brand: 0 2px 10px #c2410c38;
-    --shadow-chip-brand: 0 2px 8px #78716c24;
-    --shadow-toggle-light: inset 0 1px 0 #fffefc, 0 2px 8px #1c19170f;
-    --shadow-toggle-thumb-light: 0 1px 4px #1c19171a, inset 0 1px 0 #fffefcbf;
-  }
+  --shadow-glass: 0 1px 2px #1c19170a, 0 14px 40px #1c19170c;
+  --shadow-glass-elevated: 0 2px 6px #1c19170b, 0 18px 48px #1c19170f;
+  --shadow-glass-compact: 0 1px 2px #1c191708, 0 8px 26px #1c19170c;
+  --shadow-glass-hero: 0 20px 56px #1c191710, inset 0 1px 0 #fffefcd9;
+  --shadow-panel: 0 1px 2px #1c191708, 0 10px 32px #1c19170d;
+  --shadow-panel-sm: 0 1px 2px #1c191706, 0 6px 20px #1c19170a;
+  --shadow-shell: 0 1px 0 #fffefcd1, 0 20px 52px #1c191710;
+  --shadow-shell-panel: var(--shadow-shell);
+  --shadow-shell-header: 0 1px 0 #fffefceb, 0 4px 16px #1c191708;
+  --shadow-composer-bar: 0 -1px 0 #1c191708, 0 -8px 26px #1c19170a;
+  --shadow-composer-input: 0 2px 8px #1c19170a, inset 0 1px 0 #fffefceb;
+  --shadow-composer-field: 0 1px 3px #1c19170a;
+  --shadow-bubble-user: 0 4px 14px #29252433;
+  --shadow-bubble-assistant: 0 2px 10px #1c19170a;
+  --shadow-table: 0 4px 18px #1c19170c;
+  --shadow-thread-active: 0 2px 10px #1c19170e, 0 8px 22px #1c19170a;
+  --shadow-card-surface: 0 1px 2px #1c191706, 0 4px 12px #1c191708;
+  --shadow-card-surface-soft: 0 1px 2px #1c191705, 0 6px 16px #1c19170a;
+  --shadow-btn-brand: 0 2px 10px #c2410c38;
+  --shadow-chip-brand: 0 2px 8px #78716c24;
+  --shadow-toggle-light: inset 0 1px 0 #fffefc, 0 2px 8px #1c19170f;
+  --shadow-toggle-thumb-light: 0 1px 4px #1c19171a, inset 0 1px 0 #fffefcbf;
+}
 
-  & body {
-    color: var(--color-app-fg);
-  }
+html[data-theme="light"] body {
+  color: var(--color-app-fg);
+}
 
-  & .app-sidebar {
-    color: var(--color-app-fg);
-    border-color: var(--color-app-border-9);
-    background: var(--bg-glass-panel);
-    box-shadow: var(--shadow-shell);
-  }
+html[data-theme="light"] .app-sidebar {
+  color: var(--color-app-fg);
+  border-color: var(--color-app-border-9);
+  background: var(--bg-glass-panel);
+  box-shadow: var(--shadow-shell);
+}
 
-  & .app-chat-panel {
-    border-color: var(--color-app-border-9);
-    background: var(--bg-glass-panel);
-    box-shadow: var(--shadow-shell-panel);
-  }
+html[data-theme="light"] .app-chat-panel {
+  border-color: var(--color-app-border-9);
+  background: var(--bg-glass-panel);
+  box-shadow: var(--shadow-shell-panel);
+}
 
-  & .app-chat-header {
-    border-color: var(--color-app-border-8);
-    background: var(--bg-glass-header);
-    box-shadow: var(--shadow-shell-header);
-  }
+html[data-theme="light"] .app-chat-header {
+  border-color: var(--color-app-border-8);
+  background: var(--bg-glass-header);
+  box-shadow: var(--shadow-shell-header);
 }
 
 aside .rounded-2xl,
