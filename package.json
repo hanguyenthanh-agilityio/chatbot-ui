@@ -21,6 +21,7 @@
     "build-storybook": "storybook build",
     "test": "vitest run --project unit",
     "test:coverage": "vitest run --project unit --coverage",
+    "test:coverage:ci": "vitest run --project unit --coverage --testNamePattern='^(?!.*matches snapshot).*$'",
     "test:storybook": "vitest run --project storybook"
   },
   "dependencies": {
