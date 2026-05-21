@@ -120,6 +120,8 @@
   --layout-shell-blur: 28px;
   --layout-radius-composer-field: 1.125rem;
   --layout-radius-bubble-user: 1.125rem 0.375rem 1.125rem 1.125rem;
+  --layout-leading-composer: 1.55;
+  --layout-scale-hover-btn: 1.04;
 
   --font-primary: "Syne", sans-serif;
   --font-secondary:
@@ -205,6 +207,8 @@
   --radius-shell: var(--layout-radius-shell);
   --radius-composer-field: var(--layout-radius-composer-field);
   --radius-bubble-user: var(--layout-radius-bubble-user);
+  --leading-composer: var(--layout-leading-composer);
+  --scale-hover-btn: var(--layout-scale-hover-btn);
 }
 
 html,
