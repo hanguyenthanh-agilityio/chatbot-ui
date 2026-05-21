@@ -52,7 +52,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "eslint-plugin-storybook": "^10.3.6",
-    "happy-dom": "^20.9.0",
+    "jsdom": "^29.1.1",
     "json-server": "^1.0.0-beta.3",
     "playwright": "^1.59.1",
     "storybook": "^10.3.6",

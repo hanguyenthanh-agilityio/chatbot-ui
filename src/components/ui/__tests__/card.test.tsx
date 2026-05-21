@@ -1,6 +1,8 @@
 import { cleanup, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+// Components
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 describe("Card", () => {

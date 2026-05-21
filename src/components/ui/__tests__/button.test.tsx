@@ -1,6 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+// Components
 import { Button } from "@/components/ui/button";
 
 describe("Button", () => {
@@ -17,15 +19,10 @@ describe("Button", () => {
     ["disabled", { disabled: true }],
     ["loading", { isLoading: true }],
   ])("matches snapshot (%s)", (_name, props) => {
-    const { container } = render(<Button {...props}>Label</Button>);
-    expect(container).toMatchSnapshot();
-  });
-
-  it("renders children as the accessible label", () => {
-    render(<Button>Save changes</Button>);
+    render(<Button {...props}>Label</Button>);
     expect(
-      screen.getByRole("button", { name: "Save changes" }),
-    ).toBeInTheDocument();
+      screen.getByRole("button", { name: "Label" }).outerHTML,
+    ).toMatchSnapshot();
   });
 
   it("calls onClick when clicked", async () => {

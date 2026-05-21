@@ -1,87 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+
 @import "tailwindcss";
 
 @custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
 @variant light {
   @theme {
-    --color-app-fg: #1a1035;
-    --color-app-fg-muted: #463f62;
-    --color-app-muted-50: #857d9c;
-    --color-app-muted-30: #7a7390;
-    --color-app-muted-55: #867e9c;
-    --color-app-muted-60: #787196;
-    --color-app-muted-65: #6f688f;
-    --color-app-muted-70: #676185;
-    --color-app-border-9: #cec5e2;
-    --color-app-border-8: #d1c8e5;
-    --color-app-border-10: #c9bfe0;
-    --color-app-hover-border: #b18df0;
-    --color-app-surface-4: #f0ebf8;
-    --color-app-surface-6: #e4dcf2;
-    --color-app-field-panel: #e4daf5;
-    --color-app-hover: #7c3aed22;
-    --color-app-btn-brand-disabled: #4c388c59;
-    --color-app-blob-violet: #a78bfa47;
-    --color-app-blob-indigo: #818cf838;
-    --color-app-blob-cyan: #38bdf833;
+    /* Warm Paper — stone neutrals, low blue cast */
+    --color-app-fg: #292524;
+    --color-app-fg-muted: #57534e;
+    --color-app-muted-50: #a8a29e;
+    --color-app-muted-55: #928b86;
+    --color-app-muted-60: #78716c;
+    --color-app-muted-65: #6b6560;
+    --color-app-muted-70: #57534e;
+    --color-app-muted-30: #a8a29e;
+    --color-app-border-9: #e7e5e4;
+    --color-app-border-8: #ede9e7;
+    --color-app-border-10: #d6d3d1;
+    --color-app-hover-border: #a8a29e;
+    --color-app-surface-4: #f5f5f4f2;
+    --color-app-surface-6: #f5f5f4f2;
+    --color-app-field-panel: #f0eeeb;
+    --color-app-hover: #1c19170a;
+    --color-app-btn-brand-disabled: #78716c55;
+    --color-app-blob-violet: #d9770614;
+    --color-app-blob-indigo: #78716c12;
+    --color-app-blob-cyan: #b4530910;
   }
-}
-
-/* Light :root tokens + shell — plain `html[data-theme]` so page chrome
-   updates even if variant ordering changes. */
-html[data-theme="light"] {
-  --foreground: #1a1035;
-  --bg-selection: #7c3aed2e;
-  --bg-radial-violet: radial-gradient(
-    1000px 620px at -8% -12%,
-    #a78bfa38 0%,
-    transparent 58%
-  );
-  --bg-radial-cyan: radial-gradient(
-    980px 600px at 108% 18%,
-    #38bdf829 0%,
-    transparent 60%
-  );
-  --bg-gradient-base: linear-gradient(
-    135deg,
-    #f8f6ff 0%,
-    #ede8ff 42%,
-    #eef6ff 100%
-  );
-  --bg-app-shell:
-    var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
-  --bg-shell-sidebar: linear-gradient(165deg, #ffffffeb, #f8f5ffe0);
-  --bg-shell-chat-panel: linear-gradient(170deg, #ffffffeb, #f8f5ffe0);
-  --bg-shell-chat-header: linear-gradient(180deg, #fffffff2, #f8f5ffd1);
-  --shadow-shell: 0 16px 48px #4c388c1f;
-  --shadow-shell-panel: var(--shadow-shell);
-  --shadow-shell-header: 0 1px 0 #ffffffe6, 0 8px 24px #4c388c14;
-  --shadow-glass: 0 10px 30px #4c388c1f;
-  --shadow-card-surface: 0 2px 12px #4c388c12;
-  --shadow-card-surface-soft: 0 2px 12px #4c388c14;
-}
-
-html[data-theme="light"] body {
-  color: var(--color-app-fg);
-}
-
-html[data-theme="light"] .app-sidebar {
-  color: var(--color-app-fg);
-  border-color: var(--color-app-border-9);
-  background: var(--bg-shell-sidebar);
-  box-shadow: var(--shadow-shell);
-}
-
-html[data-theme="light"] .app-chat-panel {
-  border-color: var(--color-app-border-9);
-  background: var(--bg-shell-chat-panel);
-  box-shadow: var(--shadow-shell-panel);
-}
-
-html[data-theme="light"] .app-chat-header {
-  border-color: var(--color-app-border-8);
-  background: var(--bg-shell-chat-header);
-  box-shadow: var(--shadow-shell-header);
 }
 
 :root {
@@ -134,6 +80,7 @@ html[data-theme="light"] .app-chat-header {
   --shadow-shell-header: 0 1px 0 #ffffff0f, 0 8px 32px #00000033;
   --shadow-composer-bar: 0 -1px 0 #ffffff0a, 0 -10px 34px #00000033;
   --shadow-composer-input: 0 8px 26px #070c1e33, inset 0 1px 0 #ffffff14;
+  --shadow-composer-field: var(--shadow-composer-input);
   --shadow-bubble-user: 0 8px 26px #38208c57;
   --shadow-bubble-assistant: 0 8px 24px #060a1e3d;
   --shadow-table: 0 14px 34px #060a1e57;
@@ -218,6 +165,7 @@ html[data-theme="light"] .app-chat-header {
   --shadow-shell-header: var(--shadow-shell-header);
   --shadow-composer-bar: var(--shadow-composer-bar);
   --shadow-composer-input: var(--shadow-composer-input);
+  --shadow-composer-field: var(--shadow-composer-field);
   --shadow-bubble-user: var(--shadow-bubble-user);
   --shadow-bubble-assistant: var(--shadow-bubble-assistant);
   --shadow-table: var(--shadow-table);
@@ -233,6 +181,8 @@ html[data-theme="light"] .app-chat-header {
   --shadow-tool-rose: var(--shadow-tool-rose);
   --shadow-tool-emerald: var(--shadow-tool-emerald);
   --shadow-tool-neutral: var(--shadow-tool-neutral);
+  --shadow-card-surface: var(--shadow-card-surface);
+  --shadow-card-surface-soft: var(--shadow-card-surface-soft);
 
   --width-loading-card: var(--layout-loading-card-width);
   --size-avatar-sm: var(--layout-avatar-sm);
@@ -300,6 +250,109 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
     -webkit-backdrop-filter !important;
 }
 
+html[data-theme="light"] {
+  --foreground: #292524;
+  --bg-selection: #d9770629;
+
+  --bg-radial-violet: radial-gradient(
+    920px 540px at 0% -5%,
+    #d9770612 0%,
+    transparent 58%
+  );
+  --bg-radial-cyan: radial-gradient(
+    880px 500px at 100% 8%,
+    #78716c10 0%,
+    transparent 58%
+  );
+  --bg-gradient-base: linear-gradient(
+    180deg,
+    #f7f5f2 0%,
+    #faf8f5 48%,
+    #f5f4f1 100%
+  );
+  --bg-app-shell:
+    var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
+
+  --bg-glass: linear-gradient(180deg, #fffefce0 0%, #faf9f7ad 100%);
+  --bg-glass-panel: linear-gradient(180deg, #fffefceb 0%, #f5f4f1c7 100%);
+  --bg-glass-panel-alt: var(--bg-glass-panel);
+  --bg-glass-header: linear-gradient(180deg, #fffefcf5 0%, #faf9f7e8 100%);
+  --bg-glass-composer: linear-gradient(180deg, #fffefc59 0%, #faf9f7c9 100%);
+  --bg-glass-input: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1e3 100%);
+  --bg-glass-loading: var(--bg-glass-panel);
+  --bg-glass-table: linear-gradient(180deg, #fffefcf0 0%, #f5f4f1d9 100%);
+
+  --bg-shell-sidebar: linear-gradient(180deg, #fffefce3 0%, #f5f4f1b8 100%);
+  --bg-shell-chat-panel: linear-gradient(180deg, #fffefce8 0%, #f5f4f1ba 100%);
+  --bg-shell-chat-header: linear-gradient(180deg, #fffefcf9 0%, #faf9f7ed 100%);
+
+  --bg-bubble-user: linear-gradient(
+    135deg,
+    #57534e 0%,
+    #44403c 52%,
+    #78716c 100%
+  );
+  --bg-bubble-assistant: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1db 100%);
+  --bg-btn-active: linear-gradient(
+    90deg,
+    #332b24 0%,
+    #3a322b 6%,
+    #4a3b31 11%,
+    #5c4334 16%,
+    #7a5638 22%,
+    #a8732c 30%,
+    #d97706 48%,
+    #de8408 72%,
+    #e18f0c 100%
+  );
+
+  --shadow-glass: 0 1px 2px #1c19170a, 0 14px 40px #1c19170c;
+  --shadow-glass-elevated: 0 2px 6px #1c19170b, 0 18px 48px #1c19170f;
+  --shadow-glass-compact: 0 1px 2px #1c191708, 0 8px 26px #1c19170c;
+  --shadow-glass-hero: 0 20px 56px #1c191710, inset 0 1px 0 #fffefcd9;
+  --shadow-panel: 0 1px 2px #1c191708, 0 10px 32px #1c19170d;
+  --shadow-panel-sm: 0 1px 2px #1c191706, 0 6px 20px #1c19170a;
+  --shadow-shell: 0 1px 0 #fffefcd1, 0 20px 52px #1c191710;
+  --shadow-shell-panel: var(--shadow-shell);
+  --shadow-shell-header: 0 1px 0 #fffefceb, 0 4px 16px #1c191708;
+  --shadow-composer-bar: 0 -1px 0 #1c191708, 0 -8px 26px #1c19170a;
+  --shadow-composer-input: 0 2px 8px #1c19170a, inset 0 1px 0 #fffefceb;
+  --shadow-composer-field: 0 1px 3px #1c19170a;
+  --shadow-bubble-user: 0 4px 14px #29252433;
+  --shadow-bubble-assistant: 0 2px 10px #1c19170a;
+  --shadow-table: 0 4px 18px #1c19170c;
+  --shadow-thread-active: 0 2px 10px #1c19170e, 0 8px 22px #1c19170a;
+  --shadow-card-surface: 0 1px 2px #1c191706, 0 4px 12px #1c191708;
+  --shadow-card-surface-soft: 0 1px 2px #1c191705, 0 6px 16px #1c19170a;
+  --shadow-btn-brand: 0 2px 10px #c2410c38;
+  --shadow-chip-brand: 0 2px 8px #78716c24;
+  --shadow-toggle-light: inset 0 1px 0 #fffefc, 0 2px 8px #1c19170f;
+  --shadow-toggle-thumb-light: 0 1px 4px #1c19171a, inset 0 1px 0 #fffefcbf;
+}
+
+html[data-theme="light"] body {
+  color: var(--color-app-fg);
+}
+
+html[data-theme="light"] .app-sidebar {
+  color: var(--color-app-fg);
+  border-color: var(--color-app-border-9);
+  background: var(--bg-glass-panel);
+  box-shadow: var(--shadow-shell);
+}
+
+html[data-theme="light"] .app-chat-panel {
+  border-color: var(--color-app-border-9);
+  background: var(--bg-glass-panel);
+  box-shadow: var(--shadow-shell-panel);
+}
+
+html[data-theme="light"] .app-chat-header {
+  border-color: var(--color-app-border-8);
+  background: var(--bg-glass-header);
+  box-shadow: var(--shadow-shell-header);
+}
+
 aside .rounded-2xl,
 aside .rounded-2xl .inline-flex.rounded-full {
   transition-property: transform, box-shadow, opacity;
@@ -330,8 +383,8 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="light"] {
-  border-color: #7c3aed38;
-  background-color: #f8f5fff2;
+  border-color: #1c191714;
+  background-color: #fffefcc7;
   box-shadow: var(--shadow-toggle-light);
 }
 
@@ -345,7 +398,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
 .theme-toggle[data-state="light"]:focus-visible {
   box-shadow:
     var(--shadow-toggle-light),
-    0 0 0 2px #7c3aed66;
+    0 0 0 2px #d977064d;
 }
 
 .theme-toggle::before {
@@ -368,7 +421,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="light"]::before {
-  background-color: #f59e0b;
+  background-color: #fbbf24;
   box-shadow: var(--shadow-toggle-thumb-light);
 }
 
@@ -398,12 +451,12 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="light"] .theme-toggle-icon:first-of-type {
-  color: #7c2d12;
-  filter: drop-shadow(0 0 1px #ffffff59);
+  color: #9ca3af;
 }
 
 .theme-toggle[data-state="light"] .theme-toggle-icon:last-of-type {
-  color: #a687d9;
+  color: #f59e0b;
+  filter: drop-shadow(0 1px 1px #ffffffa6);
 }
 
 @media (prefers-reduced-motion: reduce) {

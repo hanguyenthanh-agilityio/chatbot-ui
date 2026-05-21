@@ -17,6 +17,8 @@ export type Theme = (typeof THEMES)[number];
 
 export const DEFAULT_THEME: Theme = ThemeMode.Dark;
 
+export const STORYBOOK_THEME_GLOBAL = "appTheme";
+
 export const THEME_TOGGLE_ARIA_LABEL = {
   toLight: "Switch to light mode",
   toDark: "Switch to dark mode",
@@ -41,10 +43,13 @@ export const THEME_SHELL_UTILITIES = {
 
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
 export const FORM_FIELD_PANEL_CLASSES =
-  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-app-field-panel light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-app-hover-border";
+  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-app-field-panel light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-amber-800/35";
+
+export const OPENAI_VERIFY_BUTTON_CLASSES =
+  "light:bg-btn-active light:text-white light:hover:brightness-105 light:disabled:bg-app-btn-brand-disabled light:disabled:text-white/85";
 
 export const OLLAMA_VERIFY_BUTTON_CLASSES =
-  "border font-secondary text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-60 light:hover:bg-app-hover";
+  "border font-secondary text-white/60 hover:bg-white/8 light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:hover:bg-app-hover";
 
 export function isDarkTheme(theme: Theme): boolean {
   return theme === ThemeMode.Dark;

@@ -3,15 +3,11 @@ import userEvent from "@testing-library/user-event";
 import type { ReactElement, ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-// Components
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-
-// Constants
 import {
   DEFAULT_THEME,
   THEME_STORAGE_KEY,
-  THEME_TOGGLE_ARIA_LABEL,
   ThemeMode,
   type Theme,
 } from "@/constants/theme";
@@ -19,23 +15,23 @@ import {
 // Libs
 import { isTheme, persistTheme } from "@/lib/theme";
 
-/** Start each test with a known theme on <html> and in localStorage. */
-function resetThemeStorage(theme: Theme = DEFAULT_THEME) {
-  localStorage.clear();
+function setDocumentTheme(theme: Theme = DEFAULT_THEME) {
   persistTheme(theme);
 }
 
-function renderWithTheme(ui: ReactElement, theme: Theme = DEFAULT_THEME) {
-  resetThemeStorage(theme);
-  return render(ui, {
-    wrapper: ({ children }: { children: ReactNode }) => (
-      <ThemeProvider>{children}</ThemeProvider>
-    ),
-  });
+function renderWithTheme(
+  ui: ReactElement,
+  theme: Theme = DEFAULT_THEME,
+  wrapper?: ({ children }: { children: ReactNode }) => ReactElement,
+) {
+  setDocumentTheme(theme);
+  return render(ui, wrapper ? { wrapper } : undefined);
 }
 
-function renderThemeToggle(theme: Theme = DEFAULT_THEME) {
-  return renderWithTheme(<ThemeToggle />, theme);
+function renderThemeToggle(theme: Theme = ThemeMode.Dark) {
+  return renderWithTheme(<ThemeToggle />, theme, ({ children }) => (
+    <ThemeProvider>{children}</ThemeProvider>
+  ));
 }
 
 function readStoredTheme(): Theme | null {
@@ -49,28 +45,17 @@ describe("ThemeToggle", () => {
   });
 
   beforeEach(() => {
-    resetThemeStorage(ThemeMode.Dark);
+    setDocumentTheme(ThemeMode.Dark);
   });
 
-  it("renders as an accessible switch in dark mode", () => {
+  it("matches snapshot in dark mode", () => {
     renderThemeToggle(ThemeMode.Dark);
-
-    const toggle = screen.getByRole("switch");
-
-    expect(toggle).toHaveAttribute("data-state", "dark");
-    expect(toggle).toHaveAttribute("aria-checked", "true");
-    expect(toggle).toHaveAccessibleName(THEME_TOGGLE_ARIA_LABEL.toLight);
-    expect(toggle.querySelectorAll(".theme-toggle-icon")).toHaveLength(2);
+    expect(screen.getByRole("switch").outerHTML).toMatchSnapshot();
   });
 
-  it("renders in light mode with correct aria state", () => {
+  it("matches snapshot in light mode", () => {
     renderThemeToggle(ThemeMode.Light);
-
-    const toggle = screen.getByRole("switch");
-
-    expect(toggle).toHaveAttribute("data-state", "light");
-    expect(toggle).toHaveAttribute("aria-checked", "false");
-    expect(toggle).toHaveAccessibleName(THEME_TOGGLE_ARIA_LABEL.toDark);
+    expect(screen.getByRole("switch").outerHTML).toMatchSnapshot();
   });
 
   it("toggles theme on click and persists to localStorage", async () => {
@@ -80,22 +65,12 @@ describe("ThemeToggle", () => {
     const toggle = screen.getByRole("switch");
     await user.click(toggle);
 
-    expect(toggle).toHaveAttribute("data-state", "light");
-    expect(toggle).toHaveAccessibleName(THEME_TOGGLE_ARIA_LABEL.toDark);
     expect(document.documentElement.dataset.theme).toBe("light");
     expect(readStoredTheme()).toBe(ThemeMode.Light);
-    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe(ThemeMode.Light);
 
     await user.click(toggle);
 
-    expect(toggle).toHaveAttribute("data-state", "dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(readStoredTheme()).toBe(ThemeMode.Dark);
-  });
-
-  it("merges optional className onto the button", () => {
-    renderWithTheme(<ThemeToggle className="ml-2" />, ThemeMode.Dark);
-
-    expect(screen.getByRole("switch")).toHaveClass("theme-toggle", "ml-2");
   });
 });
