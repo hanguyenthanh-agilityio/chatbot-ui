@@ -60,8 +60,8 @@ export function ChatComposer({
   return (
     <div
       className={cn(
-        "border-t border-white/8 backdrop-blur-[1.75rem] px-4 py-3 sm:px-6 lg:px-8 shadow-composer-bar",
-        "bg-glass-composer",
+        "border-t border-white/8 backdrop-blur-[1.75rem] shadow-composer-bar bg-glass-composer light:border-app-border-8",
+        "px-4 py-3 sm:px-6 lg:px-8",
       )}
     >
       <div className="mx-auto w-full max-w-3xl flex flex-col gap-2">
@@ -83,50 +83,52 @@ export function ChatComposer({
               <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
             </div>
           )}
-        <form
-          onSubmit={onSubmitAction}
-          className={cn(
-            "flex w-full items-center gap-3 rounded-composer-field border border-white/13 px-4 py-2.5 shadow-composer-input backdrop-blur-xl transition-all duration-200 focus-within:border-violet-400/55",
-            "bg-glass-input",
-          )}
-        >
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(event) => onInputChange(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={CHAT_COMPOSER_COPY.placeholder}
-            aria-label={CHAT_COMPOSER_COPY.ariaLabel}
-            disabled={!isProviderReady}
-            rows={1}
-            className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50"
-          />
-
-          <button
-            type="submit"
-            disabled={!canSend}
-            aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
-            className={cn(
-              "self-end grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-all duration-200",
-              "disabled:opacity-30 disabled:cursor-not-allowed",
-              "hover:scale-[1.04] hover:shadow-btn-brand",
-              canSend
-                ? "bg-btn-active text-white"
-                : "bg-btn-disabled text-white/75",
-            )}
+          <form
+            onSubmit={onSubmitAction}
+            className="flex w-full items-center gap-3 rounded-composer-field border border-white/13 px-4 py-2.5 shadow-composer-input backdrop-blur-xl bg-glass-input transition-all duration-200 focus-within:border-violet-400/55 light:border-app-border-10 light:bg-app-field-panel light:shadow-composer-field light:focus-within:border-app-hover-border"
           >
-            {isLoading ? (
-              <span className="h-2 w-2 animate-pulse rounded-full bg-current" />
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
-                <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-              </svg>
-            )}
-          </button>
-        </form>
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(event) => onInputChange(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={CHAT_COMPOSER_COPY.placeholder}
+              aria-label={CHAT_COMPOSER_COPY.ariaLabel}
+              disabled={!isProviderReady}
+              rows={1}
+              className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-[1.55] text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-amber-700 light:placeholder:text-app-muted-50"
+            />
+
+            <button
+              type="submit"
+              disabled={!canSend}
+              aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
+              className={cn(
+                "self-end grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-all duration-200",
+                "disabled:opacity-30 disabled:cursor-not-allowed",
+                "hover:scale-[1.04] hover:shadow-btn-brand",
+                canSend
+                  ? "bg-btn-active text-white"
+                  : "bg-btn-disabled text-white/75",
+              )}
+            >
+              {isLoading ? (
+                <span className="h-2 w-2 animate-pulse rounded-full bg-current" />
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                </svg>
+              )}
+            </button>
+          </form>
         </div>
 
-        <Text variant="helper" className="px-1 text-center text-white/55">
+        <Text variant="helper" className="px-1 text-center">
           {helperText ?? CHAT_COMPOSER_COPY.defaultHelperText}
         </Text>
       </div>

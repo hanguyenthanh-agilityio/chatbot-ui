@@ -35,9 +35,7 @@ export function ProviderSelector({
         <Text as="label" variant="sectionTitle">
           {PROVIDER_PANEL_COPY.label}
         </Text>
-        <Text variant="captionStrong">
-          {PROVIDER_PANEL_COPY.description}
-        </Text>
+        <Text variant="captionStrong">{PROVIDER_PANEL_COPY.description}</Text>
       </div>
 
       <Select
@@ -67,7 +65,9 @@ export function ProviderSelector({
           <Input
             type="password"
             value={provider.openaiApiKeyInput}
-            onChange={(event) => provider.updateOpenAIApiKeyInput(event.target.value)}
+            onChange={(event) =>
+              provider.updateOpenAIApiKeyInput(event.target.value)
+            }
             placeholder={PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder}
             fullWidth
             controlSize="md"
@@ -93,7 +93,9 @@ export function ProviderSelector({
           <Input
             type="url"
             value={provider.ollamaBaseUrlInput}
-            onChange={(event) => provider.updateOllamaBaseUrlInput(event.target.value)}
+            onChange={(event) =>
+              provider.updateOllamaBaseUrlInput(event.target.value)
+            }
             placeholder={PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder}
             fullWidth
             controlSize="md"
