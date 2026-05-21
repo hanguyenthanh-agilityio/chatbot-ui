@@ -90,6 +90,12 @@
   --shadow-avatar-brand: 0 2px 8px #00000059, 0 0 0 1px #7c3aed2e;
   --shadow-avatar-placeholder: inset 0 1px 0 #ffffff1f, 0 2px 6px #00000040;
   --shadow-avatar-photo: 0 2px 6px #0000004d;
+  --avatar-assistant-fallback: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  --bg-avatar-user-placeholder: radial-gradient(
+    circle at 30% 30%,
+    rgba(99, 102, 241, 0.45),
+    rgba(109, 40, 217, 0.35)
+  );
   --shadow-toast-success: 0 8px 32px #10b9812e;
   --shadow-toast-error: 0 8px 32px #ef44442e;
   --shadow-toast-info: 0 8px 32px #0ea5e92e;
@@ -157,6 +163,7 @@
   --background-image-bubble-user: var(--bg-bubble-user);
   --background-image-bubble-assistant: var(--bg-bubble-assistant);
   --background-image-btn-active: var(--bg-btn-active);
+  --background-image-avatar-user-placeholder: var(--bg-avatar-user-placeholder);
   --shadow-glass: var(--shadow-glass);
   --shadow-glass-elevated: var(--shadow-glass-elevated);
   --shadow-glass-compact: var(--shadow-glass-compact);
@@ -327,6 +334,15 @@ html[data-theme="light"] {
   --shadow-composer-field: 0 1px 3px #1c19170a;
   --shadow-bubble-user: 0 4px 14px #29252433;
   --shadow-bubble-assistant: 0 2px 10px #1c19170a;
+  --shadow-avatar-brand: 0 2px 8px #1c191714, 0 0 0 1px #d6d3d1;
+  --shadow-avatar-placeholder: inset 0 1px 0 #fffefc, 0 2px 6px #1c19171a;
+  --shadow-avatar-photo: 0 2px 8px #1c19171f;
+  --avatar-assistant-fallback: linear-gradient(135deg, #a8a29e 0%, #78716c 100%);
+  --bg-avatar-user-placeholder: radial-gradient(
+    circle at 30% 30%,
+    rgba(168, 162, 158, 0.5),
+    rgba(87, 83, 78, 0.38)
+  );
   --shadow-table: 0 4px 18px #1c19170c;
   --shadow-thread-active: 0 2px 10px #1c19170e, 0 8px 22px #1c19170a;
   --shadow-card-surface: 0 1px 2px #1c191706, 0 4px 12px #1c191708;
