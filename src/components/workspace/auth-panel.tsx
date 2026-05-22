@@ -1,10 +1,16 @@
 import { Card } from "@/components/ui/card";
-import { isAppRole, type AppRole, type MockAuthSession } from "@/lib/auth/session";
+import {
+  isAppRole,
+  type AppRole,
+  type MockAuthSession,
+} from "@/lib/auth/session";
 import { Select } from "@/components/ui/select";
 import { AUTH_PANEL_COPY, ROLE_HELPER_COPY_BY_ROLE } from "@/constants/auth";
+import { THEME_SHELL_UTILITIES } from "@/constants/theme";
 import { Text } from "@/components/ui/text";
 import { Avatar } from "@/components/ui/avatar";
 import { getInitialsFromName } from "@/utils/avatar";
+import { cn } from "@/utils/class-name";
 
 type AuthPanelProps = {
   role: AppRole;
@@ -25,14 +31,15 @@ export function AuthPanel({
   }
 
   return (
-    <Card variant="panel" className="p-4 shadow-panel-sm text-white light:text-app-fg">
+    <Card
+      variant="panel"
+      className={cn("p-4 shadow-panel-sm", THEME_SHELL_UTILITIES.text)}
+    >
       <div className="space-y-1">
         <Text as="p" variant="sectionTitle">
           {AUTH_PANEL_COPY.title}
         </Text>
-        <Text variant="captionStrong">
-          {ROLE_HELPER_COPY_BY_ROLE[role]}
-        </Text>
+        <Text variant="captionStrong">{ROLE_HELPER_COPY_BY_ROLE[role]}</Text>
       </div>
 
       <Card variant="panel" className="mt-4 px-4 py-3">

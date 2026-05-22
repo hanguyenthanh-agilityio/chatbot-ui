@@ -38,7 +38,7 @@ export const THEME_SHELL_CLASSES = {
 export const THEME_SHELL_UTILITIES = {
   border: "border-white/9 light:border-app-border-muted",
   borderSubtle: "border-white/8 light:border-app-border-subtle",
-  text: "text-white light:text-app-fg",
+  text: "p-4 shadow-panel-sm text-white light:text-app-fg",
 } as const;
 
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
