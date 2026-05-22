@@ -36,20 +36,20 @@ export const THEME_SHELL_CLASSES = {
 } as const;
 
 export const THEME_SHELL_UTILITIES = {
-  border: "border-white/9 light:border-app-border-9",
-  borderSubtle: "border-white/8 light:border-app-border-8",
+  border: "border-white/9 light:border-app-border-muted",
+  borderSubtle: "border-white/8 light:border-app-border-subtle",
   text: "text-white light:text-app-fg",
 } as const;
 
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
 export const FORM_FIELD_PANEL_CLASSES =
-  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-app-field-panel light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-amber-800/35";
+  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border light:bg-app-field light:text-app-fg-muted light:placeholder:text-app-fg-faint light:hover:border-amber-800/35";
 
-export const OPENAI_VERIFY_BUTTON_CLASSES =
-  "light:bg-btn-active light:text-white light:hover:brightness-105 light:disabled:bg-app-btn-brand-disabled light:disabled:text-white/85";
+export const FORM_FIELD_PANEL_FOCUS_CLASSES =
+  "focus:border-violet-400/55 focus:ring-2 focus:ring-violet-400/20 light:focus:border-app-border-emphasis light:focus:ring-amber-700/25";
 
 export const OLLAMA_VERIFY_BUTTON_CLASSES =
-  "border font-secondary text-white/60 hover:bg-white/8 light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:hover:bg-app-hover";
+  "border font-secondary text-white/60 hover:bg-white/8 light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:hover:bg-app-hover";
 
 export function isDarkTheme(theme: Theme): boolean {
   return theme === ThemeMode.Dark;

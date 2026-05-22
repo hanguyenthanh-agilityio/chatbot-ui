@@ -3,9 +3,9 @@ import { cn } from "@/utils/class-name";
 
 const BADGE_VARIANT_CLASSES = {
   neutral:
-    "app-badge-neutral border-white/20 bg-white/8 text-white/80 light:border-app-border-10 light:bg-app-surface-6 light:text-app-fg-muted",
+    "app-badge-neutral border-white/20 bg-white/8 text-white/80 light:border-app-border light:bg-app-surface-muted light:text-app-fg-muted",
   subtle:
-    "app-badge-subtle border-white/16 bg-white/5 text-white/62 light:border-app-border-8 light:bg-app-surface-4 light:text-app-muted-65",
+    "app-badge-subtle border-white/16 bg-white/5 text-white/62 light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-quaternary",
   brand:
     "app-badge-brand border-violet-400/35 bg-violet-500/16 text-violet-200 light:border-amber-300/70 light:bg-amber-50 light:text-amber-950",
   providerOllama:
