@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+# Vitest snapshots live under __snapshots__/*.snap (do not ignore)
 
 # next.js
 /.next/
@@ -48,6 +49,9 @@ next-env.d.ts
 .claude
 .codex
 .opencode
+
+*storybook.log
+storybook-static
 
 .open-next/
 .wrangler/

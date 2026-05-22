@@ -1,0 +1,14 @@
+# AI System: Production-Grade Agentic Architecture (Source of Truth)
+
+Before performing any task, initialize your runtime state by reading the modular layers in `.agent/`.
+
+## System Architecture
+- **Prompts** (`.agent/prompts/`): Persona and Specialist directives.
+- **Runtime** (`.agent/runtime/`): **Plan → Act → Observe** decision loop logic.
+- **Workflows** (`.agent/workflows/`): **State Machine** definitions for core tasks.
+- **Tools** (`.agent/tools/`): Execution contracts and permissions.
+- **Knowledge** (`.agent/knowledge/`): Technical guides and SOPs.
+
+Adherence to the **State Machines** and **Runtime Loop** is mandatory for production consistency.
+
+

@@ -1,0 +1,108 @@
+# Deploy app (Workers), Storybook (Pages), and coverage (Pages).
+# Runs only when pushing to feat/cloudflare-deploy.
+#
+# GitHub secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN
+#   CLOUDFLARE_ACCOUNT_ID
+
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches:
+      - feat/cloudflare-deploy
+  workflow_dispatch:
+
+concurrency:
+  group: cloudflare-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PNPM_VERSION: "10.24.0"
+  NODE_VERSION: "22"
+  WRANGLER_VERSION: "4.93.1"
+
+jobs:
+  deploy-storybook:
+    name: Storybook → Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run build-storybook
+
+      - name: Deploy to chatbot-ui-storybook
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: pages deploy storybook-static --project-name=chatbot-ui-storybook --branch=feat/cloudflare-deploy --commit-dirty=true
+
+  deploy-coverage:
+    name: Coverage → Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run test:coverage
+
+      - name: Deploy to chatbot-ui-coverage
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: pages deploy coverage --project-name=chatbot-ui-coverage --branch=feat/cloudflare-deploy --commit-dirty=true
+
+  deploy-app:
+    name: Next.js app → Workers
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec opennextjs-cloudflare build
+
+      - name: Deploy Worker (ai-sdk)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: deploy

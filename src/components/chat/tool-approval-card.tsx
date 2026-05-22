@@ -1,0 +1,49 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
+
+type ToolApprovalCardProps = {
+  title: string;
+  description: string;
+  confirmLabel: string;
+  cancelLabel: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
+
+export function ToolApprovalCard({
+  title,
+  description,
+  confirmLabel,
+  cancelLabel,
+  onConfirm,
+  onCancel,
+}: ToolApprovalCardProps) {
+  return (
+    <Card className="w-fit max-w-full px-4 py-3 shadow-glass-compact light:shadow-glass-compact">
+      <Text as="p" variant="sectionTitle">
+        {title}
+      </Text>
+      <Text
+        variant="helper"
+        className="mt-1 block text-white/70 light:text-app-muted-65"
+      >
+        {description}
+      </Text>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button type="button" size="sm" variant="primary" onClick={onConfirm}>
+          {confirmLabel}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          className="border border-white/12 text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-65 light:hover:bg-app-hover light:hover:text-app-fg"
+          onClick={onCancel}
+        >
+          {cancelLabel}
+        </Button>
+      </div>
+    </Card>
+  );
+}
