@@ -6,8 +6,8 @@ import {
 
 const SIZE = {
   sm: { box: "size-avatar-sm", text: "text-[10px] tracking-wide" },
-  md: { box: "h-9 w-9",           text: "text-[11px] tracking-wide" },
-  lg: { box: "h-14 w-14",         text: "text-sm tracking-wider"    },
+  md: { box: "h-9 w-9", text: "text-[11px] tracking-wide" },
+  lg: { box: "h-14 w-14", text: "text-sm tracking-wider" },
 } as const;
 
 export type AvatarSize = keyof typeof SIZE;
@@ -40,7 +40,7 @@ export function Avatar(props: AvatarProps) {
           className,
         )}
         style={{
-          backgroundImage: `url(${APP_ASSISTANT_AVATAR_SRC}), linear-gradient(135deg,#7c3aed 0%,#06b6d4 100%)`,
+          backgroundImage: `url(${APP_ASSISTANT_AVATAR_SRC}), linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%)`,
         }}
       />
     );
@@ -56,7 +56,7 @@ export function Avatar(props: AvatarProps) {
       className={cn(
         BASE,
         SIZE[size].box,
-        "bg-[radial-gradient(circle_at_30%_30%,rgba(99,102,241,0.45),rgba(109,40,217,0.35))]",
+        "bg-[radial-gradient(circle_at_30%_30%,#6366f173,#6d28d959)]",
         "ring-[1.5px] ring-indigo-400/35",
         !hasImage && "shadow-avatar-placeholder",
         hasImage && "shadow-avatar-photo",

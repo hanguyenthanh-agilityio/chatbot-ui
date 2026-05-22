@@ -1,6 +1,5 @@
 /**
  * Theme: `data-theme` on <html>. Dark = default classes; light = `light:` utilities.
- * Color format & tokens: globals.css (`--alpha-*`, `--palette-*`, `--color-app-*`).
  * Fonts: `--font-primary` (Syne) / `--font-secondary` (DM Sans) in globals.css `:root`.
  * Body uses `var(--font-secondary)`; use Tailwind `font-primary` only where Syne is required.
  * Backgrounds: `--bg-*` in globals.css; use Tailwind classes (`bg-glass`, `bg-btn-active`, …) in JSX.

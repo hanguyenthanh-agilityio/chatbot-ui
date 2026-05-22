@@ -104,7 +104,7 @@ export function ProviderSelector({
             variant="ghost"
             size="md"
             fullWidth
-            className="border font-secondary text-white/60 hover:bg-white/8 light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:hover:bg-app-hover"
+            className="border font-secondary text-white/60 hover:bg-white/8 light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:hover:bg-app-hover"
           >
             {provider.isValidatingOllamaBaseUrl
               ? PROVIDER_PANEL_COPY.verifyActionLoadingLabel
