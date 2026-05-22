@@ -4,36 +4,133 @@
 
 @custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
+/* Opacity scale + palette bases (shared) */
+:root {
+  --alpha-4: 0a;
+  --alpha-8: 14;
+  --alpha-10: 1a;
+  --alpha-12: 1f;
+  --alpha-15: 26;
+  --alpha-16: 29;
+  --alpha-20: 33;
+  --alpha-24: 3d;
+  --alpha-25: 40;
+  --alpha-30: 4d;
+  --alpha-32: 52;
+  --alpha-35: 59;
+  --alpha-40: 66;
+  --alpha-45: 73;
+  --alpha-50: 80;
+  --alpha-55: 8c;
+  --alpha-60: 99;
+  --alpha-65: a6;
+  --alpha-70: b3;
+  --alpha-75: bf;
+  --alpha-80: cc;
+  --alpha-85: d9;
+  --alpha-90: e6;
+  --alpha-92: eb;
+  --alpha-94: f0;
+  --alpha-95: f2;
+  --alpha-96: f5;
+  --alpha-98: f9;
+  --alpha-100: ff;
+
+  --palette-ink: #070c1e;
+  --palette-ink-deep: #050a1e;
+  --palette-ink-mid: #060a1e;
+  --palette-ink-soft: #080c1e;
+  --palette-night: #0f0c23;
+  --palette-night-shadow: #0f0a28;
+  --palette-paper: #fffefc;
+  --palette-paper-muted: #f5f4f1;
+  --palette-paper-warm: #faf9f7;
+  --palette-paper-shell: #faf8f5;
+  --palette-paper-bg: #f7f5f2;
+  --palette-white: #ffffff;
+  --palette-black: #000000;
+  --palette-stone-950: #1c1917;
+  --palette-stone-900: #292524;
+  --palette-stone-800: #44403c;
+  --palette-stone-700: #57534e;
+  --palette-stone-600: #78716c;
+  --palette-stone-500: #a8a29e;
+  --palette-stone-400: #928b86;
+  --palette-stone-300: #d6d3d1;
+  --palette-stone-200: #e7e5e4;
+  --palette-stone-150: #ede9e7;
+  --palette-stone-100: #f5f5f4;
+  --palette-stone-field: #f0eeeb;
+  --palette-violet-500: #8b5cf6;
+  --palette-violet-600: #7c3aed;
+  --palette-violet-700: #633cdc;
+  --palette-violet-800: #581c87;
+  --palette-violet-400: #a78bfa;
+  --palette-purple-900: #38208c;
+  --palette-indigo-500: #6366f1;
+  --palette-indigo-600: #4f46e5;
+  --palette-cyan-500: #0ea5e9;
+  --palette-amber-400: #fbbf24;
+  --palette-amber-500: #f59e0b;
+  --palette-amber-600: #d97706;
+  --palette-amber-700: #b45309;
+  --palette-amber-800: #c2410c;
+  --palette-amber-mid: #a8732c;
+  --palette-emerald-500: #10b981;
+  --palette-red-500: #ef4444;
+  --palette-slate-muted: #8c8eaa;
+  --palette-slate-deep: #3e3c5e;
+  --palette-rose-dark: #5a0c24;
+  --palette-emerald-dark: #08462a;
+  --palette-toggle-moon: #9a99a3;
+  --palette-toggle-sun-dim: #9ca3af;
+  --palette-shell-dark: #0c1024;
+  --palette-shell-mid: #1a1739;
+  --palette-shell-cyan: #102033;
+
+  /* Theme toggle (semantic border / surface / focus) */
+  --toggle-track-border-dark: #ffffff33;
+  --toggle-track-bg-dark: #0f0c238c;
+  --toggle-track-border-light: #1c19171a;
+  --toggle-track-bg-light: #fffefccc;
+  --toggle-focus-ring-dark: #a78bfa8c;
+  --toggle-focus-ring-light: #d977064d;
+  --toggle-thumb-shadow-dark: #581c878c;
+  --toggle-thumb-shadow-light: #f59e0b80;
+  --toggle-icon-shadow-dark: #0f0a284d;
+  --toggle-icon-shadow-light: #ffffffb3;
+}
+
 @variant light {
   @theme {
-    /* Warm Paper — stone neutrals, low blue cast */
-    --color-app-fg: #292524;
-    --color-app-fg-muted: #57534e;
-    --color-app-muted-50: #a8a29e;
-    --color-app-muted-55: #928b86;
-    --color-app-muted-60: #78716c;
-    --color-app-muted-65: #6b6560;
-    --color-app-muted-70: #57534e;
-    --color-app-muted-30: #a8a29e;
-    --color-app-border-9: #e7e5e4;
-    --color-app-border-8: #ede9e7;
-    --color-app-border-10: #d6d3d1;
-    --color-app-hover-border: #a8a29e;
-    --color-app-surface-4: #f5f5f4f2;
-    --color-app-surface-6: #f5f5f4f2;
-    --color-app-field-panel: #f0eeeb;
+    /* Warm Paper — stone neutrals (opaque + scale alpha only) */
+    --color-app-fg: var(--palette-stone-900);
+    --color-app-fg-muted: var(--palette-stone-700);
+    --color-app-fg-tertiary: var(--palette-stone-400);
+    --color-app-fg-subtle: var(--palette-stone-600);
+    --color-app-fg-quaternary: #6b6560;
+    --color-app-fg-faint: var(--palette-stone-500);
+    --color-app-border: var(--palette-stone-300);
+    --color-app-border-muted: var(--palette-stone-200);
+    --color-app-border-subtle: var(--palette-stone-150);
+    --color-app-border-emphasis: var(--palette-stone-500);
+    --color-app-surface-subtle: #f5f5f4eb;
+    --color-app-surface-muted: #f0eeebf2;
+    --color-app-surface-raised: #e7e5e4f2;
+    --color-app-field: var(--palette-stone-field);
     --color-app-hover: #1c19170a;
-    --color-app-btn-brand-disabled: #78716c55;
-    --color-app-blob-violet: #d9770614;
-    --color-app-blob-indigo: #78716c12;
-    --color-app-blob-cyan: #b4530910;
+    --color-app-accent: var(--palette-amber-700);
+    --color-app-btn-brand-disabled: #78716c8c;
+    --color-app-blob-warm: #d977061a;
+    --color-app-blob-neutral: #78716c1a;
+    --color-app-blob-accent: #b453091a;
   }
 }
 
 :root {
   --foreground: #f8fafc;
   --bg-selection: #7c3aed4d;
-  --bg-btn-disabled: #ffffff2e;
+  --bg-btn-disabled: #ffffff33;
   --bg-surface-muted: #1c1b3899;
 
   --bg-radial-violet: radial-gradient(
@@ -43,61 +140,80 @@
   );
   --bg-radial-cyan: radial-gradient(
     1100px 650px at 110% 20%,
-    #0ea5e92e 0%,
+    #0ea5e933 0%,
     transparent 62%
   );
   --bg-gradient-base: linear-gradient(
     135deg,
-    #0c1024 0%,
-    #1a1739 42%,
-    #102033 100%
+    var(--palette-shell-dark) 0%,
+    var(--palette-shell-mid) 42%,
+    var(--palette-shell-cyan) 100%
   );
   --bg-app-shell:
     var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
 
-  --bg-glass: linear-gradient(165deg, #ffffff17, #ffffff0a);
-  --bg-glass-panel: linear-gradient(165deg, #ffffff0f, #ffffff08);
-  --bg-glass-panel-alt: linear-gradient(170deg, #ffffff0d, #ffffff08);
-  --bg-glass-header: linear-gradient(180deg, #ffffff14, #ffffff08);
-  --bg-glass-composer: linear-gradient(180deg, #ffffff05, #ffffff0f);
-  --bg-glass-input: linear-gradient(165deg, #ffffff14, #ffffff0a);
-  --bg-glass-loading: linear-gradient(165deg, #ffffff17, #ffffff0d);
-  --bg-glass-table: linear-gradient(165deg, #8c8eaa38, #3e3c5e5c);
-  --bg-bubble-user: linear-gradient(135deg, #7c3aed80, #4f46e670, #0ea5e938);
-  --bg-bubble-assistant: linear-gradient(165deg, #ffffff17, #ffffff0f);
-  --bg-btn-active: linear-gradient(135deg, #8b5cf6, #6366f1, #0ea5e9);
+  /* Glass — white @ α-10 / α-4 (two-stop) */
+  --bg-glass: linear-gradient(165deg, #ffffff1a, #ffffff0a);
+  --bg-glass-panel: linear-gradient(165deg, #ffffff1a, #ffffff0a);
+  --bg-glass-panel-alt: var(--bg-glass-panel);
+  --bg-glass-header: linear-gradient(180deg, #ffffff1f, #ffffff0a);
+  --bg-glass-composer: linear-gradient(180deg, #ffffff0a, #ffffff1a);
+  --bg-glass-input: linear-gradient(165deg, #ffffff1f, #ffffff0a);
+  --bg-glass-loading: var(--bg-glass-panel);
+  --bg-glass-table: linear-gradient(165deg, #8c8eaa4d, #3e3c5e66);
+  --bg-bubble-user: linear-gradient(
+    135deg,
+    #7c3aed80,
+    #4f46e580,
+    #0ea5e94d
+  );
+  --bg-bubble-assistant: linear-gradient(165deg, #ffffff1a, #ffffff0a);
+  --bg-btn-active: linear-gradient(
+    135deg,
+    var(--palette-violet-500),
+    var(--palette-indigo-500),
+    var(--palette-cyan-500)
+  );
 
-  --shadow-glass: 0 10px 30px #070c1e42;
-  --shadow-glass-elevated: 0 10px 28px #070c1e47;
-  --shadow-glass-compact: 0 10px 26px #070c1e40;
-  --shadow-glass-hero: 0 24px 64px #00000061, inset 0 1px 0 #ffffff1a;
+  /* Shadows — ink @ α-24 / α-25 / α-30 / α-32 / α-35 only */
+  --shadow-ink-sm: 0 8px 24px #070c1e3d;
+  --shadow-ink-md: 0 10px 28px #070c1e40;
+  --shadow-ink-lg: 0 14px 34px #070c1e4d;
+  --shadow-ink-xl: 0 16px 60px #070c1e52;
+
+  --shadow-glass: var(--shadow-ink-md);
+  --shadow-glass-elevated: 0 10px 28px #070c1e4d;
+  --shadow-glass-compact: var(--shadow-ink-md);
+  --shadow-glass-hero: 0 24px 64px #00000066, inset 0 1px 0 #ffffff1a;
   --shadow-panel: 0 8px 30px #050a1e40;
-  --shadow-panel-sm: 0 8px 24px #070c1e38;
-  --shadow-shell: 0 16px 60px #070c2052;
-  --shadow-shell-panel: 0 16px 60px #070c205c;
-  --shadow-shell-header: 0 1px 0 #ffffff0f, 0 8px 32px #00000033;
+  --shadow-panel-sm: var(--shadow-ink-sm);
+  --shadow-shell: var(--shadow-ink-xl);
+  --shadow-shell-panel: 0 16px 60px #070c1e59;
+  --shadow-shell-header: 0 1px 0 #ffffff1a, 0 8px 32px #00000033;
   --shadow-composer-bar: 0 -1px 0 #ffffff0a, 0 -10px 34px #00000033;
-  --shadow-composer-input: 0 8px 26px #070c1e33, inset 0 1px 0 #ffffff14;
+  --shadow-composer-input: 0 8px 26px #070c1e33, inset 0 1px 0 #ffffff1f;
   --shadow-composer-field: var(--shadow-composer-input);
-  --shadow-bubble-user: 0 8px 26px #38208c57;
+  --shadow-bubble-user: 0 8px 26px #38208c59;
   --shadow-bubble-assistant: 0 8px 24px #060a1e3d;
-  --shadow-table: 0 14px 34px #060a1e57;
-  --shadow-thread-active: 0 8px 26px #080c1e38;
+  --shadow-table: var(--shadow-ink-lg);
+  --shadow-thread-active: 0 8px 26px #080c1e3d;
   --shadow-btn-brand: 0 6px 20px #633cdc66;
   --shadow-chip-brand: 0 4px 12px #633cdc33;
-  --shadow-avatar-brand: 0 2px 8px #00000059, 0 0 0 1px #7c3aed2e;
+  --shadow-avatar-brand: 0 2px 8px #00000059, 0 0 0 1px #7c3aed33;
   --shadow-avatar-placeholder: inset 0 1px 0 #ffffff1f, 0 2px 6px #00000040;
   --shadow-avatar-photo: 0 2px 6px #0000004d;
-  --shadow-toast-success: 0 8px 32px #10b9812e;
-  --shadow-toast-error: 0 8px 32px #ef44442e;
-  --shadow-toast-info: 0 8px 32px #0ea5e92e;
+  --shadow-toast-success: 0 8px 32px #10b98133;
+  --shadow-toast-error: 0 8px 32px #ef444433;
+  --shadow-toast-info: 0 8px 32px #0ea5e933;
   --shadow-tool-rose: 0 8px 20px #5a0c243d;
-  --shadow-tool-emerald: 0 8px 20px #08462a38;
+  --shadow-tool-emerald: 0 8px 20px #08462a3d;
   --shadow-tool-neutral: 0 8px 20px #070c1e33;
-  --shadow-toggle: inset 0 1px 0 #ffffff14, 0 4px 16px #00000047;
+  --shadow-toggle: inset 0 1px 0 #ffffff1f, 0 4px 16px #0000004d;
   --shadow-toggle-light: inset 0 1px 0 #fffffff2, 0 4px 14px #5b21b61a;
-  --shadow-toggle-thumb: 0 2px 10px #581c878c, inset 0 1px 0 #ffffff59;
-  --shadow-toggle-thumb-light: 0 2px 10px #f59e0b73, inset 0 1px 0 #ffffffa6;
+  --shadow-toggle-thumb: var(--toggle-thumb-shadow-dark);
+  --shadow-toggle-thumb-light: var(--toggle-thumb-shadow-light);
+  --shadow-card-surface: var(--shadow-bubble-assistant);
+  --shadow-card-surface-soft: var(--shadow-panel-sm);
 
   /* Layout → w-*, max-w-*, min-h-*, rounded-* */
   --layout-shell-max: 1600px;
@@ -108,7 +224,6 @@
   --layout-page-min-sm: calc(100vh - 1.5rem);
   --layout-page-min-md: calc(100vh - 2.5rem);
   --layout-page-min-dvh: calc(100dvh - 2.5rem);
-  /* Storybook / small preview surfaces */
   --layout-min-preview: 120px;
   --layout-avatar-sm: 30px;
   --layout-max-bubble-user: 78%;
@@ -122,7 +237,6 @@
   --font-secondary:
     "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  /* 11px — dense labels (tool table header, small action buttons) */
   --font-size-compact-11: 0.6875rem;
 }
 
@@ -247,82 +361,94 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
 }
 
 html[data-theme="light"] {
-  --foreground: #292524;
-  --bg-selection: #d9770629;
+  --foreground: var(--palette-stone-900);
+  --bg-selection: #d9770633;
 
   --bg-radial-violet: radial-gradient(
     920px 540px at 0% -5%,
-    #d9770612 0%,
+    #d977061a 0%,
     transparent 58%
   );
   --bg-radial-cyan: radial-gradient(
     880px 500px at 100% 8%,
-    #78716c10 0%,
+    #78716c1a 0%,
     transparent 58%
   );
   --bg-gradient-base: linear-gradient(
     180deg,
-    #f7f5f2 0%,
-    #faf8f5 48%,
-    #f5f4f1 100%
+    var(--palette-paper-bg) 0%,
+    var(--palette-paper-shell) 48%,
+    var(--palette-paper-muted) 100%
   );
   --bg-app-shell:
     var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
 
-  --bg-glass: linear-gradient(180deg, #fffefce0 0%, #faf9f7ad 100%);
-  --bg-glass-panel: linear-gradient(180deg, #fffefceb 0%, #f5f4f1c7 100%);
-  --bg-glass-panel-alt: var(--bg-glass-panel);
-  --bg-glass-header: linear-gradient(180deg, #fffefcf5 0%, #faf9f7e8 100%);
-  --bg-glass-composer: linear-gradient(180deg, #fffefc59 0%, #faf9f7c9 100%);
-  --bg-glass-input: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1e3 100%);
+  /* Glass — paper @ α-90→α-80 (two-stop, shared stops) */
+  --bg-glass-stop-top: #fffefce6;
+  --bg-glass-stop-bottom: #f5f4f1cc;
+  --bg-glass: linear-gradient(
+    180deg,
+    var(--bg-glass-stop-top) 0%,
+    var(--bg-glass-stop-bottom) 100%
+  );
+  --bg-glass-panel: var(--bg-glass);
+  --bg-glass-panel-alt: var(--bg-glass);
+  --bg-glass-header: linear-gradient(180deg, #fffefcf2 0%, #faf9f7e6 100%);
+  --bg-glass-composer: linear-gradient(180deg, #fffefc4d 0%, #faf9f7b3 100%);
+  --bg-glass-input: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1cc 100%);
   --bg-glass-loading: var(--bg-glass-panel);
-  --bg-glass-table: linear-gradient(180deg, #fffefcf0 0%, #f5f4f1d9 100%);
+  --bg-glass-table: var(--bg-glass);
 
-  --bg-shell-sidebar: linear-gradient(180deg, #fffefce3 0%, #f5f4f1b8 100%);
-  --bg-shell-chat-panel: linear-gradient(180deg, #fffefce8 0%, #f5f4f1ba 100%);
-  --bg-shell-chat-header: linear-gradient(180deg, #fffefcf9 0%, #faf9f7ed 100%);
+  --bg-shell-sidebar: var(--bg-glass);
+  --bg-shell-chat-panel: var(--bg-glass);
+  --bg-shell-chat-header: var(--bg-glass-header);
 
   --bg-bubble-user: linear-gradient(
     135deg,
-    #57534e 0%,
-    #44403c 52%,
-    #78716c 100%
+    var(--palette-stone-700) 0%,
+    var(--palette-stone-800) 50%,
+    var(--palette-stone-600) 100%
   );
-  --bg-bubble-assistant: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1db 100%);
+  --bg-bubble-assistant: linear-gradient(
+    180deg,
+    #fffefcf2 0%,
+    #f5f4f1cc 100%
+  );
   --bg-btn-active: linear-gradient(
     90deg,
-    #332b24 0%,
-    #3a322b 6%,
-    #4a3b31 11%,
-    #5c4334 16%,
-    #7a5638 22%,
-    #a8732c 30%,
-    #d97706 48%,
-    #de8408 72%,
-    #e18f0c 100%
+    var(--palette-stone-800) 0%,
+    var(--palette-amber-mid) 45%,
+    var(--palette-amber-600) 100%
   );
 
-  --shadow-glass: 0 1px 2px #1c19170a, 0 14px 40px #1c19170c;
-  --shadow-glass-elevated: 0 2px 6px #1c19170b, 0 18px 48px #1c19170f;
-  --shadow-glass-compact: 0 1px 2px #1c191708, 0 8px 26px #1c19170c;
-  --shadow-glass-hero: 0 20px 56px #1c191710, inset 0 1px 0 #fffefcd9;
-  --shadow-panel: 0 1px 2px #1c191708, 0 10px 32px #1c19170d;
-  --shadow-panel-sm: 0 1px 2px #1c191706, 0 6px 20px #1c19170a;
-  --shadow-shell: 0 1px 0 #fffefcd1, 0 20px 52px #1c191710;
+  /* Shadows — stone-950 @ α-4 / α-8 / α-10 / α-12 */
+  --shadow-hairline: 0 1px 0 #1c19170a;
+  --shadow-ink-sm: 0 1px 2px #1c19170a, 0 6px 20px #1c19170a;
+  --shadow-ink-md: 0 1px 2px #1c19170a, 0 14px 40px #1c19170a;
+  --shadow-ink-lg: 0 2px 6px #1c19170a, 0 18px 48px #1c19170a;
+  --shadow-ink-xl: 0 1px 0 #fffefcd9, 0 20px 52px #1c19171a;
+
+  --shadow-glass: var(--shadow-ink-md);
+  --shadow-glass-elevated: var(--shadow-ink-lg);
+  --shadow-glass-compact: var(--shadow-ink-sm);
+  --shadow-glass-hero: 0 20px 56px #1c19171a, inset 0 1px 0 #fffefcd9;
+  --shadow-panel: var(--shadow-ink-md);
+  --shadow-panel-sm: var(--shadow-ink-sm);
+  --shadow-shell: var(--shadow-ink-xl);
   --shadow-shell-panel: var(--shadow-shell);
-  --shadow-shell-header: 0 1px 0 #fffefceb, 0 4px 16px #1c191708;
-  --shadow-composer-bar: 0 -1px 0 #1c191708, 0 -8px 26px #1c19170a;
+  --shadow-shell-header: 0 1px 0 #fffefceb, 0 4px 16px #1c19170a;
+  --shadow-composer-bar: 0 -1px 0 #1c19170a, 0 -8px 26px #1c19170a;
   --shadow-composer-input: 0 2px 8px #1c19170a, inset 0 1px 0 #fffefceb;
   --shadow-composer-field: 0 1px 3px #1c19170a;
   --shadow-bubble-user: 0 4px 14px #29252433;
   --shadow-bubble-assistant: 0 2px 10px #1c19170a;
-  --shadow-table: 0 4px 18px #1c19170c;
-  --shadow-thread-active: 0 2px 10px #1c19170e, 0 8px 22px #1c19170a;
-  --shadow-card-surface: 0 1px 2px #1c191706, 0 4px 12px #1c191708;
-  --shadow-card-surface-soft: 0 1px 2px #1c191705, 0 6px 16px #1c19170a;
-  --shadow-btn-brand: 0 2px 10px #c2410c38;
-  --shadow-chip-brand: 0 2px 8px #78716c24;
-  --shadow-toggle-light: inset 0 1px 0 #fffefc, 0 2px 8px #1c19170f;
+  --shadow-table: 0 4px 18px #1c19170a;
+  --shadow-thread-active: 0 2px 10px #1c19170a, 0 8px 22px #1c19170a;
+  --shadow-card-surface: var(--shadow-ink-sm);
+  --shadow-card-surface-soft: var(--shadow-ink-sm);
+  --shadow-btn-brand: 0 2px 10px #c2410c40;
+  --shadow-chip-brand: 0 2px 8px #78716c33;
+  --shadow-toggle-light: inset 0 1px 0 #fffefcff, 0 2px 8px #1c19171a;
   --shadow-toggle-thumb-light: 0 1px 4px #1c19171a, inset 0 1px 0 #fffefcbf;
 }
 
@@ -332,19 +458,19 @@ html[data-theme="light"] body {
 
 html[data-theme="light"] .app-sidebar {
   color: var(--color-app-fg);
-  border-color: var(--color-app-border-9);
+  border-color: var(--color-app-border-muted);
   background: var(--bg-glass-panel);
   box-shadow: var(--shadow-shell);
 }
 
 html[data-theme="light"] .app-chat-panel {
-  border-color: var(--color-app-border-9);
+  border-color: var(--color-app-border-muted);
   background: var(--bg-glass-panel);
   box-shadow: var(--shadow-shell-panel);
 }
 
 html[data-theme="light"] .app-chat-header {
-  border-color: var(--color-app-border-8);
+  border-color: var(--color-app-border-subtle);
   background: var(--bg-glass-header);
   box-shadow: var(--shadow-shell-header);
 }
@@ -367,8 +493,8 @@ aside .rounded-2xl .inline-flex.rounded-full {
   padding: 0.25rem;
   overflow: hidden;
   border-radius: 9999px;
-  border: 1px solid #ffffff33;
-  background-color: #0f0c238c;
+  border: 1px solid var(--toggle-track-border-dark);
+  background-color: var(--toggle-track-bg-dark);
   box-shadow: var(--shadow-toggle);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -379,8 +505,8 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="light"] {
-  border-color: #1c191714;
-  background-color: #fffefcc7;
+  border-color: var(--toggle-track-border-light);
+  background-color: var(--toggle-track-bg-light);
   box-shadow: var(--shadow-toggle-light);
 }
 
@@ -388,13 +514,13 @@ aside .rounded-2xl .inline-flex.rounded-full {
   outline: none;
   box-shadow:
     var(--shadow-toggle),
-    0 0 0 2px #a78bfa8c;
+    0 0 0 2px var(--toggle-focus-ring-dark);
 }
 
 .theme-toggle[data-state="light"]:focus-visible {
   box-shadow:
     var(--shadow-toggle-light),
-    0 0 0 2px #d977064d;
+    0 0 0 2px var(--toggle-focus-ring-light);
 }
 
 .theme-toggle::before {
@@ -406,7 +532,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 9999px;
-  background-color: #7c3aed;
+  background-color: var(--palette-violet-600);
   box-shadow: var(--shadow-toggle-thumb);
   transform: translate3d(0, 0, 0);
   transition:
@@ -417,7 +543,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="light"]::before {
-  background-color: #fbbf24;
+  background-color: var(--palette-amber-400);
   box-shadow: var(--shadow-toggle-thumb-light);
 }
 
@@ -438,21 +564,21 @@ aside .rounded-2xl .inline-flex.rounded-full {
 }
 
 .theme-toggle[data-state="dark"] .theme-toggle-icon:first-of-type {
-  color: #9a99a3;
+  color: var(--palette-toggle-moon);
 }
 
 .theme-toggle[data-state="dark"] .theme-toggle-icon:last-of-type {
-  color: #ffffff;
-  filter: drop-shadow(0 1px 1px #0f0a2873);
+  color: var(--palette-white);
+  filter: drop-shadow(0 1px 1px var(--toggle-icon-shadow-dark));
 }
 
 .theme-toggle[data-state="light"] .theme-toggle-icon:first-of-type {
-  color: #9ca3af;
+  color: var(--palette-toggle-sun-dim);
 }
 
 .theme-toggle[data-state="light"] .theme-toggle-icon:last-of-type {
-  color: #f59e0b;
-  filter: drop-shadow(0 1px 1px #ffffffa6);
+  color: var(--palette-amber-500);
+  filter: drop-shadow(0 1px 1px var(--toggle-icon-shadow-light));
 }
 
 @media (prefers-reduced-motion: reduce) {

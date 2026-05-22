@@ -1,5 +1,6 @@
 /**
  * Theme: `data-theme` on <html>. Dark = default classes; light = `light:` utilities.
+ * Color format & tokens: globals.css (`--alpha-*`, `--palette-*`, `--color-app-*`).
  * Fonts: `--font-primary` (Syne) / `--font-secondary` (DM Sans) in globals.css `:root`.
  * Body uses `var(--font-secondary)`; use Tailwind `font-primary` only where Syne is required.
  * Backgrounds: `--bg-*` in globals.css; use Tailwind classes (`bg-glass`, `bg-btn-active`, …) in JSX.
@@ -36,14 +37,14 @@ export const THEME_SHELL_CLASSES = {
 } as const;
 
 export const THEME_SHELL_UTILITIES = {
-  border: "border-white/9 light:border-app-border-9",
-  borderSubtle: "border-white/8 light:border-app-border-8",
+  border: "border-white/9 light:border-app-border-muted",
+  borderSubtle: "border-white/8 light:border-app-border-subtle",
   text: "text-white light:text-app-fg",
 } as const;
 
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
 export const FORM_FIELD_PANEL_CLASSES =
-  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border-10 light:bg-app-field-panel light:text-app-fg-muted light:placeholder:text-app-muted-50 light:hover:border-amber-800/35";
+  "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border light:bg-app-field light:text-app-fg-muted light:placeholder:text-app-fg-faint light:hover:border-amber-800/35";
 
 export function isDarkTheme(theme: Theme): boolean {
   return theme === ThemeMode.Dark;
