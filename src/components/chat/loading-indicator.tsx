@@ -36,24 +36,24 @@ export function LoadingIndicator({
         variant="glass"
         className={cn(
           "w-loading-card max-w-full border-white/10 px-4 py-3.5 shadow-glass-elevated",
-          "bg-glass-loading light:border-app-border light:backdrop-blur-none",
+          "bg-glass-loading",
         )}
       >
         <div className="mb-2.5">
-          <span className="font-primary text-sm font-semibold tracking-wide text-white/82 light:text-app-fg">
+          <span className="font-primary text-sm font-semibold tracking-wide text-white/82">
             {APP_NAME}
           </span>
         </div>
 
         <div className="mb-3 flex items-center gap-1">
-          <span className="text-sm font-medium text-white/68 light:text-app-fg-muted">
+          <span className="text-sm font-medium text-white/68">
             {headerLabel}
           </span>
           <span className="ml-0.5 flex gap-0.5">
             {DOT_DELAYS.map((delay, i) => (
               <span
                 key={i}
-                className="h-1 w-1 rounded-full bg-white/40 animate-pulse light:bg-app-fg-faint"
+                className="h-1 w-1 rounded-full bg-white/40 animate-pulse"
                 style={{ animationDelay: delay, animationDuration: "1200ms" }}
               />
             ))}
@@ -64,7 +64,7 @@ export function LoadingIndicator({
           {SKELETON_WIDTHS.map((width, i) => (
             <Skeleton
               key={i}
-              className={`h-2.5 rounded-full bg-white/9 light:bg-app-hover ${width}`}
+              className={`h-2.5 rounded-full bg-white/9 ${width}`}
             />
           ))}
         </div>
