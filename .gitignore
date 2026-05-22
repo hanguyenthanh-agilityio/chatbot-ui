@@ -12,7 +12,8 @@
 
 # testing
 /coverage
-# Vitest snapshots live under __snapshots__/*.snap (do not ignore)
+**/__snapshots__/
+*.snap
 
 # next.js
 /.next/
