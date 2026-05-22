@@ -9,7 +9,6 @@ type MessageBubbleProps = {
   fullWidth?: boolean;
   children?: ReactNode;
 };
-
 export function MessageBubble({
   isUser,
   text,
