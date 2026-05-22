@@ -19,7 +19,7 @@ export function ChatEmptyState({
       <div
         className={cn(
           "flex w-full max-w-chat-empty flex-col items-center gap-6 rounded-3xl border border-white/10 p-8 shadow-glass-hero backdrop-blur-[2rem]",
-          "bg-glass light:border-app-border-10 light:bg-app-surface-6 light:shadow-panel",
+          "bg-glass light:border-app-border light:bg-app-surface-muted light:shadow-panel",
           THEME_SHELL_UTILITIES.border,
         )}
       >
@@ -45,7 +45,7 @@ export function ChatEmptyState({
             <button
               key={action.label}
               type="button"
-              className="cursor-pointer rounded-full border border-white/18 bg-white/6 px-3.5 py-1.5 text-xs text-white/78 backdrop-blur-[0.625rem] transition-all duration-200 hover:border-violet-300/55 hover:bg-violet-600/20 hover:text-white hover:shadow-chip-brand light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:hover:border-amber-800/30 light:hover:bg-amber-950/8 light:hover:text-app-fg light:hover:shadow-card-surface"
+              className="cursor-pointer rounded-full border border-white/18 bg-white/6 px-3.5 py-1.5 text-xs text-white/78 backdrop-blur-[0.625rem] transition-all duration-200 hover:border-violet-300/55 hover:bg-violet-600/20 hover:text-white hover:shadow-chip-brand light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:hover:border-amber-800/30 light:hover:bg-amber-950/8 light:hover:text-app-fg light:hover:shadow-card-surface"
               onClick={() => onSelectPrompt(action.prompt)}
             >
               {action.label}
