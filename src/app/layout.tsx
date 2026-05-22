@@ -41,19 +41,19 @@ export default function RootLayout({
           <div
             className={cn(
               "absolute -left-28 -top-24 size-app-blob rounded-full blur-app-blob",
-              "bg-violet-500/14 light:bg-app-blob-violet",
+              "bg-violet-500/14 light:bg-app-blob-warm",
             )}
           />
           <div
             className={cn(
               "absolute -bottom-24 -left-16 size-app-blob-alt rounded-full blur-app-blob",
-              "bg-indigo-600/16 light:bg-app-blob-indigo",
+              "bg-indigo-600/16 light:bg-app-blob-neutral",
             )}
           />
           <div
             className={cn(
               "absolute -right-24 top-1/4 size-app-blob rounded-full blur-app-blob-accent",
-              "bg-cyan-500/12 light:bg-app-blob-cyan",
+              "bg-cyan-500/12 light:bg-app-blob-accent",
             )}
           />
         </div>
