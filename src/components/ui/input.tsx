@@ -1,6 +1,9 @@
 import { forwardRef } from "react";
 import type { InputHTMLAttributes } from "react";
-import { FORM_FIELD_PANEL_CLASSES } from "@/constants/theme";
+import {
+  FORM_FIELD_PANEL_CLASSES,
+  FORM_FIELD_PANEL_FOCUS_CLASSES,
+} from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 const INPUT_VARIANT_CLASSES = {
@@ -45,9 +48,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       ref={ref}
       className={cn(
         "rounded-xl border outline-none transition duration-200",
-        "placeholder:text-slate-400",
+        variant !== "panel" && "placeholder:text-slate-400",
         variant === "panel"
-          ? "focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
+          ? FORM_FIELD_PANEL_FOCUS_CLASSES
           : "focus:border-sky-400 focus:ring-2 focus:ring-sky-100",
         "disabled:cursor-not-allowed disabled:opacity-60",
         INPUT_VARIANT_CLASSES[variant],

@@ -175,12 +175,12 @@ function ThreadCard({
       variant={isActive ? "soft" : "panel"}
       className={cn(
         "group cursor-pointer transition-[box-shadow,transform] duration-200",
-        "border-white/10 light:border-app-border-10",
-        "hover:border-white/16 light:hover:border-app-border-10",
+        "border-white/10 light:border-app-border",
+        "hover:border-white/16 light:hover:border-app-border",
         "hover:bg-white/9 light:hover:bg-app-hover",
         isActive
-          ? "bg-white/10 shadow-thread-active light:bg-app-surface-6"
-          : "bg-white/4 light:bg-app-surface-4",
+          ? "bg-white/10 shadow-thread-active light:bg-app-surface-raised"
+          : "bg-white/4 light:bg-app-surface-subtle",
       )}
       onClick={onSelect}
     >
@@ -209,9 +209,8 @@ function ThreadCard({
           <button
             type="button"
             className={cn(
-              "text-compact-10 uppercase tracking-wider disabled:cursor-not-allowed disabled:opacity-50",
-              "text-white/30 hover:text-rose-300",
-              "light:text-app-muted-60 light:hover:text-rose-600",
+              "text-compact-10 uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
+              "text-white/30 light:text-app-fg-faint",
             )}
             onClick={(e) => {
               e.stopPropagation();

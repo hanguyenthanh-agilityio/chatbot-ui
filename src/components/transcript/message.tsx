@@ -45,7 +45,7 @@ const TOOL_STATUS_LIGHT_CLASS: Record<"success" | "error" | "neutral", string> =
     success:
       "light:border-emerald-300/70 light:bg-emerald-50 light:text-emerald-900 light:shadow-none",
     neutral:
-      "light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:shadow-none",
+      "light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:shadow-none",
   };
 
 type SecondContentProps = {
@@ -450,7 +450,7 @@ export function ChatMessage({
           !isLoading &&
           isLastMessage &&
           mutationSuccessCards.length === 0 ? (
-          <p className="text-sm text-white/50 light:text-app-muted-50">
+          <p className="text-sm text-white/50 light:text-app-fg-faint">
             Something went wrong. Please try again.
           </p>
         ) : null}

@@ -6,7 +6,7 @@ import { TEXT_VARIANT_OPTIONS } from "@/constants/text";
 import type { TextVariant } from "@/types/text";
 
 const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-white/5 p-6 light:border-app-border-10 light:bg-app-surface-4">
+  <div className="rounded-2xl border border-white/10 bg-glass-panel p-6 text-white light:border-app-border">
     <Story />
   </div>
 );

@@ -92,7 +92,7 @@ const ACTION_TONE_CLASS: Record<
   string
 > = {
   neutral:
-    "border-white/22 bg-white/8 text-white/82 hover:border-white/34 hover:bg-white/14 light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:hover:border-app-hover-border light:hover:bg-app-hover",
+    "border-white/22 bg-white/8 text-white/82 hover:border-white/34 hover:bg-white/14 light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:hover:border-app-border-emphasis light:hover:bg-app-hover",
   success:
     "border-emerald-400/36 bg-emerald-500/16 text-emerald-100 hover:border-emerald-300/46 hover:bg-emerald-500/24 light:border-emerald-300/70 light:bg-emerald-50 light:text-emerald-900 light:hover:border-emerald-400/80 light:hover:bg-emerald-100",
   danger:
@@ -155,11 +155,11 @@ export function ToolOutputTable({
       variant="glass"
       className={cn(
         "overflow-hidden border-white/12 shadow-table bg-glass-table",
-        "light:border-app-border-10 light:shadow-table light:backdrop-blur-none",
+        "light:border-app-border light:shadow-table light:backdrop-blur-none",
       )}
     >
-      <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3.5 py-2.5 light:border-app-border-8">
-        <p className="font-primary text-compact-11 font-semibold uppercase tracking-table-title text-white/78 light:text-app-muted-65">
+      <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3.5 py-2.5 light:border-app-border-subtle">
+        <p className="font-primary text-compact-11 font-semibold uppercase tracking-table-title text-white/78 light:text-app-fg-quaternary">
           {title}
         </p>
         <Badge variant="subtle" size="sm">
@@ -171,13 +171,13 @@ export function ToolOutputTable({
           <div
             className={cn(
               "overflow-hidden rounded-xl border border-white/9 bg-surface-muted",
-              "light:border-app-border-8 light:bg-app-surface-4",
+              "light:border-app-border-subtle light:bg-app-surface-subtle",
             )}
           >
             <div
               className={cn(
                 "hidden sm:grid items-center border-b border-white/8 bg-white/5 px-3 py-2",
-                "light:border-app-border-8 light:bg-app-surface-6",
+                "light:border-app-border-subtle light:bg-app-surface-muted",
                 gridClassName,
               )}
             >
@@ -185,7 +185,7 @@ export function ToolOutputTable({
                 <p
                   key={`${title}-header-${column.key}`}
                   className={cn(
-                    "text-compact-10 uppercase tracking-table-label text-white/45 light:text-app-muted-55",
+                    "text-compact-10 uppercase tracking-table-label text-white/45 light:text-app-fg-tertiary",
                     getAlignClass(column.align),
                   )}
                 >
@@ -219,10 +219,10 @@ export function ToolOutputTable({
                     className={cn(
                       "px-3 py-2.5",
                       rowIndex > 0 &&
-                        "border-t border-white/7 light:border-app-border-8",
+                        "border-t border-white/7 light:border-app-border-subtle",
                       rowIndex % 2 === 0
                         ? "bg-white/150 light:bg-white"
-                        : "bg-white/350 light:bg-app-surface-4",
+                        : "bg-white/350 light:bg-app-surface-subtle",
                       hasRowActions &&
                         rowHasActions &&
                         "cursor-pointer transition hover:bg-white/5 light:hover:bg-app-hover",
@@ -238,7 +238,7 @@ export function ToolOutputTable({
                           key={`${rowIndex}-${column.key}`}
                           className="min-w-0"
                         >
-                          <p className="text-compact-10 uppercase tracking-table-label text-white/45 sm:hidden light:text-app-muted-55">
+                          <p className="text-compact-10 uppercase tracking-table-label text-white/45 sm:hidden light:text-app-fg-tertiary">
                             {column.label}
                           </p>
                           <div
@@ -256,10 +256,10 @@ export function ToolOutputTable({
                   </div>
 
                   {isSelected && rowSelectedActions.length > 0 ? (
-                    <div className="border-t border-white/8 bg-violet-500/10 px-3 py-2.5 light:border-app-border-8 light:bg-amber-50/60">
+                    <div className="border-t border-white/8 bg-violet-500/10 px-3 py-2.5 light:border-app-border-subtle light:bg-amber-50/60">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <p className="text-xs text-white/75 light:text-app-fg-muted">
-                          <span className="text-white/58 light:text-app-muted-60">
+                          <span className="text-white/58 light:text-app-fg-subtle">
                             Selected:
                           </span>{" "}
                           {rowSummary}
@@ -289,7 +289,7 @@ export function ToolOutputTable({
             })}
           </div>
         ) : (
-          <div className="rounded-xl border border-white/8 bg-white/4 px-3 py-3 text-sm text-white/55 light:border-app-border-8 light:bg-app-surface-4 light:text-app-muted-60">
+          <div className="rounded-xl border border-white/8 bg-white/4 px-3 py-3 text-sm text-white/55 light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-subtle">
             {emptyLabel}
           </div>
         )}
