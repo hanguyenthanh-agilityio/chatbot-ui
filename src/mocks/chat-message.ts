@@ -1,4 +1,6 @@
+import type { ComponentProps } from "react";
 import type { UIMessage } from "ai";
+import { ChatMessage } from "@/components/transcript/message";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
 
 const ASSISTANT_METADATA = {
@@ -140,6 +142,24 @@ export function mockAssistantApprovalMessage(id = "msg-assistant-approval"): UIM
         },
       }),
     ],
+  };
+}
+
+export type MockChatMessageProps = ComponentProps<typeof ChatMessage>;
+
+export function mockChatMessageProps(
+  message: UIMessage,
+  overrides?: Partial<Omit<MockChatMessageProps, "message">>,
+): MockChatMessageProps {
+  return {
+    message,
+    isLastMessage: true,
+    isLoading: false,
+    userInitials: "HN",
+    userAvatarLabel: "User avatar",
+    onSelectPrompt: () => {},
+    onToolApproval: () => {},
+    ...overrides,
   };
 }
 
