@@ -9,7 +9,6 @@ export type MessageBubbleProps = {
   fullWidth?: boolean;
   children?: ReactNode;
 };
-
 export function MessageBubble({
   isUser,
   text,
@@ -36,13 +35,13 @@ export function MessageBubble({
       className={cn(
         "rounded-2xl border px-4 py-2.5 text-sm leading-relaxed shadow-bubble-assistant backdrop-blur-md",
         "border-white/11 bg-bubble-assistant text-white/88",
-        "light:border-app-border-10 light:text-app-fg light:backdrop-blur-none",
+        "light:border-app-border light:text-app-fg light:backdrop-blur-none",
         fullWidth ? "max-w-full" : "max-w-bubble-assistant",
       )}
     >
       {text ? <span className="whitespace-pre-wrap">{text}</span> : null}
       {!text && placeholder ? (
-        <span className="text-white/40 light:text-app-muted-50">
+        <span className="text-white/40 light:text-app-fg-faint">
           {placeholder}
         </span>
       ) : null}
