@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
 
 @import "tailwindcss";
 
@@ -145,6 +145,9 @@
     --color-app-table-row-alt: #1c19170a;
     --color-app-row-selected-bg: var(--color-app-accent-soft);
     --color-app-row-selected-ring: #d977064d;
+    /* Skeleton shimmer — must contrast on white glass */
+    --color-app-skeleton: var(--palette-stone-700);
+    --color-app-skeleton-dot: var(--palette-stone-800);
   }
 }
 
@@ -300,6 +303,8 @@
   --tracking-table-label: var(--letter-spacing-table-label);
   --color-btn-disabled: var(--bg-btn-disabled);
   --color-surface-muted: var(--bg-surface-muted);
+  --color-app-skeleton: #ffffff52;
+  --color-app-skeleton-dot: #ffffff85;
   --background-image-glass: var(--bg-glass);
   --background-image-glass-panel: var(--bg-glass-panel);
   --background-image-glass-panel-chat: var(--bg-glass-panel);
@@ -527,6 +532,9 @@ html[data-theme="light"],
   --shadow-chip-brand: 0 2px 8px #78716c24;
   --shadow-toggle-light: inset 0 1px 0 #fffefc, 0 2px 8px #1c19170f;
   --shadow-toggle-thumb-light: 0 1px 4px #1c19171a, inset 0 1px 0 #fffefcbf;
+
+  --color-app-skeleton: var(--palette-stone-800);
+  --color-app-skeleton-dot: var(--palette-stone-900);
 }
 
 html[data-theme="light"] body {
@@ -550,6 +558,36 @@ html[data-theme="light"] .app-chat-header {
   border-color: var(--color-app-border-subtle);
   background: var(--bg-glass-header);
   box-shadow: var(--shadow-shell-header);
+}
+
+@keyframes app-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.app-skeleton-bar {
+  background-color: #ffffff85;
+  animation: app-skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.app-skeleton-dot {
+  background-color: #ffffffb3;
+  animation: app-skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+html[data-theme="light"] .app-skeleton-bar,
+[data-theme="light"] .app-skeleton-bar {
+  background-color: #44403c;
+}
+
+html[data-theme="light"] .app-skeleton-dot,
+[data-theme="light"] .app-skeleton-dot {
+  background-color: #292524;
 }
 
 aside .rounded-2xl,
