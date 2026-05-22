@@ -11,7 +11,9 @@ import {
   ThemeMode,
   type Theme,
 } from "@/constants/theme";
-import { persistTheme } from "@/lib/theme";
+
+// Libs
+import { isTheme, persistTheme } from "@/lib/theme";
 
 function setDocumentTheme(theme: Theme = DEFAULT_THEME) {
   persistTheme(theme);
@@ -34,10 +36,7 @@ function renderThemeToggle(theme: Theme = ThemeMode.Dark) {
 
 function readStoredTheme(): Theme | null {
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored === ThemeMode.Dark || stored === ThemeMode.Light) {
-    return stored;
-  }
-  return null;
+  return isTheme(stored) ? stored : null;
 }
 
 describe("ThemeToggle", () => {

@@ -36,7 +36,7 @@ export function Avatar(props: AvatarProps) {
         className={cn(
           BASE,
           SIZE[size].box,
-          "border border-white/20 shadow-avatar-brand",
+          "border border-white/20 shadow-avatar-brand light:border-app-border",
           className,
         )}
         style={{

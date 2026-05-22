@@ -45,6 +45,12 @@ export const THEME_SHELL_UTILITIES = {
 export const FORM_FIELD_PANEL_CLASSES =
   "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border light:bg-app-field light:text-app-fg-muted light:placeholder:text-app-fg-faint light:hover:border-amber-800/35";
 
+export const FORM_FIELD_PANEL_FOCUS_CLASSES =
+  "focus:border-violet-400/55 focus:ring-2 focus:ring-violet-400/20 light:focus:border-app-border-emphasis light:focus:ring-amber-700/25";
+
+export const OLLAMA_VERIFY_BUTTON_CLASSES =
+  "border font-secondary text-white/60 hover:bg-white/8 light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:hover:bg-app-hover";
+
 export function isDarkTheme(theme: Theme): boolean {
   return theme === ThemeMode.Dark;
 }

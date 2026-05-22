@@ -25,7 +25,7 @@ export function AuthPanel({
   }
 
   return (
-    <Card className="p-4 shadow-panel-sm">
+    <Card variant="panel" className="p-4 shadow-panel-sm text-white light:text-app-fg">
       <div className="space-y-1">
         <Text as="p" variant="sectionTitle">
           {AUTH_PANEL_COPY.title}
@@ -45,7 +45,7 @@ export function AuthPanel({
           disabled={disabled}
           fullWidth
           controlSize="md"
-          variant="dark"
+          variant="panel"
         >
           <option value="user">{AUTH_PANEL_COPY.userModeLabel}</option>
           <option value="manager">{AUTH_PANEL_COPY.managerModeLabel}</option>

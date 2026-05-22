@@ -120,10 +120,31 @@
     --color-app-field: var(--palette-stone-field);
     --color-app-hover: #1c19170a;
     --color-app-accent: var(--palette-amber-700);
+    --color-app-accent-soft: #d977061a;
     --color-app-btn-brand-disabled: #78716c8c;
     --color-app-blob-warm: #d977061a;
     --color-app-blob-neutral: #78716c1a;
-    --color-app-blob-accent: #b453091a;
+    --color-app-blob-accent: #b4530910;
+    /* Alerts & tool surfaces */
+    --color-app-danger-border: #fecaca;
+    --color-app-danger-bg: #fef2f2;
+    --color-app-danger-fg: #b91c1c;
+    --color-app-success-border: #a7f3d0;
+    --color-app-success-bg: #ecfdf5;
+    --color-app-success-fg: #047857;
+    --color-app-info-border: #bae6fd;
+    --color-app-info-bg: #f0f9ff;
+    --color-app-info-fg: #0369a1;
+    --color-app-warning-border: #fde68a;
+    --color-app-warning-bg: #fffbeb;
+    --color-app-warning-fg: var(--palette-amber-700);
+    --color-app-tool-neutral-border: var(--color-app-border);
+    --color-app-tool-neutral-bg: var(--color-app-surface-subtle);
+    --color-app-tool-neutral-fg: var(--color-app-fg-muted);
+    --color-app-table-header-bg: #1c19170a;
+    --color-app-table-row-alt: #1c19170a;
+    --color-app-row-selected-bg: var(--color-app-accent-soft);
+    --color-app-row-selected-ring: #d977064d;
   }
 }
 
@@ -161,12 +182,7 @@
   --bg-glass-input: linear-gradient(165deg, #ffffff1f, #ffffff0a);
   --bg-glass-loading: var(--bg-glass-panel);
   --bg-glass-table: linear-gradient(165deg, #8c8eaa4d, #3e3c5e66);
-  --bg-bubble-user: linear-gradient(
-    135deg,
-    #7c3aed80,
-    #4f46e580,
-    #0ea5e94d
-  );
+  --bg-bubble-user: linear-gradient(135deg, #7c3aed80, #4f46e580, #0ea5e94d);
   --bg-bubble-assistant: linear-gradient(165deg, #ffffff1a, #ffffff0a);
   --bg-btn-active: linear-gradient(
     135deg,
@@ -409,11 +425,7 @@ html[data-theme="light"] {
     var(--palette-stone-800) 50%,
     var(--palette-stone-600) 100%
   );
-  --bg-bubble-assistant: linear-gradient(
-    180deg,
-    #fffefcf2 0%,
-    #f5f4f1cc 100%
-  );
+  --bg-bubble-assistant: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1cc 100%);
   --bg-btn-active: linear-gradient(
     90deg,
     var(--palette-stone-800) 0%,

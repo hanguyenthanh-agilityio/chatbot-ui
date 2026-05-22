@@ -1,6 +1,9 @@
 import { forwardRef } from "react";
 import type { SelectHTMLAttributes } from "react";
-import { FORM_FIELD_PANEL_CLASSES } from "@/constants/theme";
+import {
+  FORM_FIELD_PANEL_CLASSES,
+  FORM_FIELD_PANEL_FOCUS_CLASSES,
+} from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 const SELECT_VARIANT_CLASSES = {
@@ -10,7 +13,7 @@ const SELECT_VARIANT_CLASSES = {
     "border-slate-200 bg-slate-50/90 text-slate-900 hover:border-slate-300",
   ghost:
     "border-transparent bg-transparent text-slate-900 hover:border-slate-200",
-  dark: cn(FORM_FIELD_PANEL_CLASSES, "[&>option]:text-slate-900"),
+  panel: cn(FORM_FIELD_PANEL_CLASSES, "[&>option]:text-slate-900"),
 } as const;
 
 const SELECT_SIZE_CLASSES = {
@@ -45,8 +48,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         ref={ref}
         className={cn(
           "peer w-full appearance-none rounded-xl border pr-10 outline-none transition duration-200",
-          variant === "dark"
-            ? "focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
+          variant === "panel"
+            ? FORM_FIELD_PANEL_FOCUS_CLASSES
             : "focus:border-sky-400 focus:ring-2 focus:ring-sky-100",
           "disabled:cursor-not-allowed disabled:opacity-60",
           SELECT_VARIANT_CLASSES[variant],
@@ -58,7 +61,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {children}
       </select>
 
-      <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-500 transition peer-focus:text-sky-500">
+      <span
+        className={cn(
+          "pointer-events-none absolute inset-y-0 right-3 flex items-center transition",
+          variant === "panel"
+            ? "text-white/50 peer-focus:text-violet-300/90 light:text-app-fg-faint light:peer-focus:text-app-accent"
+            : "text-slate-500 peer-focus:text-sky-500",
+        )}
+      >
         <svg
           aria-hidden="true"
           viewBox="0 0 20 20"
