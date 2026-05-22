@@ -67,13 +67,17 @@ export function ChatComposer({
   return (
     <div
       className={cn(
-        "border-t border-white/8 backdrop-blur-shell shadow-composer-bar bg-glass-composer light:border-app-border-8 light:backdrop-blur-none",
+        "border-t border-white/8 backdrop-blur-shell shadow-composer-bar bg-glass-composer light:border-app-border-subtle light:backdrop-blur-none",
         "px-4 py-3 sm:px-6 lg:px-8",
       )}
     >
       <div className="mx-auto w-full max-w-3xl flex flex-col gap-2">
         {errorMessage ? (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 light:border-red-300/50 light:bg-red-50">
+          <div
+            className={
+              "rounded-2xl px-4 py-3 border border-red-500/30 bg-red-500/10 text-red-400 light:border-app-danger-border light:bg-app-danger-bg light:text-app-danger-fg"
+            }
+          >
             <Text variant="error">{errorMessage}</Text>
           </div>
         ) : null}
@@ -84,29 +88,18 @@ export function ChatComposer({
           onMouseLeave={() => setShowTooltip(false)}
           onClick={() => !isProviderReady && setShowTooltip(true)}
         >
-          {showTooltip && !isProviderReady && inputTooltip && (
-            <div
-              className={cn(
-                "pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs shadow-lg",
-                "bg-slate-800 text-white",
-                "light:border light:border-app-border-10 light:bg-app-fg light:text-white light:shadow-card-surface",
-              )}
-            >
+          {showTooltip && !isProviderReady && inputTooltip ? (
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/12 bg-slate-800 px-3 py-1.5 text-xs text-white shadow-lg light:border-app-border light:bg-app-surface-muted light:text-app-fg light:shadow-panel-sm">
               {inputTooltip}
-              <span
-                className={cn(
-                  "absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800",
-                  "light:border-t-app-fg",
-                )}
-              />
+              <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800 light:border-t-app-border-muted" />
             </div>
-          )}
+          ) : null}
           <form
             onSubmit={onSubmitAction}
             className={cn(
               "flex w-full items-center gap-3 rounded-composer-field px-4 py-2.5 shadow-composer-input backdrop-blur-xl bg-glass-input transition-all duration-200",
-              "focus-within:border-violet-400/55 light:shadow-composer-field light:focus-within:border-app-hover-border",
               FORM_FIELD_PANEL_CLASSES,
+              "focus-within:border-violet-400/55 focus-within:ring-2 focus-within:ring-violet-400/20 light:focus-within:border-app-border-emphasis light:focus-within:ring-amber-700/25",
             )}
           >
             <textarea
@@ -118,7 +111,7 @@ export function ChatComposer({
               aria-label={CHAT_COMPOSER_COPY.ariaLabel}
               disabled={!isProviderReady}
               rows={1}
-              className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-composer text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-amber-700 light:placeholder:text-app-muted-50"
+              className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-composer text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-app-accent light:placeholder:text-app-fg-faint"
             />
 
             <button
@@ -127,7 +120,7 @@ export function ChatComposer({
               aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
               className={cn(
                 "self-end grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-all duration-200",
-                "disabled:opacity-30 disabled:cursor-not-allowed",
+                "disabled:cursor-not-allowed disabled:opacity-30",
                 "hover:scale-hover-btn hover:shadow-btn-brand",
                 canSend
                   ? "bg-btn-active text-white light:hover:brightness-105"

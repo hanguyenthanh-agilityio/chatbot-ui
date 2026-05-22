@@ -7,9 +7,8 @@ import {
   type BadgeVariant,
 } from "@/components/ui/badge";
 
-
 const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+  <div className="rounded-2xl border border-white/10 bg-glass-panel p-6 text-white">
     <Story />
   </div>
 );
@@ -85,18 +84,18 @@ export const ThemeComparison: Story = {
     <div className="grid gap-6 sm:grid-cols-2">
       <div
         data-theme="dark"
-        className="space-y-3 rounded-2xl border border-white/10 bg-[linear-gradient(165deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-4 text-white"
+        className="space-y-3 rounded-2xl border border-white/10 bg-preview-dark p-4 text-white"
       >
-        <p className="font-dm-sans text-xs font-medium uppercase tracking-wider text-white/50">
+        <p className="font-secondary text-xs font-medium uppercase tracking-wider text-white/50 light:text-app-fg-faint">
           Dark
         </p>
         <VariantGrid />
       </div>
       <div
         data-theme="light"
-        className="space-y-3 rounded-2xl border border-violet-200/40 bg-[linear-gradient(165deg,#fff,#f8f6ff)] p-4 light:text-app-fg"
+        className="space-y-3 rounded-2xl border border-white/10 bg-preview-light p-4 light:border-app-border light:text-app-fg"
       >
-        <p className="font-dm-sans text-xs font-medium uppercase tracking-wider light:text-app-muted-55">
+        <p className="font-secondary text-xs font-medium uppercase tracking-wider text-white/50 light:text-app-fg-faint">
           Light
         </p>
         <VariantGrid />
@@ -117,5 +116,3 @@ export const Sizes: Story = {
     </div>
   ),
 };
-
-
