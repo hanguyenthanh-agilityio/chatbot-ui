@@ -14,6 +14,7 @@ import {
   THREAD_TIMESTAMP_FORMAT,
   THREAD_TIMESTAMP_LOCALE,
 } from "@/constants/date-time";
+import { PROVIDER_BADGE_VARIANT } from "@/constants/provider";
 
 // Utils
 import { cn } from "@/utils/class-name";
@@ -194,7 +195,7 @@ function ThreadCard({
             </Text>
           </div>
           <Badge
-            variant={isActive ? "brand" : "subtle"}
+            variant={PROVIDER_BADGE_VARIANT[thread.provider]}
             size="sm"
             className="uppercase tracking-wide"
           >

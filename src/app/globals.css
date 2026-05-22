@@ -184,6 +184,19 @@
   --bg-glass-table: linear-gradient(165deg, #8c8eaa4d, #3e3c5e66);
   --bg-bubble-user: linear-gradient(135deg, #7c3aed80, #4f46e580, #0ea5e94d);
   --bg-bubble-assistant: linear-gradient(165deg, #ffffff1a, #ffffff0a);
+  /* Preview / date-picker (hex α — rgba(255,255,255,0.06)→0f, 0.03→08, 50%→80) */
+  --bg-preview-dark: linear-gradient(165deg, #ffffff0f, #ffffff08);
+  --bg-preview-light: var(--bg-glass);
+  --bg-datepicker-half-morning: linear-gradient(
+    to right,
+    #ffffff80 50%,
+    transparent 50%
+  );
+  --bg-datepicker-half-afternoon: linear-gradient(
+    to right,
+    transparent 50%,
+    #ffffff80 50%
+  );
   --bg-btn-active: linear-gradient(
     135deg,
     var(--palette-violet-500),
@@ -277,6 +290,12 @@
   --background-image-glass-input: var(--bg-glass-input);
   --background-image-glass-loading: var(--bg-glass-loading);
   --background-image-glass-table: var(--bg-glass-table);
+  --background-image-preview-dark: var(--bg-preview-dark);
+  --background-image-preview-light: var(--bg-preview-light);
+  --background-image-datepicker-half-morning: var(--bg-datepicker-half-morning);
+  --background-image-datepicker-half-afternoon: var(
+    --bg-datepicker-half-afternoon
+  );
   --background-image-bubble-user: var(--bg-bubble-user);
   --background-image-bubble-assistant: var(--bg-bubble-assistant);
   --background-image-btn-active: var(--bg-btn-active);
@@ -376,7 +395,8 @@ html[data-theme] body :not(.theme-toggle, .theme-toggle *) {
     -webkit-backdrop-filter !important;
 }
 
-html[data-theme="light"] {
+html[data-theme="light"],
+[data-theme="light"] {
   --foreground: var(--palette-stone-900);
   --bg-selection: #d9770633;
 
@@ -414,6 +434,17 @@ html[data-theme="light"] {
   --bg-glass-input: linear-gradient(180deg, #fffefcf2 0%, #f5f4f1cc 100%);
   --bg-glass-loading: var(--bg-glass-panel);
   --bg-glass-table: var(--bg-glass);
+  --bg-preview-light: var(--bg-glass);
+  --bg-datepicker-half-morning: linear-gradient(
+    to right,
+    #fffefc80 50%,
+    transparent 50%
+  );
+  --bg-datepicker-half-afternoon: linear-gradient(
+    to right,
+    transparent 50%,
+    #fffefc80 50%
+  );
 
   --bg-shell-sidebar: var(--bg-glass);
   --bg-shell-chat-panel: var(--bg-glass);
