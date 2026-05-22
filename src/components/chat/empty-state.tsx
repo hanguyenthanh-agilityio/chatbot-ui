@@ -1,6 +1,8 @@
 import { Avatar } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
 import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
+import { THEME_SHELL_UTILITIES } from "@/constants/theme";
+import { cn } from "@/utils/class-name";
 import type { QuickAction } from "@/types/chat";
 
 type ChatEmptyStateProps = {
@@ -14,7 +16,13 @@ export function ChatEmptyState({
 }: ChatEmptyStateProps) {
   return (
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-4 py-12">
-      <div className="flex w-full max-w-[32.5rem] flex-col items-center gap-6 rounded-3xl border border-white/10 bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.04))] p-8 shadow-[0_24px_64px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[2rem]">
+      <div
+        className={cn(
+          "flex w-full max-w-chat-empty flex-col items-center gap-6 rounded-3xl border border-white/10 p-8 shadow-glass-hero backdrop-blur-[2rem]",
+          "bg-glass light:border-app-border-10 light:bg-app-surface-6 light:shadow-panel",
+          THEME_SHELL_UTILITIES.border,
+        )}
+      >
         <div className="flex items-center justify-center">
           <Avatar variant="assistant" size="lg" />
         </div>
@@ -22,12 +30,12 @@ export function ChatEmptyState({
         <div className="text-center">
           <Text
             as="h2"
-            variant="inherit"
-            className="mb-2 font-dm-sans text-[1.875rem] font-bold leading-[1.3] text-white"
+            variant="title"
+            className="mb-2 text-[1.875rem] leading-[1.3]"
           >
             {CHAT_EMPTY_STATE_COPY.title}
           </Text>
-          <Text variant="subtitle" className="text-sm leading-relaxed text-white/72">
+          <Text variant="subtitle" className="text-sm leading-relaxed">
             {CHAT_EMPTY_STATE_COPY.description}
           </Text>
         </div>
@@ -37,7 +45,7 @@ export function ChatEmptyState({
             <button
               key={action.label}
               type="button"
-              className="cursor-pointer rounded-full border border-white/18 bg-white/6 px-3.5 py-1.5 font-dm-sans text-xs text-white/78 backdrop-blur-[0.625rem] transition-all duration-200 hover:border-violet-300/55 hover:bg-violet-600/20 hover:text-white hover:shadow-[0_4px_12px_rgba(99,60,220,0.2)]"
+              className="cursor-pointer rounded-full border border-white/18 bg-white/6 px-3.5 py-1.5 text-xs text-white/78 backdrop-blur-[0.625rem] transition-all duration-200 hover:border-violet-300/55 hover:bg-violet-600/20 hover:text-white hover:shadow-chip-brand light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted light:hover:border-amber-800/30 light:hover:bg-amber-950/8 light:hover:text-app-fg light:hover:shadow-card-surface"
               onClick={() => onSelectPrompt(action.prompt)}
             >
               {action.label}

@@ -1,22 +1,34 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+
+// Components
 import { ProviderSelector } from "@/components/chat/provider-selector";
 import { ChatComposer } from "@/components/chat/composer";
 import { ChatTranscript } from "@/components/transcript";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Toast } from "@/components/ui/toast";
+import { Text } from "@/components/ui/text";
 import { AuthPanel } from "@/components/workspace/auth-panel";
 import { ThreadSidebar } from "@/components/workspace/sidebar";
+
+// Constants
 import { APP_NAME, APP_HEADER_REVIEW_BADGE_LABEL } from "@/constants/app";
+import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
 import { DEFAULT_PROVIDER_OPTIONS } from "@/constants/provider";
+
+// Libs
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
 import { isProductionLike } from "@/lib/runtime-env";
 import type { AIProviderName } from "@/lib/ai-provider";
-import { Text } from "@/components/ui/text";
+
+// Utils
 import { getInitialsFromName } from "@/utils/avatar";
+import { cn } from "@/utils/class-name";
+
+// Hooks
 import { useWorkspaceApp } from "@/hooks/use-workspace-app";
 
 const ALLOWED_PROVIDERS: AIProviderName[] = isProductionLike()
@@ -27,7 +39,6 @@ type WorkspaceAppProps = {
   authRole?: AppRole;
   authSessions: Record<AppRole, MockAuthSession>;
 };
-
 export function WorkspaceApp({
   authRole = "user",
   authSessions,
@@ -40,10 +51,22 @@ export function WorkspaceApp({
 
   if (!isHydrated) {
     return (
-      <main className="min-h-screen min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
-        <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
-          <div className="h-[70vh] w-full rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px] lg:max-w-sm" />
-          <div className="h-[70vh] flex-1 rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] backdrop-blur-[28px]" />
+      <main className="min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
+        <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-md sm:gap-4 lg:flex-row">
+          <div
+            className={cn(
+              "h-chat-viewport w-full rounded-shell border backdrop-blur-[28px] lg:max-w-sm",
+              "bg-glass-panel-alt",
+              THEME_SHELL_UTILITIES.border,
+            )}
+          />
+          <div
+            className={cn(
+              "h-chat-viewport flex-1 rounded-shell border backdrop-blur-[28px]",
+              "bg-glass-panel-alt",
+              THEME_SHELL_UTILITIES.border,
+            )}
+          />
         </div>
       </main>
     );
@@ -87,11 +110,13 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
       onRoleChange={handleRoleChange}
     />
   );
-
   const sidebarProviderPanel = (
     <Card
       variant="panel"
-      className="p-4 text-white shadow-[0_8px_30px_rgba(5,10,30,0.25)]"
+      className={cn(
+        "p-4 shadow-panel",
+        THEME_SHELL_UTILITIES.text,
+      )}
     >
       <ProviderSelector
         provider={provider}
@@ -107,7 +132,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
   );
 
   return (
-    <main className="min-h-screen min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
+    <main className="min-h-screen px-3 py-3 sm:px-5 sm:py-5">
       {provider.successMessage ? (
         <Toast
           message={provider.successMessage}
@@ -115,7 +140,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           onDismiss={provider.dismissSuccessMessage}
         />
       ) : null}
-      <div className="mx-auto flex min-h-[calc(100vh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[1600px] flex-col gap-3 sm:min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100dvh-2.5rem)] sm:gap-4 lg:flex-row">
+      <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-dvh sm:gap-4 lg:flex-row">
         <ThreadSidebar
           activeThread={activeThread}
           allThreads={allThreads}
@@ -127,8 +152,22 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           onDeleteThread={deleteThread}
         />
 
-        <section className="flex min-h-[70vh] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/9 bg-[linear-gradient(170deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-[28px] shadow-[0_16px_60px_rgba(7,12,32,0.36)]">
-          <header className="border-b border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-4 py-5 sm:px-6 lg:px-8 shadow-[0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.2)]">
+        <section
+          className={cn(
+            THEME_SHELL_CLASSES.chatPanel,
+            "flex min-h-chat-viewport flex-1 flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel light:backdrop-blur-none",
+            "bg-glass-panel-chat",
+            THEME_SHELL_UTILITIES.border,
+          )}
+        >
+          <header
+            className={cn(
+              THEME_SHELL_CLASSES.chatHeader,
+              "border-b px-4 py-5 sm:px-6 lg:px-8 shadow-shell-header",
+              "bg-glass-header",
+              THEME_SHELL_UTILITIES.borderSubtle,
+            )}
+          >
             <div className="mx-auto w-full max-w-3xl">
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <Text as="p" variant="eyebrow">
@@ -173,7 +212,6 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             onSelectPrompt={handlePromptSelect}
             onToolApproval={handleToolApproval}
           />
-
           <ChatComposer
             input={input}
             canSend={canSend}
