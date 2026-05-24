@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/utils/class-name";
 
-type MessageBubbleProps = {
+export type MessageBubbleProps = {
   isUser: boolean;
   text?: string;
   placeholder?: string;
@@ -20,8 +20,9 @@ export function MessageBubble({
     return (
       <div
         className={cn(
-          "ml-auto max-w-bubble-user rounded-bubble-user border border-violet-300/28 px-3.75 py-2.5 text-sm leading-relaxed wrap-break-word text-white/90 shadow-bubble-user backdrop-blur-lg",
-          "bg-bubble-user",
+          "ml-auto max-w-bubble-user rounded-bubble-user border px-3.75 py-2.5 text-sm leading-relaxed wrap-break-word shadow-bubble-user backdrop-blur-lg",
+          "border-violet-300/28 bg-bubble-user text-white/90",
+          "light:border-stone-600/20 light:text-white/95 light:backdrop-blur-none",
         )}
       >
         <span className="whitespace-pre-wrap">{text ?? placeholder}</span>
@@ -32,14 +33,17 @@ export function MessageBubble({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-white/11 px-4 py-2.5 text-sm leading-relaxed text-white/88 shadow-bubble-assistant backdrop-blur-md",
-        "bg-bubble-assistant",
+        "rounded-2xl border px-4 py-2.5 text-sm leading-relaxed shadow-bubble-assistant backdrop-blur-md",
+        "border-white/11 bg-bubble-assistant text-white/88",
+        "light:border-app-border light:text-app-fg light:backdrop-blur-none",
         fullWidth ? "max-w-full" : "max-w-bubble-assistant",
       )}
     >
       {text ? <span className="whitespace-pre-wrap">{text}</span> : null}
       {!text && placeholder ? (
-        <span className="text-white/40">{placeholder}</span>
+        <span className="text-white/40 light:text-app-fg-faint">
+          {placeholder}
+        </span>
       ) : null}
       {children ? (
         <div className={cn(text || placeholder ? "mt-3" : undefined)}>
@@ -50,7 +54,7 @@ export function MessageBubble({
   );
 }
 
-type MessageAvatarProps = {
+export type MessageAvatarProps = {
   initials: string;
   isUser: boolean;
   avatarUrl?: string;

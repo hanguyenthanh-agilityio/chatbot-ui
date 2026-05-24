@@ -5,12 +5,14 @@ import {
 } from "@/constants/app";
 
 const SIZE = {
-  sm: { box: "size-avatar-sm", text: "text-[10px] tracking-wide" },
-  md: { box: "h-9 w-9", text: "text-[11px] tracking-wide" },
+  sm: { box: "size-avatar-sm", text: "text-compact-10 tracking-wide" },
+  md: { box: "h-9 w-9", text: "text-compact-11 tracking-wide" },
   lg: { box: "h-14 w-14", text: "text-sm tracking-wider" },
 } as const;
 
 export type AvatarSize = keyof typeof SIZE;
+
+export const AVATAR_SIZE_OPTIONS = Object.keys(SIZE) as AvatarSize[];
 
 const BASE =
   "relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center";
@@ -40,7 +42,7 @@ export function Avatar(props: AvatarProps) {
           className,
         )}
         style={{
-          backgroundImage: `url(${APP_ASSISTANT_AVATAR_SRC}), linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%)`,
+          backgroundImage: `url(${APP_ASSISTANT_AVATAR_SRC}), var(--avatar-assistant-fallback)`,
         }}
       />
     );
@@ -56,8 +58,8 @@ export function Avatar(props: AvatarProps) {
       className={cn(
         BASE,
         SIZE[size].box,
-        "bg-[radial-gradient(circle_at_30%_30%,#6366f173,#6d28d959)]",
-        "ring-[1.5px] ring-indigo-400/35",
+        "bg-avatar-user-placeholder",
+        "ring-[1.5px] ring-indigo-400/35 light:ring-stone-400/50",
         !hasImage && "shadow-avatar-placeholder",
         hasImage && "shadow-avatar-photo",
         className,
@@ -67,7 +69,7 @@ export function Avatar(props: AvatarProps) {
       {hasImage ? null : (
         <span
           className={cn(
-            "absolute inset-0 flex items-center justify-center font-semibold text-white/90",
+            "absolute inset-0 flex items-center justify-center font-semibold text-white/90 light:text-white",
             SIZE[size].text,
           )}
         >
