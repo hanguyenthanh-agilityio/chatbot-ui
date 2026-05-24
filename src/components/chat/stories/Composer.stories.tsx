@@ -6,6 +6,7 @@ import { CHAT_COMPOSER_COPY } from "@/constants/chat";
 import {
   STORYBOOK_THEME_GLOBAL,
   THEME_SHELL_CLASSES,
+  THEME_SHELL_UTILITIES,
   ThemeMode,
 } from "@/constants/theme";
 import {
@@ -19,7 +20,8 @@ const inChatPanel: Decorator = (Story) => (
     className={cn(
       THEME_SHELL_CLASSES.chatPanel,
       "mx-auto flex w-full max-w-3xl flex-col overflow-hidden rounded-shell border shadow-shell-panel",
-      "bg-glass-panel-chat border-white/9 light:border-app-border-9",
+      "bg-glass-panel-chat",
+      THEME_SHELL_UTILITIES.border,
     )}
   >
     <div className="min-h-48 flex-1" />
@@ -115,7 +117,8 @@ const meta = {
     },
     helperText: {
       control: "text",
-      description: "Footer hint; defaults to `CHAT_COMPOSER_COPY.defaultHelperText`.",
+      description:
+        "Footer hint; defaults to `CHAT_COMPOSER_COPY.defaultHelperText`.",
       table: { category: "Content" },
     },
     errorMessage: {

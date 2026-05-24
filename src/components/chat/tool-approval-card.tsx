@@ -26,7 +26,7 @@ export function ToolApprovalCard({
       </Text>
       <Text
         variant="helper"
-        className="mt-1 block text-white/70 light:text-app-muted-65"
+        className="mt-1 block text-white/70 light:text-app-fg-quaternary"
       >
         {description}
       </Text>
@@ -38,7 +38,7 @@ export function ToolApprovalCard({
           type="button"
           size="sm"
           variant="ghost"
-          className="border border-white/12 text-white/60 hover:bg-white/8 light:border-app-border-10 light:text-app-muted-65 light:hover:bg-app-hover light:hover:text-app-fg"
+          className="border border-white/12 text-white/60 hover:bg-white/8 light:border-app-border light:text-app-fg-quaternary light:hover:bg-app-hover light:hover:text-app-fg"
           onClick={onCancel}
         >
           {cancelLabel}

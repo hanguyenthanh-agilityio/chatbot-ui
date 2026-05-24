@@ -8,6 +8,7 @@ import {
 import {
   STORYBOOK_THEME_GLOBAL,
   THEME_SHELL_CLASSES,
+  THEME_SHELL_UTILITIES,
   ThemeMode,
 } from "@/constants/theme";
 import { cn } from "@/utils/class-name";
@@ -17,7 +18,8 @@ const inChatTranscript: Decorator = (Story) => (
     className={cn(
       THEME_SHELL_CLASSES.chatPanel,
       "mx-auto w-full max-w-3xl rounded-shell border p-6 shadow-shell-panel",
-      "bg-glass-panel-chat border-white/9 light:border-app-border-9",
+      "bg-glass-panel-chat",
+      THEME_SHELL_UTILITIES.border,
     )}
   >
     <Story />
@@ -94,7 +96,7 @@ export const AssistantWithChildren: Story = {
     <div className="flex justify-start gap-3">
       <MessageAvatar initials="EM" isUser={false} />
       <MessageBubble isUser={false} text="Here is your leave summary:" fullWidth>
-        <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm light:border-app-border-10 light:bg-app-surface-4 light:text-app-fg-muted">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-sm light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted">
           Table / tool output renders here
         </div>
       </MessageBubble>
