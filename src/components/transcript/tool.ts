@@ -21,11 +21,11 @@ export const TOOL_STATUS_TONE_CLASS: Record<
   string
 > = {
   error:
-    "border border-rose-400/28 bg-rose-500/12 text-rose-200 shadow-tool-rose",
+    "border border-rose-400/28 bg-rose-500/12 text-rose-200 shadow-tool-rose light:border-rose-300/70 light:bg-rose-50 light:text-rose-800 light:shadow-none",
   success:
-    "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 shadow-tool-emerald",
+    "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 shadow-tool-emerald light:border-emerald-300/70 light:bg-emerald-50 light:text-emerald-900 light:shadow-none",
   neutral:
-    "border border-white/10 bg-white/7 text-white/72 shadow-tool-neutral",
+    "border border-white/10 bg-white/7 text-white/72 shadow-tool-neutral light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:shadow-none",
 };
 
 export const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {

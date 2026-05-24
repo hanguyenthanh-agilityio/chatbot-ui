@@ -13,6 +13,15 @@ import {
   type UnknownRecord,
 } from "./utils";
 
+const EMPLOYEE_CELL_NAME_CLASSES =
+  "whitespace-nowrap text-sm font-semibold leading-compact text-white/92 light:text-app-fg";
+
+const EMPLOYEE_CELL_TEAM_CLASSES =
+  "mt-0.5 whitespace-nowrap text-xs leading-compact text-white/60 light:text-app-fg-muted";
+
+const EMPLOYEE_CELL_AVATAR_RING =
+  "ring-white/15 light:ring-app-border-muted";
+
 export function renderLeaveTypeChip(label: string) {
   return <Badge variant="info" className="px-2.5 py-0.5 text-xs">{label}</Badge>;
 }
@@ -52,17 +61,13 @@ export function renderEmployeeCell(request: UnknownRecord) {
         alt={`${employeeName} avatar`}
         initials={getInitialsFromName(employeeName)}
         size="sm"
-        className="ring-white/15"
+        className={EMPLOYEE_CELL_AVATAR_RING}
       />
 
       <div className="min-w-0">
-        <p className="whitespace-nowrap text-sm font-semibold leading-[1.25] text-white/92">
-          {employeeName}
-        </p>
+        <p className={EMPLOYEE_CELL_NAME_CLASSES}>{employeeName}</p>
         {employeeTeam ? (
-          <p className="mt-0.5 whitespace-nowrap text-xs leading-[1.25] text-white/60">
-            {employeeTeam}
-          </p>
+          <p className={EMPLOYEE_CELL_TEAM_CLASSES}>{employeeTeam}</p>
         ) : null}
       </div>
     </div>
