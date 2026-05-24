@@ -4,7 +4,68 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
+import { THEME_SHELL_UTILITIES } from "@/constants/theme";
 import { cn } from "@/utils/class-name";
+
+const CALENDAR_NAV_BUTTON_CLASSES =
+  "flex h-7 w-7 items-center justify-center rounded border border-white/16 text-white/60 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30 light:border-app-border light:text-app-fg-muted light:hover:bg-app-hover light:hover:text-app-fg disabled:light:opacity-40";
+
+const CALENDAR_RANGE_BAND_CLASSES =
+  "absolute top-0.5 bottom-0.5 bg-white/20 light:bg-app-accent-soft";
+
+const CALENDAR_DIVIDER_CLASSES =
+  "mt-3 h-px bg-white/10 light:bg-app-border-subtle";
+
+const SLOT_BUTTON_BASE_CLASSES =
+  "flex-1 rounded border py-2 text-sm font-medium transition border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70 light:border-app-border light:text-app-fg-tertiary light:hover:bg-app-hover light:hover:text-app-fg-muted";
+
+const SLOT_BUTTON_ACTIVE_CLASSES =
+  "border-white/30 bg-white/16 text-white light:border-app-border-emphasis light:bg-app-accent-soft light:text-app-fg";
+
+const CALENDAR_MONTH_LABEL_CLASSES =
+  "text-sm font-bold text-white light:text-app-fg";
+
+const CALENDAR_WEEKDAY_HEADER_CLASSES =
+  "py-1 text-center text-xs font-bold uppercase tracking-wide text-white/40 light:text-app-fg-tertiary";
+
+const CALENDAR_WEEKEND_HEADER_CLASSES =
+  "text-white/18 light:text-app-fg-faint";
+
+const CALENDAR_DAY_SELECTED_CLASSES =
+  "bg-white font-semibold text-slate-900 light:bg-app-accent light:text-white";
+
+const CALENDAR_DAY_IN_RANGE_CLASSES =
+  "font-medium text-white hover:bg-white/10 light:text-app-fg light:hover:bg-app-hover";
+
+const CALENDAR_DAY_TODAY_CLASSES =
+  "text-white ring-1 ring-white/35 hover:bg-white/10 light:text-app-fg light:ring-app-border-emphasis light:hover:bg-app-hover";
+
+const CALENDAR_DAY_DEFAULT_CLASSES =
+  "text-white/72 hover:bg-white/10 light:text-app-fg-muted light:hover:bg-app-hover";
+
+const CALENDAR_DAY_WEEKEND_CLASSES =
+  "cursor-not-allowed select-none text-white/18 light:text-app-fg-faint";
+
+const CALENDAR_DAY_DISABLED_CLASSES =
+  "cursor-not-allowed text-white/22 light:text-app-fg-faint";
+
+const CALENDAR_HALF_MORNING_CLASSES =
+  "pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(to_right,white_50%,transparent_50%)] light:bg-[linear-gradient(to_right,var(--color-app-accent)_50%,transparent_50%)]";
+
+const CALENDAR_HALF_AFTERNOON_CLASSES =
+  "pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(to_right,transparent_50%,white_50%)] light:bg-[linear-gradient(to_right,transparent_50%,var(--color-app-accent)_50%)]";
+
+const CALENDAR_SELECTED_DAY_NUMBER_CLASSES =
+  "relative z-10 text-slate-900 light:text-white";
+
+const CALENDAR_SUMMARY_DATE_CLASSES =
+  "text-sm text-white/50 light:text-app-fg-tertiary";
+
+const CALENDAR_SUMMARY_VALUE_CLASSES =
+  "text-sm font-bold text-white light:text-app-fg";
+
+const CALENDAR_CLEAR_BUTTON_CLASSES =
+  "shrink-0 text-xs text-white/30 transition hover:text-white/60 light:text-app-fg-tertiary light:hover:text-app-fg-muted";
 
 const MONTHS = [
   "January",
@@ -417,7 +478,12 @@ export function DateRangePickerCard({
   }
 
   return (
-    <Card className="w-fit max-w-full px-4 py-3 shadow-glass-compact">
+    <Card
+      className={cn(
+        "w-fit max-w-full px-4 py-3 shadow-glass-compact light:shadow-glass-compact",
+        THEME_SHELL_UTILITIES.borderSubtle,
+      )}
+    >
       <Text as="p" variant="sectionTitle">
         Select dates
       </Text>
@@ -429,7 +495,7 @@ export function DateRangePickerCard({
           aria-label="Previous month"
           onClick={() => goMonth(-1)}
           disabled={!canGoPrev || disabled}
-          className="flex h-7 w-7 items-center justify-center rounded border border-white/16 text-white/60 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+          className={CALENDAR_NAV_BUTTON_CLASSES}
         >
           <svg
             viewBox="0 0 16 16"
@@ -441,7 +507,7 @@ export function DateRangePickerCard({
             <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" />
           </svg>
         </button>
-        <span className="text-sm font-bold text-white">
+        <span className={CALENDAR_MONTH_LABEL_CLASSES}>
           {MONTHS[viewMonth]} {viewYear}
         </span>
         <button
@@ -449,7 +515,7 @@ export function DateRangePickerCard({
           aria-label="Next month"
           onClick={() => goMonth(1)}
           disabled={disabled}
-          className="flex h-7 w-7 items-center justify-center rounded border border-white/16 text-white/60 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+          className={CALENDAR_NAV_BUTTON_CLASSES}
         >
           <svg
             viewBox="0 0 16 16"
@@ -469,8 +535,8 @@ export function DateRangePickerCard({
           <div
             key={`hdr-${i}`}
             className={cn(
-              "py-1 text-center text-xs font-bold uppercase tracking-wide",
-              i >= 5 ? "text-white/18" : "text-white/40",
+              CALENDAR_WEEKDAY_HEADER_CLASSES,
+              i >= 5 && CALENDAR_WEEKEND_HEADER_CLASSES,
             )}
           >
             {h}
@@ -499,15 +565,30 @@ export function DateRangePickerCard({
               className="relative flex h-8 w-full items-center justify-center"
             >
               {inRange && (
-                <div className="absolute top-0.5 bottom-0.5 left-0 right-0 bg-white/20 rounded-none" />
+                <div
+                  className={cn(
+                    CALENDAR_RANGE_BAND_CLASSES,
+                    "left-0 right-0 rounded-none",
+                  )}
+                />
               )}
               {/* Right-half band extending from start pill into the range */}
               {isStart && isMultiDay && (
-                <div className="absolute top-0.5 bottom-0.5 left-1/2 right-0 bg-white/20" />
+                <div
+                  className={cn(
+                    CALENDAR_RANGE_BAND_CLASSES,
+                    "left-1/2 right-0",
+                  )}
+                />
               )}
               {/* Left-half band extending from range into end pill */}
               {isEnd && isMultiDay && (
-                <div className="absolute top-0.5 bottom-0.5 left-0 right-1/2 bg-white/20" />
+                <div
+                  className={cn(
+                    CALENDAR_RANGE_BAND_CLASSES,
+                    "left-0 right-1/2",
+                  )}
+                />
               )}
 
               {/* Day button */}
@@ -517,52 +598,41 @@ export function DateRangePickerCard({
                 disabled={disabled || isDisabledCell}
                 className={cn(
                   "relative z-10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs transition",
-                  // Full white pill when selected without half-day slot.
-                  isSelected &&
-                    !showHalf &&
-                    "bg-white font-semibold text-slate-900",
-                  // No bg on pill when half-day — gradient overlay below provides it.
+                  isSelected && !showHalf && CALENDAR_DAY_SELECTED_CLASSES,
                   isSelected && showHalf && "font-semibold",
-                  // Disabled (weekend / past / constraint).
-                  !isSelected &&
-                    isWknd &&
-                    "cursor-not-allowed select-none text-white/18",
+                  !isSelected && isWknd && CALENDAR_DAY_WEEKEND_CLASSES,
                   !isSelected &&
                     !isWknd &&
                     isDisabledCell &&
-                    "cursor-not-allowed text-white/22",
-                  // In-range dates — brighter text on the tinted band.
-                  !isSelected &&
-                    inRange &&
-                    "text-white font-medium hover:bg-white/10",
-                  // Normal interactive states.
+                    CALENDAR_DAY_DISABLED_CLASSES,
+                  !isSelected && inRange && CALENDAR_DAY_IN_RANGE_CLASSES,
                   !isSelected &&
                     !inRange &&
                     !isDisabledCell &&
                     isToday &&
-                    "ring-1 ring-white/35 text-white hover:bg-white/10",
+                    CALENDAR_DAY_TODAY_CLASSES,
                   !isSelected &&
                     !inRange &&
                     !isDisabledCell &&
                     !isToday &&
-                    "text-white/72 hover:bg-white/10",
+                    CALENDAR_DAY_DEFAULT_CLASSES,
                 )}
               >
                 {showHalf && (
                   <span
-                    className={cn(
-                      "pointer-events-none absolute inset-0 rounded-full",
+                    className={
                       halfSlot === "morning"
-                        ? "bg-[linear-gradient(to_right,white_50%,transparent_50%)]"
-                        : "bg-[linear-gradient(to_right,transparent_50%,white_50%)]",
-                    )}
+                        ? CALENDAR_HALF_MORNING_CLASSES
+                        : CALENDAR_HALF_AFTERNOON_CLASSES
+                    }
                   />
                 )}
                 {/* Day number sits on top of the gradient overlay. */}
                 <span
                   className={cn(
-                    "relative z-10",
-                    isSelected && "text-slate-900",
+                    isSelected
+                      ? CALENDAR_SELECTED_DAY_NUMBER_CLASSES
+                      : "relative z-10",
                   )}
                 >
                   {Number(iso.slice(8))}
@@ -576,7 +646,7 @@ export function DateRangePickerCard({
       {/* Visible as soon as a start date is selected — mirrors DatePickerTimeOffSection. */}
       {startDate && (
         <>
-          <div className="mt-3 h-px bg-white/10" />
+          <div className={CALENDAR_DIVIDER_CLASSES} />
           <div className="mt-3 flex gap-2">
             {SLOT_OPTIONS.map(({ label, value }) => {
               const isActive = activeBoundarySlot === value;
@@ -588,10 +658,8 @@ export function DateRangePickerCard({
                   disabled={isDisabledSlot}
                   onClick={() => handleSelectTimeSlot(value)}
                   className={cn(
-                    "flex-1 rounded border py-2 text-sm font-medium transition",
-                    isActive && !isDisabledSlot
-                      ? "border-white/30 bg-white/16 text-white"
-                      : "border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70",
+                    SLOT_BUTTON_BASE_CLASSES,
+                    isActive && !isDisabledSlot && SLOT_BUTTON_ACTIVE_CLASSES,
                     isDisabledSlot && "cursor-not-allowed opacity-40",
                   )}
                 >
@@ -606,12 +674,12 @@ export function DateRangePickerCard({
       {/* Mirrors summaryContainer / summaryDate / summaryDaysOff — always shows startDate. */}
       {summaryDateText && (
         <>
-          <div className="mt-3 h-px bg-white/10" />
+          <div className={CALENDAR_DIVIDER_CLASSES} />
           <div className="mt-2 flex flex-col items-end gap-0.5">
-            <span className="text-sm text-white/50">
+            <span className={CALENDAR_SUMMARY_DATE_CLASSES}>
               {summaryDateText}
             </span>
-            <span className="text-sm font-bold text-white">
+            <span className={CALENDAR_SUMMARY_VALUE_CLASSES}>
               {summaryValueText}
             </span>
           </div>
@@ -625,7 +693,7 @@ export function DateRangePickerCard({
             type="button"
             disabled={disabled}
             onClick={handleClear}
-            className="shrink-0 text-xs text-white/30 transition hover:text-white/60"
+            className={CALENDAR_CLEAR_BUTTON_CLASSES}
           >
             Clear
           </button>
