@@ -38,17 +38,22 @@ const MONTHS = [
 // Monday-first week headers; Sa/Su (indices 5-6) always dimmed.
 const WEEK_HEADERS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
+// Mirrors DATE_PICKER_TIME_SLOT from the reference.
+type TimeSlot = "all_day" | "morning" | "afternoon";
+
+// Mirrors DATE_PICKER_RANGE_SELECTION.
+type RangeSelection = "start" | "end";
+
+// Two pressable slot options (mirrors TIME_SLOT_OPTIONS).
 const SLOT_OPTIONS = [
   { label: "Morning", value: "morning" as const },
   { label: "Afternoon", value: "afternoon" as const },
 ];
 
-type TimeSlot = "all_day" | "morning" | "afternoon";
-type RangeSelection = "start" | "end";
-
+// Work-schedule boundaries used in calculateLeaveDays (mirrors WORK_HOURS in date.ts).
 const WORK_SHIFTS = [
-  { startH: 8, startM: 0, endH: 12, endM: 0 },
-  { startH: 13, startM: 30, endH: 17, endM: 30 },
+  { startH: 8, startM: 0, endH: 12, endM: 0 }, // morning block: 4 h
+  { startH: 13, startM: 30, endH: 17, endM: 30 }, // afternoon block: 4 h
 ] as const;
 const HOURS_PER_DAY = 8;
 
@@ -75,8 +80,8 @@ function getNextWorkingDay(fromIso: string): string {
 }
 
 function buildCalendarGrid(year: number, month: number): (string | null)[] {
-  const firstDow = new Date(year, month, 1).getDay();
-  const offset = (firstDow + 6) % 7;
+  const firstDow = new Date(year, month, 1).getDay(); // 0 = Sun
+  const offset = (firstDow + 6) % 7; // Mon-first offset
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const grid: (string | null)[] = Array(offset).fill(null);
   for (let d = 1; d <= daysInMonth; d++) grid.push(buildIso(year, month, d));
@@ -84,6 +89,7 @@ function buildCalendarGrid(year: number, month: number): (string | null)[] {
   return grid;
 }
 
+// "Apr 29" — mirrors formatDateWithWeekday (short form, current-year only).
 function fmtDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString("en-US", {
@@ -93,14 +99,19 @@ function fmtDate(iso: string): string {
   });
 }
 
+// Calendar days between two ISO dates (inclusive) — mirrors getInclusiveDaysInRange.
+// Counts ALL calendar days, not just workdays; used to detect single vs multi-day.
 function getInclusiveDays(start: string | null, end: string | null): number {
   if (!start) return 0;
-  if (!end) return 1;
+  if (!end) return 1; // single-day selection
   const s = new Date(start + "T00:00:00").getTime();
   const e = new Date(end + "T00:00:00").getTime();
   return Math.floor((e - s) / (24 * 60 * 60 * 1000)) + 1;
 }
 
+// Apply slot-based time boundaries to an ISO date string — mirrors applyTimeSlotsToRange.
+// start boundary: all_day|morning → 08:00, afternoon → 13:30
+// end boundary: all_day|afternoon → 17:30, morning → 12:00
 function applySlotTime(
   isoDate: string,
   slot: TimeSlot,
@@ -121,6 +132,8 @@ function applySlotTime(
   return d;
 }
 
+// Exact port of calculateLeaveDays from date.ts:
+// sums work-shift overlap hours for every weekday in [start, end], divides by 8.
 function calculateLeaveDays(start: Date, end: Date): number {
   if (end <= start) return 0;
 
@@ -149,6 +162,8 @@ function calculateLeaveDays(start: Date, end: Date): number {
   return Number((totalHours / HOURS_PER_DAY).toFixed(2));
 }
 
+// Mirrors calculateRangeDaysOff from utils.ts.
+// For single-day (no end): end slot mirrors start slot (matches effectiveRangeEndTimeSlot logic).
 function computeDaysOff(
   start: string | null,
   end: string | null,
@@ -157,11 +172,15 @@ function computeDaysOff(
 ): number {
   if (!start) return 0;
   const effectiveEnd = end ?? start;
+  // Single-day: end-slot mirrors start-slot (reference: effectiveRangeEndTimeSlot = rangeStartTimeSlot).
   const effectiveEndSlot: TimeSlot = end ? endSlot : startSlot;
   const startDate = applySlotTime(start, startSlot, "start");
   const endDate = applySlotTime(effectiveEnd, effectiveEndSlot, "end");
   return calculateLeaveDays(startDate, endDate);
 }
+
+// Mirrors formatDaysOff from date.ts (without the startTime half-day special case,
+// which is only used in calendar event contexts, not the picker summary).
 
 function formatDaysOff(days: number): string {
   const n =
@@ -169,10 +188,14 @@ function formatDaysOff(days: number): string {
   return `${n} day${days === 1 ? "" : "s"} off`;
 }
 
+// For multi-day ranges: MORNING is invalid for the start boundary (you can only
+// set AFTERNOON or leave it ALL_DAY); AFTERNOON is invalid for the end boundary.
+// Mirrors getBlockedMultiDaySlot.
 function getBlockedSlot(selection: RangeSelection): "morning" | "afternoon" {
   return selection === "start" ? "morning" : "afternoon";
 }
 
+// Mirrors getNextSlot: pressing the currently-active half-slot reverts to all_day.
 function getNextSlot(
   pressed: "morning" | "afternoon",
   current: TimeSlot,
