@@ -287,43 +287,22 @@ export function useChatThreads({
     }
   }
 
-  function resetChatPanel() {
-    setData((prev) => {
-      const roleData = prev[role];
-      const current = roleData.threads.find((t) => t.id === roleData.activeId);
-      if (!current) return prev;
-
-      const clearedThread: ChatThread = {
-        ...current,
-        messages: [],
-        title: CHAT_THREAD_COPY.defaultTitle,
-        preview: CHAT_THREAD_COPY.emptyPreview,
-        updatedAt: new Date().toISOString(),
-        provider,
-      };
-
-      return {
-        ...prev,
-        [role]: {
-          ...roleData,
-          threads: updateThreadInList(roleData.threads, roleData.activeId, clearedThread),
-        },
-      };
-    });
-
-    isInternalChangeRef.current = true;
+  function clearThread() {
+    // This now effectively means "delete all threads for this role and start fresh"
+    const empty = createEmptyThread(provider);
+    setData((prev) => ({
+      ...prev,
+      [role]: { threads: [empty], activeId: empty.id }
+    }));
     setMessages([]);
-    setTimeout(() => {
-      isInternalChangeRef.current = false;
-    }, 0);
   }
 
-  return {
-    activeThread,
-    allThreads,
-    switchThread,
-    createNewThread,
-    deleteThread,
-    resetChatPanel,
+  return { 
+    activeThread, 
+    allThreads, 
+    switchThread, 
+    createNewThread, 
+    deleteThread, 
+    clearThread 
   };
 }
