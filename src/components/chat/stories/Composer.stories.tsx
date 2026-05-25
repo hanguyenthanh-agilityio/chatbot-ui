@@ -2,7 +2,7 @@ import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState, type ComponentProps, type FormEvent } from "react";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { ChatComposer } from "@/components/chat/composer";
-import { CHAT_COMPOSER_COPY } from "@/constants/chat";
+import { CHAT_COMPOSER_COPY, MOCK_CHAT_SAMPLE_MESSAGES } from "@/constants/chat";
 import {
   STORYBOOK_THEME_GLOBAL,
   THEME_SHELL_CLASSES,
@@ -168,7 +168,7 @@ export const Playground: Story = {};
 /** Provider ready; send enabled with sample text. */
 export const Ready: Story = {
   args: {
-    initialInput: "How many leave days do I have left?",
+    initialInput: MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalance,
     canSend: true,
     isProviderReady: true,
   },
