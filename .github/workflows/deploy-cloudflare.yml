@@ -45,6 +45,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Pages preview branch slug
+        id: pages_slug
+        shell: bash
+        run: echo "name=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Build Storybook
         run: pnpm run build-storybook
         env:
@@ -56,7 +61,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
-          command: pages deploy storybook-static --project-name=chatbot-ui-storybook --branch=${{ github.ref_name }} --commit-dirty=true
+          packageManager: pnpm
+          command: pages deploy storybook-static --project-name=chatbot-ui-storybook --branch=${{ steps.pages_slug.outputs.name }} --commit-dirty=true
 
   deploy-coverage:
     name: Coverage → Pages
@@ -81,6 +87,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Pages preview branch slug
+        id: pages_slug
+        shell: bash
+        run: echo "name=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Run tests with coverage (no snapshots)
         run: pnpm run test:coverage:ci
 
@@ -90,7 +101,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
-          command: pages deploy coverage --project-name=chatbot-ui-coverage --branch=${{ github.ref_name }} --commit-dirty=true
+          packageManager: pnpm
+          command: pages deploy coverage --project-name=chatbot-ui-coverage --branch=${{ steps.pages_slug.outputs.name }} --commit-dirty=true
 
   deploy-app:
     name: Next.js app → Workers
@@ -123,10 +135,14 @@ jobs:
         env:
           CI: "true"
 
+      - name: Verify OpenNext worker bundle
+        run: test -f .open-next/worker.js
+
       - name: Deploy Worker (ai-sdk)
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          packageManager: pnpm
           command: deploy
