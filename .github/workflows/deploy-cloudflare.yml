@@ -1,12 +1,11 @@
 # Deploy on push to feat/implement-cancel-button (Coverage + App).
 # Storybook: workflow_dispatch only (checkbox) — build ~25min.
 #
-# CLOUDFLARE_API_TOKEN must include:
-#   Account → Workers Scripts — Edit
-#   Account → Workers Services — Edit  (required for ai-sdk service binding)
-#   Account → Cloudflare Pages — Edit
-#   User → User Details — Read
-# CLOUDFLARE_ACCOUNT_ID = Dashboard → Workers → Account ID
+# GitHub Actions secrets (repo → Settings → Secrets → Actions):
+#   CLOUDFLARE_API_TOKEN — start from template "Edit Cloudflare Workers", then add:
+#     Account → Cloudflare Pages — Edit
+#   CLOUDFLARE_ACCOUNT_ID — 32-char hex from Workers & Pages sidebar (not email, not zone id)
+# Token must be scoped to the same account as CLOUDFLARE_ACCOUNT_ID.
 
 name: Deploy to Cloudflare
 
@@ -101,24 +100,6 @@ jobs:
       - name: Build native deps (pnpm 10 / OpenNext)
         run: pnpm rebuild esbuild workerd sharp @swc/core 2>/dev/null || true
 
-      - name: Inject account_id into wrangler.jsonc
-        run: |
-          node <<'NODE'
-          const fs = require("fs");
-          const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-          const path = "wrangler.jsonc";
-          let text = fs.readFileSync(path, "utf8");
-          if (!/"account_id"/.test(text)) {
-            text = text.replace(
-              /"\$schema"/,
-              `"account_id": "${accountId}",\n\t"$schema"`,
-            );
-            fs.writeFileSync(path, text);
-          }
-          NODE
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
       - name: Build OpenNext bundle
         run: pnpm exec opennextjs-cloudflare build
         env:
@@ -127,11 +108,52 @@ jobs:
       - name: Verify OpenNext worker bundle
         run: test -f .open-next/worker.js
 
-      - name: Deploy Worker (ai-sdk)
-        run: pnpm exec opennextjs-cloudflare deploy
+      - name: Resolve Cloudflare account ID
+        id: cf_account
+        run: node scripts/ci-resolve-cloudflare-account.mjs
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Verify Cloudflare token
+        run: |
+          set -euo pipefail
+          VERIFY="$(curl -sS "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}")"
+          echo "$VERIFY" | grep -q '"success":true' || {
+            echo "::error::CLOUDFLARE_API_TOKEN is invalid. Recreate from template Edit Cloudflare Workers + Pages Edit."
+            echo "$VERIFY"
+            exit 1
+          }
+          ACCOUNT_ID="${{ steps.cf_account.outputs.account_id }}"
+          WORKERS_HTTP="$(curl -sS -o /tmp/workers-probe.json -w '%{http_code}' \
+            "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/scripts/ai-sdk" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}")"
+          echo "workers/scripts/ai-sdk HTTP ${WORKERS_HTTP}"
+          if [ "$WORKERS_HTTP" = "401" ] || [ "$WORKERS_HTTP" = "403" ]; then
+            echo "::error::Token cannot deploy Workers on account ${ACCOUNT_ID}."
+            cat /tmp/workers-probe.json || true
+            exit 1
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Inject account_id into wrangler.jsonc
+        run: node scripts/ci-inject-wrangler-account.mjs
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf_account.outputs.account_id }}
+
+      - name: Wrangler whoami
+        run: pnpm exec wrangler whoami
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf_account.outputs.account_id }}
+
+      - name: Deploy Worker (ai-sdk)
+        run: bash scripts/ci-cloudflare-deploy.sh
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf_account.outputs.account_id }}
           CI: "true"
 
       - name: App URL
