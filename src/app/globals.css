@@ -88,6 +88,13 @@
   --toggle-thumb-shadow-light: color-mix(in srgb, var(--palette-amber-500) 50%, transparent);
   --toggle-icon-shadow-dark: color-mix(in srgb, var(--palette-night-shadow) 30%, transparent);
   --toggle-icon-shadow-light: color-mix(in srgb, var(--palette-white) 70%, transparent);
+
+  /* Chat panel reset (icon button; shares toggle track tokens) */
+  --chat-panel-reset-fg-dark: color-mix(in srgb, var(--palette-white) 85%, transparent);
+  --chat-panel-reset-fg-dark-hover: color-mix(in srgb, var(--palette-white) 92%, transparent);
+  --chat-panel-reset-border-hover-dark: color-mix(in srgb, var(--palette-white) 30%, transparent);
+  --chat-panel-reset-bg-hover-dark: color-mix(in srgb, var(--palette-white) 8%, transparent);
+  --chat-panel-reset-border-hover-light: color-mix(in srgb, var(--palette-stone-950) 15%, transparent);
 }
 
 @variant light {
@@ -707,7 +714,7 @@ aside .rounded-2xl .inline-flex.rounded-full {
   border: 1px solid var(--toggle-track-border-dark);
   background-color: var(--toggle-track-bg-dark);
   box-shadow: var(--shadow-toggle);
-  color: #ffffffd9;
+  color: var(--chat-panel-reset-fg-dark);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
@@ -740,14 +747,14 @@ html[data-theme="light"] .chat-panel-reset:focus-visible {
 }
 
 .chat-panel-reset:not(:disabled):hover {
-  border-color: #ffffff4d;
-  background-color: #ffffff14;
-  color: #ffffffeb;
+  border-color: var(--chat-panel-reset-border-hover-dark);
+  background-color: var(--chat-panel-reset-bg-hover-dark);
+  color: var(--chat-panel-reset-fg-dark-hover);
 }
 
 html[data-theme="light"] .chat-panel-reset:not(:disabled):hover {
-  border-color: #1c191726;
-  background-color: #fffefc;
+  border-color: var(--chat-panel-reset-border-hover-light);
+  background-color: var(--palette-paper);
   color: var(--palette-stone-900);
 }
 

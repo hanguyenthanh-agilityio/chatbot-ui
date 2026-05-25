@@ -81,7 +81,7 @@ export function ThreadSidebar({
             <Text variant="captionStrong">{SIDEBAR_COPY.description}</Text>
           </div>
           {headerActions ? (
-            <div className="flex shrink-0 items-center gap-2 pt-0.5">
+            <div className="flex shrink-0 items-center gap-2 -mt-1.5">
               {headerActions}
             </div>
           ) : null}
