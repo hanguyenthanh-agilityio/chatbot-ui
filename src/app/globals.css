@@ -78,16 +78,56 @@
   --palette-shell-cyan: #102033;
 
   /* Theme toggle (semantic border / surface / focus) */
-  --toggle-track-border-dark: color-mix(in srgb, var(--palette-white) 20%, transparent);
-  --toggle-track-bg-dark: color-mix(in srgb, var(--palette-night) 55%, transparent);
-  --toggle-track-border-light: color-mix(in srgb, var(--palette-stone-950) 10%, transparent);
-  --toggle-track-bg-light: color-mix(in srgb, var(--palette-paper) 80%, transparent);
-  --toggle-focus-ring-dark: color-mix(in srgb, var(--palette-violet-400) 55%, transparent);
-  --toggle-focus-ring-light: color-mix(in srgb, var(--palette-amber-600) 30%, transparent);
-  --toggle-thumb-shadow-dark: color-mix(in srgb, var(--palette-violet-800) 55%, transparent);
-  --toggle-thumb-shadow-light: color-mix(in srgb, var(--palette-amber-500) 50%, transparent);
-  --toggle-icon-shadow-dark: color-mix(in srgb, var(--palette-night-shadow) 30%, transparent);
-  --toggle-icon-shadow-light: color-mix(in srgb, var(--palette-white) 70%, transparent);
+  --toggle-track-border-dark: color-mix(
+    in srgb,
+    var(--palette-white) 20%,
+    transparent
+  );
+  --toggle-track-bg-dark: color-mix(
+    in srgb,
+    var(--palette-night) 55%,
+    transparent
+  );
+  --toggle-track-border-light: color-mix(
+    in srgb,
+    var(--palette-stone-950) 10%,
+    transparent
+  );
+  --toggle-track-bg-light: color-mix(
+    in srgb,
+    var(--palette-paper) 80%,
+    transparent
+  );
+  --toggle-focus-ring-dark: color-mix(
+    in srgb,
+    var(--palette-violet-400) 55%,
+    transparent
+  );
+  --toggle-focus-ring-light: color-mix(
+    in srgb,
+    var(--palette-amber-600) 30%,
+    transparent
+  );
+  --toggle-thumb-shadow-dark: color-mix(
+    in srgb,
+    var(--palette-violet-800) 55%,
+    transparent
+  );
+  --toggle-thumb-shadow-light: color-mix(
+    in srgb,
+    var(--palette-amber-500) 50%,
+    transparent
+  );
+  --toggle-icon-shadow-dark: color-mix(
+    in srgb,
+    var(--palette-night-shadow) 30%,
+    transparent
+  );
+  --toggle-icon-shadow-light: color-mix(
+    in srgb,
+    var(--palette-white) 70%,
+    transparent
+  );
 }
 
 @variant light {
@@ -103,17 +143,53 @@
     --color-app-border-muted: var(--palette-stone-200);
     --color-app-border-subtle: var(--palette-stone-150);
     --color-app-border-emphasis: var(--palette-stone-500);
-    --color-app-surface-subtle: color-mix(in srgb, var(--palette-stone-100) 92%, transparent);
-    --color-app-surface-muted: color-mix(in srgb, var(--palette-stone-field) 95%, transparent);
-    --color-app-surface-raised: color-mix(in srgb, var(--palette-stone-200) 95%, transparent);
+    --color-app-surface-subtle: color-mix(
+      in srgb,
+      var(--palette-stone-100) 92%,
+      transparent
+    );
+    --color-app-surface-muted: color-mix(
+      in srgb,
+      var(--palette-stone-field) 95%,
+      transparent
+    );
+    --color-app-surface-raised: color-mix(
+      in srgb,
+      var(--palette-stone-200) 95%,
+      transparent
+    );
     --color-app-field: var(--palette-stone-field);
-    --color-app-hover: color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+    --color-app-hover: color-mix(
+      in srgb,
+      var(--palette-stone-950) 4%,
+      transparent
+    );
     --color-app-accent: var(--palette-amber-700);
-    --color-app-accent-soft: color-mix(in srgb, var(--palette-amber-600) 10%, transparent);
-    --color-app-btn-brand-disabled: color-mix(in srgb, var(--palette-stone-600) 55%, transparent);
-    --color-app-blob-warm: color-mix(in srgb, var(--palette-amber-600) 10%, transparent);
-    --color-app-blob-neutral: color-mix(in srgb, var(--palette-stone-600) 10%, transparent);
-    --color-app-blob-accent: color-mix(in srgb, var(--palette-amber-700) 6%, transparent);
+    --color-app-accent-soft: color-mix(
+      in srgb,
+      var(--palette-amber-600) 10%,
+      transparent
+    );
+    --color-app-btn-brand-disabled: color-mix(
+      in srgb,
+      var(--palette-stone-600) 55%,
+      transparent
+    );
+    --color-app-blob-warm: color-mix(
+      in srgb,
+      var(--palette-amber-600) 10%,
+      transparent
+    );
+    --color-app-blob-neutral: color-mix(
+      in srgb,
+      var(--palette-stone-600) 10%,
+      transparent
+    );
+    --color-app-blob-accent: color-mix(
+      in srgb,
+      var(--palette-amber-700) 6%,
+      transparent
+    );
     /* Alerts & tool surfaces */
     --color-app-danger-border: var(--palette-danger-border);
     --color-app-danger-bg: var(--palette-danger-bg);
@@ -130,10 +206,22 @@
     --color-app-tool-neutral-border: var(--color-app-border);
     --color-app-tool-neutral-bg: var(--color-app-surface-subtle);
     --color-app-tool-neutral-fg: var(--color-app-fg-muted);
-    --color-app-table-header-bg: color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-    --color-app-table-row-alt: color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+    --color-app-table-header-bg: color-mix(
+      in srgb,
+      var(--palette-stone-950) 4%,
+      transparent
+    );
+    --color-app-table-row-alt: color-mix(
+      in srgb,
+      var(--palette-stone-950) 4%,
+      transparent
+    );
     --color-app-row-selected-bg: var(--color-app-accent-soft);
-    --color-app-row-selected-ring: color-mix(in srgb, var(--palette-amber-600) 30%, transparent);
+    --color-app-row-selected-ring: color-mix(
+      in srgb,
+      var(--palette-amber-600) 30%,
+      transparent
+    );
     /* Skeleton shimmer — must contrast on white glass */
     --color-app-skeleton: var(--palette-stone-800);
     --color-app-skeleton-dot: var(--palette-stone-900);
@@ -142,16 +230,36 @@
 
 :root {
   --foreground: var(--palette-fg-dark);
-  --bg-selection: color-mix(in srgb, var(--palette-violet-600) 30%, transparent);
+  --bg-selection: color-mix(
+    in srgb,
+    var(--palette-violet-600) 30%,
+    transparent
+  );
   --bg-btn-disabled: color-mix(in srgb, var(--palette-white) 20%, transparent);
-  --bg-surface-muted: color-mix(in srgb, var(--palette-shell-mid) 60%, transparent);
+  --bg-surface-muted: color-mix(
+    in srgb,
+    var(--palette-shell-mid) 60%,
+    transparent
+  );
   --bg-skeleton: color-mix(in srgb, var(--palette-white) 32%, transparent);
   --bg-skeleton-dot: color-mix(in srgb, var(--palette-white) 70%, transparent);
 
   /* Dark glass gradient stops (reused across panels) */
-  --bg-glass-stop-strong: color-mix(in srgb, var(--palette-white) 10%, transparent);
-  --bg-glass-stop-soft: color-mix(in srgb, var(--palette-white) 4%, transparent);
-  --bg-glass-stop-mid: color-mix(in srgb, var(--palette-white) 12%, transparent);
+  --bg-glass-stop-strong: color-mix(
+    in srgb,
+    var(--palette-white) 10%,
+    transparent
+  );
+  --bg-glass-stop-soft: color-mix(
+    in srgb,
+    var(--palette-white) 4%,
+    transparent
+  );
+  --bg-glass-stop-mid: color-mix(
+    in srgb,
+    var(--palette-white) 12%,
+    transparent
+  );
 
   --bg-radial-violet: radial-gradient(
     1200px 700px at -10% -15%,
@@ -173,17 +281,54 @@
     var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
 
   /* Glass (dark) */
-  --bg-glass: linear-gradient(165deg, var(--bg-glass-stop-strong), var(--bg-glass-stop-soft));
-  --bg-glass-panel: linear-gradient(165deg, var(--bg-glass-stop-strong), var(--bg-glass-stop-soft));
+  --bg-glass: linear-gradient(
+    165deg,
+    var(--bg-glass-stop-strong),
+    var(--bg-glass-stop-soft)
+  );
+  --bg-glass-panel: linear-gradient(
+    165deg,
+    var(--bg-glass-stop-strong),
+    var(--bg-glass-stop-soft)
+  );
   --bg-glass-panel-alt: var(--bg-glass-panel);
-  --bg-glass-header: linear-gradient(180deg, var(--bg-glass-stop-mid), var(--bg-glass-stop-soft));
-  --bg-glass-composer: linear-gradient(180deg, var(--bg-glass-stop-soft), var(--bg-glass-stop-strong));
-  --bg-glass-input: linear-gradient(165deg, var(--bg-glass-stop-mid), var(--bg-glass-stop-soft));
+  --bg-glass-header: linear-gradient(
+    180deg,
+    var(--bg-glass-stop-mid),
+    var(--bg-glass-stop-soft)
+  );
+  --bg-glass-composer: linear-gradient(
+    180deg,
+    var(--bg-glass-stop-soft),
+    var(--bg-glass-stop-strong)
+  );
+  --bg-glass-input: linear-gradient(
+    165deg,
+    var(--bg-glass-stop-mid),
+    var(--bg-glass-stop-soft)
+  );
   --bg-glass-loading: var(--bg-glass-panel);
-  --bg-glass-table: linear-gradient(165deg, color-mix(in srgb, var(--palette-slate-muted) 30%, transparent), color-mix(in srgb, var(--palette-slate-deep) 40%, transparent));
-  --bg-bubble-user: linear-gradient(135deg, color-mix(in srgb, var(--palette-violet-600) 50%, transparent), color-mix(in srgb, var(--palette-indigo-600) 50%, transparent), color-mix(in srgb, var(--palette-cyan-500) 30%, transparent));
-  --bg-bubble-assistant: linear-gradient(165deg, var(--bg-glass-stop-strong), var(--bg-glass-stop-soft));
-  --bg-preview-dark: linear-gradient(165deg, color-mix(in srgb, var(--palette-white) 6%, transparent), color-mix(in srgb, var(--palette-white) 3%, transparent));
+  --bg-glass-table: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--palette-slate-muted) 30%, transparent),
+    color-mix(in srgb, var(--palette-slate-deep) 40%, transparent)
+  );
+  --bg-bubble-user: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--palette-violet-600) 50%, transparent),
+    color-mix(in srgb, var(--palette-indigo-600) 50%, transparent),
+    color-mix(in srgb, var(--palette-cyan-500) 30%, transparent)
+  );
+  --bg-bubble-assistant: linear-gradient(
+    165deg,
+    var(--bg-glass-stop-strong),
+    var(--bg-glass-stop-soft)
+  );
+  --bg-preview-dark: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--palette-white) 6%, transparent),
+    color-mix(in srgb, var(--palette-white) 3%, transparent)
+  );
   --bg-preview-light: var(--bg-glass);
   --bg-datepicker-half-morning: linear-gradient(
     to right,
@@ -203,34 +348,62 @@
   );
 
   /* Shadows (dark) */
-  --shadow-ink-sm: 0 8px 24px color-mix(in srgb, var(--palette-ink) 24%, transparent);
-  --shadow-ink-md: 0 10px 28px color-mix(in srgb, var(--palette-ink) 25%, transparent);
-  --shadow-ink-lg: 0 14px 34px color-mix(in srgb, var(--palette-ink) 30%, transparent);
-  --shadow-ink-xl: 0 16px 60px color-mix(in srgb, var(--palette-ink) 32%, transparent);
+  --shadow-ink-sm: 0 8px 24px
+    color-mix(in srgb, var(--palette-ink) 24%, transparent);
+  --shadow-ink-md: 0 10px 28px
+    color-mix(in srgb, var(--palette-ink) 25%, transparent);
+  --shadow-ink-lg: 0 14px 34px
+    color-mix(in srgb, var(--palette-ink) 30%, transparent);
+  --shadow-ink-xl: 0 16px 60px
+    color-mix(in srgb, var(--palette-ink) 32%, transparent);
 
   --shadow-glass: var(--shadow-ink-md);
-  --shadow-glass-elevated: 0 10px 28px color-mix(in srgb, var(--palette-ink) 30%, transparent);
+  --shadow-glass-elevated: 0 10px 28px
+    color-mix(in srgb, var(--palette-ink) 30%, transparent);
   --shadow-glass-compact: var(--shadow-ink-md);
-  --shadow-glass-hero: 0 24px 64px color-mix(in srgb, var(--palette-black) 40%, transparent), inset 0 1px 0 color-mix(in srgb, var(--palette-white) 10%, transparent);
-  --shadow-panel: 0 8px 30px color-mix(in srgb, var(--palette-ink-deep) 25%, transparent);
-  --shadow-panel-sm: 0 8px 24px color-mix(in srgb, var(--palette-ink) 22%, transparent);
-  --shadow-card-surface: 0 2px 12px color-mix(in srgb, var(--palette-ink) 16%, transparent);
-  --shadow-card-surface-soft: 0 2px 12px color-mix(in srgb, var(--palette-ink) 16%, transparent);
+  --shadow-glass-hero:
+    0 24px 64px color-mix(in srgb, var(--palette-black) 40%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--palette-white) 10%, transparent);
+  --shadow-panel: 0 8px 30px
+    color-mix(in srgb, var(--palette-ink-deep) 25%, transparent);
+  --shadow-panel-sm: 0 8px 24px
+    color-mix(in srgb, var(--palette-ink) 22%, transparent);
+  --shadow-card-surface: 0 2px 12px
+    color-mix(in srgb, var(--palette-ink) 16%, transparent);
+  --shadow-card-surface-soft: 0 2px 12px
+    color-mix(in srgb, var(--palette-ink) 16%, transparent);
   --shadow-shell: var(--shadow-ink-xl);
-  --shadow-shell-panel: 0 16px 60px color-mix(in srgb, var(--palette-ink) 35%, transparent);
-  --shadow-shell-header: 0 1px 0 color-mix(in srgb, var(--palette-white) 6%, transparent), 0 8px 32px color-mix(in srgb, var(--palette-black) 20%, transparent);
-  --shadow-composer-bar: 0 -1px 0 color-mix(in srgb, var(--palette-white) 4%, transparent), 0 -10px 34px color-mix(in srgb, var(--palette-black) 20%, transparent);
-  --shadow-composer-input: 0 8px 26px color-mix(in srgb, var(--palette-ink) 20%, transparent), inset 0 1px 0 color-mix(in srgb, var(--palette-white) 12%, transparent);
+  --shadow-shell-panel: 0 16px 60px
+    color-mix(in srgb, var(--palette-ink) 35%, transparent);
+  --shadow-shell-header:
+    0 1px 0 color-mix(in srgb, var(--palette-white) 6%, transparent),
+    0 8px 32px color-mix(in srgb, var(--palette-black) 20%, transparent);
+  --shadow-composer-bar:
+    0 -1px 0 color-mix(in srgb, var(--palette-white) 4%, transparent),
+    0 -10px 34px color-mix(in srgb, var(--palette-black) 20%, transparent);
+  --shadow-composer-input:
+    0 8px 26px color-mix(in srgb, var(--palette-ink) 20%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--palette-white) 12%, transparent);
   --shadow-composer-field: var(--shadow-composer-input);
-  --shadow-bubble-user: 0 8px 26px color-mix(in srgb, var(--palette-purple-900) 35%, transparent);
-  --shadow-bubble-assistant: 0 8px 24px color-mix(in srgb, var(--palette-ink-mid) 24%, transparent);
+  --shadow-bubble-user: 0 8px 26px
+    color-mix(in srgb, var(--palette-purple-900) 35%, transparent);
+  --shadow-bubble-assistant: 0 8px 24px
+    color-mix(in srgb, var(--palette-ink-mid) 24%, transparent);
   --shadow-table: var(--shadow-ink-lg);
-  --shadow-thread-active: 0 8px 26px color-mix(in srgb, var(--palette-ink-soft) 24%, transparent);
-  --shadow-btn-brand: 0 6px 20px color-mix(in srgb, var(--palette-violet-700) 40%, transparent);
-  --shadow-chip-brand: 0 4px 12px color-mix(in srgb, var(--palette-violet-700) 20%, transparent);
-  --shadow-avatar-brand: 0 2px 8px color-mix(in srgb, var(--palette-black) 35%, transparent), 0 0 0 1px color-mix(in srgb, var(--palette-violet-600) 20%, transparent);
-  --shadow-avatar-placeholder: inset 0 1px 0 color-mix(in srgb, var(--palette-white) 12%, transparent), 0 2px 6px color-mix(in srgb, var(--palette-black) 25%, transparent);
-  --shadow-avatar-photo: 0 2px 6px color-mix(in srgb, var(--palette-black) 30%, transparent);
+  --shadow-thread-active: 0 8px 26px
+    color-mix(in srgb, var(--palette-ink-soft) 24%, transparent);
+  --shadow-btn-brand: 0 6px 20px
+    color-mix(in srgb, var(--palette-violet-700) 40%, transparent);
+  --shadow-chip-brand: 0 4px 12px
+    color-mix(in srgb, var(--palette-violet-700) 20%, transparent);
+  --shadow-avatar-brand:
+    0 2px 8px color-mix(in srgb, var(--palette-black) 35%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--palette-violet-600) 20%, transparent);
+  --shadow-avatar-placeholder:
+    inset 0 1px 0 color-mix(in srgb, var(--palette-white) 12%, transparent),
+    0 2px 6px color-mix(in srgb, var(--palette-black) 25%, transparent);
+  --shadow-avatar-photo: 0 2px 6px
+    color-mix(in srgb, var(--palette-black) 30%, transparent);
   --avatar-assistant-fallback: linear-gradient(
     135deg,
     var(--palette-violet-600) 0%,
@@ -241,14 +414,24 @@
     color-mix(in srgb, var(--palette-indigo-500) 45%, transparent),
     color-mix(in srgb, var(--palette-violet-700) 35%, transparent)
   );
-  --shadow-toast-success: 0 8px 32px color-mix(in srgb, var(--palette-emerald-500) 20%, transparent);
-  --shadow-toast-error: 0 8px 32px color-mix(in srgb, var(--palette-red-500) 20%, transparent);
-  --shadow-toast-info: 0 8px 32px color-mix(in srgb, var(--palette-cyan-500) 20%, transparent);
-  --shadow-tool-rose: 0 8px 20px color-mix(in srgb, var(--palette-rose-dark) 24%, transparent);
-  --shadow-tool-emerald: 0 8px 20px color-mix(in srgb, var(--palette-emerald-dark) 24%, transparent);
-  --shadow-tool-neutral: 0 8px 20px color-mix(in srgb, var(--palette-ink) 20%, transparent);
-  --shadow-toggle: inset 0 1px 0 color-mix(in srgb, var(--palette-white) 12%, transparent), 0 4px 16px color-mix(in srgb, var(--palette-black) 30%, transparent);
-  --shadow-toggle-light: inset 0 1px 0 color-mix(in srgb, var(--palette-white) 95%, transparent), 0 4px 14px color-mix(in srgb, var(--palette-violet-800) 10%, transparent);
+  --shadow-toast-success: 0 8px 32px
+    color-mix(in srgb, var(--palette-emerald-500) 20%, transparent);
+  --shadow-toast-error: 0 8px 32px
+    color-mix(in srgb, var(--palette-red-500) 20%, transparent);
+  --shadow-toast-info: 0 8px 32px
+    color-mix(in srgb, var(--palette-cyan-500) 20%, transparent);
+  --shadow-tool-rose: 0 8px 20px
+    color-mix(in srgb, var(--palette-rose-dark) 24%, transparent);
+  --shadow-tool-emerald: 0 8px 20px
+    color-mix(in srgb, var(--palette-emerald-dark) 24%, transparent);
+  --shadow-tool-neutral: 0 8px 20px
+    color-mix(in srgb, var(--palette-ink) 20%, transparent);
+  --shadow-toggle:
+    inset 0 1px 0 color-mix(in srgb, var(--palette-white) 12%, transparent),
+    0 4px 16px color-mix(in srgb, var(--palette-black) 30%, transparent);
+  --shadow-toggle-light:
+    inset 0 1px 0 color-mix(in srgb, var(--palette-white) 95%, transparent),
+    0 4px 14px color-mix(in srgb, var(--palette-violet-800) 10%, transparent);
   --shadow-toggle-thumb: var(--toggle-thumb-shadow-dark);
   --shadow-toggle-thumb-light: var(--toggle-thumb-shadow-light);
 
@@ -447,8 +630,16 @@ html[data-theme="light"],
     var(--bg-radial-violet), var(--bg-radial-cyan), var(--bg-gradient-base);
 
   /* Glass (light) — shared stops */
-  --bg-glass-stop-top: color-mix(in srgb, var(--palette-paper) 90%, transparent);
-  --bg-glass-stop-bottom: color-mix(in srgb, var(--palette-paper-muted) 80%, transparent);
+  --bg-glass-stop-top: color-mix(
+    in srgb,
+    var(--palette-paper) 90%,
+    transparent
+  );
+  --bg-glass-stop-bottom: color-mix(
+    in srgb,
+    var(--palette-paper-muted) 80%,
+    transparent
+  );
   --bg-glass: linear-gradient(
     180deg,
     var(--bg-glass-stop-top) 0%,
@@ -456,9 +647,21 @@ html[data-theme="light"],
   );
   --bg-glass-panel: var(--bg-glass);
   --bg-glass-panel-alt: var(--bg-glass);
-  --bg-glass-header: linear-gradient(180deg, var(--bg-glass-stop-top) 0%, color-mix(in srgb, var(--palette-paper-warm) 90%, transparent) 100%);
-  --bg-glass-composer: linear-gradient(180deg, color-mix(in srgb, var(--palette-paper) 30%, transparent) 0%, color-mix(in srgb, var(--palette-paper-warm) 70%, transparent) 100%);
-  --bg-glass-input: linear-gradient(180deg, var(--bg-glass-stop-top) 0%, var(--bg-glass-stop-bottom) 100%);
+  --bg-glass-header: linear-gradient(
+    180deg,
+    var(--bg-glass-stop-top) 0%,
+    color-mix(in srgb, var(--palette-paper-warm) 90%, transparent) 100%
+  );
+  --bg-glass-composer: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--palette-paper) 30%, transparent) 0%,
+    color-mix(in srgb, var(--palette-paper-warm) 70%, transparent) 100%
+  );
+  --bg-glass-input: linear-gradient(
+    180deg,
+    var(--bg-glass-stop-top) 0%,
+    var(--bg-glass-stop-bottom) 100%
+  );
   --bg-glass-loading: var(--bg-glass-panel);
   --bg-glass-table: var(--bg-glass);
   --bg-preview-light: var(--bg-glass);
@@ -483,7 +686,11 @@ html[data-theme="light"],
     var(--palette-stone-800) 50%,
     var(--palette-stone-600) 100%
   );
-  --bg-bubble-assistant: linear-gradient(180deg, var(--bg-glass-stop-top) 0%, var(--bg-glass-stop-bottom) 100%);
+  --bg-bubble-assistant: linear-gradient(
+    180deg,
+    var(--bg-glass-stop-top) 0%,
+    var(--bg-glass-stop-bottom) 100%
+  );
   --bg-btn-active: linear-gradient(
     90deg,
     var(--palette-stone-800) 0%,
@@ -492,43 +699,85 @@ html[data-theme="light"],
   );
 
   /* Shadows (light) */
-  --shadow-hairline: 0 1px 0 color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-ink-sm: 0 1px 2px color-mix(in srgb, var(--palette-stone-950) 4%, transparent), 0 6px 20px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-ink-md: 0 1px 2px color-mix(in srgb, var(--palette-stone-950) 4%, transparent), 0 14px 40px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-ink-lg: 0 2px 6px color-mix(in srgb, var(--palette-stone-950) 4%, transparent), 0 18px 48px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-ink-xl: 0 1px 0 color-mix(in srgb, var(--palette-paper) 85%, transparent), 0 20px 52px color-mix(in srgb, var(--palette-stone-950) 10%, transparent);
+  --shadow-hairline: 0 1px 0
+    color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-ink-sm:
+    0 1px 2px color-mix(in srgb, var(--palette-stone-950) 4%, transparent),
+    0 6px 20px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-ink-md:
+    0 1px 2px color-mix(in srgb, var(--palette-stone-950) 4%, transparent),
+    0 14px 40px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-ink-lg:
+    0 2px 6px color-mix(in srgb, var(--palette-stone-950) 4%, transparent),
+    0 18px 48px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-ink-xl:
+    0 1px 0 color-mix(in srgb, var(--palette-paper) 85%, transparent),
+    0 20px 52px color-mix(in srgb, var(--palette-stone-950) 10%, transparent);
 
   --shadow-glass: var(--shadow-ink-md);
   --shadow-glass-elevated: var(--shadow-ink-lg);
   --shadow-glass-compact: var(--shadow-ink-sm);
-  --shadow-glass-hero: 0 20px 56px color-mix(in srgb, var(--palette-stone-950) 10%, transparent), inset 0 1px 0 color-mix(in srgb, var(--palette-paper) 85%, transparent);
+  --shadow-glass-hero:
+    0 20px 56px color-mix(in srgb, var(--palette-stone-950) 10%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--palette-paper) 85%, transparent);
   --shadow-panel: var(--shadow-ink-md);
   --shadow-panel-sm: var(--shadow-ink-sm);
   --shadow-shell: var(--shadow-ink-xl);
   --shadow-shell-panel: var(--shadow-shell);
-  --shadow-shell-header: 0 1px 0 color-mix(in srgb, var(--palette-paper) 92%, transparent), 0 4px 16px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-composer-bar: 0 -1px 0 color-mix(in srgb, var(--palette-stone-950) 4%, transparent), 0 -8px 26px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-composer-input: 0 2px 8px color-mix(in srgb, var(--palette-stone-950) 4%, transparent), inset 0 1px 0 color-mix(in srgb, var(--palette-paper) 92%, transparent);
-  --shadow-composer-field: 0 1px 3px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-bubble-user: 0 4px 14px color-mix(in srgb, var(--palette-stone-900) 20%, transparent);
-  --shadow-bubble-assistant: 0 2px 10px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-avatar-brand: 0 2px 8px color-mix(in srgb, var(--palette-stone-950) 8%, transparent), 0 0 0 1px var(--palette-stone-300);
-  --shadow-avatar-placeholder: inset 0 1px 0 var(--palette-paper), 0 2px 6px color-mix(in srgb, var(--palette-stone-950) 10%, transparent);
-  --shadow-avatar-photo: 0 2px 8px color-mix(in srgb, var(--palette-stone-950) 12%, transparent);
-  --avatar-assistant-fallback: linear-gradient(135deg, var(--palette-stone-500) 0%, var(--palette-stone-600) 100%);
+  --shadow-shell-header:
+    0 1px 0 color-mix(in srgb, var(--palette-paper) 92%, transparent),
+    0 4px 16px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-composer-bar:
+    0 -1px 0 color-mix(in srgb, var(--palette-stone-950) 4%, transparent),
+    0 -8px 26px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-composer-input:
+    0 2px 8px color-mix(in srgb, var(--palette-stone-950) 4%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--palette-paper) 92%, transparent);
+  --shadow-composer-field: 0 1px 3px
+    color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-bubble-user: 0 4px 14px
+    color-mix(in srgb, var(--palette-stone-900) 20%, transparent);
+  --shadow-bubble-assistant: 0 2px 10px
+    color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-avatar-brand:
+    0 2px 8px color-mix(in srgb, var(--palette-stone-950) 8%, transparent),
+    0 0 0 1px var(--palette-stone-300);
+  --shadow-avatar-placeholder:
+    inset 0 1px 0 var(--palette-paper),
+    0 2px 6px color-mix(in srgb, var(--palette-stone-950) 10%, transparent);
+  --shadow-avatar-photo: 0 2px 8px
+    color-mix(in srgb, var(--palette-stone-950) 12%, transparent);
+  --avatar-assistant-fallback: linear-gradient(
+    135deg,
+    var(--palette-stone-500) 0%,
+    var(--palette-stone-600) 100%
+  );
   --bg-avatar-user-placeholder: radial-gradient(
     circle at 30% 30%,
     color-mix(in srgb, var(--palette-stone-500) 50%, transparent),
     color-mix(in srgb, var(--palette-stone-700) 38%, transparent)
   );
-  --shadow-table: 0 4px 18px color-mix(in srgb, var(--palette-stone-950) 5%, transparent);
-  --shadow-thread-active: 0 2px 10px color-mix(in srgb, var(--palette-stone-950) 5%, transparent), 0 8px 22px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-card-surface: 0 1px 2px color-mix(in srgb, var(--palette-stone-950) 2%, transparent), 0 4px 12px color-mix(in srgb, var(--palette-stone-950) 3%, transparent);
-  --shadow-card-surface-soft: 0 1px 2px color-mix(in srgb, var(--palette-stone-950) 2%, transparent), 0 6px 16px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
-  --shadow-btn-brand: 0 2px 10px color-mix(in srgb, var(--palette-amber-800) 22%, transparent);
-  --shadow-chip-brand: 0 2px 8px color-mix(in srgb, var(--palette-stone-600) 14%, transparent);
-  --shadow-toggle-light: inset 0 1px 0 var(--palette-paper), 0 2px 8px color-mix(in srgb, var(--palette-stone-950) 6%, transparent);
-  --shadow-toggle-thumb-light: 0 1px 4px color-mix(in srgb, var(--palette-stone-950) 10%, transparent), inset 0 1px 0 color-mix(in srgb, var(--palette-paper) 75%, transparent);
+  --shadow-table: 0 4px 18px
+    color-mix(in srgb, var(--palette-stone-950) 5%, transparent);
+  --shadow-thread-active:
+    0 2px 10px color-mix(in srgb, var(--palette-stone-950) 5%, transparent),
+    0 8px 22px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-card-surface:
+    0 1px 2px color-mix(in srgb, var(--palette-stone-950) 2%, transparent),
+    0 4px 12px color-mix(in srgb, var(--palette-stone-950) 3%, transparent);
+  --shadow-card-surface-soft:
+    0 1px 2px color-mix(in srgb, var(--palette-stone-950) 2%, transparent),
+    0 6px 16px color-mix(in srgb, var(--palette-stone-950) 4%, transparent);
+  --shadow-btn-brand: 0 2px 10px
+    color-mix(in srgb, var(--palette-amber-800) 22%, transparent);
+  --shadow-chip-brand: 0 2px 8px
+    color-mix(in srgb, var(--palette-stone-600) 14%, transparent);
+  --shadow-toggle-light:
+    inset 0 1px 0 var(--palette-paper),
+    0 2px 8px color-mix(in srgb, var(--palette-stone-950) 6%, transparent);
+  --shadow-toggle-thumb-light:
+    0 1px 4px color-mix(in srgb, var(--palette-stone-950) 10%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--palette-paper) 75%, transparent);
 
   --bg-skeleton: var(--palette-stone-800);
   --bg-skeleton-dot: var(--palette-stone-900);
