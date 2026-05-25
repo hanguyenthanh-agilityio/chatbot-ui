@@ -102,7 +102,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     handlePromptSelect,
     handleToolApproval,
     handleRoleChange,
-    stop,
+    handleStop,
   } = useWorkspaceApp(authRole ?? "user", authSessions);
 
   const accountPanel = (
@@ -234,7 +234,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             errorMessage={requestError}
             onInputChange={setInput}
             onSubmitAction={handleSubmit}
-            onStopAction={stop}
+            onStopAction={handleStop}
           />
         </section>
       </div>

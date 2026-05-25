@@ -93,7 +93,7 @@ describe("ChatMessage", () => {
     expect(screen.queryByText("My leave balance")).not.toBeInTheDocument();
   });
 
-  it("shows error copy when the last assistant message has no renderable content", () => {
+  it("shows stopped copy when the last assistant message has no renderable content", () => {
     render(
       <ChatMessage
         {...mockChatMessageProps(mockAssistantThinkingMessage(), {
@@ -104,7 +104,7 @@ describe("ChatMessage", () => {
     );
 
     expect(
-      screen.getByText("Something went wrong. Please try again."),
+      screen.getByText(CHAT_TRANSCRIPT_COPY.responseStopped),
     ).toBeInTheDocument();
   });
 });

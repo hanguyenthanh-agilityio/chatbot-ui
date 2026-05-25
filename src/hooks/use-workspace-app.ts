@@ -222,6 +222,11 @@ export function useWorkspaceApp(
     void addToolApprovalResponse({ id, approved });
   }
 
+  function handleStop() {
+    stop();
+    clearError();
+  }
+
   function handleRoleChange(role: AppRole) {
     if (role === selectedRole) {
       return;
@@ -277,6 +282,6 @@ export function useWorkspaceApp(
     handlePromptSelect,
     handleToolApproval,
     handleRoleChange,
-    stop,
+    handleStop,
   };
 }

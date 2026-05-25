@@ -140,6 +140,8 @@ export const CHAT_TRANSCRIPT_COPY = {
     failedSuffix: "failed.",
     completedSuffix: "completed.",
   },
+
+  responseStopped: "Response stopped.",
 } as const;
 
 export function getQuickActionsByRole(role: AppRole) {
