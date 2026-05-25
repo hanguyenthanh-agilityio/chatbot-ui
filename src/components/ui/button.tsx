@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { ButtonHTMLAttributes } from "react";
-import { THEME_TOGGLE_CLASS } from "@/constants/theme";
+import { CHAT_PANEL_RESET_CLASS, THEME_TOGGLE_CLASS } from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 const BUTTON_VARIANT_CLASSES = {
@@ -15,6 +15,7 @@ const BUTTON_VARIANT_CLASSES = {
   danger:
     "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-300 disabled:text-red-50",
   themeToggle: THEME_TOGGLE_CLASS,
+  chatPanelReset: CHAT_PANEL_RESET_CLASS,
 } as const;
 
 const BUTTON_SIZE_CLASSES = {
@@ -25,7 +26,10 @@ const BUTTON_SIZE_CLASSES = {
 type ButtonVariant = keyof typeof BUTTON_VARIANT_CLASSES;
 type ButtonSize = keyof typeof BUTTON_SIZE_CLASSES;
 
-const CUSTOM_SHELL_VARIANTS = new Set<ButtonVariant>(["themeToggle"]);
+const CUSTOM_SHELL_VARIANTS = new Set<ButtonVariant>([
+  "themeToggle",
+  "chatPanelReset",
+]);
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;

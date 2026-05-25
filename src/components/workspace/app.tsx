@@ -3,8 +3,10 @@
 import { useSyncExternalStore } from "react";
 
 // Components
+import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
 import { ProviderSelector } from "@/components/chat/provider-selector";
 import { ChatComposer } from "@/components/chat/composer";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ChatTranscript } from "@/components/transcript";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -144,6 +146,14 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           disabled={isLoading}
           accountPanel={accountPanel}
           providerPanel={sidebarProviderPanel}
+          headerActions={
+            <>
+              <ChatPanelResetButton
+                disabled={isLoading || messages.length === 0}
+              />
+              <ThemeToggle />
+            </>
+          }
           onSwitchThread={switchThread}
           onCreateThread={createNewThread}
           onDeleteThread={deleteThread}

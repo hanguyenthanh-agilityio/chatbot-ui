@@ -1,6 +1,11 @@
 import type { AppRole } from "@/lib/auth/session";
 import type { QuickAction } from "@/types/chat";
 
+export const CHAT_PANEL_RESET_COPY = {
+  ariaLabel: "Reset chat panel",
+  tooltip: "Clear the chat panel and start over",
+} as const;
+
 export const CHAT_COMPOSER_COPY = {
   placeholder:
     "Ask about your balance, request time off, review approvals, or cancel a request...",

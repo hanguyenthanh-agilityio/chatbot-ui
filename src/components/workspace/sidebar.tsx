@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // Constants
 import { SIDEBAR_COPY } from "@/constants/app";
@@ -43,6 +42,7 @@ type ThreadSidebarProps = {
   disabled?: boolean;
   accountPanel: ReactNode;
   providerPanel: ReactNode;
+  headerActions?: ReactNode;
   onSwitchThread: (id: string) => void;
   onCreateThread: () => void;
   onDeleteThread: (id: string) => void;
@@ -54,6 +54,7 @@ export function ThreadSidebar({
   disabled = false,
   accountPanel,
   providerPanel,
+  headerActions,
   onSwitchThread,
   onCreateThread,
   onDeleteThread,
@@ -79,7 +80,11 @@ export function ThreadSidebar({
             </Text>
             <Text variant="captionStrong">{SIDEBAR_COPY.description}</Text>
           </div>
-          <ThemeToggle />
+          {headerActions ? (
+            <div className="flex shrink-0 items-center gap-2 pt-0.5">
+              {headerActions}
+            </div>
+          ) : null}
         </div>
       </div>
 

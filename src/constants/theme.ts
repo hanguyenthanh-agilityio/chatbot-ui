@@ -26,6 +26,7 @@ export const THEME_TOGGLE_ARIA_LABEL = {
 
 /** CSS class hooks (must match globals.css selectors) */
 export const THEME_TOGGLE_CLASS = "theme-toggle";
+export const CHAT_PANEL_RESET_CLASS = "chat-panel-reset";
 export const THEME_SWITCHING_CLASS = "theme-switching";
 
 /** Shell hook classes; light gradients in globals.css `@variant light` */
