@@ -80,6 +80,16 @@ export const QUICK_ACTIONS_BY_ROLE: Record<AppRole, QuickAction[]> = {
   ],
 };
 
+/** Shared sample prompts/replies for mocks, stories, and tests */
+export const MOCK_CHAT_SAMPLE_MESSAGES = {
+  userLeaveBalance: "How many leave days do I have left?",
+  userLeaveBalanceDetailed:
+    "How many annual, sick, and personal leave days do I have left?",
+  assistantLeaveBalance: "You have 12 annual days remaining.",
+  assistantLeaveBalanceDetailed:
+    "You have 12 annual, 8 sick, and 3 personal days remaining.",
+} as const;
+
 export const CHAT_TRANSCRIPT_COPY = {
   defaultAgentName: "employee",
   userBadge: "You",

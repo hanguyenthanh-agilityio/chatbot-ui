@@ -221,8 +221,8 @@ export function ToolOutputTable({
                       rowIndex > 0 &&
                         "border-t border-white/7 light:border-app-border-subtle",
                       rowIndex % 2 === 0
-                        ? "bg-white/150 light:bg-white"
-                        : "bg-white/350 light:bg-app-surface-subtle",
+                        ? "bg-white/5 light:bg-white"
+                        : "bg-white/10 light:bg-app-surface-subtle",
                       hasRowActions &&
                         rowHasActions &&
                         "cursor-pointer transition hover:bg-white/5 light:hover:bg-app-hover",

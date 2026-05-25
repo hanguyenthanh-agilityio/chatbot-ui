@@ -5,6 +5,7 @@ import {
   MessageAvatar,
   MessageBubble,
 } from "@/components/chat/message-bubble";
+import { MOCK_CHAT_SAMPLE_MESSAGES } from "@/constants/chat";
 import {
   STORYBOOK_THEME_GLOBAL,
   THEME_SHELL_CLASSES,
@@ -25,10 +26,6 @@ const inChatTranscript: Decorator = (Story) => (
     <Story />
   </section>
 );
-
-const SAMPLE_USER_TEXT = "How many annual, sick, and personal leave days do I have left?";
-const SAMPLE_ASSISTANT_TEXT =
-  "You have 12 annual, 8 sick, and 3 personal days remaining.";
 
 const meta = {
   title: "Chat/MessageBubble",
@@ -59,13 +56,13 @@ type Story = StoryObj<typeof MessageBubble>;
 export const User: Story = {
   render: () => (
     <div className="flex justify-end gap-3">
-      <MessageBubble isUser text={SAMPLE_USER_TEXT} />
+      <MessageBubble isUser text={MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalanceDetailed} />
       <MessageAvatar initials="HN" isUser avatarLabel="Ha Nguyen" />
     </div>
   ),
   play: async ({ canvasElement }) => {
     await expect(
-      within(canvasElement).getByText(SAMPLE_USER_TEXT),
+      within(canvasElement).getByText(MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalanceDetailed),
     ).toBeInTheDocument();
   },
 };
@@ -75,7 +72,7 @@ export const Assistant: Story = {
   render: () => (
     <div className="flex justify-start gap-3">
       <MessageAvatar initials="EM" isUser={false} />
-      <MessageBubble isUser={false} text={SAMPLE_ASSISTANT_TEXT} />
+      <MessageBubble isUser={false} text={MOCK_CHAT_SAMPLE_MESSAGES.assistantLeaveBalanceDetailed} />
     </div>
   ),
 };
@@ -112,12 +109,12 @@ export const ConversationRows: Story = {
       <article className="flex justify-start gap-3">
         <MessageAvatar initials="EM" isUser={false} />
         <div className="min-w-0 flex-1">
-          <MessageBubble isUser={false} text={SAMPLE_ASSISTANT_TEXT} fullWidth />
+          <MessageBubble isUser={false} text={MOCK_CHAT_SAMPLE_MESSAGES.assistantLeaveBalanceDetailed} fullWidth />
         </div>
       </article>
       <article className="flex justify-end gap-3">
-        <div className="flex max-w-message-column-user flex-col items-end">
-          <MessageBubble isUser text={SAMPLE_USER_TEXT} />
+        <div className="max-w-message-column-user min-w-0">
+          <MessageBubble isUser text={MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalanceDetailed} />
         </div>
         <MessageAvatar initials="HN" isUser avatarLabel="Ha Nguyen" />
       </article>
@@ -131,10 +128,10 @@ export const Light: Story = {
     <div className="flex w-full max-w-2xl flex-col gap-6">
       <div className="flex justify-start gap-3">
         <MessageAvatar initials="EM" isUser={false} />
-        <MessageBubble isUser={false} text={SAMPLE_ASSISTANT_TEXT} />
+        <MessageBubble isUser={false} text={MOCK_CHAT_SAMPLE_MESSAGES.assistantLeaveBalanceDetailed} />
       </div>
       <div className="flex justify-end gap-3">
-        <MessageBubble isUser text={SAMPLE_USER_TEXT} />
+        <MessageBubble isUser text={MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalanceDetailed} />
         <MessageAvatar initials="HN" isUser />
       </div>
     </div>
@@ -147,10 +144,10 @@ export const Dark: Story = {
     <div className="flex w-full max-w-2xl flex-col gap-6">
       <div className="flex justify-start gap-3">
         <MessageAvatar initials="EM" isUser={false} />
-        <MessageBubble isUser={false} text={SAMPLE_ASSISTANT_TEXT} />
+        <MessageBubble isUser={false} text={MOCK_CHAT_SAMPLE_MESSAGES.assistantLeaveBalanceDetailed} />
       </div>
       <div className="flex justify-end gap-3">
-        <MessageBubble isUser text={SAMPLE_USER_TEXT} />
+        <MessageBubble isUser text={MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalanceDetailed} />
         <MessageAvatar initials="HN" isUser />
       </div>
     </div>

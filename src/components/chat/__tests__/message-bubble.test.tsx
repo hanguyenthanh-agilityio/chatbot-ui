@@ -7,6 +7,10 @@ import {
   type MessageAvatarProps,
   type MessageBubbleProps,
 } from "@/components/chat/message-bubble";
+import {
+  CHAT_STREAMING_PLACEHOLDER_TEXT,
+  MOCK_CHAT_SAMPLE_MESSAGES,
+} from "@/constants/chat";
 
 describe("MessageBubble", () => {
   afterEach(() => {
@@ -14,15 +18,23 @@ describe("MessageBubble", () => {
   });
 
   it.each([
-    ["user", { isUser: true, text: "How many leave days do I have left?" }],
-    ["user-short", { isUser: true, text: "hellp" }],
+    [
+      "user",
+      {
+        isUser: true,
+        text: MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalance,
+      },
+    ],
     [
       "assistant",
-      { isUser: false, text: "You have 12 annual days remaining." },
+      {
+        isUser: false,
+        text: MOCK_CHAT_SAMPLE_MESSAGES.assistantLeaveBalance,
+      },
     ],
     [
       "assistant-placeholder",
-      { isUser: false, placeholder: "Working on it..." },
+      { isUser: false, placeholder: CHAT_STREAMING_PLACEHOLDER_TEXT },
     ],
     [
       "assistant-with-children",
