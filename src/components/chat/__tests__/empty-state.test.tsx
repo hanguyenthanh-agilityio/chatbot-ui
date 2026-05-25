@@ -1,19 +1,39 @@
-import { cleanup, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { ChatEmptyState } from '@/components/chat/empty-state';
-import { CHAT_EMPTY_STATE_COPY } from '@/constants/chat';
-import { mockChatEmptyStateProps } from '@/mocks/empty-state';
+// Components
+import { ChatEmptyState } from "@/components/chat/empty-state";
 
-describe('ChatEmptyState', () => {
+// Constants
+import { CHAT_EMPTY_STATE_COPY, QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
+
+// Mocks
+import {
+  mockChatEmptyStateProps,
+  type MockChatEmptyStateProps,
+} from "@/mocks/empty-state";
+
+describe("ChatEmptyState", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it('renders title and description from CHAT_EMPTY_STATE_COPY', () => {
-    const props = mockChatEmptyStateProps();
-    render(<ChatEmptyState {...props} />);
+  it.each([
+    ["default", {}],
+    ["single-action", { quickActions: [QUICK_ACTIONS_BY_ROLE.user[0]!] }],
+  ] satisfies ReadonlyArray<[string, Partial<MockChatEmptyStateProps>]>)(
+    "matches snapshot (%s)",
+    (_name, overrides) => {
+      const { container } = render(
+        <ChatEmptyState {...mockChatEmptyStateProps(overrides)} />,
+      );
+      expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
+    },
+  );
+
+  it("renders title and description from CHAT_EMPTY_STATE_COPY", () => {
+    render(<ChatEmptyState {...mockChatEmptyStateProps()} />);
 
     expect(screen.getByText(CHAT_EMPTY_STATE_COPY.title)).toBeInTheDocument();
     expect(
@@ -21,25 +41,25 @@ describe('ChatEmptyState', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders a button for each quick action', () => {
+  it("renders a button for each quick action", () => {
     const props = mockChatEmptyStateProps();
     render(<ChatEmptyState {...props} />);
 
     for (const action of props.quickActions) {
       expect(
-        screen.getByRole('button', { name: action.label }),
+        screen.getByRole("button", { name: action.label }),
       ).toBeInTheDocument();
     }
   });
 
-  it('calls onSelectPrompt with the action prompt when a chip is clicked', async () => {
+  it("calls onSelectPrompt with the action prompt when a chip is clicked", async () => {
     const user = userEvent.setup();
     const onSelectPrompt = vi.fn();
     const props = mockChatEmptyStateProps({ onSelectPrompt });
 
     render(<ChatEmptyState {...props} />);
     await user.click(
-      screen.getByRole('button', { name: props.quickActions[0]!.label }),
+      screen.getByRole("button", { name: props.quickActions[0]!.label }),
     );
 
     expect(onSelectPrompt).toHaveBeenCalledTimes(1);

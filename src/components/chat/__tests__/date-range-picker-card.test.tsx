@@ -1,86 +1,133 @@
-import { cleanup, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DateRangePickerCard } from '@/components/chat/date-range-picker-card';
-import { mockDateRangePickerCardProps } from '@/mocks/date-range-picker-card';
+import { DateRangePickerCard } from "@/components/chat/date-range-picker-card";
+import { mockDateRangePickerCardProps } from "@/mocks/date-range-picker-card";
 
-describe('DateRangePickerCard', () => {
+const NOW = new Date("2026-05-20T12:00:00");
+
+describe("DateRangePickerCard", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.setSystemTime(NOW);
+  });
+
   afterEach(() => {
     cleanup();
+    vi.useRealTimers();
   });
 
-  it('renders the section title and month navigation', () => {
-    render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
-
-    expect(screen.getByText('Select dates')).toBeInTheDocument();
-    expect(screen.getByLabelText('Previous month')).toBeInTheDocument();
-    expect(screen.getByLabelText('Next month')).toBeInTheDocument();
-    expect(screen.getByText(/\d{4}/)).toBeInTheDocument();
+  it.each([
+    ["default", {}],
+    ["disabled", { disabled: true }],
+  ] as const)("snapshot: %s", (_name, overrides) => {
+    const { container } = render(
+      <DateRangePickerCard {...mockDateRangePickerCardProps(overrides)} />,
+    );
+    expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
   });
 
-  it('shows morning and afternoon slot buttons when a start date is selected', () => {
-    render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
-
-    expect(screen.getByRole('button', { name: 'Morning' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Afternoon' }),
-    ).toBeInTheDocument();
-  });
-
-  it('calls onSubmit with a single-day range on confirm', async () => {
-    const user = userEvent.setup();
+  it("submits all-day, half-day, and multi-day ranges", async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const onSubmit = vi.fn();
-
     render(
       <DateRangePickerCard {...mockDateRangePickerCardProps({ onSubmit })} />,
     );
-    await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    const message = String(onSubmit.mock.calls[0]?.[0]);
-    const [start, end] = message.split(' to ');
-    expect(start).toBe(end);
-    expect(start).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    const confirm = () =>
+      user.click(screen.getByRole("button", { name: "Confirm" }));
+    const pickDay = (day: number) =>
+      user.click(
+        screen
+          .getAllByRole("button")
+          .find(
+            (el) =>
+              !el.getAttribute("aria-label") &&
+              el.textContent?.trim() === String(day),
+          )!,
+      );
+    const pickSlot = (name: "Morning" | "Afternoon") =>
+      user.click(screen.getByRole("button", { name }));
+
+    await confirm();
+    expect(onSubmit).toHaveBeenLastCalledWith("2026-05-21 to 2026-05-21");
+
+    await pickSlot("Morning");
+    await confirm();
+    expect(onSubmit).toHaveBeenLastCalledWith("morning of 2026-05-21");
+
+    await pickSlot("Afternoon");
+    await pickDay(28);
+    await pickSlot("Morning");
+    await confirm();
+    expect(onSubmit).toHaveBeenLastCalledWith(
+      "afternoon of 2026-05-21 to morning of 2026-05-28",
+    );
   });
 
-  it('calls onSubmit with morning half-day when morning slot is active', async () => {
-    const user = userEvent.setup();
+  it("resets range when picking a new start after a range", async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const onSubmit = vi.fn();
-
     render(
       <DateRangePickerCard {...mockDateRangePickerCardProps({ onSubmit })} />,
     );
-    await user.click(screen.getByRole('button', { name: 'Morning' }));
-    await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    expect(String(onSubmit.mock.calls[0]?.[0])).toMatch(
-      /^morning of \d{4}-\d{2}-\d{2}$/,
-    );
+    const pickDay = (day: number) =>
+      user.click(
+        screen
+          .getAllByRole("button")
+          .find(
+            (el) =>
+              !el.getAttribute("aria-label") &&
+              el.textContent?.trim() === String(day),
+          )!,
+      );
+
+    // 25 → extends range from default start (21); 28 → new cycle (start=28);
+    // 22 → before 28, so start becomes 22 only (single day, not 22–28).
+    await pickDay(25);
+    await pickDay(28);
+    await pickDay(22);
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+
+    // Single-day confirm format: same ISO date twice.
+    expect(onSubmit).toHaveBeenLastCalledWith("2026-05-22 to 2026-05-22");
   });
 
-  it('clears selection when Clear is clicked', async () => {
-    const user = userEvent.setup();
-
+  it("clears selection so slots hide until a day is picked", async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
-    expect(screen.getByRole('button', { name: 'Confirm' })).toBeEnabled();
 
-    await user.click(screen.getByRole('button', { name: 'Clear' }));
-
+    await user.click(screen.getByRole("button", { name: "Clear" }));
     expect(
-      screen.queryByRole('button', { name: 'Morning' }),
+      screen.queryByRole("button", { name: "Morning" }),
     ).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+
+    await user.click(
+      screen
+        .getAllByRole("button")
+        .find(
+          (el) =>
+            !el.getAttribute("aria-label") && el.textContent?.trim() === "25",
+        )!,
+    );
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeEnabled();
   });
 
-  it('disables confirm when disabled prop is true', () => {
-    render(
-      <DateRangePickerCard
-        {...mockDateRangePickerCardProps({ disabled: true })}
-      />,
+  it("disables afternoon on the end boundary of a multi-day range", async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
+
+    await user.click(
+      screen
+        .getAllByRole("button")
+        .find(
+          (el) =>
+            !el.getAttribute("aria-label") && el.textContent?.trim() === "28",
+        )!,
     );
 
-    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Afternoon" })).toBeDisabled();
   });
 });
