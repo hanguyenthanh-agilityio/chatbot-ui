@@ -192,13 +192,13 @@
   --bg-preview-light: var(--bg-glass);
   --bg-datepicker-half-morning: linear-gradient(
     to right,
-    #ffffff80 50%,
+    #ffffff 50%,
     transparent 50%
   );
   --bg-datepicker-half-afternoon: linear-gradient(
     to right,
     transparent 50%,
-    #ffffff80 50%
+    #ffffff 50%
   );
   --bg-btn-active: linear-gradient(
     135deg,
@@ -469,13 +469,13 @@ html[data-theme="light"],
   --bg-preview-light: var(--bg-glass);
   --bg-datepicker-half-morning: linear-gradient(
     to right,
-    #fffefc80 50%,
+    var(--color-app-accent) 50%,
     transparent 50%
   );
   --bg-datepicker-half-afternoon: linear-gradient(
     to right,
     transparent 50%,
-    #fffefc80 50%
+    var(--color-app-accent) 50%
   );
 
   --bg-shell-sidebar: var(--bg-glass);
