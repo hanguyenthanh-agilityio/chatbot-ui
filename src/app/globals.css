@@ -146,8 +146,8 @@
     --color-app-row-selected-bg: var(--color-app-accent-soft);
     --color-app-row-selected-ring: #d977064d;
     /* Skeleton shimmer — must contrast on white glass */
-    --color-app-skeleton: var(--palette-stone-700);
-    --color-app-skeleton-dot: var(--palette-stone-800);
+    --color-app-skeleton: var(--palette-stone-800);
+    --color-app-skeleton-dot: var(--palette-stone-900);
   }
 }
 
@@ -156,6 +156,9 @@
   --bg-selection: #7c3aed4d;
   --bg-btn-disabled: #ffffff33;
   --bg-surface-muted: #1c1b3899;
+  /* Skeleton — white @ α-32 / α-70 */
+  --bg-skeleton: #ffffff52;
+  --bg-skeleton-dot: #ffffffb3;
 
   --bg-radial-violet: radial-gradient(
     1200px 700px at -10% -15%,
@@ -303,8 +306,8 @@
   --tracking-table-label: var(--letter-spacing-table-label);
   --color-btn-disabled: var(--bg-btn-disabled);
   --color-surface-muted: var(--bg-surface-muted);
-  --color-app-skeleton: #ffffff52;
-  --color-app-skeleton-dot: #ffffff85;
+  --color-app-skeleton: var(--bg-skeleton);
+  --color-app-skeleton-dot: var(--bg-skeleton-dot);
   --background-image-glass: var(--bg-glass);
   --background-image-glass-panel: var(--bg-glass-panel);
   --background-image-glass-panel-chat: var(--bg-glass-panel);
@@ -533,8 +536,8 @@ html[data-theme="light"],
   --shadow-toggle-light: inset 0 1px 0 #fffefc, 0 2px 8px #1c19170f;
   --shadow-toggle-thumb-light: 0 1px 4px #1c19171a, inset 0 1px 0 #fffefcbf;
 
-  --color-app-skeleton: var(--palette-stone-800);
-  --color-app-skeleton-dot: var(--palette-stone-900);
+  --bg-skeleton: var(--palette-stone-800);
+  --bg-skeleton-dot: var(--palette-stone-900);
 }
 
 html[data-theme="light"] body {
@@ -571,23 +574,13 @@ html[data-theme="light"] .app-chat-header {
 }
 
 .app-skeleton-bar {
-  background-color: #ffffff85;
+  background-color: var(--bg-skeleton);
   animation: app-skeleton-pulse 1.2s ease-in-out infinite;
 }
 
 .app-skeleton-dot {
-  background-color: #ffffffb3;
+  background-color: var(--bg-skeleton-dot);
   animation: app-skeleton-pulse 1.2s ease-in-out infinite;
-}
-
-html[data-theme="light"] .app-skeleton-bar,
-[data-theme="light"] .app-skeleton-bar {
-  background-color: #44403c;
-}
-
-html[data-theme="light"] .app-skeleton-dot,
-[data-theme="light"] .app-skeleton-dot {
-  background-color: #292524;
 }
 
 aside .rounded-2xl,

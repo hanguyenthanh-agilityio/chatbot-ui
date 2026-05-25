@@ -1,7 +1,10 @@
 import type { ComponentProps, RefObject } from "react";
 import { createRef } from "react";
 import { ChatTranscript } from "@/components/transcript";
-import { QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
+import {
+  MOCK_CHAT_SAMPLE_MESSAGES,
+  QUICK_ACTIONS_BY_ROLE,
+} from "@/constants/chat";
 import {
   mockAssistantTextMessage,
   mockUserChatMessage,
@@ -26,8 +29,8 @@ export function mockChatTranscriptProps(
 export function mockChatTranscriptWithMessages(): MockChatTranscriptProps {
   return mockChatTranscriptProps({
     messages: [
-      mockUserChatMessage("How many leave days do I have left?"),
-      mockAssistantTextMessage("You have 12 annual days remaining."),
+      mockUserChatMessage(MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalance),
+      mockAssistantTextMessage(MOCK_CHAT_SAMPLE_MESSAGES.assistantLeaveBalance),
     ],
   });
 }
