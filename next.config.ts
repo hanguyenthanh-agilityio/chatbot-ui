@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;
 
-import("@opennextjs/cloudflare").then((m) =>
-  m.initOpenNextCloudflareForDev(),
-);
+// Skip Workers dev runtime during Vitest/CI (prevents workerd SQLITE_BUSY on Linux runners).
+if (!process.env.VITEST && process.env.CI !== "true") {
+  import("@opennextjs/cloudflare").then((m) =>
+    m.initOpenNextCloudflareForDev(),
+  );
+}

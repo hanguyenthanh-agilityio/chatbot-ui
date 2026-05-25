@@ -30,7 +30,7 @@
     "test": "vitest run --project unit",
     "test:update": "vitest run --project unit -u",
     "test:coverage": "vitest run --project unit --coverage",
-    "test:coverage:ci": "vitest run --project unit --coverage --testNamePattern='^(?!.*matches snapshot).*$' --pool=forks --no-file-parallelism",
+    "test:coverage:ci": "VITEST=true vitest run --config vitest.unit.config.ts --coverage --testNamePattern='^(?!.*matches snapshot).*$'",
     "test:update-coverage": "vitest run --project unit -u --coverage",
     "test:storybook": "vitest run --project storybook",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",

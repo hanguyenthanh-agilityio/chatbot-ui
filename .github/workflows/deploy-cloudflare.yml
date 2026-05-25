@@ -85,6 +85,9 @@ jobs:
 
       - name: Run tests with coverage (no snapshots)
         run: pnpm run test:coverage:ci
+        env:
+          VITEST: "true"
+          CI: "true"
 
       - name: Deploy to chatbot-ui-coverage
         uses: cloudflare/wrangler-action@v3
@@ -122,6 +125,8 @@ jobs:
 
       - name: Build OpenNext bundle
         run: pnpm exec opennextjs-cloudflare build
+        env:
+          CI: "true"
 
       - name: Deploy Worker (ai-sdk)
         uses: cloudflare/wrangler-action@v3
