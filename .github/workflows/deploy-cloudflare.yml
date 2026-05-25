@@ -1,5 +1,4 @@
-# Auto-deploy on push to feat/cloudflare-deploy ONLY.
-# Other branches (feat/update-*, main) will NOT trigger this workflow.
+# Auto-deploy on push to feat/implement-cancel-button (preview branch name = ref).
 #
 # Required GitHub secrets (Settings → Secrets and variables → Actions):
 #   CLOUDFLARE_API_TOKEN  — Workers Edit + Pages Edit
@@ -10,7 +9,7 @@ name: Deploy to Cloudflare
 on:
   push:
     branches:
-      - feat/cloudflare-deploy
+      - feat/implement-cancel-button
   workflow_dispatch:
 
 concurrency:
@@ -57,7 +56,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
-          command: pages deploy storybook-static --project-name=chatbot-ui-storybook --branch=feat/cloudflare-deploy --commit-dirty=true
+          command: pages deploy storybook-static --project-name=chatbot-ui-storybook --branch=${{ github.ref_name }} --commit-dirty=true
 
   deploy-coverage:
     name: Coverage → Pages
@@ -91,7 +90,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: ${{ env.WRANGLER_VERSION }}
-          command: pages deploy coverage --project-name=chatbot-ui-coverage --branch=feat/cloudflare-deploy --commit-dirty=true
+          command: pages deploy coverage --project-name=chatbot-ui-coverage --branch=${{ github.ref_name }} --commit-dirty=true
 
   deploy-app:
     name: Next.js app → Workers
