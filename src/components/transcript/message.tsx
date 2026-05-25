@@ -437,7 +437,11 @@ export function ChatMessage({
         />
       ) : null}
       <div
-        className={`min-w-0 ${isUser ? "max-w-message-column-user" : "max-w-full flex-1"}`}
+        className={
+          isUser
+            ? "flex max-w-message-column-user flex-col items-end"
+            : "min-w-0 max-w-full flex-1"
+        }
       >
         {mutationSuccessCards.length > 0 ? (
           <div className="space-y-2">{successCardContent}</div>

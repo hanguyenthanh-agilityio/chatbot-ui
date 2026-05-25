@@ -116,7 +116,7 @@ export const ConversationRows: Story = {
         </div>
       </article>
       <article className="flex justify-end gap-3">
-        <div className="max-w-message-column-user min-w-0">
+        <div className="flex max-w-message-column-user flex-col items-end">
           <MessageBubble isUser text={SAMPLE_USER_TEXT} />
         </div>
         <MessageAvatar initials="HN" isUser avatarLabel="Ha Nguyen" />

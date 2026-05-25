@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
-import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
+import { ChatPanelResetButton } from '@/components/ui/chat-panel-reset-button';
 
 const meta = {
   title: 'Chat/ChatPanelResetButton',

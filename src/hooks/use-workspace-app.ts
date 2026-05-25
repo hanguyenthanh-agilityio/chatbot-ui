@@ -86,6 +86,7 @@ export function useWorkspaceApp(
     status,
     error,
     clearError,
+    stop,
   } = useChat({
     transport,
     sendAutomaticallyWhen: ({ messages }) => {
@@ -276,5 +277,6 @@ export function useWorkspaceApp(
     handlePromptSelect,
     handleToolApproval,
     handleRoleChange,
+    stop,
   };
 }

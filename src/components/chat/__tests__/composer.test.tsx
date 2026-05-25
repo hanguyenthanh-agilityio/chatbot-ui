@@ -138,4 +138,63 @@ describe("ChatComposer", () => {
     render(<ChatComposer {...mockChatComposerProps({ errorMessage })} />);
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
+
+  it("shows stop button while loading and calls onStopAction", async () => {
+    const user = userEvent.setup();
+    const onStopAction = vi.fn();
+    const onSubmitAction = vi.fn((event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+    });
+
+    render(
+      <ChatComposer
+        {...mockChatComposerProps({
+          input: "Hello",
+          canSend: true,
+          isLoading: true,
+          isProviderReady: true,
+          onStopAction,
+          onSubmitAction,
+        })}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: CHAT_COMPOSER_COPY.stopButtonLabel }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: CHAT_COMPOSER_COPY.sendButtonLabel }),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: CHAT_COMPOSER_COPY.stopButtonLabel }),
+    );
+    expect(onStopAction).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not submit on Enter while loading", async () => {
+    const user = userEvent.setup();
+    const onSubmitAction = vi.fn((event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+    });
+
+    render(
+      <ChatComposer
+        {...mockChatComposerProps({
+          input: "Hello",
+          canSend: true,
+          isLoading: true,
+          isProviderReady: true,
+          onSubmitAction,
+        })}
+      />,
+    );
+
+    const textarea = screen.getByRole("textbox", {
+      name: CHAT_COMPOSER_COPY.ariaLabel,
+    });
+    await user.click(textarea);
+    await user.keyboard("{Enter}");
+    expect(onSubmitAction).not.toHaveBeenCalled();
+  });
 });

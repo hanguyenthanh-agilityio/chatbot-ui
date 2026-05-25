@@ -15,6 +15,7 @@ describe("MessageBubble", () => {
 
   it.each([
     ["user", { isUser: true, text: "How many leave days do I have left?" }],
+    ["user-short", { isUser: true, text: "hellp" }],
     [
       "assistant",
       { isUser: false, text: "You have 12 annual days remaining." },

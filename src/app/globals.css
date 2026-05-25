@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
 
 @import "tailwindcss";
 
@@ -782,4 +782,49 @@ html[data-theme="light"] .chat-panel-reset:not(:disabled):hover {
   .chat-panel-reset {
     transition: none;
   }
+}
+
+.composer-stop-button {
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid #ffffff40;
+  background-color: #ffffff2e;
+  color: #ffffff;
+  box-shadow: 0 1px 4px #0000002e;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.composer-stop-button:hover {
+  background-color: #ffffff42;
+  border-color: #ffffff55;
+}
+
+.composer-stop-button:active {
+  transform: scale(0.96);
+}
+
+.composer-stop-button-icon {
+  display: block;
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: 0.125rem;
+  background-color: currentColor;
+}
+
+html[data-theme="light"] .composer-stop-button {
+  border-color: #a8a29e;
+  background-color: #d6d3d1;
+  color: #1c1917;
+  box-shadow: 0 1px 3px #1c19171f;
+}
+
+html[data-theme="light"] .composer-stop-button:hover {
+  background-color: #a8a29e;
+  border-color: #78716c;
 }

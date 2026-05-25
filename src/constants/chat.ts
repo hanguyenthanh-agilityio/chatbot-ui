@@ -2,8 +2,8 @@ import type { AppRole } from "@/lib/auth/session";
 import type { QuickAction } from "@/types/chat";
 
 export const CHAT_PANEL_RESET_COPY = {
-  ariaLabel: "Reset chat panel",
-  tooltip: "Clear the chat panel and start over",
+  ariaLabel: "Clear chat",
+  tooltip: "Clear this conversation and start over",
 } as const;
 
 export const CHAT_COMPOSER_COPY = {
@@ -13,6 +13,7 @@ export const CHAT_COMPOSER_COPY = {
   defaultHelperText: "Press Enter to send. Shift + Enter adds a new line.",
   submitHint: "Sending your message...",
   sendButtonLabel: "Send",
+  stopButtonLabel: "Stop response",
   thinkingButtonLabel: "Thinking...",
   verifyFirstButtonLabel: "Verify first",
   verifyProviderTooltip: "Please verify your OpenAI key first.",
