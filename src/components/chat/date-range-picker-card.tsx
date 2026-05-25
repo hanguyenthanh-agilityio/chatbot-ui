@@ -16,56 +16,10 @@ const CALENDAR_RANGE_BAND_CLASSES =
 const CALENDAR_DIVIDER_CLASSES =
   "mt-3 h-px bg-white/10 light:bg-app-border-subtle";
 
-const SLOT_BUTTON_BASE_CLASSES =
-  "flex-1 rounded border py-2 text-sm font-medium transition border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70 light:border-app-border light:text-app-fg-tertiary light:hover:bg-app-hover light:hover:text-app-fg-muted";
-
-const SLOT_BUTTON_ACTIVE_CLASSES =
-  "border-white/30 bg-white/16 text-white light:border-app-border-emphasis light:bg-app-accent-soft light:text-app-fg";
+const CALENDAR_WEEKEND_HEADER_CLASSES = "text-white/18 light:text-app-fg-faint";
 
 const CALENDAR_MONTH_LABEL_CLASSES =
   "text-sm font-bold text-white light:text-app-fg";
-
-const CALENDAR_WEEKDAY_HEADER_CLASSES =
-  "py-1 text-center text-xs font-bold uppercase tracking-wide text-white/40 light:text-app-fg-tertiary";
-
-const CALENDAR_WEEKEND_HEADER_CLASSES =
-  "text-white/18 light:text-app-fg-faint";
-
-const CALENDAR_DAY_SELECTED_CLASSES =
-  "bg-white font-semibold text-slate-900 light:bg-app-accent light:text-white";
-
-const CALENDAR_DAY_IN_RANGE_CLASSES =
-  "font-medium text-white hover:bg-white/10 light:text-app-fg light:hover:bg-app-hover";
-
-const CALENDAR_DAY_TODAY_CLASSES =
-  "text-white ring-1 ring-white/35 hover:bg-white/10 light:text-app-fg light:ring-app-border-emphasis light:hover:bg-app-hover";
-
-const CALENDAR_DAY_DEFAULT_CLASSES =
-  "text-white/72 hover:bg-white/10 light:text-app-fg-muted light:hover:bg-app-hover";
-
-const CALENDAR_DAY_WEEKEND_CLASSES =
-  "cursor-not-allowed select-none text-white/18 light:text-app-fg-faint";
-
-const CALENDAR_DAY_DISABLED_CLASSES =
-  "cursor-not-allowed text-white/22 light:text-app-fg-faint";
-
-const CALENDAR_HALF_MORNING_CLASSES =
-  "pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(to_right,white_50%,transparent_50%)] light:bg-[linear-gradient(to_right,var(--color-app-accent)_50%,transparent_50%)]";
-
-const CALENDAR_HALF_AFTERNOON_CLASSES =
-  "pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(to_right,transparent_50%,white_50%)] light:bg-[linear-gradient(to_right,transparent_50%,var(--color-app-accent)_50%)]";
-
-const CALENDAR_SELECTED_DAY_NUMBER_CLASSES =
-  "relative z-10 text-slate-900 light:text-white";
-
-const CALENDAR_SUMMARY_DATE_CLASSES =
-  "text-sm text-white/50 light:text-app-fg-tertiary";
-
-const CALENDAR_SUMMARY_VALUE_CLASSES =
-  "text-sm font-bold text-white light:text-app-fg";
-
-const CALENDAR_CLEAR_BUTTON_CLASSES =
-  "shrink-0 text-xs text-white/30 transition hover:text-white/60 light:text-app-fg-tertiary light:hover:text-app-fg-muted";
 
 const MONTHS = [
   "January",
@@ -84,22 +38,17 @@ const MONTHS = [
 // Monday-first week headers; Sa/Su (indices 5-6) always dimmed.
 const WEEK_HEADERS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
-// Mirrors DATE_PICKER_TIME_SLOT from the reference.
-type TimeSlot = "all_day" | "morning" | "afternoon";
-
-// Mirrors DATE_PICKER_RANGE_SELECTION.
-type RangeSelection = "start" | "end";
-
-// Two pressable slot options (mirrors TIME_SLOT_OPTIONS).
 const SLOT_OPTIONS = [
   { label: "Morning", value: "morning" as const },
   { label: "Afternoon", value: "afternoon" as const },
 ];
 
-// Work-schedule boundaries used in calculateLeaveDays (mirrors WORK_HOURS in date.ts).
+type TimeSlot = "all_day" | "morning" | "afternoon";
+type RangeSelection = "start" | "end";
+
 const WORK_SHIFTS = [
-  { startH: 8, startM: 0, endH: 12, endM: 0 }, // morning block: 4 h
-  { startH: 13, startM: 30, endH: 17, endM: 30 }, // afternoon block: 4 h
+  { startH: 8, startM: 0, endH: 12, endM: 0 },
+  { startH: 13, startM: 30, endH: 17, endM: 30 },
 ] as const;
 const HOURS_PER_DAY = 8;
 
@@ -126,8 +75,8 @@ function getNextWorkingDay(fromIso: string): string {
 }
 
 function buildCalendarGrid(year: number, month: number): (string | null)[] {
-  const firstDow = new Date(year, month, 1).getDay(); // 0 = Sun
-  const offset = (firstDow + 6) % 7; // Mon-first offset
+  const firstDow = new Date(year, month, 1).getDay();
+  const offset = (firstDow + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const grid: (string | null)[] = Array(offset).fill(null);
   for (let d = 1; d <= daysInMonth; d++) grid.push(buildIso(year, month, d));
@@ -135,7 +84,6 @@ function buildCalendarGrid(year: number, month: number): (string | null)[] {
   return grid;
 }
 
-// "Apr 29" — mirrors formatDateWithWeekday (short form, current-year only).
 function fmtDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString("en-US", {
@@ -145,19 +93,14 @@ function fmtDate(iso: string): string {
   });
 }
 
-// Calendar days between two ISO dates (inclusive) — mirrors getInclusiveDaysInRange.
-// Counts ALL calendar days, not just workdays; used to detect single vs multi-day.
 function getInclusiveDays(start: string | null, end: string | null): number {
   if (!start) return 0;
-  if (!end) return 1; // single-day selection
+  if (!end) return 1;
   const s = new Date(start + "T00:00:00").getTime();
   const e = new Date(end + "T00:00:00").getTime();
   return Math.floor((e - s) / (24 * 60 * 60 * 1000)) + 1;
 }
 
-// Apply slot-based time boundaries to an ISO date string — mirrors applyTimeSlotsToRange.
-// start boundary: all_day|morning → 08:00, afternoon → 13:30
-// end boundary: all_day|afternoon → 17:30, morning → 12:00
 function applySlotTime(
   isoDate: string,
   slot: TimeSlot,
@@ -170,18 +113,14 @@ function applySlotTime(
     } else {
       d.setHours(8, 0, 0, 0);
     }
+  } else if (slot === "morning") {
+    d.setHours(12, 0, 0, 0);
   } else {
-    if (slot === "morning") {
-      d.setHours(12, 0, 0, 0);
-    } else {
-      d.setHours(17, 30, 0, 0);
-    }
+    d.setHours(17, 30, 0, 0);
   }
   return d;
 }
 
-// Exact port of calculateLeaveDays from date.ts:
-// sums work-shift overlap hours for every weekday in [start, end], divides by 8.
 function calculateLeaveDays(start: Date, end: Date): number {
   if (end <= start) return 0;
 
@@ -210,8 +149,6 @@ function calculateLeaveDays(start: Date, end: Date): number {
   return Number((totalHours / HOURS_PER_DAY).toFixed(2));
 }
 
-// Mirrors calculateRangeDaysOff from utils.ts.
-// For single-day (no end): end slot mirrors start slot (matches effectiveRangeEndTimeSlot logic).
 function computeDaysOff(
   start: string | null,
   end: string | null,
@@ -220,29 +157,22 @@ function computeDaysOff(
 ): number {
   if (!start) return 0;
   const effectiveEnd = end ?? start;
-  // Single-day: end-slot mirrors start-slot (reference: effectiveRangeEndTimeSlot = rangeStartTimeSlot).
   const effectiveEndSlot: TimeSlot = end ? endSlot : startSlot;
   const startDate = applySlotTime(start, startSlot, "start");
   const endDate = applySlotTime(effectiveEnd, effectiveEndSlot, "end");
   return calculateLeaveDays(startDate, endDate);
 }
 
-// Mirrors formatDaysOff from date.ts (without the startTime half-day special case,
-// which is only used in calendar event contexts, not the picker summary).
 function formatDaysOff(days: number): string {
   const n =
     days % 1 === 0 ? days.toString() : Number(days.toFixed(1)).toString();
   return `${n} day${days === 1 ? "" : "s"} off`;
 }
 
-// For multi-day ranges: MORNING is invalid for the start boundary (you can only
-// set AFTERNOON or leave it ALL_DAY); AFTERNOON is invalid for the end boundary.
-// Mirrors getBlockedMultiDaySlot.
 function getBlockedSlot(selection: RangeSelection): "morning" | "afternoon" {
   return selection === "start" ? "morning" : "afternoon";
 }
 
-// Mirrors getNextSlot: pressing the currently-active half-slot reverts to all_day.
 function getNextSlot(
   pressed: "morning" | "afternoon",
   current: TimeSlot,
@@ -428,8 +358,6 @@ export function DateRangePickerCard({
 
     if (!isMultiDay) {
       setRangeStartSlot(nextSlot);
-    } else if (activeSelection === "start") {
-      setRangeStartSlot(nextSlot);
     } else {
       setRangeEndSlot(nextSlot);
     }
@@ -451,9 +379,7 @@ export function DateRangePickerCard({
       // Single-day: start cell reflects rangeStartSlot.
       return isStart ? rangeStartSlot : null;
     }
-    if (isStart) return rangeStartSlot;
-    if (isEnd) return rangeEndSlot;
-    return null;
+    return isStart ? rangeStartSlot : rangeEndSlot;
   }
 
   function handleConfirm() {
@@ -535,7 +461,7 @@ export function DateRangePickerCard({
           <div
             key={`hdr-${i}`}
             className={cn(
-              CALENDAR_WEEKDAY_HEADER_CLASSES,
+              "py-1 text-center text-xs font-bold uppercase tracking-wide text-white/40 light:text-app-fg-tertiary",
               i >= 5 && CALENDAR_WEEKEND_HEADER_CLASSES,
             )}
           >
@@ -598,40 +524,50 @@ export function DateRangePickerCard({
                 disabled={disabled || isDisabledCell}
                 className={cn(
                   "relative z-10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs transition",
-                  isSelected && !showHalf && CALENDAR_DAY_SELECTED_CLASSES,
+                  isSelected &&
+                    !showHalf &&
+                    "bg-white font-semibold text-slate-900 light:bg-app-accent light:text-white",
                   isSelected && showHalf && "font-semibold",
-                  !isSelected && isWknd && CALENDAR_DAY_WEEKEND_CLASSES,
+                  !isSelected &&
+                    isWknd &&
+                    cn(
+                      "cursor-not-allowed select-none",
+                      CALENDAR_WEEKEND_HEADER_CLASSES,
+                    ),
                   !isSelected &&
                     !isWknd &&
                     isDisabledCell &&
-                    CALENDAR_DAY_DISABLED_CLASSES,
-                  !isSelected && inRange && CALENDAR_DAY_IN_RANGE_CLASSES,
+                    "cursor-not-allowed text-white/22 light:text-app-fg-faint",
+                  !isSelected &&
+                    inRange &&
+                    "font-medium text-white hover:bg-white/10 light:text-app-fg light:hover:bg-app-hover",
                   !isSelected &&
                     !inRange &&
                     !isDisabledCell &&
                     isToday &&
-                    CALENDAR_DAY_TODAY_CLASSES,
+                    "text-white ring-1 ring-white/35 hover:bg-white/10 light:text-app-fg light:ring-app-border-emphasis light:hover:bg-app-hover",
                   !isSelected &&
                     !inRange &&
                     !isDisabledCell &&
                     !isToday &&
-                    CALENDAR_DAY_DEFAULT_CLASSES,
+                    "text-white/72 hover:bg-white/10 light:text-app-fg-muted light:hover:bg-app-hover",
                 )}
               >
                 {showHalf && (
                   <span
-                    className={
+                    className={cn(
+                      "pointer-events-none absolute inset-0 rounded-full",
                       halfSlot === "morning"
-                        ? CALENDAR_HALF_MORNING_CLASSES
-                        : CALENDAR_HALF_AFTERNOON_CLASSES
-                    }
+                        ? "bg-datepicker-half-morning"
+                        : "bg-datepicker-half-afternoon",
+                    )}
                   />
                 )}
                 {/* Day number sits on top of the gradient overlay. */}
                 <span
                   className={cn(
                     isSelected
-                      ? CALENDAR_SELECTED_DAY_NUMBER_CLASSES
+                      ? "relative z-10 text-slate-900 light:text-white"
                       : "relative z-10",
                   )}
                 >
@@ -658,8 +594,10 @@ export function DateRangePickerCard({
                   disabled={isDisabledSlot}
                   onClick={() => handleSelectTimeSlot(value)}
                   className={cn(
-                    SLOT_BUTTON_BASE_CLASSES,
-                    isActive && !isDisabledSlot && SLOT_BUTTON_ACTIVE_CLASSES,
+                    "flex-1 rounded border py-2 text-sm font-medium transition border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70 light:border-app-border light:text-app-fg-tertiary light:hover:bg-app-hover light:hover:text-app-fg-muted",
+                    isActive &&
+                      !isDisabledSlot &&
+                      "border-white/30 bg-white/16 text-white light:border-app-border-emphasis light:bg-app-accent-soft light:text-app-fg",
                     isDisabledSlot && "cursor-not-allowed opacity-40",
                   )}
                 >
@@ -676,10 +614,10 @@ export function DateRangePickerCard({
         <>
           <div className={CALENDAR_DIVIDER_CLASSES} />
           <div className="mt-2 flex flex-col items-end gap-0.5">
-            <span className={CALENDAR_SUMMARY_DATE_CLASSES}>
+            <span className="text-sm text-white/50 light:text-app-fg-tertiary">
               {summaryDateText}
             </span>
-            <span className={CALENDAR_SUMMARY_VALUE_CLASSES}>
+            <span className={CALENDAR_MONTH_LABEL_CLASSES}>
               {summaryValueText}
             </span>
           </div>
@@ -693,7 +631,7 @@ export function DateRangePickerCard({
             type="button"
             disabled={disabled}
             onClick={handleClear}
-            className={CALENDAR_CLEAR_BUTTON_CLASSES}
+            className="shrink-0 text-xs text-white/30 transition hover:text-white/60 light:text-app-fg-tertiary light:hover:text-app-fg-muted"
           >
             Clear
           </button>

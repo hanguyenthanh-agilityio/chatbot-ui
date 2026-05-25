@@ -4,16 +4,31 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ChatEmptyState } from "@/components/chat/empty-state";
 import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
-import { mockChatEmptyStateProps } from "@/mocks/empty-state";
+import {
+  mockChatEmptyStateProps,
+  type MockChatEmptyStateProps,
+} from "@/mocks/empty-state";
 
 describe("ChatEmptyState", () => {
   afterEach(() => {
     cleanup();
   });
 
+  it.each([
+    ["default", {}],
+    ["single-action", { quickActions: [{ label: "Check balance", prompt: "balance" }] }],
+  ] satisfies ReadonlyArray<[string, Partial<MockChatEmptyStateProps>]>)(
+    "matches snapshot (%s)",
+    (_name, overrides) => {
+    const { container } = render(
+      <ChatEmptyState {...mockChatEmptyStateProps(overrides)} />,
+    );
+    expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
+    },
+  );
+
   it("renders title and description from CHAT_EMPTY_STATE_COPY", () => {
-    const props = mockChatEmptyStateProps();
-    render(<ChatEmptyState {...props} />);
+    render(<ChatEmptyState {...mockChatEmptyStateProps()} />);
 
     expect(screen.getByText(CHAT_EMPTY_STATE_COPY.title)).toBeInTheDocument();
     expect(

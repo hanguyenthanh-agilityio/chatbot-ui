@@ -1,78 +1,135 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DateRangePickerCard } from "@/components/chat/date-range-picker-card";
 import { mockDateRangePickerCardProps } from "@/mocks/date-range-picker-card";
 
+const FIXED_NOW = new Date("2026-05-20T12:00:00");
+
+function dayButton(day: number) {
+  return screen.getAllByRole("button").find(
+    (el) =>
+      !el.getAttribute("aria-label") && el.textContent?.trim() === String(day),
+  );
+}
+
+function renderPicker(overrides?: Parameters<typeof mockDateRangePickerCardProps>[0]) {
+  return render(<DateRangePickerCard {...mockDateRangePickerCardProps(overrides)} />);
+}
+
 describe("DateRangePickerCard", () => {
+  beforeEach(() => vi.setSystemTime(FIXED_NOW));
   afterEach(() => {
     cleanup();
+    vi.useRealTimers();
   });
 
-  it("renders the section title and month navigation", () => {
-    render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
-
-    expect(screen.getByText("Select dates")).toBeInTheDocument();
-    expect(screen.getByLabelText("Previous month")).toBeInTheDocument();
-    expect(screen.getByLabelText("Next month")).toBeInTheDocument();
-    expect(screen.getByText(/\d{4}/)).toBeInTheDocument();
+  it.each([
+    ["default", {}],
+    ["disabled", { disabled: true }],
+  ] as const)("matches snapshot (%s)", (_name, overrides) => {
+    const { container } = renderPicker(overrides);
+    expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
   });
 
-  it("shows morning and afternoon slot buttons when a start date is selected", () => {
-    render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
-
-    expect(screen.getByRole("button", { name: "Morning" })).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Afternoon" }),
-    ).toBeInTheDocument();
+  it("matches snapshot when cleared", async () => {
+    const user = userEvent.setup();
+    const { container } = renderPicker();
+    await user.click(screen.getByRole("button", { name: "Clear" }));
+    expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
   });
 
-  it("calls onSubmit with a single-day range on confirm", async () => {
+  it("matches snapshot with morning selected", async () => {
+    const user = userEvent.setup();
+    const { container } = renderPicker();
+    await user.click(screen.getByRole("button", { name: "Morning" }));
+    expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
+  });
+
+  it("submits single-day, half-day, and multi-day ranges", async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
+    renderPicker({ onSubmit });
 
-    render(<DateRangePickerCard {...mockDateRangePickerCardProps({ onSubmit })} />);
     await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenLastCalledWith("2026-05-21 to 2026-05-21");
 
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    const message = String(onSubmit.mock.calls[0]?.[0]);
-    const [start, end] = message.split(" to ");
-    expect(start).toBe(end);
-    expect(start).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-  });
-
-  it("calls onSubmit with morning half-day when morning slot is active", async () => {
-    const user = userEvent.setup();
-    const onSubmit = vi.fn();
-
-    render(<DateRangePickerCard {...mockDateRangePickerCardProps({ onSubmit })} />);
     await user.click(screen.getByRole("button", { name: "Morning" }));
     await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenLastCalledWith("morning of 2026-05-21");
 
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    expect(String(onSubmit.mock.calls[0]?.[0])).toMatch(/^morning of \d{4}-\d{2}-\d{2}$/);
-  });
+    await user.click(screen.getByRole("button", { name: "Afternoon" }));
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenLastCalledWith("afternoon of 2026-05-21");
 
-  it("clears selection when Clear is clicked", async () => {
-    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "Morning" }));
+    await user.click(screen.getByRole("button", { name: "Morning" }));
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenLastCalledWith("2026-05-21 to 2026-05-21");
 
-    render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
-    expect(screen.getByRole("button", { name: "Confirm" })).toBeEnabled();
-
-    await user.click(screen.getByRole("button", { name: "Clear" }));
-
-    expect(screen.queryByRole("button", { name: "Morning" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Confirm" })).toBeDisabled();
-  });
-
-  it("disables confirm when disabled prop is true", () => {
-    render(
-      <DateRangePickerCard
-        {...mockDateRangePickerCardProps({ disabled: true })}
-      />,
+    await user.click(screen.getByRole("button", { name: "Afternoon" }));
+    await user.click(dayButton(28)!);
+    await user.click(screen.getByRole("button", { name: "Morning" }));
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenLastCalledWith(
+      "afternoon of 2026-05-21 to morning of 2026-05-28",
     );
+  });
 
-    expect(screen.getByRole("button", { name: "Confirm" })).toBeDisabled();
+  it("navigates months and updates day selection", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    renderPicker({ onSubmit });
+
+    expect(screen.getByText("Select dates")).toBeInTheDocument();
+    expect(screen.getByLabelText("Previous month")).toBeDisabled();
+    await user.click(screen.getByLabelText("Next month"));
+    expect(screen.getByText("June 2026")).toBeInTheDocument();
+    await user.click(screen.getByLabelText("Previous month"));
+    expect(screen.getByText("May 2026")).toBeInTheDocument();
+
+    await user.click(dayButton(20)!);
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenLastCalledWith("2026-05-20 to 2026-05-20");
+
+    await user.click(dayButton(25)!);
+    await user.click(dayButton(28)!);
+    await user.click(dayButton(22)!);
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenLastCalledWith("2026-05-22 to 2026-05-22");
+
+    for (let i = 0; i < 8; i++) await user.click(screen.getByLabelText("Next month"));
+    expect(screen.getByText("January 2027")).toBeInTheDocument();
+    await user.click(screen.getByLabelText("Previous month"));
+    expect(screen.getByText("December 2026")).toBeInTheDocument();
+  });
+
+  it("clears selection and allows picking a new start date", async () => {
+    const user = userEvent.setup();
+    renderPicker();
+    await user.click(screen.getByRole("button", { name: "Clear" }));
+    expect(screen.queryByRole("button", { name: "Morning" })).not.toBeInTheDocument();
+    await user.click(dayButton(25)!);
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeEnabled();
+  });
+
+  it("keeps morning on one day and blocks invalid multi-day slots", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    renderPicker({ onSubmit });
+
+    await user.click(screen.getByRole("button", { name: "Morning" }));
+    await user.click(dayButton(28)!);
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(onSubmit).toHaveBeenCalledWith("morning of 2026-05-21");
+
+    cleanup();
+    renderPicker();
+    await user.click(dayButton(28)!);
+    const afternoon = screen.getByRole("button", { name: "Afternoon" });
+    expect(afternoon).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Morning" }));
+    expect(afternoon).not.toHaveClass("border-white/30");
   });
 });
