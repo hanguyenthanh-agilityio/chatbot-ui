@@ -1,123 +1,103 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
+// Components
 import {
   buildMembersTableModel,
   getBalanceTableModel,
   getRequestTableModel,
-} from '@/components/transcript/named-tables';
+} from "@/components/transcript/named-tables";
 import {
   getBalanceRowActions,
   getSelfRequestRowActions,
-} from '@/components/transcript/cells';
+} from "@/components/transcript/cells";
 
-describe('transcript/named-tables', () => {
-  it('builds members table with row actions', () => {
+// Mocks
+import {
+  FIXTURE_BALANCE_ANNUAL,
+  FIXTURE_MEMBER_ROW,
+  FIXTURE_REQUEST_ANNUAL,
+} from "@/mocks/time-off-fixtures";
+
+describe("transcript/named-tables", () => {
+  it("builds members table with row actions", () => {
     const model = buildMembersTableModel({
-      id: 'team-members',
-      title: 'Team members',
-      memberRows: [
-        {
-          employeeName: 'Mia Nguyen',
-          pendingCount: 1,
-          approvedCount: 2,
-          cancelledCount: 0,
-          totalCount: 3,
-        },
-      ],
-      emptyLabel: 'No team members found.',
+      id: "team-members",
+      title: "Team members",
+      memberRows: [FIXTURE_MEMBER_ROW],
+      emptyLabel: "No team members found.",
     });
 
     expect(model?.columns).toHaveLength(5);
-    expect(model?.rowActions?.[0]?.[0]?.label).toBe('View pending');
+    expect(model?.rowActions?.[0]?.[0]?.label).toBe("View pending");
   });
 
-  it('builds request table with and without employee column', () => {
+  it("builds request table with and without employee column", () => {
     const selfModel = getRequestTableModel({
-      id: 'my-requests',
-      title: 'My requests',
-      payload: {
-        requests: [
-          {
-            leaveType: 'annual',
-            startDate: '2026-06-10',
-            endDate: '2026-06-12',
-            days: 3,
-            status: 'pending',
-          },
-        ],
-      },
+      id: "my-requests",
+      title: "My requests",
+      payload: { requests: [FIXTURE_REQUEST_ANNUAL] },
       showEmployee: false,
       getRowActions: getSelfRequestRowActions,
-      emptyLabel: 'No requests.',
+      emptyLabel: "No requests.",
     });
 
     const teamModel = getRequestTableModel({
-      id: 'team-requests',
-      title: 'Team requests',
+      id: "team-requests",
+      title: "Team requests",
       payload: {
         requests: [
           {
-            employeeName: 'Mia Nguyen',
-            leaveType: 'sick',
-            startDate: '2026-07-01',
-            endDate: '2026-07-01',
+            employeeName: "Mia Nguyen",
+            leaveType: "sick",
+            startDate: "2026-07-01",
+            endDate: "2026-07-01",
             days: 1,
-            status: 'approved',
+            status: "approved",
           },
         ],
       },
       showEmployee: true,
-      emptyLabel: 'No team requests.',
+      emptyLabel: "No team requests.",
     });
 
-    expect(selfModel?.columns.some((column) => column.key === 'employee')).toBe(
+    expect(selfModel?.columns.some((column) => column.key === "employee")).toBe(
       false,
     );
-    expect(teamModel?.columns.some((column) => column.key === 'employee')).toBe(
+    expect(teamModel?.columns.some((column) => column.key === "employee")).toBe(
       true,
     );
   });
 
-  it('builds balance table with row actions', () => {
+  it("builds balance table with row actions", () => {
     const model = getBalanceTableModel({
-      id: 'balance',
-      title: 'My leave balance',
-      payload: {
-        balances: [
-          {
-            leaveType: 'annual',
-            allowance: 14,
-            used: 2,
-            pending: 1,
-            remaining: 11,
-          },
-        ],
-      },
+      id: "balance",
+      title: "My leave balance",
+      payload: { balances: [FIXTURE_BALANCE_ANNUAL] },
       getRowActions: getBalanceRowActions,
-      emptyLabel: 'No balance data found.',
+      emptyLabel: "No balance data found.",
     });
 
     expect(model?.rows).toHaveLength(1);
-    expect(model?.rowActions?.[0]?.[0]?.prompt).toContain('annual');
+    expect(model?.rowActions?.[0]?.[0]?.prompt).toContain("annual");
   });
 
-  it('returns null when payload shape is invalid', () => {
+  it("returns null when payload shape is invalid", () => {
     expect(
       getRequestTableModel({
-        id: 'x',
-        title: 'X',
+        id: "x",
+        title: "X",
         payload: {},
         showEmployee: false,
-        emptyLabel: 'Empty',
+        emptyLabel: "Empty",
       }),
     ).toBeNull();
 
     expect(
       getBalanceTableModel({
-        id: 'x',
-        title: 'X',
+        id: "x",
+        title: "X",
         payload: {},
-        emptyLabel: 'Empty',
+        emptyLabel: "Empty",
       }),
     ).toBeNull();
   });

@@ -1,6 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
+// Components
 import { ToolOutputTable } from "@/components/chat/tool-output-table";
 import {
   collectRecordCollections,
@@ -11,14 +12,20 @@ import {
   toKebabCase,
 } from "@/components/transcript/generic-table";
 
+// Mocks
+import {
+  FIXTURE_REQUEST_ANNUAL,
+  FIXTURE_TEAM,
+} from "@/mocks/time-off-fixtures";
+
 const sampleRows = [
   {
     employeeName: "Mia Nguyen",
-    team: "Flash",
-    leaveTypeLabel: "Annual leave",
-    startDate: "2026-06-10",
-    endDate: "2026-06-12",
-    status: "pending",
+    team: FIXTURE_TEAM,
+    leaveTypeLabel: FIXTURE_REQUEST_ANNUAL.leaveTypeLabel,
+    startDate: FIXTURE_REQUEST_ANNUAL.startDate,
+    endDate: FIXTURE_REQUEST_ANNUAL.endDate,
+    status: FIXTURE_REQUEST_ANNUAL.status,
   },
 ];
 
@@ -55,10 +62,16 @@ describe("transcript/generic-table", () => {
     });
     expect(collections[0]?.path).toEqual(["team", "requests"]);
 
-    expect(getCollectionTitle(["team", "requests"], null)).toBe("Team requests");
-    expect(getCollectionTitle(["upcoming", "requests"], null)).toBe("Upcoming requests");
+    expect(getCollectionTitle(["team", "requests"], null)).toBe(
+      "Team requests",
+    );
+    expect(getCollectionTitle(["upcoming", "requests"], null)).toBe(
+      "Upcoming requests",
+    );
     expect(getCollectionTitle(["team", "items"], null)).toBe("Team");
-    expect(getCollectionTitle([], "get_my_time_off_balance")).toBe("My leave balance");
+    expect(getCollectionTitle([], "get_my_time_off_balance")).toBe(
+      "My leave balance",
+    );
     expect(getCollectionTitle(["balances"], null)).toBe("Leave balance");
     expect(getCollectionId(["team", "requests"], null)).toBe("team-requests");
     expect(getCollectionId([], null)).toBe("records");
