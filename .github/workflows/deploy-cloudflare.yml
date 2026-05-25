@@ -1,8 +1,8 @@
 # Auto-deploy on push to feat/implement-cancel-button (preview branch name = ref).
 #
 # Required GitHub secrets (Settings → Secrets and variables → Actions):
-#   CLOUDFLARE_API_TOKEN  — Workers Edit + Pages Edit
-#   CLOUDFLARE_ACCOUNT_ID — e.g. 50f0ea4afc966adf2f4e9cec6c4eb172
+#   CLOUDFLARE_API_TOKEN  — Custom token with Workers Scripts/Services Edit + Pages Edit
+#   CLOUDFLARE_ACCOUNT_ID — Dashboard → Workers → Account ID
 
 name: Deploy to Cloudflare
 
@@ -120,6 +120,8 @@ jobs:
 
       - name: Build OpenNext bundle
         run: pnpm exec opennextjs-cloudflare build
+        env:
+          CI: "true"
 
       - name: Deploy Worker (ai-sdk)
         uses: cloudflare/wrangler-action@v3
