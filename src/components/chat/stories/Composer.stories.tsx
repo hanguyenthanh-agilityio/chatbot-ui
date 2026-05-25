@@ -2,7 +2,7 @@ import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState, type ComponentProps, type FormEvent } from "react";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { ChatComposer } from "@/components/chat/composer";
-import { CHAT_COMPOSER_COPY } from "@/constants/chat";
+import { CHAT_COMPOSER_COPY, MOCK_CHAT_SAMPLE_MESSAGES } from "@/constants/chat";
 import {
   STORYBOOK_THEME_GLOBAL,
   THEME_SHELL_CLASSES,
@@ -15,16 +15,32 @@ import {
 } from "@/mocks/chat-composer";
 import { cn } from "@/utils/class-name";
 
+/** Same shell as `WorkspaceApp`: header + scroll + composer at bottom. */
 const inChatPanel: Decorator = (Story) => (
   <section
     className={cn(
       THEME_SHELL_CLASSES.chatPanel,
-      "mx-auto flex w-full max-w-3xl flex-col overflow-hidden rounded-shell border shadow-shell-panel",
+      "mx-auto flex min-h-112 w-full max-w-3xl flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel light:backdrop-blur-none",
       "bg-glass-panel-chat",
       THEME_SHELL_UTILITIES.border,
     )}
   >
-    <div className="min-h-48 flex-1" />
+    <header
+      className={cn(
+        THEME_SHELL_CLASSES.chatHeader,
+        "shrink-0 border-b px-4 py-5 shadow-shell-header sm:px-6 lg:px-8",
+        "bg-glass-header",
+        THEME_SHELL_UTILITIES.borderSubtle,
+      )}
+    >
+      <div
+        className="mx-auto h-12 w-full max-w-3xl rounded-xl bg-white/5 light:bg-app-surface-subtle"
+        aria-hidden
+      />
+    </header>
+    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 text-white light:text-app-fg sm:px-6 lg:px-8">
+      <div className="mx-auto min-h-40 w-full max-w-3xl" aria-hidden />
+    </div>
     <Story />
   </section>
 );
@@ -168,7 +184,7 @@ export const Playground: Story = {};
 /** Provider ready; send enabled with sample text. */
 export const Ready: Story = {
   args: {
-    initialInput: "How many leave days do I have left?",
+    initialInput: MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalance,
     canSend: true,
     isProviderReady: true,
   },

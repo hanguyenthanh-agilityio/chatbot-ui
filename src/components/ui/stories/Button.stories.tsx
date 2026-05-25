@@ -16,7 +16,7 @@ type StandardVariant = (typeof STANDARD_VARIANTS)[number];
 const SIZE_OPTIONS = ["sm", "md", "lg"] as const;
 
 const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-white/5 p-6 light:border-app-border-10 light:bg-app-surface-4">
+  <div className="rounded-2xl border border-white/10 bg-white/5 p-6 light:border-app-border light:bg-app-surface-subtle">
     <Story />
   </div>
 );
