@@ -2,8 +2,8 @@ import type { AppRole } from "@/lib/auth/session";
 import type { QuickAction } from "@/types/chat";
 
 export const CHAT_PANEL_RESET_COPY = {
-  ariaLabel: "Clear chat",
-  tooltip: "Clear this conversation and start over",
+  ariaLabel: "Reset chat panel",
+  tooltip: "Clear the chat panel and start over",
 } as const;
 
 export const CHAT_COMPOSER_COPY = {
