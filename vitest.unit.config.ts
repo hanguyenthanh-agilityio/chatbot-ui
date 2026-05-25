@@ -20,9 +20,7 @@ export default defineProject({
     setupFiles: [path.join(dirname, "vitest.setup.ts")],
     include: ["src/components/**/*.test.{ts,tsx}"],
     pool: "forks",
-    poolOptions: {
-      forks: { singleFork: true },
-    },
+    singleFork: true,
     teardownTimeout: 5_000,
     coverage: {
       provider: "v8",
