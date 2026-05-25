@@ -2,8 +2,13 @@
 # Pages previews use the pushed branch name via github.ref_name.
 #
 # Required GitHub secrets (Settings → Secrets and variables → Actions):
-#   CLOUDFLARE_API_TOKEN  — Workers Edit + Pages Edit
-#   CLOUDFLARE_ACCOUNT_ID — e.g. 50f0ea4afc966adf2f4e9cec6c4eb172
+#   CLOUDFLARE_API_TOKEN  — Custom token (not Global API Key) with at least:
+#     User / User Details — Read
+#     Account / Account Settings — Read
+#     Account / Workers Scripts — Edit
+#     Account / Workers Services — Edit  (required for service bindings)
+#     Account / Cloudflare Pages — Edit
+#   CLOUDFLARE_ACCOUNT_ID — Dashboard → Workers → right sidebar Account ID
 
 name: Deploy to Cloudflare
 
@@ -131,7 +136,9 @@ jobs:
           CI: "true"
 
       - name: Deploy Worker (ai-sdk)
-        run: pnpm exec wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: deploy

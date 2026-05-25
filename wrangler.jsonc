@@ -1,5 +1,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
+	// Set CLOUDFLARE_ACCOUNT_ID in CI/local; avoids wrangler user lookup (needs User Details Read).
+	// "account_id": "<your-account-id>",
 	"main": ".open-next/worker.js",
 	"name": "ai-sdk",
 	"compatibility_date": "2026-05-21",
