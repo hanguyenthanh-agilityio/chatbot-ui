@@ -2,8 +2,13 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+// Components
 import { ChatEmptyState } from "@/components/chat/empty-state";
-import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
+
+// Constants
+import { CHAT_EMPTY_STATE_COPY, QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
+
+// Mocks
 import {
   mockChatEmptyStateProps,
   type MockChatEmptyStateProps,
@@ -16,10 +21,7 @@ describe("ChatEmptyState", () => {
 
   it.each([
     ["default", {}],
-    [
-      "single-action",
-      { quickActions: [{ label: "Check balance", prompt: "balance" }] },
-    ],
+    ["single-action", { quickActions: [QUICK_ACTIONS_BY_ROLE.user[0]!] }],
   ] satisfies ReadonlyArray<[string, Partial<MockChatEmptyStateProps>]>)(
     "matches snapshot (%s)",
     (_name, overrides) => {
