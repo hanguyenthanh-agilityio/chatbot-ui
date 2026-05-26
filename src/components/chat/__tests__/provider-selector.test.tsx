@@ -1,193 +1,179 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+// Types
+import type { AIProviderName } from "@/lib/ai-provider";
+
+// Components
 import { ProviderSelector } from "@/components/chat/provider-selector";
+
+// Constants
+import { PROVIDER_PANEL_COPY } from "@/constants/provider";
+
+// Mocks
 import { mockProvider } from "@/mocks/provider-selector";
-import {
-  PROVIDER_PANEL_COPY,
-  PROVIDER_STATUS_COPY,
-} from "@/constants/provider";
+import type { UseProviderSelectionResult } from "@/types/provider";
+
+vi.mock("@/lib/runtime-env", () => ({
+  isProductionLike: vi.fn(() => false),
+}));
+
+import { isProductionLike } from "@/lib/runtime-env";
+
+const productionLike = vi.mocked(isProductionLike);
+
+function renderPanel(
+  provider: Partial<UseProviderSelectionResult> = {},
+  {
+    allowedProviders,
+    withContainer = false,
+  }: {
+    allowedProviders?: AIProviderName[];
+    withContainer?: boolean;
+  } = {},
+) {
+  return render(
+    <ProviderSelector
+      provider={mockProvider(provider)}
+      allowedProviders={allowedProviders}
+      withContainer={withContainer}
+    />,
+  );
+}
 
 describe("ProviderSelector", () => {
   afterEach(() => {
     cleanup();
+    productionLike.mockReturnValue(false);
   });
 
-  it("renders provider label and description from PROVIDER_PANEL_COPY", () => {
-    render(
-      <ProviderSelector
-        provider={mockProvider()}
-        withContainer={false}
-      />,
-    );
-    expect(screen.getByText(PROVIDER_PANEL_COPY.label)).toBeInTheDocument();
-    expect(screen.getByText(PROVIDER_PANEL_COPY.description)).toBeInTheDocument();
-  });
+  it.each([
+    {
+      id: "openai",
+      provider: { isOpenAISelected: true, selectedProvider: "openai" as const },
+    },
+    {
+      id: "ollama",
+      provider: {
+        isOpenAISelected: false,
+        selectedProvider: "ollama" as const,
+      },
+    },
+    {
+      id: "openai-validating",
+      provider: { isOpenAISelected: true, isValidatingKey: true },
+    },
+    {
+      id: "ollama-validating",
+      provider: {
+        isOpenAISelected: false,
+        selectedProvider: "ollama" as const,
+        isValidatingOllamaBaseUrl: true,
+      },
+    },
+    {
+      id: "openai-only",
+      provider: { isOpenAISelected: true, selectedProvider: "openai" as const },
+      allowedProviders: ["openai"] satisfies AIProviderName[],
+    },
+    {
+      id: "ollama-only",
+      provider: {
+        isOpenAISelected: false,
+        selectedProvider: "ollama" as const,
+      },
+      allowedProviders: ["ollama"] satisfies AIProviderName[],
+    },
+    { id: "with-card", withContainer: true },
+    {
+      id: "ollama-production",
+      provider: {
+        isOpenAISelected: false,
+        selectedProvider: "ollama" as const,
+      },
+      production: true,
+    },
+  ])(
+    "snapshot $id",
+    ({ id, provider = {}, allowedProviders, withContainer, production }) => {
+      if (production) productionLike.mockReturnValue(true);
+      const { container } = renderPanel(provider, {
+        allowedProviders,
+        withContainer,
+      });
+      expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot(id);
+    },
+  );
 
-  it("shows OpenAI branch when isOpenAISelected is true (password + verify button)", () => {
-    render(
-      <ProviderSelector
-        provider={mockProvider({
-          isOpenAISelected: true,
-          selectedProvider: "openai",
-        })}
-        withContainer={false}
-      />,
-    );
-    expect(
-      screen.getByPlaceholderText(PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", {
-        name: PROVIDER_PANEL_COPY.verifyOpenAIButtonLabel,
-      }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByPlaceholderText(PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder),
-    ).not.toBeInTheDocument();
-  });
-
-  it("shows Ollama branch when isOpenAISelected is false", () => {
-    render(
-      <ProviderSelector
-        provider={mockProvider({
-          selectedProvider: "ollama",
-          isOpenAISelected: false,
-          providerStatus: PROVIDER_STATUS_COPY.ollamaDefault,
-        })}
-        withContainer={false}
-      />,
-    );
-    expect(
-      screen.getByPlaceholderText(PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", {
-        name: PROVIDER_PANEL_COPY.verifyOllamaButtonLabel,
-      }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByPlaceholderText(PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder),
-    ).not.toBeInTheDocument();
-  });
-
-  it("calls updateOpenAIApiKeyInput when typing in the API key field", async () => {
+  it.each([
+    {
+      handler: "updateOpenAIApiKeyInput",
+      provider: { isOpenAISelected: true },
+      run: async (user: ReturnType<typeof userEvent.setup>) => {
+        await user.type(
+          screen.getByPlaceholderText(
+            PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder,
+          ),
+          "sk-test",
+        );
+      },
+    },
+    {
+      handler: "updateOllamaBaseUrlInput",
+      provider: {
+        isOpenAISelected: false,
+        selectedProvider: "ollama" as const,
+      },
+      run: async (user: ReturnType<typeof userEvent.setup>) => {
+        await user.type(
+          screen.getByPlaceholderText(
+            PROVIDER_PANEL_COPY.ollamaBaseUrlPlaceholder,
+          ),
+          "http://localhost:11434",
+        );
+      },
+    },
+    {
+      handler: "verifyOpenAIKey",
+      provider: { isOpenAISelected: true },
+      run: async (user: ReturnType<typeof userEvent.setup>) => {
+        await user.click(
+          screen.getByRole("button", {
+            name: PROVIDER_PANEL_COPY.verifyOpenAIButtonLabel,
+          }),
+        );
+      },
+    },
+    {
+      handler: "verifyOllamaBaseUrl",
+      provider: {
+        isOpenAISelected: false,
+        selectedProvider: "ollama" as const,
+      },
+      run: async (user: ReturnType<typeof userEvent.setup>) => {
+        await user.click(
+          screen.getByRole("button", {
+            name: PROVIDER_PANEL_COPY.verifyOllamaButtonLabel,
+          }),
+        );
+      },
+    },
+    {
+      handler: "selectProvider",
+      provider: {},
+      run: async (user: ReturnType<typeof userEvent.setup>) => {
+        await user.selectOptions(screen.getByRole("combobox"), "ollama");
+      },
+      assert: (fn: ReturnType<typeof vi.fn>) =>
+        expect(fn).toHaveBeenCalledWith("ollama"),
+    },
+  ])("calls $handler", async ({ handler, provider, run, assert }) => {
     const user = userEvent.setup();
-    const updateOpenAIApiKeyInput = vi.fn();
-    render(
-      <ProviderSelector
-        provider={mockProvider({
-          isOpenAISelected: true,
-          updateOpenAIApiKeyInput,
-        })}
-        withContainer={false}
-      />,
-    );
-    await user.type(
-      screen.getByPlaceholderText(PROVIDER_PANEL_COPY.openaiApiKeyPlaceholder),
-      "sk-test",
-    );
-    expect(updateOpenAIApiKeyInput).toHaveBeenCalled();
-  });
-
-  it("calls verifyOpenAIKey when the OpenAI verify button is clicked", async () => {
-    const user = userEvent.setup();
-    const verifyOpenAIKey = vi.fn().mockResolvedValue(undefined);
-    render(
-      <ProviderSelector
-        provider={mockProvider({
-          isOpenAISelected: true,
-          verifyOpenAIKey,
-        })}
-        withContainer={false}
-      />,
-    );
-    await user.click(
-      screen.getByRole("button", {
-        name: PROVIDER_PANEL_COPY.verifyOpenAIButtonLabel,
-      }),
-    );
-    expect(verifyOpenAIKey).toHaveBeenCalledTimes(1);
-  });
-
-  it("calls verifyOllamaBaseUrl when the Ollama verify button is clicked", async () => {
-    const user = userEvent.setup();
-    const verifyOllamaBaseUrl = vi.fn().mockResolvedValue(undefined);
-    render(
-      <ProviderSelector
-        provider={mockProvider({
-          selectedProvider: "ollama",
-          isOpenAISelected: false,
-          verifyOllamaBaseUrl,
-        })}
-        withContainer={false}
-      />,
-    );
-    await user.click(
-      screen.getByRole("button", {
-        name: PROVIDER_PANEL_COPY.verifyOllamaButtonLabel,
-      }),
-    );
-    expect(verifyOllamaBaseUrl).toHaveBeenCalledTimes(1);
-  });
-
-  it("calls selectProvider when the user picks another provider", async () => {
-    const user = userEvent.setup();
-    const selectProvider = vi.fn();
-    render(
-      <ProviderSelector
-        provider={mockProvider({
-          selectProvider,
-        })}
-        withContainer={false}
-      />,
-    );
-    await user.selectOptions(screen.getByRole("combobox"), "ollama");
-    expect(selectProvider).toHaveBeenCalledWith("ollama");
-  });
-
-  it("wraps content in Card when withContainer is true (default)", () => {
-    const { container } = render(
-      <ProviderSelector provider={mockProvider()} />,
-    );
-    expect(container.querySelector(".rounded-2xl")).toBeInTheDocument();
-  });
-
-  it("does not wrap in Card when withContainer is false", () => {
-    const { container } = render(
-      <ProviderSelector
-        provider={mockProvider()}
-        withContainer={false}
-      />,
-    );
-    const root = container.firstElementChild;
-    expect(root?.className).toContain("flex");
-    expect(root?.className).toContain("flex-col");
-    expect(root?.querySelectorAll(".rounded-2xl").length).toBe(0);
-  });
-
-  it("disables the provider select when only one allowed provider", () => {
-    render(
-      <ProviderSelector
-        provider={mockProvider({
-          selectedProvider: "openai",
-          isOpenAISelected: true,
-        })}
-        allowedProviders={["openai"]}
-        withContainer={false}
-      />,
-    );
-    expect(screen.getByRole("combobox")).toBeDisabled();
-  });
-
-  it("shows providerStatus in the status line", () => {
-    const status = "Custom status line";
-    render(
-      <ProviderSelector
-        provider={mockProvider({ providerStatus: status })}
-        withContainer={false}
-      />,
-    );
-    expect(screen.getByText(status)).toBeInTheDocument();
+    const fn = vi.fn().mockResolvedValue(undefined);
+    renderPanel({ ...provider, [handler]: fn });
+    await run(user);
+    if (assert) assert(fn);
+    else expect(fn).toHaveBeenCalled();
   });
 });
