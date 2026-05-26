@@ -13,7 +13,10 @@ import { Text } from "@/components/ui/text";
 
 // Constants
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
-import { FORM_FIELD_PANEL_CLASSES } from "@/constants/theme";
+import {
+  COMPOSER_STOP_BUTTON_CLASS,
+  FORM_FIELD_PANEL_CLASSES,
+} from "@/constants/theme";
 
 // Utils
 import { cn } from "@/utils/class-name";
@@ -28,6 +31,7 @@ export type ChatComposerProps = {
   errorMessage?: string | null;
   onInputChange: (value: string) => void;
   onSubmitAction: FormEventHandler<HTMLFormElement>;
+  onStopAction: () => void;
 };
 
 export function ChatComposer({
@@ -40,6 +44,7 @@ export function ChatComposer({
   errorMessage,
   onInputChange,
   onSubmitAction,
+  onStopAction,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -60,7 +65,7 @@ export function ChatComposer({
     if (isComposing) return;
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      if (canSend) event.currentTarget.form?.requestSubmit();
+      if (!isLoading && canSend) event.currentTarget.form?.requestSubmit();
     }
   }
 
@@ -114,32 +119,44 @@ export function ChatComposer({
               className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-composer text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-app-accent light:placeholder:text-app-fg-faint"
             />
 
-            <button
-              type="submit"
-              disabled={!canSend}
-              aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
-              className={cn(
-                "self-end grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-all duration-200",
-                "disabled:cursor-not-allowed disabled:opacity-30",
-                "hover:scale-hover-btn hover:shadow-btn-brand",
-                canSend
-                  ? "bg-btn-active text-white light:hover:brightness-105"
-                  : "bg-btn-disabled text-white/75 light:bg-app-btn-brand-disabled light:text-white/85",
-              )}
-            >
+            <div className="flex shrink-0 self-end">
               {isLoading ? (
-                <span className="h-2 w-2 animate-pulse rounded-full bg-current" />
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="h-4 w-4"
+                <button
+                  type="button"
+                  onClick={onStopAction}
+                  aria-label={CHAT_COMPOSER_COPY.stopButtonLabel}
+                  className={cn(
+                    COMPOSER_STOP_BUTTON_CLASS,
+                    "grid h-10 w-10 min-h-10 min-w-10 place-items-center",
+                  )}
                 >
-                  <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                </svg>
+                  <span className="composer-stop-button-icon" aria-hidden />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={!canSend}
+                  aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
+                  className={cn(
+                    "grid h-10 w-10 min-h-10 min-w-10 place-items-center rounded-xl transition-all duration-200",
+                    "disabled:cursor-not-allowed disabled:opacity-30",
+                    "hover:scale-hover-btn hover:shadow-btn-brand",
+                    canSend
+                      ? "bg-btn-active text-white light:hover:brightness-105"
+                      : "bg-btn-disabled text-white/75 light:bg-app-btn-brand-disabled light:text-white/85",
+                  )}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-4 w-4"
+                  >
+                    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                  </svg>
+                </button>
               )}
-            </button>
+            </div>
           </form>
         </div>
 

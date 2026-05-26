@@ -16,6 +16,7 @@ export function mockChatComposerProps(
     onSubmitAction: (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
     },
+    onStopAction: overrides.onStopAction ?? noop,
     ...overrides,
   };
 }

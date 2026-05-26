@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { type UIMessage } from "ai";
+import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
 import { LoadingIndicator } from "@/components/chat/loading-indicator";
 import { MessageAvatar, MessageBubble } from "@/components/chat/message-bubble";
 import { DateRangePickerCard } from "@/components/chat/date-range-picker-card";
@@ -437,7 +438,11 @@ export function ChatMessage({
         />
       ) : null}
       <div
-        className={`min-w-0 ${isUser ? "max-w-message-column-user" : "max-w-full flex-1"}`}
+        className={
+          isUser
+            ? "flex max-w-message-column-user flex-col items-end"
+            : "min-w-0 max-w-full flex-1"
+        }
       >
         {mutationSuccessCards.length > 0 ? (
           <div className="space-y-2">{successCardContent}</div>
@@ -451,7 +456,7 @@ export function ChatMessage({
           isLastMessage &&
           mutationSuccessCards.length === 0 ? (
           <p className="text-sm text-white/50 light:text-app-fg-faint">
-            Something went wrong. Please try again.
+            {CHAT_TRANSCRIPT_COPY.responseStopped}
           </p>
         ) : null}
       </div>
