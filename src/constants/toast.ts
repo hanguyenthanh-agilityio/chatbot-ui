@@ -1,4 +1,6 @@
 export const TOAST_DEFAULT_DURATION_MS = 3500;
+/** `0` = no auto-dismiss (Storybook previews, manual dismiss only). */
+export const TOAST_PERSISTENT_DURATION_MS = 0;
 export const TOAST_EXIT_ANIMATION_MS = 280;
 export const TOAST_ARIA_DISMISS = "Dismiss";
 export const TOAST_VISIBLE_CLASS = "translate-y-0 opacity-100";

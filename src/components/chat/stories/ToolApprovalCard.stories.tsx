@@ -1,26 +1,9 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { fn, userEvent, within } from "storybook/test";
 
-// CC
 import { ToolApprovalCard } from "@/components/chat/tool-approval-card";
-
-// Constants
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
-import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
-import { cn } from "@/utils/class-name";
-
-const inChatTranscript: Decorator = (Story) => (
-  <section
-    className={cn(
-      THEME_SHELL_CLASSES.chatPanel,
-      "mx-auto w-full max-w-3xl rounded-shell border p-6 shadow-shell-panel",
-      "bg-glass-panel-chat",
-      THEME_SHELL_UTILITIES.border,
-    )}
-  >
-    <Story />
-  </section>
-);
+import { inChatTranscript } from "@/mocks/storybook";
 
 const submitCopy = CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest;
 

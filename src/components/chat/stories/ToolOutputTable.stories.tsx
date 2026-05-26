@@ -1,30 +1,15 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 
 // Components
 import { ToolOutputTable } from "@/components/chat/tool-output-table";
 
-// Constants
-import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
+import { inChatTranscript } from "@/mocks/storybook";
 import {
   mockBalanceTableProps,
   mockEmptyTableProps,
   mockMyRequestsTableProps,
 } from "@/mocks/tool-output-table";
-import { cn } from "@/utils/class-name";
-
-const inChatTranscript: Decorator = (Story) => (
-  <section
-    className={cn(
-      THEME_SHELL_CLASSES.chatPanel,
-      "mx-auto w-full max-w-3xl rounded-shell border p-6 shadow-shell-panel",
-      "bg-glass-panel-chat",
-      THEME_SHELL_UTILITIES.border,
-    )}
-  >
-    <Story />
-  </section>
-);
 
 const meta = {
   title: "Chat/ToolOutputTable",

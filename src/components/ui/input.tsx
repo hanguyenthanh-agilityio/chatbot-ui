@@ -8,15 +8,17 @@ import { cn } from "@/utils/class-name";
 
 const INPUT_VARIANT_CLASSES = {
   default:
-    "border-slate-300 bg-white/95 text-slate-900 shadow-sm hover:border-slate-400",
+    "border border-white/12 bg-white/6 text-white/80 shadow-sm placeholder:text-white/30 hover:border-white/20 light:border-app-border light:bg-app-field light:text-app-fg light:placeholder:text-app-fg-faint light:hover:border-app-border-emphasis",
   subtle:
-    "border-slate-200 bg-slate-50/90 text-slate-900 hover:border-slate-300",
+    "border border-white/8 bg-white/4 text-white/72 placeholder:text-white/25 hover:border-white/14 light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-muted light:placeholder:text-app-fg-faint light:hover:border-app-border",
   ghost:
-    "border-transparent bg-transparent text-slate-900 hover:border-slate-200",
+    "border border-transparent bg-transparent text-white/80 placeholder:text-white/30 hover:border-white/12 light:text-app-fg light:placeholder:text-app-fg-faint light:hover:border-app-border-subtle",
   error:
-    "border-red-300 bg-red-50/70 text-red-900 shadow-sm hover:border-red-400",
+    "border border-red-500/30 bg-red-500/10 text-red-300 placeholder:text-red-300/50 shadow-sm hover:border-red-500/40 light:border-app-danger-border light:bg-app-danger-bg light:text-app-danger-fg light:placeholder:text-app-danger-fg/60 light:hover:border-app-danger-border",
   panel: FORM_FIELD_PANEL_CLASSES,
 } as const;
+
+const INPUT_FOCUS_CLASSES = FORM_FIELD_PANEL_FOCUS_CLASSES;
 
 const INPUT_SIZE_CLASSES = {
   sm: "h-8 px-2 text-xs",
@@ -47,11 +49,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     <input
       ref={ref}
       className={cn(
-        "rounded-xl border outline-none transition duration-200",
-        variant !== "panel" && "placeholder:text-slate-400",
-        variant === "panel"
-          ? FORM_FIELD_PANEL_FOCUS_CLASSES
-          : "focus:border-sky-400 focus:ring-2 focus:ring-sky-100",
+        "rounded-xl outline-none transition duration-200",
+        INPUT_FOCUS_CLASSES,
         "disabled:cursor-not-allowed disabled:opacity-60",
         INPUT_VARIANT_CLASSES[variant],
         INPUT_SIZE_CLASSES[controlSize],
