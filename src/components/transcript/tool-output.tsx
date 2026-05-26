@@ -26,6 +26,8 @@ import {
   employeeRequestsTableTitle,
   TOOL_OUTPUT_TABLE_TITLES,
 } from "./tool";
+import { EMPLOYEE_TOOL_NAME } from "@/agents/employee/tools/common/definitions";
+import { MANAGER_TOOL_NAME } from "@/agents/manager/tools/common/definitions";
 
 // Utils
 import {
@@ -111,7 +113,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
   }
 
   switch (toolName) {
-    case "list_employees": {
+    case MANAGER_TOOL_NAME.LIST_EMPLOYEES: {
       const table = buildMembersTableModel({
         id: "all-employees",
         title: TOOL_OUTPUT_TABLE_TITLES.projectMembers,
@@ -121,7 +123,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return table ? [table] : dynamicTables;
     }
 
-    case "list_team_members": {
+    case MANAGER_TOOL_NAME.LIST_TEAM_MEMBERS: {
       const table = buildMembersTableModel({
         id: "team-members",
         title: TOOL_OUTPUT_TABLE_TITLES.teamMembers,
@@ -131,7 +133,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return table ? [table] : dynamicTables;
     }
 
-    case "list_my_time_off_requests": {
+    case EMPLOYEE_TOOL_NAME.LIST_MY_TIME_OFF_REQUESTS: {
       const requests = getRequestTableModel({
         id: "my-time-off-requests",
         title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
@@ -143,7 +145,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return requests ? [requests] : dynamicTables;
     }
 
-    case "list_team_time_off_requests": {
+    case MANAGER_TOOL_NAME.LIST_TEAM_TIME_OFF_REQUESTS: {
       const requests = getRequestTableModel({
         id: "team-time-off-requests",
         title: TOOL_OUTPUT_TABLE_TITLES.teamTimeOffRequests,
@@ -155,7 +157,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return requests ? [requests] : dynamicTables;
     }
 
-    case "get_my_time_off_balance": {
+    case EMPLOYEE_TOOL_NAME.GET_MY_TIME_OFF_BALANCE: {
       const tables = [
         getBalanceTableModel({
           id: "my-time-off-balance",
@@ -179,7 +181,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return tables.length > 0 ? tables : dynamicTables;
     }
 
-    case "submit_my_time_off_request": {
+    case EMPLOYEE_TOOL_NAME.SUBMIT_MY_TIME_OFF_REQUEST: {
       const balance = asRecord(output.balance);
       if (!balance) return dynamicTables;
 
@@ -206,7 +208,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return tables.length > 0 ? tables : dynamicTables;
     }
 
-    case "cancel_my_time_off_request": {
+    case EMPLOYEE_TOOL_NAME.CANCEL_MY_TIME_OFF_REQUEST: {
       const table = getRequestTableModel({
         id: "my-cancelled-requests",
         title: TOOL_OUTPUT_TABLE_TITLES.cancelledRequests,
@@ -218,8 +220,8 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return table ? [table] : dynamicTables;
     }
 
-    case "approve_team_time_off_request":
-    case "reject_team_time_off_request": {
+    case MANAGER_TOOL_NAME.APPROVE_TEAM_TIME_OFF_REQUEST:
+    case MANAGER_TOOL_NAME.REJECT_TEAM_TIME_OFF_REQUEST: {
       const reviewedEmployeeRequests = asRecord(
         output.reviewedEmployeeRequests,
       );

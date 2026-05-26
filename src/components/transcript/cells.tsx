@@ -2,6 +2,8 @@
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import type { ToolOutputTableAction } from "@/components/chat/tool-output-table";
+import { EMPLOYEE_TOOL_NAME } from "@/agents/employee/tools/common/definitions";
+import { MANAGER_TOOL_NAME } from "@/agents/manager/tools/common/definitions";
 
 // Utils
 import { getAvatarUrl, getInitialsFromName } from "@/utils/avatar";
@@ -257,14 +259,14 @@ export function getMemberRowActions(
 
 export function getRequestRowActionBuilder(toolName: string | null) {
   switch (toolName) {
-    case "list_team_time_off_requests":
-    case "approve_team_time_off_request":
-    case "reject_team_time_off_request":
+    case MANAGER_TOOL_NAME.LIST_TEAM_TIME_OFF_REQUESTS:
+    case MANAGER_TOOL_NAME.APPROVE_TEAM_TIME_OFF_REQUEST:
+    case MANAGER_TOOL_NAME.REJECT_TEAM_TIME_OFF_REQUEST:
       return getTeamRequestRowActions;
-    case "list_my_time_off_requests":
-    case "get_my_time_off_balance":
-    case "submit_my_time_off_request":
-    case "cancel_my_time_off_request":
+    case EMPLOYEE_TOOL_NAME.LIST_MY_TIME_OFF_REQUESTS:
+    case EMPLOYEE_TOOL_NAME.GET_MY_TIME_OFF_BALANCE:
+    case EMPLOYEE_TOOL_NAME.SUBMIT_MY_TIME_OFF_REQUEST:
+    case EMPLOYEE_TOOL_NAME.CANCEL_MY_TIME_OFF_REQUEST:
       return getSelfRequestRowActions;
     default:
       return (request: UnknownRecord) => {
