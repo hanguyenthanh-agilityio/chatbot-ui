@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
 
 const meta = {
-  title: 'Chat/ChatPanelResetButton',
+  title: "Chat/ChatPanelResetButton",
   component: ChatPanelResetButton,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component:
-          'Resets the entire chat panel (UI only). Sits next to the theme toggle in the header. Toggle **App theme** for light/dark.',
+          "Resets the entire chat panel (UI only). Sits next to the theme toggle in the header. Toggle **App theme** for light/dark.",
       },
     },
   },

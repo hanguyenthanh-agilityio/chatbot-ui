@@ -13,6 +13,7 @@ export const CHAT_COMPOSER_COPY = {
   defaultHelperText: "Press Enter to send. Shift + Enter adds a new line.",
   submitHint: "Sending your message...",
   sendButtonLabel: "Send",
+  stopButtonLabel: "Stop response",
   thinkingButtonLabel: "Thinking...",
   verifyFirstButtonLabel: "Verify first",
   verifyProviderTooltip: "Please verify your OpenAI key first.",
@@ -139,6 +140,8 @@ export const CHAT_TRANSCRIPT_COPY = {
     failedSuffix: "failed.",
     completedSuffix: "completed.",
   },
+
+  responseStopped: "Response stopped.",
 } as const;
 
 export function getQuickActionsByRole(role: AppRole) {
