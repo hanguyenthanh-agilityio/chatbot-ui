@@ -8,6 +8,7 @@ import {
   TOAST_DEFAULT_DURATION_MS,
   TOAST_DEMO_MESSAGE,
   TOAST_EXIT_ANIMATION_MS,
+  TOAST_PERSISTENT_DURATION_MS,
   TOAST_VARIANTS,
 } from "@/constants/toast";
 
@@ -28,6 +29,7 @@ describe("Toast", () => {
     overrides: Partial<{
       variant: (typeof TOAST_VARIANTS)[number];
       durationMs: number;
+      layout: "fixed" | "inline";
     }> = {},
   ) {
     return render(
@@ -67,6 +69,23 @@ describe("Toast", () => {
     flushExit();
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not auto-dismiss when durationMs is 0", () => {
+    renderToast({ durationMs: TOAST_PERSISTENT_DURATION_MS });
+    flushEnter();
+
+    act(() => {
+      vi.advanceTimersByTime(TOAST_DEFAULT_DURATION_MS * 2);
+    });
+
+    expect(onDismiss).not.toHaveBeenCalled();
+  });
+
+  it("uses inline layout classes when layout is inline", () => {
+    renderToast({ layout: "inline" });
+    flushEnter();
+    expect(screen.getByRole("status")).toHaveClass("relative", "w-max");
   });
 
   it("dismisses when the close button is clicked", async () => {
