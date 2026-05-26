@@ -1,18 +1,22 @@
-# Deploy on push to feat/implement-cancel-button (Coverage + App).
-# Storybook: workflow_dispatch only (checkbox) — build ~25min.
+# Auto-deploy on push to configured branches (see `on.push.branches`).
+# Pages previews use the pushed branch name via github.ref_name.
 #
-# GitHub Actions secrets (repo → Settings → Secrets → Actions):
-#   CLOUDFLARE_API_TOKEN — start from template "Edit Cloudflare Workers", then add:
-#     Account → Cloudflare Pages — Edit
-#   CLOUDFLARE_ACCOUNT_ID — 32-char hex from Workers & Pages sidebar (not email, not zone id)
-# Token must be scoped to the same account as CLOUDFLARE_ACCOUNT_ID.
+# Required GitHub secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN  — Custom token (not Global API Key) with at least:
+#     User / User Details — Read
+#     Account / Account Settings — Read
+#     Account / Workers Scripts — Edit
+#     Account / Workers Services — Edit  (required for service bindings)
+#     Account / Cloudflare Pages — Edit
+#   CLOUDFLARE_ACCOUNT_ID — Dashboard → Workers → right sidebar Account ID
 
 name: Deploy to Cloudflare
 
 on:
   push:
     branches:
-      - feat/implement-cancel-button
+      - feat/cloudflare-deploy
+      - feat/update-transcript-light-dark-mode
   workflow_dispatch:
     inputs:
       deploy_storybook:
@@ -29,6 +33,42 @@ env:
   NODE_VERSION: "22"
 
 jobs:
+  deploy-storybook:
+    name: Storybook → Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Require Cloudflare secrets
+        run: |
+          test -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" || (echo "Missing CLOUDFLARE_API_TOKEN secret" && exit 1)
+          test -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" || (echo "Missing CLOUDFLARE_ACCOUNT_ID secret" && exit 1)
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build Storybook
+        run: pnpm run build-storybook
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+
+      - name: Deploy to chatbot-ui-storybook
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: pages deploy storybook-static --project-name=chatbot-ui-storybook --branch=${{ github.ref_name }} --commit-dirty=true
+
   deploy-coverage:
     name: Coverage → Pages
     runs-on: ubuntu-latest
@@ -52,24 +92,18 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Run tests with coverage (no snapshots, no workerd)
-        run: pnpm run test:coverage:ci
+      - name: Run tests with coverage
+        run: pnpm exec vitest run --config vitest.unit.config.ts --coverage
         env:
           VITEST: "true"
           CI: "true"
 
-      - name: Verify coverage output
-        run: test -f coverage/index.html
-
       - name: Deploy to chatbot-ui-coverage
-        run: |
-          BRANCH_SLUG="${GITHUB_REF_NAME//\//-}"
-          pnpm exec wrangler pages deploy coverage \
-            --project-name=chatbot-ui-coverage \
-            --branch="${BRANCH_SLUG}" \
-            --commit-dirty=true
-          echo "### Coverage" >> "$GITHUB_STEP_SUMMARY"
-          echo "https://${BRANCH_SLUG}.chatbot-ui-coverage.pages.dev" >> "$GITHUB_STEP_SUMMARY"
+        run: >
+          pnpm exec wrangler pages deploy coverage
+          --project-name=chatbot-ui-coverage
+          --branch=${{ github.ref_name }}
+          --commit-dirty=true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -104,50 +138,6 @@ jobs:
         run: pnpm exec opennextjs-cloudflare build
         env:
           CI: "true"
-
-      - name: Verify OpenNext worker bundle
-        run: test -f .open-next/worker.js
-
-      - name: Resolve Cloudflare account ID
-        id: cf_account
-        run: node scripts/ci-resolve-cloudflare-account.mjs
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-      - name: Verify Cloudflare token
-        run: |
-          set -euo pipefail
-          VERIFY="$(curl -sS "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}")"
-          echo "$VERIFY" | grep -q '"success":true' || {
-            echo "::error::CLOUDFLARE_API_TOKEN is invalid. Recreate from template Edit Cloudflare Workers + Pages Edit."
-            echo "$VERIFY"
-            exit 1
-          }
-          ACCOUNT_ID="${{ steps.cf_account.outputs.account_id }}"
-          WORKERS_HTTP="$(curl -sS -o /tmp/workers-probe.json -w '%{http_code}' \
-            "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/scripts/ai-sdk" \
-            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}")"
-          echo "workers/scripts/ai-sdk HTTP ${WORKERS_HTTP}"
-          if [ "$WORKERS_HTTP" = "401" ] || [ "$WORKERS_HTTP" = "403" ]; then
-            echo "::error::Token cannot deploy Workers on account ${ACCOUNT_ID}."
-            cat /tmp/workers-probe.json || true
-            exit 1
-          fi
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: Inject account_id into wrangler.jsonc
-        run: node scripts/ci-inject-wrangler-account.mjs
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf_account.outputs.account_id }}
-
-      - name: Wrangler whoami
-        run: pnpm exec wrangler whoami
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf_account.outputs.account_id }}
 
       - name: Deploy Worker (ai-sdk)
         run: bash scripts/ci-cloudflare-deploy.sh

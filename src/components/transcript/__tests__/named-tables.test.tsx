@@ -8,27 +8,32 @@ import {
 } from "@/components/transcript/named-tables";
 import {
   getBalanceRowActions,
+  getMemberRowActions,
   getSelfRequestRowActions,
 } from "@/components/transcript/cells";
+import { TOOL_OUTPUT_TABLE_TITLES } from "@/components/transcript/tool";
 
 // Mocks
 import {
   FIXTURE_BALANCE_ANNUAL,
   FIXTURE_MEMBER_ROW,
   FIXTURE_REQUEST_ANNUAL,
+  FIXTURE_TEAM_REQUEST_SICK,
 } from "@/mocks/time-off-fixtures";
 
 describe("transcript/named-tables", () => {
   it("builds members table with row actions", () => {
     const model = buildMembersTableModel({
       id: "team-members",
-      title: "Team members",
+      title: TOOL_OUTPUT_TABLE_TITLES.teamMembers,
       memberRows: [FIXTURE_MEMBER_ROW],
       emptyLabel: "No team members found.",
     });
 
     expect(model?.columns).toHaveLength(5);
-    expect(model?.rowActions?.[0]?.[0]?.label).toBe("View pending");
+    expect(model?.rowActions?.[0]?.map((action) => action.label)).toEqual(
+      getMemberRowActions(FIXTURE_MEMBER_ROW).map((action) => action.label),
+    );
   });
 
   it("builds request table with and without employee column", () => {
@@ -44,18 +49,7 @@ describe("transcript/named-tables", () => {
     const teamModel = getRequestTableModel({
       id: "team-requests",
       title: "Team requests",
-      payload: {
-        requests: [
-          {
-            employeeName: "Mia Nguyen",
-            leaveType: "sick",
-            startDate: "2026-07-01",
-            endDate: "2026-07-01",
-            days: 1,
-            status: "approved",
-          },
-        ],
-      },
+      payload: { requests: [FIXTURE_TEAM_REQUEST_SICK] },
       showEmployee: true,
       emptyLabel: "No team requests.",
     });
@@ -71,14 +65,16 @@ describe("transcript/named-tables", () => {
   it("builds balance table with row actions", () => {
     const model = getBalanceTableModel({
       id: "balance",
-      title: "My leave balance",
+      title: TOOL_OUTPUT_TABLE_TITLES.myLeaveBalance,
       payload: { balances: [FIXTURE_BALANCE_ANNUAL] },
       getRowActions: getBalanceRowActions,
       emptyLabel: "No balance data found.",
     });
 
     expect(model?.rows).toHaveLength(1);
-    expect(model?.rowActions?.[0]?.[0]?.prompt).toContain("annual");
+    expect(model?.rowActions?.[0]?.[0]?.prompt).toContain(
+      FIXTURE_BALANCE_ANNUAL.leaveType,
+    );
   });
 
   it("returns null when payload shape is invalid", () => {

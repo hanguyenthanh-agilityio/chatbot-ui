@@ -13,11 +13,17 @@ import {
   renderEmployeeCell,
   renderLeaveTypeChip,
   renderStatusChip,
+  ROW_ACTION_FALLBACKS,
+  ROW_ACTION_LABELS,
 } from "@/components/transcript/cells";
+import { compactLeaveTypeLabel } from "@/components/transcript/utils";
 
 // Mocks
 import {
+  FIXTURE_BALANCE_ANNUAL,
+  FIXTURE_MEMBER_ROW,
   FIXTURE_REQUEST_FUTURE,
+  FIXTURE_REQUEST_SICK,
   FIXTURE_TEAM,
 } from "@/mocks/time-off-fixtures";
 
@@ -25,8 +31,14 @@ describe("transcript/cells", () => {
   afterEach(() => cleanup());
 
   it.each([
-    ["leave-type", () => renderLeaveTypeChip("Annual")],
-    ["status-approved", () => renderStatusChip("approved")],
+    [
+      "leave-type",
+      () =>
+        renderLeaveTypeChip(
+          compactLeaveTypeLabel(FIXTURE_REQUEST_FUTURE.leaveTypeLabel),
+        ),
+    ],
+    ["status-approved", () => renderStatusChip(FIXTURE_REQUEST_SICK.status)],
     ["status-rejected", () => renderStatusChip("rejected")],
     [
       "employee",
@@ -40,37 +52,36 @@ describe("transcript/cells", () => {
 
   it("builds prompts and row actions", () => {
     expect(buildSelfCancelPrompt(FIXTURE_REQUEST_FUTURE)).toContain(
-      "cancel my Annual leave",
+      compactLeaveTypeLabel(FIXTURE_REQUEST_FUTURE.leaveTypeLabel),
     );
     expect(buildTeamActionPrompt(FIXTURE_REQUEST_FUTURE, "approve")).toContain(
-      "Approve Mia Nguyen",
+      FIXTURE_REQUEST_FUTURE.employeeName,
     );
     expect(
       getSelfRequestRowActions({
         ...FIXTURE_REQUEST_FUTURE,
         status: "approved",
       })[0]?.label,
-    ).toBe("Cancel request");
+    ).toBe(ROW_ACTION_LABELS.cancelRequest);
     expect(
       getTeamRequestRowActions({
         ...FIXTURE_REQUEST_FUTURE,
         status: "pending",
-      }).map((a) => a.label),
-    ).toEqual(["Approve", "Reject"]);
-    expect(getBalanceRowActions({ leaveType: "annual" })[0]?.label).toBe(
-      "Request this type",
-    );
+      }).map((action) => action.label),
+    ).toEqual([ROW_ACTION_LABELS.approve, ROW_ACTION_LABELS.reject]);
     expect(
-      getMemberRowActions({ employeeName: "Mia Nguyen", pendingCount: 1 }).map(
-        (a) => a.label,
-      ),
-    ).toEqual(["View pending", "View all"]);
+      getBalanceRowActions({ leaveType: FIXTURE_BALANCE_ANNUAL.leaveType })[0]
+        ?.label,
+    ).toBe(ROW_ACTION_LABELS.requestThisType);
+    expect(
+      getMemberRowActions(FIXTURE_MEMBER_ROW).map((action) => action.label),
+    ).toEqual([ROW_ACTION_LABELS.viewPending, ROW_ACTION_LABELS.viewAll]);
     expect(
       getRequestRowActionBuilder("list_team_time_off_requests")({
         ...FIXTURE_REQUEST_FUTURE,
         status: "pending",
-      }).map((a) => a.label),
-    ).toEqual(["Approve", "Reject"]);
+      }).map((action) => action.label),
+    ).toEqual([ROW_ACTION_LABELS.approve, ROW_ACTION_LABELS.reject]);
   });
 
   it("covers empty and fallback branches", () => {
@@ -85,21 +96,19 @@ describe("transcript/cells", () => {
     expect(
       getSelfRequestRowActions({
         status: "pending",
-        startDate: "2099-01-01",
+        startDate: FIXTURE_REQUEST_FUTURE.startDate,
       })[0]?.prompt,
-    ).toBe(
-      "I want to cancel one of my requests. Could you list my cancellable requests so I can choose one?",
-    );
+    ).toBe(ROW_ACTION_FALLBACKS.selfCancelList);
 
     const pendingFallback = getTeamRequestRowActions({
       status: "pending",
-      startDate: "2099-01-01",
+      startDate: FIXTURE_REQUEST_FUTURE.startDate,
     });
     expect(pendingFallback[0]?.prompt).toBe(
-      "Please approve the selected pending team request.",
+      ROW_ACTION_FALLBACKS.teamApprovePending,
     );
     expect(pendingFallback[1]?.prompt).toBe(
-      "Please reject the selected pending team request.",
+      ROW_ACTION_FALLBACKS.teamRejectPending,
     );
 
     expect(
@@ -107,20 +116,20 @@ describe("transcript/cells", () => {
         ...FIXTURE_REQUEST_FUTURE,
         status: "approved",
       })[0]?.label,
-    ).toBe("Reject");
+    ).toBe(ROW_ACTION_LABELS.reject);
     expect(
       getTeamRequestRowActions({ status: "approved", startDate: "2020-01-01" }),
     ).toEqual([]);
     expect(
       getTeamRequestRowActions({
         status: "rejected",
-        startDate: "2099-01-01",
+        startDate: FIXTURE_REQUEST_FUTURE.startDate,
       })[0]?.prompt,
-    ).toBe("Please approve the selected rejected team request.");
+    ).toBe(ROW_ACTION_FALLBACKS.teamApproveRejected);
     expect(
       getTeamRequestRowActions({
         status: "cancelled",
-        startDate: "2099-01-01",
+        startDate: FIXTURE_REQUEST_FUTURE.startDate,
       }),
     ).toEqual([]);
 
@@ -131,16 +140,16 @@ describe("transcript/cells", () => {
     expect(
       fallback({
         status: "approved",
-        leaveTypeLabel: "Annual",
-        startDate: "2099-01-01",
-        endDate: "2099-01-02",
+        leaveTypeLabel: FIXTURE_REQUEST_FUTURE.leaveTypeLabel,
+        startDate: FIXTURE_REQUEST_FUTURE.startDate,
+        endDate: FIXTURE_REQUEST_FUTURE.endDate,
       })[0]?.label,
-    ).toBe("Cancel request");
+    ).toBe(ROW_ACTION_LABELS.cancelRequest);
     expect(
       fallback({ ...FIXTURE_REQUEST_FUTURE, status: "pending" }).map(
         (action) => action.label,
       ),
-    ).toEqual(["Approve", "Reject"]);
+    ).toEqual([ROW_ACTION_LABELS.approve, ROW_ACTION_LABELS.reject]);
     expect(getRequestRowActionBuilder("cancel_my_time_off_request")).toBe(
       getSelfRequestRowActions,
     );
