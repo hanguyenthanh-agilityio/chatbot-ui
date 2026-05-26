@@ -3,6 +3,8 @@
 import { LEAVE_TYPE_LABEL_BY_TYPE } from "@/constants/leave";
 
 export const FIXTURE_TEAM = "Flash";
+export const FIXTURE_EMPLOYEE_AN = "An Pham";
+export const FIXTURE_REVIEW_QUERY = "Mia";
 
 export const FIXTURE_BALANCE_ANNUAL = {
   leaveType: "annual",
@@ -92,3 +94,37 @@ export const FIXTURE_MEMBER = {
   cancelledCount: 0,
   totalCount: 1,
 };
+
+export const FIXTURE_TEAM_REQUEST = {
+  ...FIXTURE_REQUEST,
+  employeeName: FIXTURE_MEMBER_ROW.employeeName,
+};
+
+export const FIXTURE_TEAM_REQUEST_SICK = {
+  employeeName: FIXTURE_MEMBER_ROW.employeeName,
+  leaveType: FIXTURE_REQUEST_SICK.leaveType,
+  startDate: "2026-07-01",
+  endDate: "2026-07-01",
+  days: 1,
+  status: FIXTURE_REQUEST_SICK.status,
+};
+
+export const FIXTURE_REQUEST_CANCELLED = {
+  ...FIXTURE_REQUEST,
+  status: "cancelled" as const,
+};
+
+export const FIXTURE_GENERIC_TABLE_ROWS = [
+  {
+    employeeName: FIXTURE_MEMBER_ROW.employeeName,
+    team: FIXTURE_TEAM,
+    leaveTypeLabel: FIXTURE_REQUEST_ANNUAL.leaveTypeLabel,
+    startDate: FIXTURE_REQUEST_ANNUAL.startDate,
+    endDate: FIXTURE_REQUEST_ANNUAL.endDate,
+    status: FIXTURE_REQUEST_ANNUAL.status,
+  },
+];
+
+export function teamRequestWith(overrides: Record<string, unknown> = {}) {
+  return { ...FIXTURE_TEAM_REQUEST, ...overrides };
+}

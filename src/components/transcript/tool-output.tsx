@@ -1,11 +1,6 @@
 import { isToolUIPart, type UIMessage } from "ai";
-import {
-  asRecord,
-  asRecordArray,
-  asOptionalString,
-  isBalanceLikeRecord,
-  isRequestLikeRecord,
-} from "./utils";
+
+// Components
 import { getToolName, getFriendlyToolLabelByName } from "./tool";
 import {
   getSelfRequestRowActions,
@@ -25,6 +20,22 @@ import {
   getCollectionTitle,
   getGenericTableModel,
 } from "./generic-table";
+
+// Constants
+import {
+  employeeRequestsTableTitle,
+  TOOL_OUTPUT_TABLE_TITLES,
+} from "./tool";
+
+// Utils
+import {
+  asRecord,
+  asRecordArray,
+  asOptionalString,
+  asString,
+  isBalanceLikeRecord,
+  isRequestLikeRecord,
+} from "./utils";
 
 function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
   const collections = collectRecordCollections(output);
@@ -60,7 +71,9 @@ function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
           id,
           title,
           payload: { requests: rows },
-          showEmployee: rows.some((row) => Boolean(asOptionalString(row.employeeName))),
+          showEmployee: rows.some((row) =>
+            Boolean(asOptionalString(row.employeeName)),
+          ),
           getRowActions: getRequestRowActionBuilder(toolName),
           emptyLabel: "No records found.",
         });
@@ -77,7 +90,11 @@ function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
 }
 
 export function getToolOutputTables(part: UIMessage["parts"][number]) {
-  if (!isToolUIPart(part) || part.state !== "output-available" || part.preliminary) {
+  if (
+    !isToolUIPart(part) ||
+    part.state !== "output-available" ||
+    part.preliminary
+  ) {
     return [] as ToolOutputTableModel[];
   }
 
@@ -97,7 +114,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
     case "list_employees": {
       const table = buildMembersTableModel({
         id: "all-employees",
-        title: "Project members",
+        title: TOOL_OUTPUT_TABLE_TITLES.projectMembers,
         memberRows: asRecordArray(output.employees),
         emptyLabel: "No employees found.",
       });
@@ -107,7 +124,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
     case "list_team_members": {
       const table = buildMembersTableModel({
         id: "team-members",
-        title: "Team members",
+        title: TOOL_OUTPUT_TABLE_TITLES.teamMembers,
         memberRows: asRecordArray(output.members),
         emptyLabel: "No team members found.",
       });
@@ -117,7 +134,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
     case "list_my_time_off_requests": {
       const requests = getRequestTableModel({
         id: "my-time-off-requests",
-        title: "My time-off requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
         payload: output,
         showEmployee: false,
         getRowActions: getSelfRequestRowActions,
@@ -127,10 +144,9 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
     }
 
     case "list_team_time_off_requests": {
-
       const requests = getRequestTableModel({
         id: "team-time-off-requests",
-        title: "Team time-off requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.teamTimeOffRequests,
         payload: output,
         showEmployee: true,
         getRowActions: getTeamRequestRowActions,
@@ -143,14 +159,14 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       const tables = [
         getBalanceTableModel({
           id: "my-time-off-balance",
-          title: "My leave balance",
+          title: TOOL_OUTPUT_TABLE_TITLES.myLeaveBalance,
           payload: output,
           getRowActions: getBalanceRowActions,
           emptyLabel: "No balance data found.",
         }),
         getRequestTableModel({
           id: "my-upcoming-requests",
-          title: "Upcoming requests",
+          title: TOOL_OUTPUT_TABLE_TITLES.upcomingRequests,
           payload: {
             requests: output.upcomingRequests,
           },
@@ -170,14 +186,14 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       const tables = [
         getBalanceTableModel({
           id: "updated-time-off-balance",
-          title: "Updated leave balance",
+          title: TOOL_OUTPUT_TABLE_TITLES.updatedLeaveBalance,
           payload: balance,
           getRowActions: getBalanceRowActions,
           emptyLabel: "No balance data found.",
         }),
         getRequestTableModel({
           id: "updated-upcoming-requests",
-          title: "Upcoming requests",
+          title: TOOL_OUTPUT_TABLE_TITLES.upcomingRequests,
           payload: {
             requests: balance.upcomingRequests,
           },
@@ -193,7 +209,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
     case "cancel_my_time_off_request": {
       const table = getRequestTableModel({
         id: "my-cancelled-requests",
-        title: "Cancelled requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.cancelledRequests,
         payload: asRecord(output.cancelledRequests) ?? {},
         showEmployee: false,
         getRowActions: getSelfRequestRowActions,
@@ -204,7 +220,9 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
 
     case "approve_team_time_off_request":
     case "reject_team_time_off_request": {
-      const reviewedEmployeeRequests = asRecord(output.reviewedEmployeeRequests);
+      const reviewedEmployeeRequests = asRecord(
+        output.reviewedEmployeeRequests,
+      );
       const pendingTeamRequests = asRecord(output.pendingTeamRequests);
 
       if (reviewedEmployeeRequests || pendingTeamRequests) {
@@ -213,7 +231,9 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
         if (reviewedEmployeeRequests) {
           const table = getRequestTableModel({
             id: "reviewed-employee-requests",
-            title: `${reviewedEmployeeRequests.query ?? "Employee"}'s requests`,
+            title: employeeRequestsTableTitle(
+              asString(reviewedEmployeeRequests.query, "Employee"),
+            ),
             payload: reviewedEmployeeRequests,
             showEmployee: true,
             getRowActions: getTeamRequestRowActions,
@@ -225,7 +245,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
         if (pendingTeamRequests) {
           const table = getRequestTableModel({
             id: "pending-team-requests",
-            title: "Pending team requests",
+            title: TOOL_OUTPUT_TABLE_TITLES.pendingTeamRequests,
             payload: pendingTeamRequests,
             showEmployee: true,
             getRowActions: getTeamRequestRowActions,
@@ -242,7 +262,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
 
       const requests = getRequestTableModel({
         id: "team-time-off-requests",
-        title: "Team time-off requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.teamTimeOffRequests,
         payload: teamRequests,
         showEmployee: true,
         getRowActions: getTeamRequestRowActions,

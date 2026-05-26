@@ -40,6 +40,23 @@ export const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {
   reject_team_time_off_request: "Reject team request",
 };
 
+/** Table titles rendered in tool-output (subset reuse friendly tool labels). */
+export const TOOL_OUTPUT_TABLE_TITLES = {
+  myLeaveBalance: TOOL_FRIENDLY_LABEL_BY_NAME.get_my_time_off_balance,
+  myTimeOffRequests: TOOL_FRIENDLY_LABEL_BY_NAME.list_my_time_off_requests,
+  teamMembers: TOOL_FRIENDLY_LABEL_BY_NAME.list_team_members,
+  teamTimeOffRequests: TOOL_FRIENDLY_LABEL_BY_NAME.list_team_time_off_requests,
+  projectMembers: "Project members",
+  upcomingRequests: "Upcoming requests",
+  updatedLeaveBalance: "Updated leave balance",
+  cancelledRequests: "Cancelled requests",
+  pendingTeamRequests: "Pending team requests",
+} as const;
+
+export function employeeRequestsTableTitle(query: string) {
+  return `${query}'s requests`;
+}
+
 export function getToolParts(message: UIMessage) {
   const toolParts = message.parts.filter((part) => isToolUIPart(part));
 

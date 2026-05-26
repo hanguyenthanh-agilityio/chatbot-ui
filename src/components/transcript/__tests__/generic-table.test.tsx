@@ -8,26 +8,20 @@ import {
   getCollectionId,
   getCollectionTitle,
   getGenericTableModel,
+  GENERIC_TABLE_TITLE_BY_KEY,
   toHumanLabel,
   toKebabCase,
 } from "@/components/transcript/generic-table";
+import {
+  TOOL_FRIENDLY_LABEL_BY_NAME,
+  TOOL_OUTPUT_TABLE_TITLES,
+} from "@/components/transcript/tool";
 
 // Mocks
 import {
+  FIXTURE_GENERIC_TABLE_ROWS,
   FIXTURE_REQUEST_ANNUAL,
-  FIXTURE_TEAM,
 } from "@/mocks/time-off-fixtures";
-
-const sampleRows = [
-  {
-    employeeName: "Mia Nguyen",
-    team: FIXTURE_TEAM,
-    leaveTypeLabel: FIXTURE_REQUEST_ANNUAL.leaveTypeLabel,
-    startDate: FIXTURE_REQUEST_ANNUAL.startDate,
-    endDate: FIXTURE_REQUEST_ANNUAL.endDate,
-    status: FIXTURE_REQUEST_ANNUAL.status,
-  },
-];
 
 describe("transcript/generic-table", () => {
   afterEach(() => cleanup());
@@ -36,7 +30,7 @@ describe("transcript/generic-table", () => {
     const model = getGenericTableModel({
       id: "records",
       title: "Records",
-      rows: sampleRows,
+      rows: FIXTURE_GENERIC_TABLE_ROWS,
       emptyLabel: "No records found.",
     });
 
@@ -63,16 +57,18 @@ describe("transcript/generic-table", () => {
     expect(collections[0]?.path).toEqual(["team", "requests"]);
 
     expect(getCollectionTitle(["team", "requests"], null)).toBe(
-      "Team requests",
+      GENERIC_TABLE_TITLE_BY_KEY.teamrequests,
     );
     expect(getCollectionTitle(["upcoming", "requests"], null)).toBe(
-      "Upcoming requests",
+      TOOL_OUTPUT_TABLE_TITLES.upcomingRequests,
     );
     expect(getCollectionTitle(["team", "items"], null)).toBe("Team");
     expect(getCollectionTitle([], "get_my_time_off_balance")).toBe(
-      "My leave balance",
+      TOOL_FRIENDLY_LABEL_BY_NAME.get_my_time_off_balance,
     );
-    expect(getCollectionTitle(["balances"], null)).toBe("Leave balance");
+    expect(getCollectionTitle(["balances"], null)).toBe(
+      GENERIC_TABLE_TITLE_BY_KEY.balances,
+    );
     expect(getCollectionId(["team", "requests"], null)).toBe("team-requests");
     expect(getCollectionId([], null)).toBe("records");
   });
@@ -105,10 +101,10 @@ describe("transcript/generic-table", () => {
       title: "Alt",
       rows: [
         {
-          leaveType: "annual",
+          leaveType: FIXTURE_REQUEST_ANNUAL.leaveType,
           dateRange: "Jun 10–12, 2026",
-          days: 3,
-          status: "approved",
+          days: FIXTURE_REQUEST_ANNUAL.days,
+          status: FIXTURE_REQUEST_ANNUAL.status,
           hidden: { nested: true },
         },
       ],

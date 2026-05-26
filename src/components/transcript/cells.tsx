@@ -1,8 +1,11 @@
+// Components
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import type { ToolOutputTableAction } from "@/components/chat/tool-output-table";
+
+// Utils
 import { getAvatarUrl, getInitialsFromName } from "@/utils/avatar";
 import { formatHumanDateRange } from "@/utils/date";
-import type { ToolOutputTableAction } from "@/components/chat/tool-output-table";
 import {
   asString,
   asOptionalString,
@@ -13,17 +16,38 @@ import {
   type UnknownRecord,
 } from "./utils";
 
+export const ROW_ACTION_LABELS = {
+  cancelRequest: "Cancel request",
+  approve: "Approve",
+  reject: "Reject",
+  requestThisType: "Request this type",
+  viewPending: "View pending",
+  viewAll: "View all",
+} as const;
+
+export const ROW_ACTION_FALLBACKS = {
+  selfCancelList:
+    "I want to cancel one of my requests. Could you list my cancellable requests so I can choose one?",
+  teamApprovePending: "Please approve the selected pending team request.",
+  teamRejectPending: "Please reject the selected pending team request.",
+  teamApproveRejected: "Please approve the selected rejected team request.",
+  teamRejectApproved: "Please reject the selected approved team request.",
+} as const;
+
 const EMPLOYEE_CELL_NAME_CLASSES =
   "whitespace-nowrap text-sm font-semibold leading-compact text-white/92 light:text-app-fg";
 
 const EMPLOYEE_CELL_TEAM_CLASSES =
   "mt-0.5 whitespace-nowrap text-xs leading-compact text-white/60 light:text-app-fg-muted";
 
-const EMPLOYEE_CELL_AVATAR_RING =
-  "ring-white/15 light:ring-app-border-muted";
+const EMPLOYEE_CELL_AVATAR_RING = "ring-white/15 light:ring-app-border-muted";
 
 export function renderLeaveTypeChip(label: string) {
-  return <Badge variant="info" className="px-2.5 py-0.5 text-xs">{label}</Badge>;
+  return (
+    <Badge variant="info" className="px-2.5 py-0.5 text-xs">
+      {label}
+    </Badge>
+  );
 }
 
 export function renderStatusChip(status: string) {
@@ -106,7 +130,9 @@ export function buildTeamActionPrompt(
   return `Reject ${name}'s ${leaveType} leave ${dateRange}. Reason: Not approved.`;
 }
 
-export function getSelfRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
+export function getSelfRequestRowActions(
+  request: UnknownRecord,
+): ToolOutputTableAction[] {
   const status = normalizeRequestStatus(request.status);
 
   if (status !== "approved" && status !== "pending") {
@@ -117,19 +143,22 @@ export function getSelfRequestRowActions(request: UnknownRecord): ToolOutputTabl
     return [];
   }
 
-  const prompt = buildSelfCancelPrompt(request)
-    || "I want to cancel one of my requests. Could you list my cancellable requests so I can choose one?";
+  const prompt =
+    buildSelfCancelPrompt(request) ||
+    ROW_ACTION_FALLBACKS.selfCancelList;
 
   return [
     {
-      label: "Cancel request",
+      label: ROW_ACTION_LABELS.cancelRequest,
       prompt,
       tone: "danger",
     },
   ];
 }
 
-export function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTableAction[] {
+export function getTeamRequestRowActions(
+  request: UnknownRecord,
+): ToolOutputTableAction[] {
   const status = normalizeRequestStatus(request.status);
 
   const isFuture = isFutureOrTodayDate(request.startDate);
@@ -137,15 +166,17 @@ export function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTabl
   if (status === "pending") {
     return [
       {
-        label: "Approve",
-        prompt: buildTeamActionPrompt(request, "approve") ||
-          "Please approve the selected pending team request.",
+        label: ROW_ACTION_LABELS.approve,
+        prompt:
+          buildTeamActionPrompt(request, "approve") ||
+          ROW_ACTION_FALLBACKS.teamApprovePending,
         tone: "success",
       },
       {
-        label: "Reject",
-        prompt: buildTeamActionPrompt(request, "reject") ||
-          "Please reject the selected pending team request.",
+        label: ROW_ACTION_LABELS.reject,
+        prompt:
+          buildTeamActionPrompt(request, "reject") ||
+          ROW_ACTION_FALLBACKS.teamRejectPending,
         tone: "danger",
       },
     ];
@@ -156,9 +187,10 @@ export function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTabl
   if (status === "approved") {
     return [
       {
-        label: "Reject",
-        prompt: buildTeamActionPrompt(request, "reject") ||
-          "Please reject the selected approved team request.",
+        label: ROW_ACTION_LABELS.reject,
+        prompt:
+          buildTeamActionPrompt(request, "reject") ||
+          ROW_ACTION_FALLBACKS.teamRejectApproved,
         tone: "danger",
       },
     ];
@@ -167,9 +199,10 @@ export function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTabl
   if (status === "rejected") {
     return [
       {
-        label: "Approve",
-        prompt: buildTeamActionPrompt(request, "approve") ||
-          "Please approve the selected rejected team request.",
+        label: ROW_ACTION_LABELS.approve,
+        prompt:
+          buildTeamActionPrompt(request, "approve") ||
+          ROW_ACTION_FALLBACKS.teamApproveRejected,
         tone: "success",
       },
     ];
@@ -178,7 +211,9 @@ export function getTeamRequestRowActions(request: UnknownRecord): ToolOutputTabl
   return [];
 }
 
-export function getBalanceRowActions(balance: UnknownRecord): ToolOutputTableAction[] {
+export function getBalanceRowActions(
+  balance: UnknownRecord,
+): ToolOutputTableAction[] {
   const leaveType = asOptionalString(balance.leaveType)?.trim().toLowerCase();
   if (!leaveType) {
     return [];
@@ -186,30 +221,33 @@ export function getBalanceRowActions(balance: UnknownRecord): ToolOutputTableAct
 
   return [
     {
-      label: "Request this type",
+      label: ROW_ACTION_LABELS.requestThisType,
       prompt: `I want to submit a ${leaveType} time-off request.`,
       tone: "success",
     },
   ];
 }
 
-export function getMemberRowActions(member: UnknownRecord): ToolOutputTableAction[] {
+export function getMemberRowActions(
+  member: UnknownRecord,
+): ToolOutputTableAction[] {
   const employeeName = asOptionalString(member.employeeName)?.trim();
   if (!employeeName) return [];
 
-  const pendingCount = typeof member.pendingCount === "number" ? member.pendingCount : 0;
+  const pendingCount =
+    typeof member.pendingCount === "number" ? member.pendingCount : 0;
   const actions: ToolOutputTableAction[] = [];
 
   if (pendingCount > 0) {
     actions.push({
-      label: "View pending",
+      label: ROW_ACTION_LABELS.viewPending,
       prompt: `Show ${employeeName}'s pending time-off requests.`,
       tone: "neutral",
     });
   }
 
   actions.push({
-    label: "View all",
+    label: ROW_ACTION_LABELS.viewAll,
     prompt: `Show all time-off requests for ${employeeName}.`,
     tone: "neutral",
   });
@@ -230,7 +268,9 @@ export function getRequestRowActionBuilder(toolName: string | null) {
       return getSelfRequestRowActions;
     default:
       return (request: UnknownRecord) => {
-        const hasEmployee = Boolean(asOptionalString(request.employeeName)?.trim());
+        const hasEmployee = Boolean(
+          asOptionalString(request.employeeName)?.trim(),
+        );
         return hasEmployee
           ? getTeamRequestRowActions(request)
           : getSelfRequestRowActions(request);

@@ -5,6 +5,7 @@ import {
   getRequestTableModel,
 } from "@/components/transcript/named-tables";
 import { getSelfRequestRowActions } from "@/components/transcript/cells";
+import { TOOL_OUTPUT_TABLE_TITLES } from "@/components/transcript/tool";
 import { FIXTURE_BALANCES, FIXTURE_REQUESTS } from "@/mocks/time-off-fixtures";
 
 export type MockToolOutputTableProps = ComponentProps<typeof ToolOutputTable>;
@@ -30,7 +31,7 @@ export function mockBalanceTableProps(): MockToolOutputTableProps {
   return fromModel(
     getBalanceTableModel({
       id: "my-time-off-balance",
-      title: "My leave balance",
+      title: TOOL_OUTPUT_TABLE_TITLES.myLeaveBalance,
       payload: { balances: FIXTURE_BALANCES },
       emptyLabel: "No balance data found.",
     }),
@@ -41,7 +42,7 @@ export function mockMyRequestsTableProps(): MockToolOutputTableProps {
   return fromModel(
     getRequestTableModel({
       id: "my-time-off-requests",
-      title: "My time-off requests",
+      title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
       payload: { requests: FIXTURE_REQUESTS },
       showEmployee: false,
       getRowActions: getSelfRequestRowActions,
@@ -52,7 +53,7 @@ export function mockMyRequestsTableProps(): MockToolOutputTableProps {
 
 export function mockEmptyTableProps(): MockToolOutputTableProps {
   return {
-    title: "My time-off requests",
+    title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
     columns: [
       { key: "leaveType", label: "Leave type", align: "center" },
       { key: "dateRange", label: "Date range", align: "center" },

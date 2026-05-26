@@ -5,6 +5,10 @@ import { afterEach, describe, expect, it } from "vitest";
 import { ToolOutputTable } from "@/components/chat/tool-output-table";
 import { getToolOutputTables } from "@/components/transcript/tool-output";
 import {
+  employeeRequestsTableTitle,
+  TOOL_OUTPUT_TABLE_TITLES,
+} from "@/components/transcript/tool";
+import {
   createToolPart,
   FIXTURE_BALANCE,
   FIXTURE_MEMBER,
@@ -13,12 +17,12 @@ import {
   mockBalanceToolPart,
   mockTeamMembersToolPart,
 } from "@/mocks/transcript-tool-output";
-
-const teamRequest = (overrides: Record<string, unknown> = {}) => ({
-  ...FIXTURE_REQUEST,
-  employeeName: "Mia Nguyen",
-  ...overrides,
-});
+import {
+  FIXTURE_EMPLOYEE_AN,
+  FIXTURE_REQUEST_CANCELLED,
+  FIXTURE_REVIEW_QUERY,
+  teamRequestWith,
+} from "@/mocks/time-off-fixtures";
 
 const titles = (part: UIMessage["parts"][number]) =>
   getToolOutputTables(part).map((table) => table.title);
@@ -40,17 +44,27 @@ describe("transcript/tool-output", () => {
   });
 
   it("maps tools to tables", () => {
-    expect(titles(mockBalanceToolPart())).toEqual(["My leave balance"]);
-    expect(titles(mockTeamMembersToolPart())).toEqual(["Team members"]);
-    expect(titles(createToolPart("list_my_time_off_requests", { requests: [FIXTURE_REQUEST] }))).toEqual([
-      "My time-off requests",
+    expect(titles(mockBalanceToolPart())).toEqual([
+      TOOL_OUTPUT_TABLE_TITLES.myLeaveBalance,
     ]);
-    expect(titles(createToolPart("list_employees", { employees: [FIXTURE_MEMBER] }))).toEqual([
-      "Project members",
+    expect(titles(mockTeamMembersToolPart())).toEqual([
+      TOOL_OUTPUT_TABLE_TITLES.teamMembers,
     ]);
-    expect(titles(createToolPart("list_team_time_off_requests", { requests: [teamRequest()] }))).toEqual([
-      "Team time-off requests",
-    ]);
+    expect(
+      titles(
+        createToolPart("list_my_time_off_requests", { requests: [FIXTURE_REQUEST] }),
+      ),
+    ).toEqual([TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests]);
+    expect(
+      titles(createToolPart("list_employees", { employees: [FIXTURE_MEMBER] })),
+    ).toEqual([TOOL_OUTPUT_TABLE_TITLES.projectMembers]);
+    expect(
+      titles(
+        createToolPart("list_team_time_off_requests", {
+          requests: [teamRequestWith()],
+        }),
+      ),
+    ).toEqual([TOOL_OUTPUT_TABLE_TITLES.teamTimeOffRequests]);
     expect(titles(createToolPart("list_my_time_off_requests", {}))).toEqual([]);
   });
 
@@ -67,7 +81,10 @@ describe("transcript/tool-output", () => {
           upcomingRequests: [FIXTURE_REQUEST],
         }),
       ),
-    ).toEqual(["My leave balance", "Upcoming requests"]);
+    ).toEqual([
+      TOOL_OUTPUT_TABLE_TITLES.myLeaveBalance,
+      TOOL_OUTPUT_TABLE_TITLES.upcomingRequests,
+    ]);
 
     expect(
       titles(
@@ -75,35 +92,40 @@ describe("transcript/tool-output", () => {
           balance: { balances: [FIXTURE_BALANCE], upcomingRequests: [FIXTURE_REQUEST] },
         }),
       )[0],
-    ).toBe("Updated leave balance");
+    ).toBe(TOOL_OUTPUT_TABLE_TITLES.updatedLeaveBalance);
 
     expect(
       titles(
         createToolPart("cancel_my_time_off_request", {
-          cancelledRequests: { requests: [{ ...FIXTURE_REQUEST, status: "cancelled" }] },
+          cancelledRequests: { requests: [FIXTURE_REQUEST_CANCELLED] },
         }),
       )[0],
-    ).toBe("Cancelled requests");
+    ).toBe(TOOL_OUTPUT_TABLE_TITLES.cancelledRequests);
 
     expect(
       titles(
         createToolPart("approve_team_time_off_request", {
           reviewedEmployeeRequests: {
-            query: "Mia",
-            requests: [teamRequest({ status: "approved" })],
+            query: FIXTURE_REVIEW_QUERY,
+            requests: [teamRequestWith({ status: "approved" })],
           },
-          pendingTeamRequests: { requests: [teamRequest({ employeeName: "An Pham" })] },
+          pendingTeamRequests: {
+            requests: [teamRequestWith({ employeeName: FIXTURE_EMPLOYEE_AN })],
+          },
         }),
       ),
-    ).toEqual(["Mia's requests", "Pending team requests"]);
+    ).toEqual([
+      employeeRequestsTableTitle(FIXTURE_REVIEW_QUERY),
+      TOOL_OUTPUT_TABLE_TITLES.pendingTeamRequests,
+    ]);
 
     expect(
       titles(
         createToolPart("reject_team_time_off_request", {
-          teamRequests: { requests: [teamRequest()] },
+          teamRequests: { requests: [teamRequestWith()] },
         }),
       )[0],
-    ).toBe("Team time-off requests");
+    ).toBe(TOOL_OUTPUT_TABLE_TITLES.teamTimeOffRequests);
 
     expect(
       getToolOutputTables(createToolPart("custom_tool", { items: [{ label: "A", score: 1 }] }))[0]
@@ -123,9 +145,9 @@ describe("transcript/tool-output", () => {
     expect(
       titles(
         createToolPart("approve_team_time_off_request", {
-          pendingTeamRequests: { requests: [teamRequest()] },
+          pendingTeamRequests: { requests: [teamRequestWith()] },
         }),
       ),
-    ).toEqual(["Pending team requests"]);
+    ).toEqual([TOOL_OUTPUT_TABLE_TITLES.pendingTeamRequests]);
   });
 });
