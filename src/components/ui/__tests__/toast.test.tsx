@@ -81,12 +81,12 @@ describe("Toast", () => {
   });
 
   it("cleans up timers on unmount", () => {
-    const { unmount } = renderToast({ durationMs: 10_000 });
+    const { unmount } = renderToast({ durationMs: 10000 });
     flushEnter();
     unmount();
 
     act(() => {
-      vi.advanceTimersByTime(20_000);
+      vi.advanceTimersByTime(20000);
     });
 
     expect(onDismiss).not.toHaveBeenCalled();
