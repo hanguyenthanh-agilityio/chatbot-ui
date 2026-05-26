@@ -19,7 +19,7 @@ export function ChatEmptyState({
       <div
         className={cn(
           "flex w-full max-w-chat-empty flex-col items-center gap-6 rounded-3xl border border-white/10 p-8 shadow-glass-hero backdrop-blur-[2rem]",
-          "bg-glass light:border-app-border light:bg-app-surface-muted light:shadow-panel",
+          "bg-glass light:border-app-border light:bg-app-surface-muted light:shadow-panel light:backdrop-blur-none",
           THEME_SHELL_UTILITIES.border,
         )}
       >
