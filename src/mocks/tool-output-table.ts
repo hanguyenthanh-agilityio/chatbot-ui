@@ -5,6 +5,8 @@ import {
   getRequestTableModel,
 } from "@/components/transcript/named-tables";
 import { getSelfRequestRowActions } from "@/components/transcript/cells";
+import { TOOL_OUTPUT_TABLE_TITLES } from "@/components/transcript/tool";
+import { FIXTURE_BALANCES, FIXTURE_REQUESTS } from "@/mocks/time-off-fixtures";
 
 export type MockToolOutputTableProps = ComponentProps<typeof ToolOutputTable>;
 
@@ -29,72 +31,29 @@ export function mockBalanceTableProps(): MockToolOutputTableProps {
   return fromModel(
     getBalanceTableModel({
       id: "my-time-off-balance",
-      title: "My leave balance",
-      payload: {
-        balances: [
-          {
-            leaveType: "annual",
-            allowance: 14,
-            used: 2,
-            pending: 1,
-            remaining: 11,
-          },
-          {
-            leaveType: "sick",
-            allowance: 5,
-            used: 1,
-            pending: 0,
-            remaining: 4,
-          },
-          {
-            leaveType: "personal",
-            allowance: 2,
-            used: 0,
-            pending: 0,
-            remaining: 2,
-          },
-        ],
-      },
+      title: TOOL_OUTPUT_TABLE_TITLES.myLeaveBalance,
+      payload: { balances: FIXTURE_BALANCES },
       emptyLabel: "No balance data found.",
     }),
   );
 }
 
 export function mockMyRequestsTableProps(): MockToolOutputTableProps {
-  const model = getRequestTableModel({
-    id: "my-time-off-requests",
-    title: "My time-off requests",
-    payload: {
-      requests: [
-        {
-          leaveType: "annual",
-          leaveTypeLabel: "Annual leave",
-          startDate: "2026-06-10",
-          endDate: "2026-06-12",
-          days: 3,
-          status: "pending",
-        },
-        {
-          leaveType: "sick",
-          leaveTypeLabel: "Sick leave",
-          startDate: "2026-05-02",
-          endDate: "2026-05-02",
-          days: 1,
-          status: "approved",
-        },
-      ],
-    },
-    showEmployee: false,
-    getRowActions: getSelfRequestRowActions,
-    emptyLabel: "No time-off requests found.",
-  });
-
-  return fromModel(model);
+  return fromModel(
+    getRequestTableModel({
+      id: "my-time-off-requests",
+      title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
+      payload: { requests: FIXTURE_REQUESTS },
+      showEmployee: false,
+      getRowActions: getSelfRequestRowActions,
+      emptyLabel: "No time-off requests found.",
+    }),
+  );
 }
 
 export function mockEmptyTableProps(): MockToolOutputTableProps {
   return {
-    title: "My time-off requests",
+    title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
     columns: [
       { key: "leaveType", label: "Leave type", align: "center" },
       { key: "dateRange", label: "Date range", align: "center" },

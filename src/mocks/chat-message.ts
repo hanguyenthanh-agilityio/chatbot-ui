@@ -2,22 +2,18 @@ import type { ComponentProps } from "react";
 import type { UIMessage } from "ai";
 import { ChatMessage } from "@/components/transcript/message";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
+import { LEAVE_TYPE_LABEL_BY_TYPE } from "@/constants/leave";
+import { createToolPart } from "@/mocks/transcript-tool-output";
+import {
+  FIXTURE_BALANCE_ANNUAL,
+  FIXTURE_BALANCE_SICK,
+  FIXTURE_REQUESTS,
+} from "@/mocks/time-off-fixtures";
 
 const ASSISTANT_METADATA = {
   agent: CHAT_TRANSCRIPT_COPY.defaultAgentName,
   agentLabel: CHAT_TRANSCRIPT_COPY.defaultAgentLabel,
 } as const;
-
-function toolPart(
-  toolName: string,
-  partial: Record<string, unknown>,
-): UIMessage["parts"][number] {
-  return {
-    type: `tool-${toolName}`,
-    toolCallId: `tc-${toolName}`,
-    ...partial,
-  } as UIMessage["parts"][number];
-}
 
 export function mockUserChatMessage(
   text: string,
@@ -63,27 +59,11 @@ export function mockAssistantBalanceTableMessage(
         type: "text",
         text: "Here is your current leave balance:",
       },
-      toolPart("get_my_time_off_balance", {
-        state: "output-available",
-        input: {},
-        output: {
-          balances: [
-            {
-              leaveType: "annual",
-              allowance: 14,
-              used: 2,
-              pending: 1,
-              remaining: 11,
-            },
-            {
-              leaveType: "sick",
-              allowance: 5,
-              used: 0,
-              pending: 0,
-              remaining: 5,
-            },
-          ],
-        },
+      createToolPart("get_my_time_off_balance", {
+        balances: [
+          FIXTURE_BALANCE_ANNUAL,
+          { ...FIXTURE_BALANCE_SICK, used: 0, pending: 0, remaining: 5 },
+        ],
       }),
     ],
   };
@@ -97,29 +77,8 @@ export function mockAssistantRequestsTableMessage(
     role: "assistant",
     metadata: ASSISTANT_METADATA,
     parts: [
-      toolPart("list_my_time_off_requests", {
-        state: "output-available",
-        input: {},
-        output: {
-          requests: [
-            {
-              leaveType: "annual",
-              leaveTypeLabel: "Annual leave",
-              startDate: "2026-06-10",
-              endDate: "2026-06-12",
-              days: 3,
-              status: "pending",
-            },
-            {
-              leaveType: "sick",
-              leaveTypeLabel: "Sick leave",
-              startDate: "2026-05-02",
-              endDate: "2026-05-02",
-              days: 1,
-              status: "approved",
-            },
-          ],
-        },
+      createToolPart("list_my_time_off_requests", {
+        requests: FIXTURE_REQUESTS,
       }),
     ],
   };
@@ -131,16 +90,20 @@ export function mockAssistantApprovalMessage(id = "msg-assistant-approval"): UIM
     role: "assistant",
     metadata: ASSISTANT_METADATA,
     parts: [
-      toolPart("submit_my_time_off_request", {
-        state: "approval-requested",
-        approval: { id: "approval-submit-1" },
-        input: {
-          leaveType: "annual",
-          startDate: "2026-07-01",
-          endDate: "2026-07-03",
-          reason: "Family trip",
+      createToolPart(
+        "submit_my_time_off_request",
+        undefined,
+        {
+          state: "approval-requested",
+          approval: { id: "approval-submit-1" },
+          input: {
+            leaveType: "annual",
+            startDate: "2026-07-01",
+            endDate: "2026-07-03",
+            reason: "Family trip",
+          },
         },
-      }),
+      ),
     ],
   };
 }
@@ -171,24 +134,23 @@ export function mockAssistantMutationSuccessMessage(
     role: "assistant",
     metadata: ASSISTANT_METADATA,
     parts: [
-      toolPart("submit_my_time_off_request", {
-        state: "output-available",
-        preliminary: false,
-        input: {},
-        output: {
+      createToolPart(
+        "submit_my_time_off_request",
+        {
           ok: true,
           request: {
             employeeName: "Thang Ho Quang",
             team: "Platform",
             leaveType: "annual",
-            leaveTypeLabel: "Annual leave",
+            leaveTypeLabel: LEAVE_TYPE_LABEL_BY_TYPE.annual,
             startDate: "2026-07-01",
             endDate: "2026-07-03",
             days: 3,
             status: "pending",
           },
         },
-      }),
+        { preliminary: false },
+      ),
       {
         type: "text",
         text: "Your request is in the queue. I can list pending items if you want.",

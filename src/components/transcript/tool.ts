@@ -9,6 +9,10 @@ import type {
 import type { MessageMetadata } from "@/agents/chat-core";
 import { formatHumanDateRange } from "@/utils/date";
 import {
+  EMPLOYEE_TOOL_NAME,
+} from "@/agents/employee/tools/common/definitions";
+import { MANAGER_TOOL_NAME } from "@/agents/manager/tools/common/definitions";
+import {
   asRecord,
   asString,
   asOptionalString,
@@ -21,24 +25,47 @@ export const TOOL_STATUS_TONE_CLASS: Record<
   string
 > = {
   error:
-    "border border-rose-400/28 bg-rose-500/12 text-rose-200 shadow-tool-rose",
+    "border border-rose-400/28 bg-rose-500/12 text-rose-200 shadow-tool-rose light:border-rose-300/70 light:bg-rose-50 light:text-rose-800 light:shadow-none",
   success:
-    "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 shadow-tool-emerald",
+    "border border-emerald-400/28 bg-emerald-500/12 text-emerald-100 shadow-tool-emerald light:border-emerald-300/70 light:bg-emerald-50 light:text-emerald-900 light:shadow-none",
   neutral:
-    "border border-white/10 bg-white/7 text-white/72 shadow-tool-neutral",
+    "border border-white/10 bg-white/7 text-white/72 shadow-tool-neutral light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted light:shadow-none",
 };
 
 export const TOOL_FRIENDLY_LABEL_BY_NAME: Record<string, string> = {
-  get_my_time_off_balance: "My leave balance",
-  list_my_time_off_requests: "My time-off requests",
-  list_employees: "All employees",
-  list_team_members: "Team members",
-  list_team_time_off_requests: "Team time-off requests",
-  submit_my_time_off_request: "Submit time-off request",
-  cancel_my_time_off_request: "Cancel time-off request",
-  approve_team_time_off_request: "Approve team request",
-  reject_team_time_off_request: "Reject team request",
+  [EMPLOYEE_TOOL_NAME.GET_MY_TIME_OFF_BALANCE]: "My leave balance",
+  [EMPLOYEE_TOOL_NAME.LIST_MY_TIME_OFF_REQUESTS]: "My time-off requests",
+  [MANAGER_TOOL_NAME.LIST_EMPLOYEES]: "All employees",
+  [MANAGER_TOOL_NAME.LIST_TEAM_MEMBERS]: "Team members",
+  [MANAGER_TOOL_NAME.LIST_TEAM_TIME_OFF_REQUESTS]: "Team time-off requests",
+  [EMPLOYEE_TOOL_NAME.SUBMIT_MY_TIME_OFF_REQUEST]: "Submit time-off request",
+  [EMPLOYEE_TOOL_NAME.CANCEL_MY_TIME_OFF_REQUEST]: "Cancel time-off request",
+  [MANAGER_TOOL_NAME.APPROVE_TEAM_TIME_OFF_REQUEST]: "Approve team request",
+  [MANAGER_TOOL_NAME.REJECT_TEAM_TIME_OFF_REQUEST]: "Reject team request",
 };
+
+/** Table titles rendered in tool-output (subset reuse friendly tool labels). */
+export const TOOL_OUTPUT_TABLE_TITLES = {
+  myLeaveBalance:
+    TOOL_FRIENDLY_LABEL_BY_NAME[EMPLOYEE_TOOL_NAME.GET_MY_TIME_OFF_BALANCE],
+  myTimeOffRequests:
+    TOOL_FRIENDLY_LABEL_BY_NAME[EMPLOYEE_TOOL_NAME.LIST_MY_TIME_OFF_REQUESTS],
+  teamMembers:
+    TOOL_FRIENDLY_LABEL_BY_NAME[MANAGER_TOOL_NAME.LIST_TEAM_MEMBERS],
+  teamTimeOffRequests:
+    TOOL_FRIENDLY_LABEL_BY_NAME[
+      MANAGER_TOOL_NAME.LIST_TEAM_TIME_OFF_REQUESTS
+    ],
+  projectMembers: "Project members",
+  upcomingRequests: "Upcoming requests",
+  updatedLeaveBalance: "Updated leave balance",
+  cancelledRequests: "Cancelled requests",
+  pendingTeamRequests: "Pending team requests",
+} as const;
+
+export function employeeRequestsTableTitle(query: string) {
+  return `${query}'s requests`;
+}
 
 export function getToolParts(message: UIMessage) {
   const toolParts = message.parts.filter((part) => isToolUIPart(part));
@@ -95,7 +122,7 @@ export function isDatePickerToolPart(
 ): boolean {
   return (
     isToolUIPart(part) &&
-    getToolName(part) === "collect_date_range" &&
+    getToolName(part) === EMPLOYEE_TOOL_NAME.COLLECT_DATE_RANGE &&
     part.state === "output-available"
   );
 }
@@ -122,7 +149,7 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
   const toolName = getToolName(part);
 
   switch (toolName) {
-    case "submit_my_time_off_request": {
+    case EMPLOYEE_TOOL_NAME.SUBMIT_MY_TIME_OFF_REQUEST: {
       const i = part.input as SubmitTimeOffInput;
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest.title,
@@ -133,7 +160,7 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
           CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest.cancelLabel,
       };
     }
-    case "cancel_my_time_off_request": {
+    case EMPLOYEE_TOOL_NAME.CANCEL_MY_TIME_OFF_REQUEST: {
       const i = part.input as CancelTimeOffInput;
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.title,
@@ -144,7 +171,7 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
           CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.cancelLabel,
       };
     }
-    case "approve_team_time_off_request": {
+    case MANAGER_TOOL_NAME.APPROVE_TEAM_TIME_OFF_REQUEST: {
       const i = part.input as ApproveTeamRequestInput;
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.title,
@@ -155,7 +182,7 @@ export function getApprovalCardContent(part: UIMessage["parts"][number]) {
           CHAT_TRANSCRIPT_COPY.toolApproval.approveRequest.cancelLabel,
       };
     }
-    case "reject_team_time_off_request": {
+    case MANAGER_TOOL_NAME.REJECT_TEAM_TIME_OFF_REQUEST: {
       const i = part.input as RejectTeamRequestInput;
       return {
         title: CHAT_TRANSCRIPT_COPY.toolApproval.rejectRequest.title,
@@ -243,12 +270,17 @@ export function getMutationSuccessCard(part: UIMessage["parts"][number]) {
   const toolName = getToolName(part);
 
   let title: string;
-  if (toolName === "approve_team_time_off_request") title = "Request approved";
-  else if (toolName === "reject_team_time_off_request")
+  if (
+    toolName === MANAGER_TOOL_NAME.APPROVE_TEAM_TIME_OFF_REQUEST
+  )
+    title = "Request approved";
+  else if (
+    toolName === MANAGER_TOOL_NAME.REJECT_TEAM_TIME_OFF_REQUEST
+  )
     title = "Request rejected";
-  else if (toolName === "cancel_my_time_off_request")
+  else if (toolName === EMPLOYEE_TOOL_NAME.CANCEL_MY_TIME_OFF_REQUEST)
     title = "Request cancelled";
-  else if (toolName === "submit_my_time_off_request")
+  else if (toolName === EMPLOYEE_TOOL_NAME.SUBMIT_MY_TIME_OFF_REQUEST)
     title = "Request submitted";
   else return null;
 

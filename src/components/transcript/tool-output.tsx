@@ -1,11 +1,6 @@
 import { isToolUIPart, type UIMessage } from "ai";
-import {
-  asRecord,
-  asRecordArray,
-  asOptionalString,
-  isBalanceLikeRecord,
-  isRequestLikeRecord,
-} from "./utils";
+
+// Components
 import { getToolName, getFriendlyToolLabelByName } from "./tool";
 import {
   getSelfRequestRowActions,
@@ -25,6 +20,24 @@ import {
   getCollectionTitle,
   getGenericTableModel,
 } from "./generic-table";
+
+// Constants
+import {
+  employeeRequestsTableTitle,
+  TOOL_OUTPUT_TABLE_TITLES,
+} from "./tool";
+import { EMPLOYEE_TOOL_NAME } from "@/agents/employee/tools/common/definitions";
+import { MANAGER_TOOL_NAME } from "@/agents/manager/tools/common/definitions";
+
+// Utils
+import {
+  asRecord,
+  asRecordArray,
+  asOptionalString,
+  asString,
+  isBalanceLikeRecord,
+  isRequestLikeRecord,
+} from "./utils";
 
 function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
   const collections = collectRecordCollections(output);
@@ -60,7 +73,9 @@ function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
           id,
           title,
           payload: { requests: rows },
-          showEmployee: rows.some((row) => Boolean(asOptionalString(row.employeeName))),
+          showEmployee: rows.some((row) =>
+            Boolean(asOptionalString(row.employeeName)),
+          ),
           getRowActions: getRequestRowActionBuilder(toolName),
           emptyLabel: "No records found.",
         });
@@ -77,7 +92,11 @@ function getDynamicToolOutputTables(output: unknown, toolName: string | null) {
 }
 
 export function getToolOutputTables(part: UIMessage["parts"][number]) {
-  if (!isToolUIPart(part) || part.state !== "output-available" || part.preliminary) {
+  if (
+    !isToolUIPart(part) ||
+    part.state !== "output-available" ||
+    part.preliminary
+  ) {
     return [] as ToolOutputTableModel[];
   }
 
@@ -94,30 +113,30 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
   }
 
   switch (toolName) {
-    case "list_employees": {
+    case MANAGER_TOOL_NAME.LIST_EMPLOYEES: {
       const table = buildMembersTableModel({
         id: "all-employees",
-        title: "Project members",
+        title: TOOL_OUTPUT_TABLE_TITLES.projectMembers,
         memberRows: asRecordArray(output.employees),
         emptyLabel: "No employees found.",
       });
       return table ? [table] : dynamicTables;
     }
 
-    case "list_team_members": {
+    case MANAGER_TOOL_NAME.LIST_TEAM_MEMBERS: {
       const table = buildMembersTableModel({
         id: "team-members",
-        title: "Team members",
+        title: TOOL_OUTPUT_TABLE_TITLES.teamMembers,
         memberRows: asRecordArray(output.members),
         emptyLabel: "No team members found.",
       });
       return table ? [table] : dynamicTables;
     }
 
-    case "list_my_time_off_requests": {
+    case EMPLOYEE_TOOL_NAME.LIST_MY_TIME_OFF_REQUESTS: {
       const requests = getRequestTableModel({
         id: "my-time-off-requests",
-        title: "My time-off requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
         payload: output,
         showEmployee: false,
         getRowActions: getSelfRequestRowActions,
@@ -126,11 +145,10 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return requests ? [requests] : dynamicTables;
     }
 
-    case "list_team_time_off_requests": {
-
+    case MANAGER_TOOL_NAME.LIST_TEAM_TIME_OFF_REQUESTS: {
       const requests = getRequestTableModel({
         id: "team-time-off-requests",
-        title: "Team time-off requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.teamTimeOffRequests,
         payload: output,
         showEmployee: true,
         getRowActions: getTeamRequestRowActions,
@@ -139,18 +157,18 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return requests ? [requests] : dynamicTables;
     }
 
-    case "get_my_time_off_balance": {
+    case EMPLOYEE_TOOL_NAME.GET_MY_TIME_OFF_BALANCE: {
       const tables = [
         getBalanceTableModel({
           id: "my-time-off-balance",
-          title: "My leave balance",
+          title: TOOL_OUTPUT_TABLE_TITLES.myLeaveBalance,
           payload: output,
           getRowActions: getBalanceRowActions,
           emptyLabel: "No balance data found.",
         }),
         getRequestTableModel({
           id: "my-upcoming-requests",
-          title: "Upcoming requests",
+          title: TOOL_OUTPUT_TABLE_TITLES.upcomingRequests,
           payload: {
             requests: output.upcomingRequests,
           },
@@ -163,21 +181,21 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return tables.length > 0 ? tables : dynamicTables;
     }
 
-    case "submit_my_time_off_request": {
+    case EMPLOYEE_TOOL_NAME.SUBMIT_MY_TIME_OFF_REQUEST: {
       const balance = asRecord(output.balance);
       if (!balance) return dynamicTables;
 
       const tables = [
         getBalanceTableModel({
           id: "updated-time-off-balance",
-          title: "Updated leave balance",
+          title: TOOL_OUTPUT_TABLE_TITLES.updatedLeaveBalance,
           payload: balance,
           getRowActions: getBalanceRowActions,
           emptyLabel: "No balance data found.",
         }),
         getRequestTableModel({
           id: "updated-upcoming-requests",
-          title: "Upcoming requests",
+          title: TOOL_OUTPUT_TABLE_TITLES.upcomingRequests,
           payload: {
             requests: balance.upcomingRequests,
           },
@@ -190,10 +208,10 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return tables.length > 0 ? tables : dynamicTables;
     }
 
-    case "cancel_my_time_off_request": {
+    case EMPLOYEE_TOOL_NAME.CANCEL_MY_TIME_OFF_REQUEST: {
       const table = getRequestTableModel({
         id: "my-cancelled-requests",
-        title: "Cancelled requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.cancelledRequests,
         payload: asRecord(output.cancelledRequests) ?? {},
         showEmployee: false,
         getRowActions: getSelfRequestRowActions,
@@ -202,9 +220,11 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
       return table ? [table] : dynamicTables;
     }
 
-    case "approve_team_time_off_request":
-    case "reject_team_time_off_request": {
-      const reviewedEmployeeRequests = asRecord(output.reviewedEmployeeRequests);
+    case MANAGER_TOOL_NAME.APPROVE_TEAM_TIME_OFF_REQUEST:
+    case MANAGER_TOOL_NAME.REJECT_TEAM_TIME_OFF_REQUEST: {
+      const reviewedEmployeeRequests = asRecord(
+        output.reviewedEmployeeRequests,
+      );
       const pendingTeamRequests = asRecord(output.pendingTeamRequests);
 
       if (reviewedEmployeeRequests || pendingTeamRequests) {
@@ -213,7 +233,9 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
         if (reviewedEmployeeRequests) {
           const table = getRequestTableModel({
             id: "reviewed-employee-requests",
-            title: `${reviewedEmployeeRequests.query ?? "Employee"}'s requests`,
+            title: employeeRequestsTableTitle(
+              asString(reviewedEmployeeRequests.query, "Employee"),
+            ),
             payload: reviewedEmployeeRequests,
             showEmployee: true,
             getRowActions: getTeamRequestRowActions,
@@ -225,7 +247,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
         if (pendingTeamRequests) {
           const table = getRequestTableModel({
             id: "pending-team-requests",
-            title: "Pending team requests",
+            title: TOOL_OUTPUT_TABLE_TITLES.pendingTeamRequests,
             payload: pendingTeamRequests,
             showEmployee: true,
             getRowActions: getTeamRequestRowActions,
@@ -242,7 +264,7 @@ export function getToolOutputTables(part: UIMessage["parts"][number]) {
 
       const requests = getRequestTableModel({
         id: "team-time-off-requests",
-        title: "Team time-off requests",
+        title: TOOL_OUTPUT_TABLE_TITLES.teamTimeOffRequests,
         payload: teamRequests,
         showEmployee: true,
         getRowActions: getTeamRequestRowActions,
