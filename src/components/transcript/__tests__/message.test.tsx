@@ -3,7 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ChatMessage } from "@/components/transcript/message";
-import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
+import {
+  CHAT_TRANSCRIPT_COPY,
+  MOCK_CHAT_SAMPLE_MESSAGES,
+} from "@/constants/chat";
 import {
   mockAssistantApprovalMessage,
   mockAssistantBalanceTableMessage,
@@ -22,12 +25,14 @@ describe("ChatMessage", () => {
   it.each([
     [
       "user",
-      mockChatMessageProps(mockUserChatMessage("How many leave days left?")),
+      mockChatMessageProps(
+        mockUserChatMessage(MOCK_CHAT_SAMPLE_MESSAGES.userLeaveBalance),
+      ),
     ],
     [
       "assistant-text",
       mockChatMessageProps(
-        mockAssistantTextMessage("You have 12 annual days remaining."),
+        mockAssistantTextMessage(MOCK_CHAT_SAMPLE_MESSAGES.assistantLeaveBalance),
       ),
     ],
     [

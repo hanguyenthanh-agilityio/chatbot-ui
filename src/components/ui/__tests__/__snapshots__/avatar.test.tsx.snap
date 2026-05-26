@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Avatar > matches snapshot (assistant-lg) 1`] = `"<div role="img" aria-label="Employee Assistant avatar" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center h-14 w-14 border border-white/20 shadow-avatar-brand light:border-app-border" style="background-image: url(/chatbot-assistant-avatar.png), var(--avatar-assistant-fallback);"></div>"`;
+
+exports[`Avatar > matches snapshot (assistant-md) 1`] = `"<div role="img" aria-label="Employee Assistant avatar" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center h-9 w-9 border border-white/20 shadow-avatar-brand light:border-app-border" style="background-image: url(/chatbot-assistant-avatar.png), var(--avatar-assistant-fallback);"></div>"`;
+
+exports[`Avatar > matches snapshot (assistant-sm) 1`] = `"<div role="img" aria-label="Employee Assistant avatar" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center size-avatar-sm border border-white/20 shadow-avatar-brand light:border-app-border" style="background-image: url(/chatbot-assistant-avatar.png), var(--avatar-assistant-fallback);"></div>"`;
+
+exports[`Avatar > matches snapshot (custom class) 1`] = `"<div role="img" aria-label="Employee Assistant avatar" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center h-9 w-9 border border-white/20 shadow-avatar-brand light:border-app-border ring-2 ring-violet-400" style="background-image: url(/chatbot-assistant-avatar.png), var(--avatar-assistant-fallback);"></div>"`;
+
+exports[`Avatar > matches snapshot (user with image) 1`] = `"<div role="img" aria-label="Photo user" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center h-9 w-9 bg-avatar-user-placeholder ring-[1.5px] ring-indigo-400/35 light:ring-stone-400/50 shadow-avatar-photo" style="background-image: url(&quot;https://example.com/avatar.png&quot;);"></div>"`;
+
+exports[`Avatar > matches snapshot (user-initials-lg) 1`] = `"<div role="img" aria-label="Test user" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center h-14 w-14 bg-avatar-user-placeholder ring-[1.5px] ring-indigo-400/35 light:ring-stone-400/50 shadow-avatar-placeholder"><span class="absolute inset-0 flex items-center justify-center font-semibold text-white/90 light:text-white text-sm tracking-wider">TH</span></div>"`;
+
+exports[`Avatar > matches snapshot (user-initials-md) 1`] = `"<div role="img" aria-label="Test user" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center h-9 w-9 bg-avatar-user-placeholder ring-[1.5px] ring-indigo-400/35 light:ring-stone-400/50 shadow-avatar-placeholder"><span class="absolute inset-0 flex items-center justify-center font-semibold text-white/90 light:text-white text-compact-11 tracking-wide">TH</span></div>"`;
+
+exports[`Avatar > matches snapshot (user-initials-sm) 1`] = `"<div role="img" aria-label="Test user" class="relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center size-avatar-sm bg-avatar-user-placeholder ring-[1.5px] ring-indigo-400/35 light:ring-stone-400/50 shadow-avatar-placeholder"><span class="absolute inset-0 flex items-center justify-center font-semibold text-white/90 light:text-white text-compact-10 tracking-wide">TH</span></div>"`;

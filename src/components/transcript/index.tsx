@@ -32,7 +32,10 @@ export function ChatTranscript({
   const lastMessage = messages.at(-1);
 
   return (
-    <div ref={containerRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
+    <div
+      ref={containerRef}
+      className="min-h-0 flex-1 overflow-y-auto px-4 py-6 text-white light:text-app-fg sm:px-6 lg:px-8"
+    >
       {messages.length === 0 ? (
         <ChatEmptyState quickActions={quickActions} onSelectPrompt={onSelectPrompt} />
       ) : (

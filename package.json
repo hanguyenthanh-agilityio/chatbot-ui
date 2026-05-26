@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.24.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd",
+      "sharp",
+      "@swc/core"
+    ]
+  },
   "scripts": {
     "dev": "pnpm run dev:all",
     "dev:web": "next dev",
@@ -22,8 +30,13 @@
     "test": "vitest run --project unit",
     "test:update": "vitest run --project unit -u",
     "test:coverage": "vitest run --project unit --coverage",
+    "test:coverage:ci": "VITEST=true CI=true vitest run --config vitest.unit.config.ts --coverage",
     "test:update-coverage": "vitest run --project unit -u --coverage",
-    "test:storybook": "vitest run --project storybook"
+    "test:storybook": "vitest run --project storybook",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.27",
@@ -38,11 +51,13 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.1.2",
+    "@opennextjs/cloudflare": "^1.19.11",
     "@storybook/addon-a11y": "^10.3.6",
     "@storybook/addon-docs": "^10.3.6",
     "@storybook/addon-vitest": "^10.3.6",
     "@storybook/nextjs-vite": "^10.3.6",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -61,6 +76,7 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite": "^8.0.10",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "wrangler": "^4.93.1"
   }
 }
