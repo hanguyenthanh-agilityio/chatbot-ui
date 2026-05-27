@@ -1,20 +1,66 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { createRef } from "react";
+import { ComponentProps, createRef } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ThemeProvider } from "@/components/theme-provider";
-import { WorkspaceApp } from "@/components/workspace/app";
+// Constants
 import {
   getAppEmptyHeaderHintByRole,
   getAppEmptyHeaderTitleByRole,
   getAppSubtitleByRole,
 } from "@/constants/app";
+import {
+  DEFAULT_PROVIDER_OPTIONS,
+  PROVIDER_OPTION_LABEL,
+} from "@/constants/provider";
+import { DEFAULT_THEME } from "@/constants/theme";
+
+// Mocks
 import { mockAuthSession } from "@/mocks/auth-panel";
 import { mockChatThread } from "@/mocks/workspace-sidebar";
 import { mockProvider } from "@/mocks/provider-selector";
-import { DEFAULT_THEME } from "@/constants/theme";
+
+// Components
+import { WorkspaceApp } from "@/components/workspace/app";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const mockUseWorkspaceApp = vi.hoisted(() => vi.fn());
+const mockIsProductionLike = vi.hoisted(() => vi.fn(() => false));
+
+const hydrationSnapshotMock = vi.hoisted(() => ({
+  enabled: false,
+  isHydrated: true,
+}));
+
+vi.mock("@/lib/runtime-env", () => ({
+  isProductionLike: () => mockIsProductionLike(),
+}));
+
+vi.mock("react", async (importOriginal) => {
+  const React = await importOriginal<typeof import("react")>();
+  return {
+    ...React,
+    useSyncExternalStore<T>(
+      subscribe: Parameters<typeof React.useSyncExternalStore<T>>[0],
+      getClientSnapshot: () => T,
+      getServerSnapshot?: () => T,
+    ) {
+      const isWorkspaceHydrationGuard =
+        getServerSnapshot?.() === false && getClientSnapshot() === true;
+
+      return React.useSyncExternalStore(
+        subscribe,
+        () =>
+          hydrationSnapshotMock.enabled && isWorkspaceHydrationGuard
+            ? (hydrationSnapshotMock.isHydrated as T)
+            : getClientSnapshot(),
+        () =>
+          hydrationSnapshotMock.enabled && isWorkspaceHydrationGuard
+            ? (hydrationSnapshotMock.isHydrated as T)
+            : (getServerSnapshot?.() as T),
+      );
+    },
+  };
+});
 
 vi.mock("@/hooks/use-workspace-app", () => ({
   useWorkspaceApp: mockUseWorkspaceApp,
@@ -23,7 +69,12 @@ vi.mock("@/hooks/use-workspace-app", () => ({
 const authSessions = {
   user: mockAuthSession("user"),
   manager: mockAuthSession("manager"),
-};
+} as const;
+
+const DEFAULT_ROLE = "user" as const;
+const DEFAULT_HEADER_TITLE = getAppEmptyHeaderTitleByRole(DEFAULT_ROLE);
+const DEFAULT_HEADER_SUBTITLE = getAppSubtitleByRole(DEFAULT_ROLE);
+const DEFAULT_HEADER_HINT = getAppEmptyHeaderHintByRole(DEFAULT_ROLE);
 
 function mockWorkspaceState(overrides: Record<string, unknown> = {}) {
   const activeThread = mockChatThread();
@@ -31,9 +82,9 @@ function mockWorkspaceState(overrides: Record<string, unknown> = {}) {
     input: "",
     setInput: vi.fn(),
     auth: {
-      role: "user" as const,
+      role: DEFAULT_ROLE,
       session: authSessions.user,
-      requestBody: { authRole: "user" },
+      requestBody: { authRole: DEFAULT_ROLE },
     },
     provider: mockProvider({ isProviderReady: true }),
     messages: [],
@@ -42,9 +93,9 @@ function mockWorkspaceState(overrides: Record<string, unknown> = {}) {
     requestError: null,
     isEmptyConversation: true,
     quickActions: [],
-    headerTitle: getAppEmptyHeaderTitleByRole("user"),
-    headerSubtitle: getAppSubtitleByRole("user"),
-    headerHint: getAppEmptyHeaderHintByRole("user"),
+    headerTitle: DEFAULT_HEADER_TITLE,
+    headerSubtitle: DEFAULT_HEADER_SUBTITLE,
+    headerHint: DEFAULT_HEADER_HINT,
     helperText: "Helper",
     messagesContainerRef: createRef<HTMLDivElement>(),
     activeThread,
@@ -62,23 +113,76 @@ function mockWorkspaceState(overrides: Record<string, unknown> = {}) {
   };
 }
 
-function renderApp() {
+function getProviderCombobox() {
+  const combobox = screen
+    .getAllByRole("combobox")
+    .find((element) => element.querySelector('option[value="openai"]'));
+  if (!combobox) {
+    throw new Error("provider combobox not found");
+  }
+  return combobox;
+}
+
+type WorkspaceAppProps = ComponentProps<typeof WorkspaceApp>;
+
+function renderApp(props: WorkspaceAppProps = { authSessions }) {
   return render(
     <ThemeProvider>
-      <WorkspaceApp authSessions={authSessions} />
+      <WorkspaceApp {...props} />
     </ThemeProvider>,
   );
+}
+
+async function renderFreshApp(props: WorkspaceAppProps = { authSessions }) {
+  vi.resetModules();
+  const [{ WorkspaceApp: FreshWorkspaceApp }, { ThemeProvider: FreshTheme }] =
+    await Promise.all([
+      import("@/components/workspace/app"),
+      import("@/components/theme-provider"),
+    ]);
+
+  return render(
+    <FreshTheme>
+      <FreshWorkspaceApp {...props} />
+    </FreshTheme>,
+  );
+}
+
+function givenWorkspaceState(overrides: Record<string, unknown> = {}) {
+  mockUseWorkspaceApp.mockReturnValue(mockWorkspaceState(overrides));
 }
 
 describe("WorkspaceApp", () => {
   beforeEach(() => {
     document.documentElement.dataset.theme = DEFAULT_THEME;
-    mockUseWorkspaceApp.mockReturnValue(mockWorkspaceState());
+    mockUseWorkspaceApp.mockClear();
+    givenWorkspaceState();
   });
 
   afterEach(() => {
+    hydrationSnapshotMock.enabled = false;
+    hydrationSnapshotMock.isHydrated = true;
+    mockIsProductionLike.mockReturnValue(false);
     cleanup();
     localStorage.clear();
+  });
+
+  describe("hydration shell", () => {
+    beforeEach(() => {
+      hydrationSnapshotMock.enabled = true;
+      hydrationSnapshotMock.isHydrated = false;
+    });
+
+    it("renders placeholder layout before hydration", () => {
+      renderApp();
+      expect(mockUseWorkspaceApp).not.toHaveBeenCalled();
+      expect(
+        screen.queryByRole("heading", {
+          name: DEFAULT_HEADER_TITLE,
+        }),
+      ).not.toBeInTheDocument();
+      expect(document.querySelectorAll(".h-chat-viewport")).toHaveLength(2);
+    });
   });
 
   it.each([
@@ -111,7 +215,7 @@ describe("WorkspaceApp", () => {
       },
     ],
   ])("snapshot %s", (_id, overrides) => {
-    mockUseWorkspaceApp.mockReturnValue(mockWorkspaceState(overrides));
+    givenWorkspaceState(overrides);
     const { container } = renderApp();
     expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
   });
@@ -120,24 +224,46 @@ describe("WorkspaceApp", () => {
     renderApp();
     expect(
       screen.getByRole("heading", {
-        name: getAppEmptyHeaderTitleByRole("user"),
+        name: DEFAULT_HEADER_TITLE,
       }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(getAppEmptyHeaderHintByRole("user")),
-    ).toBeInTheDocument();
+    expect(screen.getByText(DEFAULT_HEADER_HINT)).toBeInTheDocument();
   });
 
   it("shows success toast when provider reports success", () => {
-    mockUseWorkspaceApp.mockReturnValue(
-      mockWorkspaceState({
-        provider: mockProvider({
-          isProviderReady: true,
-          successMessage: "Provider verified",
-        }),
+    givenWorkspaceState({
+      provider: mockProvider({
+        isProviderReady: true,
+        successMessage: "Provider verified",
       }),
-    );
+    });
     renderApp();
     expect(screen.getByRole("status")).toHaveTextContent("Provider verified");
+  });
+
+  describe("allowed providers", () => {
+    it("passes default provider options in local-like mode", () => {
+      renderApp();
+      for (const provider of DEFAULT_PROVIDER_OPTIONS) {
+        expect(
+          screen.getByRole("option", { name: PROVIDER_OPTION_LABEL[provider] }),
+        ).toBeInTheDocument();
+      }
+      expect(getProviderCombobox()).toBeEnabled();
+    });
+
+    it("restricts the sidebar provider selector to OpenAI in production-like mode", async () => {
+      mockIsProductionLike.mockReturnValue(true);
+      givenWorkspaceState();
+      await renderFreshApp();
+
+      expect(
+        screen.queryByRole("option", { name: PROVIDER_OPTION_LABEL.ollama }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("option", { name: PROVIDER_OPTION_LABEL.openai }),
+      ).toBeInTheDocument();
+      expect(getProviderCombobox()).toBeDisabled();
+    });
   });
 });
