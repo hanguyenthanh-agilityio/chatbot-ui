@@ -28,10 +28,12 @@ export default defineProject({
       provider: "v8",
       reporter: ["text", "html", "lcov"],
       reportsDirectory: "./coverage",
-      include: ["src/components/**/*.{ts,tsx}"],
+      // Match vitest.config.ts (unit project): component UI is .tsx only.
+      include: ["src/components/**/*.tsx"],
       exclude: [
         "src/**/*.stories.{ts,tsx}",
         "src/**/*.test.{ts,tsx}",
+        "src/**/__tests__/**",
         "src/test/**",
       ],
     },

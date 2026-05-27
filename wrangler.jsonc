@@ -5,6 +5,8 @@
 	"main": ".open-next/worker.js",
 	"name": "ai-sdk",
 	"compatibility_date": "2026-05-21",
+	// Run Worker near backends (OpenAI US), not always at the user's edge colo (e.g. HKG).
+	"placement": { "mode": "smart" },
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"

@@ -1,0 +1,24 @@
+/* Storybook Docs: only style the preview "frame", not whole page. */
+
+.sbdocs .sbdocs-preview {
+  background: var(--bg-app-shell) !important;
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent) !important;
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* Center story content and let the frame grow with content. */
+.sbdocs .sbdocs-preview .docs-story {
+  width: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+  display: flex !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+/* Theme decorator should stay within the preview frame. */
+.sbdocs .sbdocs-preview .docs-story > div {
+  width: 100% !important;
+  max-width: 100% !important;
+}

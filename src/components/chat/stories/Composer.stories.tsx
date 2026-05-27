@@ -2,7 +2,10 @@ import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState, type ComponentProps, type FormEvent } from "react";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { ChatComposer } from "@/components/chat/composer";
-import { CHAT_COMPOSER_COPY, MOCK_CHAT_SAMPLE_MESSAGES } from "@/constants/chat";
+import {
+  CHAT_COMPOSER_COPY,
+  MOCK_CHAT_SAMPLE_MESSAGES,
+} from "@/constants/chat";
 import {
   STORYBOOK_THEME_GLOBAL,
   THEME_SHELL_CLASSES,
@@ -15,34 +18,36 @@ import {
 } from "@/mocks/chat-composer";
 import { cn } from "@/utils/class-name";
 
-/** Same shell as `WorkspaceApp`: header + scroll + composer at bottom. */
+/** Chat panel shell: full width so composer matches `WorkspaceApp` (not a centered narrow card). */
 const inChatPanel: Decorator = (Story) => (
-  <section
-    className={cn(
-      THEME_SHELL_CLASSES.chatPanel,
-      "mx-auto flex min-h-112 w-full max-w-3xl flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel light:backdrop-blur-none",
-      "bg-glass-panel-chat",
-      THEME_SHELL_UTILITIES.border,
-    )}
-  >
-    <header
+  <div className="h-auto w-full p-3 sm:p-5">
+    <section
       className={cn(
-        THEME_SHELL_CLASSES.chatHeader,
-        "shrink-0 border-b px-4 py-5 shadow-shell-header sm:px-6 lg:px-8",
-        "bg-glass-header",
-        THEME_SHELL_UTILITIES.borderSubtle,
+        THEME_SHELL_CLASSES.chatPanel,
+        "h-auto flex w-full min-w-0 flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel light:backdrop-blur-none",
+        "bg-glass-panel-chat",
+        THEME_SHELL_UTILITIES.border,
       )}
     >
-      <div
-        className="mx-auto h-12 w-full max-w-3xl rounded-xl bg-white/5 light:bg-app-surface-subtle"
-        aria-hidden
-      />
-    </header>
-    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 text-white light:text-app-fg sm:px-6 lg:px-8">
-      <div className="mx-auto min-h-40 w-full max-w-3xl" aria-hidden />
-    </div>
-    <Story />
-  </section>
+      <header
+        className={cn(
+          THEME_SHELL_CLASSES.chatHeader,
+          "shrink-0 border-b px-4 py-5 shadow-shell-header sm:px-6 lg:px-8",
+          "bg-glass-header",
+          THEME_SHELL_UTILITIES.borderSubtle,
+        )}
+      >
+        <div
+          className="h-12 w-full min-w-0 rounded-xl bg-white/5 light:bg-app-surface-subtle"
+          aria-hidden
+        />
+      </header>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div className="min-h-40 w-full min-w-0" aria-hidden />
+      </div>
+      <Story />
+    </section>
+  </div>
 );
 
 type ComposerStoryProps = ComponentProps<typeof ChatComposer> & {
@@ -81,7 +86,7 @@ const meta = {
   component: ChatComposer,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    layout: "fullscreen",
     docs: {
       description: {
         component:

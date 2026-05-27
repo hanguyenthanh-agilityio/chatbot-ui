@@ -1,5 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`Skeleton > snapshot: custom-size 1`] = `"<div class="app-skeleton-bar rounded-md h-4 w-32 rounded-full"></div>"`;
-
-exports[`Skeleton > snapshot: default 1`] = `"<div class="app-skeleton-bar rounded-md"></div>"`;

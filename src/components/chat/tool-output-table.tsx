@@ -41,6 +41,87 @@ function getAlignClass(align?: ToolOutputTableColumn["align"]) {
   return TEXT_ALIGN_CLASS[align ?? "left"];
 }
 
+const TABLE_CELL_INSET = "px-2";
+
+const TABLE_CELL_TRUNCATE_CLASS =
+  "block min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap";
+
+const TABLE_CELL_JUSTIFY_CLASS: Record<
+  NonNullable<ToolOutputTableColumn["align"]>,
+  string
+> = {
+  left: "justify-start",
+  center: "justify-center",
+  right: "justify-end",
+};
+
+function getCellJustifyClass(align?: ToolOutputTableColumn["align"]) {
+  return TABLE_CELL_JUSTIFY_CLASS[align ?? "left"];
+}
+
+function getCellTitle(value: ReactNode): string | undefined {
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  return undefined;
+}
+
+function TableCellValue({
+  value,
+  align,
+  className,
+}: {
+  value: ReactNode;
+  align?: ToolOutputTableColumn["align"];
+  className?: string;
+}) {
+  const title = getCellTitle(value);
+  const isPrimitive =
+    typeof value === "string" ||
+    typeof value === "number" ||
+    value === null ||
+    value === undefined;
+
+  if (isPrimitive) {
+    const display = value ?? "—";
+    return (
+      <div
+        className={cn(
+          "flex w-full min-w-0",
+          TABLE_CELL_INSET,
+          getCellJustifyClass(align),
+        )}
+      >
+        <span
+          className={cn(
+            TABLE_CELL_TRUNCATE_CLASS,
+            "text-compact-13 leading-table-cell text-white/90 light:text-app-fg",
+            getAlignClass(align),
+            className,
+          )}
+          title={title}
+        >
+          {display}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex w-full min-w-0",
+        TABLE_CELL_INSET,
+        getCellJustifyClass(align),
+      )}
+      title={title}
+    >
+      <div className="min-w-0 max-w-full overflow-hidden [&_.inline-flex]:max-w-full">
+        {value}
+      </div>
+    </div>
+  );
+}
+
 function getGridClass(columnCount: number) {
   if (columnCount <= 1) return "grid-cols-1";
   if (columnCount === 2) return "grid-cols-1 sm:grid-cols-2";
@@ -182,15 +263,25 @@ export function ToolOutputTable({
               )}
             >
               {columns.map((column) => (
-                <p
+                <div
                   key={`${title}-header-${column.key}`}
                   className={cn(
-                    "text-compact-10 uppercase tracking-table-label text-white/45 light:text-app-fg-tertiary",
-                    getAlignClass(column.align),
+                    "min-w-0",
+                    TABLE_CELL_INSET,
+                    getCellJustifyClass(column.align),
                   )}
                 >
-                  {column.label}
-                </p>
+                  <p
+                    className={cn(
+                      TABLE_CELL_TRUNCATE_CLASS,
+                      "text-compact-10 uppercase tracking-table-label text-white/45 light:text-app-fg-tertiary",
+                      getAlignClass(column.align),
+                    )}
+                    title={column.label}
+                  >
+                    {column.label}
+                  </p>
+                </div>
               ))}
             </div>
 
@@ -241,15 +332,11 @@ export function ToolOutputTable({
                           <p className="text-compact-10 uppercase tracking-table-label text-white/45 sm:hidden light:text-app-fg-tertiary">
                             {column.label}
                           </p>
-                          <div
-                            className={cn(
-                              "text-compact-13 leading-table-cell text-white/90 wrap-break-word light:text-app-fg",
-                              getAlignClass(column.align),
-                              column.className,
-                            )}
-                          >
-                            {row[column.key] ?? "—"}
-                          </div>
+                          <TableCellValue
+                            value={row[column.key]}
+                            align={column.align}
+                            className={column.className}
+                          />
                         </div>
                       ))}
                     </div>
@@ -257,27 +344,35 @@ export function ToolOutputTable({
 
                   {isSelected && rowSelectedActions.length > 0 ? (
                     <div className="border-t border-white/8 bg-violet-500/10 px-3 py-2.5 light:border-app-border-subtle light:bg-amber-50/60">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="text-xs text-white/75 light:text-app-fg-muted">
+                      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <p
+                          className="min-w-0 text-xs text-white/75 light:text-app-fg-muted"
+                          title={rowSummary}
+                        >
                           <span className="text-white/58 light:text-app-fg-subtle">
                             Selected:
                           </span>{" "}
-                          {rowSummary}
+                          <span className={TABLE_CELL_TRUNCATE_CLASS}>
+                            {rowSummary}
+                          </span>
                         </p>
 
-                        <div className="flex flex-wrap items-center gap-1.5">
+                        <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-1.5">
                           {rowSelectedActions.map((action, actionIndex) => (
                             <button
                               key={`${title}-selected-action-${rowIndex}-${actionIndex}`}
                               type="button"
                               disabled={disableActions}
                               onClick={() => onActionClick?.(action.prompt)}
+                              title={action.label}
                               className={cn(
-                                "inline-flex h-7 items-center rounded-md border px-2.5 text-compact-11 font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
+                                "inline-flex h-7 max-w-44 min-w-0 shrink cursor-pointer items-center overflow-hidden rounded-md border px-2.5 text-compact-11 font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                                 ACTION_TONE_CLASS[action.tone ?? "neutral"],
                               )}
                             >
-                              {action.label}
+                              <span className={TABLE_CELL_TRUNCATE_CLASS}>
+                                {action.label}
+                              </span>
                             </button>
                           ))}
                         </div>

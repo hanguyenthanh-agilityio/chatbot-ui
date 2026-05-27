@@ -8,7 +8,7 @@ import { THEME_SHELL_UTILITIES } from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 const CALENDAR_NAV_BUTTON_CLASSES =
-  "flex h-7 w-7 items-center justify-center rounded border border-white/16 text-white/60 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30 light:border-app-border light:text-app-fg-muted light:hover:bg-app-hover light:hover:text-app-fg disabled:light:opacity-40";
+  "flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-white/16 text-white/60 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30 light:border-app-border light:text-app-fg-muted light:hover:bg-app-hover light:hover:text-app-fg disabled:light:opacity-40";
 
 const CALENDAR_RANGE_BAND_CLASSES =
   "absolute top-0.5 bottom-0.5 bg-white/20 light:bg-app-accent-soft";
@@ -429,7 +429,7 @@ export function DateRangePickerCard({
   return (
     <Card
       className={cn(
-        "w-fit max-w-full px-4 py-3 shadow-glass-compact light:shadow-glass-compact",
+        "w-fit min-w-80 max-w-lg px-4 py-3 shadow-glass-compact light:shadow-glass-compact",
         THEME_SHELL_UTILITIES.borderSubtle,
       )}
     >
@@ -563,17 +563,18 @@ export function DateRangePickerCard({
                     "cursor-not-allowed text-white/22 light:text-app-fg-faint",
                   !isSelected &&
                     inRange &&
-                    "font-medium text-white hover:bg-white/10 light:text-app-fg light:hover:bg-app-hover",
+                    "cursor-pointer font-medium text-white hover:bg-white/10 light:text-app-fg light:hover:bg-app-hover",
                   !isSelected &&
                     !inRange &&
                     !isDisabledCell &&
                     isToday &&
-                    "text-white ring-1 ring-white/35 hover:bg-white/10 light:text-app-fg light:ring-app-border-emphasis light:hover:bg-app-hover",
+                    "cursor-pointer text-white ring-1 ring-white/35 hover:bg-white/10 light:text-app-fg light:ring-app-border-emphasis light:hover:bg-app-hover",
                   !isSelected &&
                     !inRange &&
                     !isDisabledCell &&
                     !isToday &&
-                    "text-white/72 hover:bg-white/10 light:text-app-fg-muted light:hover:bg-app-hover",
+                    "cursor-pointer text-white/72 hover:bg-white/10 light:text-app-fg-muted light:hover:bg-app-hover",
+                  isSelected && "cursor-pointer",
                 )}
               >
                 {showHalf && (
@@ -617,7 +618,7 @@ export function DateRangePickerCard({
                   disabled={isDisabledSlot}
                   onClick={() => handleSelectTimeSlot(value)}
                   className={cn(
-                    "flex-1 rounded border py-2 text-sm font-medium transition border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70 light:border-app-border light:text-app-fg-tertiary light:hover:bg-app-hover light:hover:text-app-fg-muted",
+                    "flex-1 cursor-pointer rounded border py-2 text-sm font-medium transition border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70 light:border-app-border light:text-app-fg-tertiary light:hover:bg-app-hover light:hover:text-app-fg-muted",
                     isActive &&
                       !isDisabledSlot &&
                       "border-white/30 bg-white/16 text-white light:border-app-border-emphasis light:bg-app-accent-soft light:text-app-fg",
@@ -654,7 +655,7 @@ export function DateRangePickerCard({
             type="button"
             disabled={disabled}
             onClick={handleClear}
-            className="shrink-0 text-xs text-white/30 transition hover:text-white/60 light:text-app-fg-tertiary light:hover:text-app-fg-muted"
+            className="shrink-0 cursor-pointer text-xs text-white/30 transition hover:text-white/60 light:text-app-fg-tertiary light:hover:text-app-fg-muted"
           >
             Clear
           </button>

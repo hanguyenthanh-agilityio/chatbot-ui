@@ -56,7 +56,7 @@ const TOAST_SHELL_LAYOUT_CLASSES: Record<ToastLayout, string> = {
 };
 
 const TOAST_DISMISS_BUTTON_CLASSES =
-  "ml-auto shrink-0 rounded-lg p-1 opacity-60 transition hover:bg-white/10 hover:opacity-100 light:hover:bg-app-hover";
+  "ml-auto shrink-0 cursor-pointer rounded-lg p-1 opacity-60 transition hover:bg-white/10 hover:opacity-100 light:hover:bg-app-hover";
 
 export function Toast({
   message,

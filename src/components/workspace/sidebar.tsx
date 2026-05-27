@@ -202,7 +202,7 @@ function ThreadCard({
           <Badge
             variant={PROVIDER_BADGE_VARIANT[thread.provider]}
             size="sm"
-            className="uppercase tracking-wide"
+            className="max-w-24 shrink-0 uppercase tracking-wide"
           >
             {thread.provider}
           </Badge>
@@ -214,7 +214,7 @@ function ThreadCard({
           <button
             type="button"
             className={cn(
-              "text-compact-10 uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
+              "cursor-pointer text-compact-10 uppercase tracking-wider hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-50",
               "text-white/30 light:text-app-fg-faint",
             )}
             onClick={(e) => {
