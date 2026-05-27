@@ -213,6 +213,22 @@ pnpm company-system:reset
 
 ---
 
+## Deployment (Cloudflare via GitHub)
+
+Workflow: `.github/workflows/deploy-cloudflare.yml` (branch `fix/redeploy-cloudflare`).
+
+| Target | URL pattern |
+|---|---|
+| App (Worker) | `https://ai-sdk.ha-nguyenthanh.workers.dev` |
+| Storybook (Pages) | `https://<branch>.chatbot-ui-storybook.pages.dev` |
+| Coverage (Pages) | `https://<branch>.chatbot-ui-coverage.pages.dev` |
+
+GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+
+OpenAI key verification: `POST /api/validate-openai-key` with `{ "apiKey": "sk-..." }`.
+
+---
+
 ## Notes
 
 - If Next.js shows stale Turbopack cache errors, delete `.next/` and rerun `pnpm dev`.
