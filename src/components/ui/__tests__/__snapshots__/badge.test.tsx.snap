@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Badge > matches snapshot (brand) 1`] = `"<span class="block min-w-0 max-w-full truncate text-center">Review first</span>"`;
+
+exports[`Badge > matches snapshot (custom-class) 1`] = `"<span class="block min-w-0 max-w-full truncate text-center">OK</span>"`;
+
+exports[`Badge > matches snapshot (default) 1`] = `"<span class="block min-w-0 max-w-full truncate text-center">Default</span>"`;
+
+exports[`Badge > matches snapshot (providerOllama) 1`] = `"<span class="block min-w-0 max-w-full truncate text-center">ollama</span>"`;
+
+exports[`Badge > matches snapshot (sm-info) 1`] = `"<span class="block min-w-0 max-w-full truncate text-center">Small</span>"`;
