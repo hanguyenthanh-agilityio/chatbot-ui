@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ThemeProvider > snapshot: dark 1`] = `
+<div>
+  <div
+    data-testid="probe"
+  >
+    <span
+      data-testid="theme"
+    >
+      dark
+    </span>
+    <button
+      type="button"
+    >
+      set
+    </button>
+    <button
+      type="button"
+    >
+      toggle
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ThemeProvider > snapshot: light 1`] = `
+<div>
+  <div
+    data-testid="probe"
+  >
+    <span
+      data-testid="theme"
+    >
+      light
+    </span>
+    <button
+      type="button"
+    >
+      set
+    </button>
+    <button
+      type="button"
+    >
+      toggle
+    </button>
+  </div>
+</div>
+`;

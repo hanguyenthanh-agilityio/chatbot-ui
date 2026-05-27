@@ -213,6 +213,15 @@ pnpm company-system:reset
 
 ---
 
+## Deploy (GitHub → Cloudflare)
+
+On **every push** to any branch, GitHub Actions runs `.github/workflows/deploy-cloudflare.yml`: **Storybook** and **coverage** deploy to Cloudflare Pages (preview URL per branch slug). The **Next.js app** (Workers / OpenNext) deploys only when pushing to **`main`**, so feature branches do not overwrite production.
+
+1. Connect the repo to GitHub and add secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (see comments at the top of the workflow file).
+2. In Cloudflare, ensure Pages projects exist: `chatbot-ui-storybook`, `chatbot-ui-coverage`, and a Worker matching `wrangler.jsonc` (`ai-sdk`).
+
+---
+
 ## Notes
 
 - If Next.js shows stale Turbopack cache errors, delete `.next/` and rerun `pnpm dev`.
