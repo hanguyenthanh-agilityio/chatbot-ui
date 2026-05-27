@@ -99,7 +99,11 @@ function MessageUiPreview({
         <TranscriptRow isUser={false}>
           <ToolApprovalCard
             title={submitCopy.title}
-            description="Annual leave from 2026-07-01 to 2026-07-03. Reason: Family trip."
+            description={Array.from(
+              { length: 4 },
+              () =>
+                "Annual leave from 2026-07-01 to 2026-07-03. Reason: Family trip.",
+            ).join(" ")}
             confirmLabel={submitCopy.confirmLabel}
             cancelLabel={submitCopy.cancelLabel}
             onConfirm={fn()}

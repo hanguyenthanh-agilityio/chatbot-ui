@@ -455,9 +455,11 @@ export function ChatMessage({
           !isLoading &&
           isLastMessage &&
           mutationSuccessCards.length === 0 ? (
-          <p className="text-sm text-white/50 light:text-app-fg-faint">
-            {CHAT_TRANSCRIPT_COPY.responseStopped}
-          </p>
+          <div className="flex min-h-10 items-center justify-start">
+            <p className="text-left text-sm text-white/50 light:text-app-fg-faint">
+              {CHAT_TRANSCRIPT_COPY.responseStopped}
+            </p>
+          </div>
         ) : null}
       </div>
       {isUser ? (
