@@ -215,10 +215,19 @@ pnpm company-system:reset
 
 ## Deploy (GitHub → Cloudflare)
 
-On **every push** to any branch, GitHub Actions runs `.github/workflows/deploy-cloudflare.yml`: **Storybook** and **coverage** deploy to Cloudflare Pages (preview URL per branch slug). The **Next.js app** (Workers / OpenNext) deploys only when pushing to **`main`**, so feature branches do not overwrite production.
+On **every push** to any branch, GitHub Actions runs `.github/workflows/deploy-cloudflare.yml`:
+
+| Target | Branch | URL pattern |
+|--------|--------|-------------|
+| Storybook | any | `https://<branch-slug>.chatbot-ui-storybook.pages.dev` |
+| Coverage | any | `https://<branch-slug>.chatbot-ui-coverage.pages.dev` |
+| App (Worker) | feature branches | `https://<branch-slug>-ai-sdk.<account>.workers.dev` (preview alias) |
+| App (Worker) | `main` | production Worker `ai-sdk` (does not use preview alias) |
+
+Branch slug: ref name with `/` replaced by `-` (e.g. `feat/chatbot-ui-light-dark` → `feat-chatbot-ui-light-dark`).
 
 1. Connect the repo to GitHub and add secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (see comments at the top of the workflow file).
-2. In Cloudflare, ensure Pages projects exist: `chatbot-ui-storybook`, `chatbot-ui-coverage`, and a Worker matching `wrangler.jsonc` (`ai-sdk`).
+2. In Cloudflare, ensure Pages projects exist: `chatbot-ui-storybook`, `chatbot-ui-coverage`, and a Worker matching `wrangler.jsonc` (`ai-sdk`) with **Preview URLs** enabled (Wrangler ≥ 4.21).
 
 ---
 
