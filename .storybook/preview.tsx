@@ -1,8 +1,9 @@
 import "@/app/globals.css";
+import "./storybook-docs.css";
 
 import type { Decorator, Preview } from "@storybook/nextjs-vite";
 import { useLayoutEffect, type ReactNode } from "react";
-import { useGlobals, useParameter } from "storybook/preview-api";
+import { useGlobals } from "storybook/preview-api";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import {
@@ -41,7 +42,7 @@ function WithAppTheme(Story: () => ReactNode) {
   return (
     <ThemeProvider key={theme}>
       <div
-        className="flex min-h-sm w-full items-center justify-center p-6"
+        className="flex w-full items-center justify-center p-6"
         style={{
           background: "var(--bg-app-shell)",
           backgroundAttachment: "fixed",

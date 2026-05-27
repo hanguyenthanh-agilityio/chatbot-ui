@@ -9,7 +9,7 @@ const inChatTranscript: Decorator = (Story) => (
   <section
     className={cn(
       THEME_SHELL_CLASSES.chatPanel,
-      "mx-auto w-full max-w-3xl rounded-shell border p-6 shadow-shell-panel",
+      "mx-auto flex w-full max-w-3xl flex-col items-center rounded-shell border p-6 shadow-shell-panel",
       "bg-glass-panel-chat text-white",
       THEME_SHELL_UTILITIES.border,
     )}

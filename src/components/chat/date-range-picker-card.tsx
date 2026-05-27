@@ -429,7 +429,7 @@ export function DateRangePickerCard({
   return (
     <Card
       className={cn(
-        "w-fit max-w-full px-4 py-3 shadow-glass-compact light:shadow-glass-compact",
+        "w-fit min-w-80 max-w-lg px-4 py-3 shadow-glass-compact light:shadow-glass-compact",
         THEME_SHELL_UTILITIES.borderSubtle,
       )}
     >
