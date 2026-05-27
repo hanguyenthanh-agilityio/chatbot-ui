@@ -1,5 +1,9 @@
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/utils/class-name";
+
+function isTextChild(children: ReactNode): children is string | number {
+  return typeof children === "string" || typeof children === "number";
+}
 
 const BADGE_VARIANT_CLASSES = {
   neutral:
@@ -47,17 +51,30 @@ export function Badge({
   variant = "neutral",
   size = "md",
   className,
+  children,
+  title,
   ...props
 }: BadgeProps) {
+  const textLabel = isTextChild(children) ? String(children) : undefined;
+
   return (
     <span
       className={cn(
-        "inline-flex rounded-full border font-medium",
+        "inline-flex min-w-0 max-w-full items-center justify-center overflow-hidden rounded-full border font-medium",
         BADGE_VARIANT_CLASSES[variant],
         BADGE_SIZE_CLASSES[size],
         className,
       )}
+      title={title ?? textLabel}
       {...props}
-    />
+    >
+      {textLabel !== undefined ? (
+        <span className="block min-w-0 max-w-full truncate text-center">
+          {children}
+        </span>
+      ) : (
+        children
+      )}
+    </span>
   );
 }

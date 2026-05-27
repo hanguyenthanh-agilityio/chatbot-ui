@@ -117,7 +117,10 @@ export function ChatComposer({
         ) : null}
 
         <div
-          className="relative min-w-0 w-full"
+          className={cn(
+            "relative min-w-0 w-full",
+            !isProviderReady && "cursor-pointer",
+          )}
           onMouseEnter={() => !isProviderReady && setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
           onClick={() => !isProviderReady && setShowTooltip(true)}
@@ -169,7 +172,7 @@ export function ChatComposer({
                   disabled={!canSend}
                   aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
                   className={cn(
-                    "grid h-10 w-10 min-h-10 min-w-10 place-items-center rounded-xl transition-all duration-200",
+                    "grid h-10 w-10 min-h-10 min-w-10 cursor-pointer place-items-center rounded-xl transition-all duration-200",
                     "disabled:cursor-not-allowed disabled:opacity-30",
                     "hover:scale-hover-btn hover:shadow-btn-brand",
                     canSend
