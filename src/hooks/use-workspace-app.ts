@@ -30,7 +30,12 @@ import { useChatAutoScroll } from "@/hooks/use-auto-scroll";
 import { useChatThreads } from "@/hooks/use-threads";
 import { useProviderSelection } from "@/hooks/use-provider";
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
+import { isProductionLike } from "@/lib/runtime-env";
 import { getDisplayErrorMessage } from "@/utils/error";
+
+const REQUIRE_OPENAI_KEY_VERIFICATION =
+  !isProductionLike() ||
+  process.env.NEXT_PUBLIC_OPENAI_SERVER_READY !== "true";
 
 export function useWorkspaceApp(
   authRole: AppRole,
@@ -40,7 +45,7 @@ export function useWorkspaceApp(
   const [selectedRole, setSelectedRole] = useState<AppRole>(authRole ?? "user");
   const autoSubmittedApprovalIdsRef = useRef<Set<string>>(new Set());
   const provider = useProviderSelection({
-    requireOpenAIApiKeyVerification: true,
+    requireOpenAIApiKeyVerification: REQUIRE_OPENAI_KEY_VERIFICATION,
   });
   const authSession = authSessions[selectedRole] ?? authSessions.user;
   const auth = useMemo(
