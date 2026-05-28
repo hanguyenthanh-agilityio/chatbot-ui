@@ -43,6 +43,7 @@ type ThreadSidebarProps = {
   accountPanel: ReactNode;
   providerPanel: ReactNode;
   headerActions?: ReactNode;
+  variant?: "full" | "nav";
   onSwitchThread: (id: string) => void;
   onCreateThread: () => void;
   onDeleteThread: (id: string) => void;
@@ -55,72 +56,69 @@ export function ThreadSidebar({
   accountPanel,
   providerPanel,
   headerActions,
+  variant = "full",
   onSwitchThread,
   onCreateThread,
   onDeleteThread,
 }: ThreadSidebarProps) {
+  const showHeader = variant === "full";
+  const showSettingsBlocks = variant === "full";
+
   return (
     <aside
       className={cn(
         THEME_SHELL_CLASSES.sidebar,
-        "flex w-full flex-col rounded-shell border backdrop-blur-shell shadow-shell lg:max-w-sm",
+        "flex w-full flex-col rounded-shell border backdrop-blur-shell shadow-shell lg:h-full lg:min-h-0 lg:overflow-hidden lg:max-w-sm",
         "bg-glass-panel",
         THEME_SHELL_UTILITIES.border,
         THEME_SHELL_UTILITIES.text,
       )}
     >
-      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0 flex-1 space-y-1">
-            <Text as="p" variant="eyebrow">
-              {SIDEBAR_COPY.eyebrow}
-            </Text>
-            <Text as="h1" variant="title">
-              {SIDEBAR_COPY.title}
-            </Text>
-            <Text variant="captionStrong">{SIDEBAR_COPY.description}</Text>
-          </div>
-          {headerActions ? (
-            <div className="flex shrink-0 items-center gap-2 -mt-1.5">
-              {headerActions}
+      {showHeader ? (
+        <div
+          className={cn(
+            "border-b px-5 pb-4 pt-5",
+            THEME_SHELL_UTILITIES.borderSubtle,
+          )}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1 space-y-1">
+              <Text as="p" variant="eyebrow">
+                {SIDEBAR_COPY.eyebrow}
+              </Text>
+              <Text as="h1" variant="title">
+                {SIDEBAR_COPY.title}
+              </Text>
+              <Text variant="captionStrong" className="max-w-xs">
+                {SIDEBAR_COPY.description}
+              </Text>
             </div>
-          ) : null}
+            {headerActions ? (
+              <div className="flex shrink-0 items-center gap-2 -mt-1.5">
+                {headerActions}
+              </div>
+            ) : null}
+          </div>
         </div>
-      </div>
+      ) : null}
 
-      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
-        {accountPanel}
-      </div>
-
-      <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
-        {providerPanel}
-      </div>
-
-      <div className="min-h-0 flex-1 overflow-y-auto p-3">
-        <div className="mb-4 px-2">
-          <Button
-            variant="primary"
-            size="sm"
-            className="w-full justify-center gap-2"
-            onClick={onCreateThread}
-            disabled={disabled || activeThread.messages.length === 0}
-          >
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="h-3.5 w-3.5"
-            >
-              <path d="M8 3v10M3 8h10" />
-            </svg>
-            {SIDEBAR_COPY.newChatLabel}
-          </Button>
+      {/* Settings blocks (only visible on narrower layouts; hidden on xl via caller). */}
+      {showSettingsBlocks && accountPanel ? (
+        <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
+          {accountPanel}
         </div>
+      ) : null}
+      {showSettingsBlocks && providerPanel ? (
+        <div className={cn("border-b p-5", THEME_SHELL_UTILITIES.borderSubtle)}>
+          {providerPanel}
+        </div>
+      ) : null}
 
+      {/* Threads */}
+      <div className="min-h-0 flex-1 overflow-y-auto px-1 py-4">
         <div className="space-y-4">
           <div>
-            <div className="mb-2 px-2">
+            <div className="mb-2 px-1">
               <Text as="p" variant="eyebrowMuted">
                 {SIDEBAR_COPY.currentChatLabel}
               </Text>
@@ -136,7 +134,7 @@ export function ThreadSidebar({
 
           {allThreads.length > 1 && (
             <div>
-              <div className="mb-2 px-2">
+              <div className="mb-2 px-1">
                 <Text as="p" variant="eyebrowMuted">
                   {SIDEBAR_COPY.recentChatsLabel}
                 </Text>
@@ -157,6 +155,28 @@ export function ThreadSidebar({
             </div>
           )}
         </div>
+      </div>
+
+      {/* Footer primary action */}
+      <div className={cn("border-t p-3", THEME_SHELL_UTILITIES.borderSubtle)}>
+        <Button
+          variant="primary"
+          size="sm"
+          className="w-full justify-center gap-2"
+          onClick={onCreateThread}
+          disabled={disabled || activeThread.messages.length === 0}
+        >
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="h-3.5 w-3.5"
+          >
+            <path d="M8 3v10M3 8h10" />
+          </svg>
+          {SIDEBAR_COPY.newChatLabel}
+        </Button>
       </div>
     </aside>
   );
