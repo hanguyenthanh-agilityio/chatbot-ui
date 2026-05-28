@@ -19,10 +19,6 @@
 
 /* Theme decorator should stay within the preview frame. */
 .sbdocs .sbdocs-preview .docs-story > div {
-  /*
-    The first child is the preview decorator root (our WithAppTheme wrapper).
-    Override its `w-full` so Docs preview can shrink to content and stay centered.
-  */
-  width: fit-content !important;
+  width: 100% !important;
   max-width: 100% !important;
 }
