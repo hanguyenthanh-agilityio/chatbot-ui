@@ -43,7 +43,7 @@ function TranscriptRow({
         className={
           isUser
             ? "flex max-w-message-column-user flex-col items-end"
-            : "min-w-0 max-w-full flex-1"
+            : "flex w-fit max-w-message-column-user flex-col items-start"
         }
       >
         {children}
