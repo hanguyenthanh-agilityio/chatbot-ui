@@ -16,6 +16,13 @@ const config: StorybookConfig = {
   ],
   viteFinal: async (config) => ({
     ...config,
+    // Some transitive deps (e.g. OpenTelemetry) assume Node globals.
+    // Storybook preview runs in the browser, so we define safe fallbacks.
+    define: {
+      ...(config.define ?? {}),
+      __dirname: JSON.stringify("/"),
+      __filename: JSON.stringify(""),
+    },
     resolve: {
       ...(config.resolve ?? {}),
       alias: {
