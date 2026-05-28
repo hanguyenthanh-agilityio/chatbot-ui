@@ -43,7 +43,7 @@ function TranscriptRow({
         className={
           isUser
             ? "flex max-w-message-column-user flex-col items-end"
-            : "flex w-fit max-w-message-column-user flex-col items-start"
+            : "min-w-0 max-w-full flex-1"
         }
       >
         {children}
@@ -124,9 +124,10 @@ function MessageUiPreview({
     case "stopped":
       return (
         <TranscriptRow isUser={false}>
-          <p className="text-sm text-white/50 light:text-app-fg-faint">
-            {CHAT_TRANSCRIPT_COPY.responseStopped}
-          </p>
+          <MessageBubble
+            isUser={false}
+            placeholder={CHAT_TRANSCRIPT_COPY.responseStopped}
+          />
         </TranscriptRow>
       );
   }
