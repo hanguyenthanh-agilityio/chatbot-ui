@@ -17,7 +17,13 @@ import { ThreadSidebar } from "@/components/workspace/sidebar";
 
 // Constants
 import { APP_NAME, APP_HEADER_REVIEW_BADGE_LABEL } from "@/constants/app";
-import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
+import {
+  SHELL_BACKDROP_BLUR_28,
+  THEME_SHELL_CLASSES,
+  THEME_SHELL_UTILITIES,
+  WORKSPACE_GRID_COLS_LG,
+  WORKSPACE_GRID_COLS_XL,
+} from "@/constants/theme";
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
 import { DEFAULT_PROVIDER_OPTIONS } from "@/constants/provider";
 
@@ -57,14 +63,16 @@ export function WorkspaceApp({
         <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-md sm:gap-4 lg:flex-row">
           <div
             className={cn(
-              "h-chat-viewport w-full rounded-shell border backdrop-blur-[28px] lg:max-w-sm",
+              "h-chat-viewport w-full rounded-shell border lg:max-w-sm",
+              SHELL_BACKDROP_BLUR_28,
               "bg-glass-panel-alt",
               THEME_SHELL_UTILITIES.border,
             )}
           />
           <div
             className={cn(
-              "h-chat-viewport flex-1 rounded-shell border backdrop-blur-[28px]",
+              "h-chat-viewport flex-1 rounded-shell border",
+              SHELL_BACKDROP_BLUR_28,
               "bg-glass-panel-alt",
               THEME_SHELL_UTILITIES.border,
             )}
@@ -132,7 +140,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
   );
 
   return (
-    <main className="min-h-screen px-3 py-3 sm:px-5 sm:py-5">
+    <main className="min-h-dvh px-3 py-3 sm:px-5 sm:py-5 lg:h-dvh lg:overflow-hidden">
       {provider.successMessage ? (
         <Toast
           message={provider.successMessage}
@@ -140,103 +148,142 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           onDismiss={provider.dismissSuccessMessage}
         />
       ) : null}
-      <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-dvh sm:gap-4 lg:flex-row">
-        <ThreadSidebar
-          activeThread={activeThread}
-          allThreads={allThreads}
-          disabled={isLoading}
-          accountPanel={accountPanel}
-          providerPanel={sidebarProviderPanel}
-          headerActions={
-            <>
-              <ChatPanelResetButton
-                disabled={isLoading || messages.length === 0}
-              />
-              <ThemeToggle />
-            </>
-          }
-          onSwitchThread={switchThread}
-          onCreateThread={createNewThread}
-          onDeleteThread={deleteThread}
-        />
-
-        <section
+      <div className="mx-auto flex min-h-dvh w-full max-w-shell flex-col gap-3 sm:gap-4 lg:h-full lg:min-h-0">
+        {/* Workspace body */}
+        <div
           className={cn(
-            THEME_SHELL_CLASSES.chatPanel,
-            "flex min-h-chat-viewport flex-1 flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel light:backdrop-blur-none",
-            "bg-glass-panel-chat",
-            THEME_SHELL_UTILITIES.border,
+            "min-h-0 flex flex-1 flex-col gap-3 sm:gap-4",
+            // 3-column workspace: tools | transcript | nav (threads)
+            // Keep the nav readable by giving it a larger min width.
+            "lg:grid lg:gap-4",
+            WORKSPACE_GRID_COLS_LG,
+            WORKSPACE_GRID_COLS_XL,
           )}
         >
-          <header
+          {/* Tools (compact) — left rail */}
+          <aside
             className={cn(
-              THEME_SHELL_CLASSES.chatHeader,
-              "border-b px-4 py-5 sm:px-6 lg:px-8 shadow-shell-header",
-              "bg-glass-header",
-              THEME_SHELL_UTILITIES.borderSubtle,
+              "flex min-h-0 flex-col overflow-hidden rounded-shell border backdrop-blur-shell shadow-shell !px-2",
+              "bg-glass-panel",
+              THEME_SHELL_UTILITIES.border,
+              THEME_SHELL_UTILITIES.text,
             )}
           >
-            <div className="mx-auto w-full max-w-3xl">
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Text as="p" variant="eyebrow">
-                  {APP_NAME}
-                </Text>
-                <Badge size="md" variant="neutral">
-                  {auth.session.roleLabel}
-                </Badge>
-                <Badge size="md" variant="brand">
-                  {APP_HEADER_REVIEW_BADGE_LABEL}
-                </Badge>
-              </div>
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              <div className="p-3">{accountPanel}</div>
+              <div
+                className={cn("border-t", THEME_SHELL_UTILITIES.borderSubtle)}
+              />
+              <div className="p-3">{sidebarProviderPanel}</div>
+            </div>
+          </aside>
 
-              <div className="space-y-2">
+          {/* Transcript + composer */}
+          <section
+            className={cn(
+              THEME_SHELL_CLASSES.chatPanel,
+              "flex min-h-0 flex-1 flex-col overflow-hidden rounded-shell border shadow-shell-panel light:backdrop-blur-none",
+              SHELL_BACKDROP_BLUR_28,
+              "bg-glass-panel-chat",
+              THEME_SHELL_UTILITIES.border,
+            )}
+          >
+            {/* Header belongs to the middle column (Notion/workspace style). */}
+            <header
+              className={cn(
+                THEME_SHELL_CLASSES.chatHeader,
+                "shrink-0 border-b px-5 py-4 shadow-shell-header",
+                "bg-glass-header",
+                THEME_SHELL_UTILITIES.borderSubtle,
+              )}
+            >
+              <div className="mx-auto w-full max-w-3xl">
+                <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Text as="p" variant="eyebrow">
+                      {APP_NAME}
+                    </Text>
+                    <Badge size="md" variant="neutral">
+                      {auth.session.roleLabel}
+                    </Badge>
+                    <Badge size="md" variant="brand">
+                      {APP_HEADER_REVIEW_BADGE_LABEL}
+                    </Badge>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <ChatPanelResetButton
+                      disabled={isLoading || messages.length === 0}
+                    />
+                    <ThemeToggle />
+                  </div>
+                </div>
+
                 <Text
                   as="h2"
                   variant="title"
-                  className="tracking-tight sm:text-[1.9rem]"
+                  className="tracking-tight leading-tight"
                 >
                   {headerTitle}
                 </Text>
-                <Text variant="subtitle" className="max-w-2xl">
+                <Text
+                  variant="subtitle"
+                  className="mt-1 max-w-3xl line-clamp-1"
+                >
                   {headerSubtitle}
                 </Text>
                 {headerHint ? (
-                  <Text variant="captionMuted" className="block">
+                  <Text
+                    variant="captionMuted"
+                    className="mt-0.5 block line-clamp-1"
+                  >
                     {headerHint}
                   </Text>
                 ) : null}
               </div>
-            </div>
-          </header>
+            </header>
+            <ChatTranscript
+              containerRef={messagesContainerRef}
+              messages={messages}
+              isLoading={isLoading}
+              userAvatarUrl={auth.session.avatar}
+              userAvatarLabel={`${auth.session.name} avatar`}
+              userInitials={getInitialsFromName(auth.session.name)}
+              quickActions={quickActions}
+              onSelectPrompt={handlePromptSelect}
+              onToolApproval={handleToolApproval}
+            />
+            <ChatComposer
+              input={input}
+              canSend={canSend}
+              isLoading={isLoading}
+              isProviderReady={provider.isProviderReady}
+              inputTooltip={
+                !provider.isProviderReady
+                  ? CHAT_COMPOSER_COPY.verifyProviderTooltip
+                  : undefined
+              }
+              helperText={helperText}
+              errorMessage={requestError}
+              onInputChange={setInput}
+              onSubmitAction={handleSubmit}
+              onStopAction={handleStop}
+            />
+          </section>
 
-          <ChatTranscript
-            containerRef={messagesContainerRef}
-            messages={messages}
-            isLoading={isLoading}
-            userAvatarUrl={auth.session.avatar}
-            userAvatarLabel={`${auth.session.name} avatar`}
-            userInitials={getInitialsFromName(auth.session.name)}
-            quickActions={quickActions}
-            onSelectPrompt={handlePromptSelect}
-            onToolApproval={handleToolApproval}
+          {/* Nav — right rail */}
+          <ThreadSidebar
+            variant="nav"
+            activeThread={activeThread}
+            allThreads={allThreads}
+            disabled={isLoading}
+            accountPanel={null}
+            providerPanel={null}
+            headerActions={null}
+            onSwitchThread={switchThread}
+            onCreateThread={createNewThread}
+            onDeleteThread={deleteThread}
           />
-          <ChatComposer
-            input={input}
-            canSend={canSend}
-            isLoading={isLoading}
-            isProviderReady={provider.isProviderReady}
-            inputTooltip={
-              !provider.isProviderReady
-                ? CHAT_COMPOSER_COPY.verifyProviderTooltip
-                : undefined
-            }
-            helperText={helperText}
-            errorMessage={requestError}
-            onInputChange={setInput}
-            onSubmitAction={handleSubmit}
-            onStopAction={handleStop}
-          />
-        </section>
+        </div>
       </div>
     </main>
   );

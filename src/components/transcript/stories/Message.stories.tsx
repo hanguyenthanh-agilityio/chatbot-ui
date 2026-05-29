@@ -124,9 +124,10 @@ function MessageUiPreview({
     case "stopped":
       return (
         <TranscriptRow isUser={false}>
-          <p className="text-sm text-white/50 light:text-app-fg-faint">
-            {CHAT_TRANSCRIPT_COPY.responseStopped}
-          </p>
+          <MessageBubble
+            isUser={false}
+            placeholder={CHAT_TRANSCRIPT_COPY.responseStopped}
+          />
         </TranscriptRow>
       );
   }

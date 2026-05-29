@@ -8,6 +8,7 @@ import {
 } from "@/constants/chat";
 import {
   STORYBOOK_THEME_GLOBAL,
+  SHELL_BACKDROP_BLUR_28,
   THEME_SHELL_CLASSES,
   THEME_SHELL_UTILITIES,
   ThemeMode,
@@ -24,7 +25,8 @@ const inChatPanel: Decorator = (Story) => (
     <section
       className={cn(
         THEME_SHELL_CLASSES.chatPanel,
-        "h-auto flex w-full min-w-0 flex-col overflow-hidden rounded-shell border backdrop-blur-[28px] shadow-shell-panel light:backdrop-blur-none",
+        "h-auto flex w-full min-w-0 flex-col overflow-hidden rounded-shell border shadow-shell-panel light:backdrop-blur-none",
+        SHELL_BACKDROP_BLUR_28,
         "bg-glass-panel-chat",
         THEME_SHELL_UTILITIES.border,
       )}

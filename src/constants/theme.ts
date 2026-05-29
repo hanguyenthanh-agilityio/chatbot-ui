@@ -43,6 +43,15 @@ export const THEME_SHELL_UTILITIES = {
   text: "p-4 shadow-panel-sm text-white light:text-app-fg",
 } as const;
 
+/** Workspace layout tokens (keep JSX readable; update once here). */
+export const WORKSPACE_GRID_COLS_LG =
+  "lg:grid-cols-[20rem_minmax(0,1fr)_18rem]" as const;
+export const WORKSPACE_GRID_COLS_XL =
+  "xl:grid-cols-[20rem_minmax(0,1fr)_20rem]" as const;
+
+/** Shell blur intensity (matches globals.css layout blur tokens). */
+export const SHELL_BACKDROP_BLUR_28 = "backdrop-blur-[28px]" as const;
+
 /** Shared Input/Select skin on glass panels (not the same as ThemeMode) */
 export const FORM_FIELD_PANEL_CLASSES =
   "border border-white/12 bg-white/6 text-white/80 placeholder:text-white/30 hover:border-violet-500/50 light:border-app-border light:bg-app-field light:text-app-fg-muted light:placeholder:text-app-fg-faint light:hover:border-amber-800/35";
