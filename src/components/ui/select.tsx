@@ -47,7 +47,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       <select
         ref={ref}
         className={cn(
-          "peer w-full appearance-none rounded-xl border pr-10 outline-none transition duration-200",
+          "peer w-full cursor-pointer appearance-none rounded-xl border pr-10 outline-none transition duration-200",
           variant === "panel"
             ? FORM_FIELD_PANEL_FOCUS_CLASSES
             : "focus:border-sky-400 focus:ring-2 focus:ring-sky-100",

@@ -18,7 +18,7 @@ deploy_preview() {
   if pnpm exec wrangler versions upload --preview-alias "$alias"; then
     echo "### App preview (Worker)" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
     echo "Branch alias: \`${alias}\`" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
-    echo "Preview URL: \`https://${alias}-${WORKER_NAME}.<account>.workers.dev\` (see wrangler output for exact host)" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+    echo "Preview URL: \`https://${alias}-${WORKER_NAME}.ha-nguyenthanh.workers.dev\`" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
     return 0
   fi
 
@@ -27,7 +27,7 @@ deploy_preview() {
   pnpm exec wrangler versions upload --preview-alias "$alias"
   echo "### App preview (Worker)" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
   echo "Branch alias: \`${alias}\`" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
-  echo "Preview URL: \`https://${alias}-${WORKER_NAME}.<account>.workers.dev\` (see wrangler output for exact host)" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+  echo "Preview URL: \`https://${alias}-${WORKER_NAME}.ha-nguyenthanh.workers.dev\`" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
 }
 
 deploy_production() {
