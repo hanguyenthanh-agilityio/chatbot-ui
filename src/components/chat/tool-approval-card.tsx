@@ -20,13 +20,13 @@ export function ToolApprovalCard({
   onCancel,
 }: ToolApprovalCardProps) {
   return (
-    <Card className="w-fit max-w-full px-4 py-3 shadow-glass-compact light:shadow-glass-compact">
+    <Card className="h-auto w-fit min-w-0 max-w-full px-4 py-3 shadow-glass-compact light:shadow-glass-compact">
       <Text as="p" variant="sectionTitle">
         {title}
       </Text>
       <Text
         variant="helper"
-        className="mt-1 block text-white/70 light:text-app-fg-quaternary"
+        className="mt-1 block wrap-break-word whitespace-pre-wrap text-white/70 light:text-app-fg-quaternary"
       >
         {description}
       </Text>

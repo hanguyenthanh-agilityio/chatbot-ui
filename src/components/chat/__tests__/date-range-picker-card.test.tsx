@@ -7,6 +7,27 @@ import { mockDateRangePickerCardProps } from "@/mocks/date-range-picker-card";
 
 const NOW = new Date("2026-05-20T12:00:00");
 
+function expectMonthLabel(month: string, year: number) {
+  expect(screen.getByText(`${month} ${year}`)).toBeInTheDocument();
+}
+
+function getPrevMonthButton() {
+  return screen.getByRole("button", { name: "Previous month" });
+}
+
+function getNextMonthButton() {
+  return screen.getByRole("button", { name: "Next month" });
+}
+
+async function advanceMonths(
+  user: ReturnType<typeof userEvent.setup>,
+  count: number,
+) {
+  for (let i = 0; i < count; i++) {
+    await user.click(getNextMonthButton());
+  }
+}
+
 describe("DateRangePickerCard", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -129,5 +150,15 @@ describe("DateRangePickerCard", () => {
     );
 
     expect(screen.getByRole("button", { name: "Afternoon" })).toBeDisabled();
+  });
+
+  describe("month navigation (goMonth)", () => {
+    it("wraps January to December of the previous year", async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      render(<DateRangePickerCard {...mockDateRangePickerCardProps()} />);
+      await advanceMonths(user, 8);
+      await user.click(getPrevMonthButton());
+      expectMonthLabel("December", 2026);
+    });
   });
 });

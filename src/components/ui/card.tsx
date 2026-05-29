@@ -19,10 +19,21 @@ export type CardProps = HTMLAttributes<HTMLDivElement> & {
   variant?: CardVariant;
 };
 
-export function Card({ variant = "glass", className, ...props }: CardProps) {
+export function Card({
+  variant = "glass",
+  className,
+  onClick,
+  ...props
+}: CardProps) {
   return (
     <div
-      className={cn("rounded-2xl", CARD_VARIANT_CLASSES[variant], className)}
+      className={cn(
+        "rounded-2xl",
+        CARD_VARIANT_CLASSES[variant],
+        onClick && "cursor-pointer",
+        className,
+      )}
+      onClick={onClick}
       {...props}
     />
   );

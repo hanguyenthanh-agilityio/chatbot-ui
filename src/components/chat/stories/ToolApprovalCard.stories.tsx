@@ -57,6 +57,17 @@ type Story = StoryObj<typeof ToolApprovalCard>;
 
 export const SubmitRequest: Story = {};
 
+/** Card grows in height as description wraps; no inner scroll. */
+export const LongDescription: Story = {
+  args: {
+    description: Array.from(
+      { length: 4 },
+      () =>
+        "Annual leave from 2026-07-01 to 2026-07-03. Reason: Family trip.",
+    ).join(" "),
+  },
+};
+
 export const CancelRequest: Story = {
   args: {
     title: CHAT_TRANSCRIPT_COPY.toolApproval.cancelRequest.title,
