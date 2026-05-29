@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
 
 @import "tailwindcss";
 
@@ -233,6 +233,32 @@
       var(--palette-amber-600) 10%,
       transparent
     );
+    --color-app-accent-datepicker-muted: color-mix(
+      in srgb,
+      var(--palette-amber-600) 32%,
+      var(--palette-paper-warm)
+    );
+    --color-app-datepicker-slot-border: color-mix(
+      in srgb,
+      var(--palette-amber-700) 32%,
+      var(--palette-stone-300)
+    );
+    --color-app-datepicker-slot-bg: color-mix(
+      in srgb,
+      var(--palette-amber-600) 14%,
+      var(--palette-paper)
+    );
+    --color-app-datepicker-slot-fg: var(--palette-stone-800);
+    --color-app-datepicker-slot-border-hover: color-mix(
+      in srgb,
+      var(--palette-amber-700) 50%,
+      var(--palette-stone-300)
+    );
+    --color-app-datepicker-slot-bg-hover: color-mix(
+      in srgb,
+      var(--palette-amber-600) 24%,
+      var(--palette-paper)
+    );
     --color-app-btn-brand-disabled: color-mix(
       in srgb,
       var(--palette-stone-600) 55%,
@@ -396,11 +422,11 @@
   --bg-datepicker-half-morning: linear-gradient(
     to right,
     var(--palette-white) 50%,
-    transparent 50%
+    color-mix(in srgb, var(--palette-white) 14%, transparent) 50%
   );
   --bg-datepicker-half-afternoon: linear-gradient(
     to right,
-    transparent 50%,
+    color-mix(in srgb, var(--palette-white) 14%, transparent) 50%,
     var(--palette-white) 50%
   );
   --bg-btn-active: linear-gradient(
@@ -773,11 +799,11 @@ html[data-theme="light"],
   --bg-datepicker-half-morning: linear-gradient(
     to right,
     var(--color-app-accent) 50%,
-    transparent 50%
+    var(--color-app-accent-datepicker-muted) 50%
   );
   --bg-datepicker-half-afternoon: linear-gradient(
     to right,
-    transparent 50%,
+    var(--color-app-accent-datepicker-muted) 50%,
     var(--color-app-accent) 50%
   );
 
