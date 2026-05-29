@@ -1,6 +1,8 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { Input } from "@/components/ui/input";
+import { inStorybookUiPanel } from "@/mocks/storybook";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
 
 const VARIANT_OPTIONS = [
   "default",
@@ -13,12 +15,6 @@ const VARIANT_OPTIONS = [
 type InputVariant = (typeof VARIANT_OPTIONS)[number];
 
 const SIZE_OPTIONS = ["sm", "md", "lg"] as const;
-
-const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-white/5 p-6 light:border-app-border light:bg-app-surface-subtle">
-    <Story />
-  </div>
-);
 
 function VariantGrid({
   controlSize = "md",
@@ -47,7 +43,7 @@ const meta = {
   component: Input,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    ...STORYBOOK_INLINE_CANVAS_PARAMETERS,
     a11y: {
       config: {
         rules: [{ id: "color-contrast", enabled: true }],
@@ -88,7 +84,7 @@ const meta = {
     onChange: { action: "changed", table: { category: "Actions" } },
     ref: { table: { disable: true } },
   },
-  decorators: [panelDecorator],
+  decorators: [inStorybookUiPanel],
 } satisfies Meta<typeof Input>;
 
 export default meta;

@@ -1,6 +1,8 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { Button } from "@/components/ui/button";
+import { inStorybookUiPanel } from "@/mocks/storybook";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
 
 /** Standard variants (exclude `themeToggle` — see ThemeToggle stories). */
 const STANDARD_VARIANTS = [
@@ -14,12 +16,6 @@ const STANDARD_VARIANTS = [
 type StandardVariant = (typeof STANDARD_VARIANTS)[number];
 
 const SIZE_OPTIONS = ["sm", "md", "lg"] as const;
-
-const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-white/5 p-6 light:border-app-border light:bg-app-surface-subtle">
-    <Story />
-  </div>
-);
 
 function VariantGrid({
   size = "md",
@@ -46,7 +42,7 @@ const meta = {
   component: Button,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    ...STORYBOOK_INLINE_CANVAS_PARAMETERS,
     a11y: {
       config: {
         rules: [{ id: "color-contrast", enabled: true }],
@@ -87,7 +83,7 @@ const meta = {
     onClick: { action: "clicked", table: { category: "Actions" } },
     ref: { table: { disable: true } },
   },
-  decorators: [panelDecorator],
+  decorators: [inStorybookUiPanel],
 } satisfies Meta<typeof Button>;
 
 export default meta;

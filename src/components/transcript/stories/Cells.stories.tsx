@@ -13,7 +13,8 @@ import {
 } from "@/components/transcript/cells";
 import { LEAVE_TYPE_LABEL_BY_TYPE } from "@/constants/leave";
 import type { LeaveType } from "@/lib/db/schema";
-import { inChatTranscript } from "@/mocks/storybook";
+import { inStorybookInlineShell } from "@/mocks/storybook";
+import { STORYBOOK_CANVAS_PARAMETER } from "@/constants/theme";
 import {
   FIXTURE_REQUEST_FUTURE,
   FIXTURE_TEAM,
@@ -118,7 +119,7 @@ const meta = {
   title: "Transcript/Cells",
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    [STORYBOOK_CANVAS_PARAMETER]: "inline",
     docs: {
       description: {
         component:
@@ -126,7 +127,7 @@ const meta = {
       },
     },
   },
-  decorators: [inChatTranscript],
+  decorators: [inStorybookInlineShell],
   args: {
     view: "employee",
     employeeName: FIXTURE_REQUEST_FUTURE.employeeName,

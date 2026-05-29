@@ -137,7 +137,6 @@ const meta = {
   title: "Transcript/ChatMessage",
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:

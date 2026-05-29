@@ -7,7 +7,6 @@ const meta = {
   component: ChatPanelResetButton,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:

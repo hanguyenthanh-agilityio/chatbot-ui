@@ -19,37 +19,32 @@ import {
 } from "@/mocks/chat-composer";
 import { cn } from "@/utils/class-name";
 
-/** Chat panel shell: full width so composer matches `WorkspaceApp` (not a centered narrow card). */
+/** Chat panel shell — height hugs composer (no fake transcript spacer). */
 const inChatPanel: Decorator = (Story) => (
-  <div className="h-auto w-full p-3 sm:p-5">
-    <section
+  <section
+    className={cn(
+      THEME_SHELL_CLASSES.chatPanel,
+      "flex h-auto w-full min-w-0 flex-col overflow-hidden rounded-shell border shadow-shell-panel light:backdrop-blur-none",
+      SHELL_BACKDROP_BLUR_28,
+      "bg-glass-panel-chat",
+      THEME_SHELL_UTILITIES.border,
+    )}
+  >
+    <header
       className={cn(
-        THEME_SHELL_CLASSES.chatPanel,
-        "h-auto flex w-full min-w-0 flex-col overflow-hidden rounded-shell border shadow-shell-panel light:backdrop-blur-none",
-        SHELL_BACKDROP_BLUR_28,
-        "bg-glass-panel-chat",
-        THEME_SHELL_UTILITIES.border,
+        THEME_SHELL_CLASSES.chatHeader,
+        "shrink-0 border-b px-4 py-5 shadow-shell-header sm:px-6 lg:px-8",
+        "bg-glass-header",
+        THEME_SHELL_UTILITIES.borderSubtle,
       )}
     >
-      <header
-        className={cn(
-          THEME_SHELL_CLASSES.chatHeader,
-          "shrink-0 border-b px-4 py-5 shadow-shell-header sm:px-6 lg:px-8",
-          "bg-glass-header",
-          THEME_SHELL_UTILITIES.borderSubtle,
-        )}
-      >
-        <div
-          className="h-12 w-full min-w-0 rounded-xl bg-white/5 light:bg-app-surface-subtle"
-          aria-hidden
-        />
-      </header>
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
-        <div className="min-h-40 w-full min-w-0" aria-hidden />
-      </div>
-      <Story />
-    </section>
-  </div>
+      <div
+        className="h-12 w-full min-w-0 rounded-xl bg-white/5 light:bg-app-surface-subtle"
+        aria-hidden
+      />
+    </header>
+    <Story />
+  </section>
 );
 
 type ComposerStoryProps = ComponentProps<typeof ChatComposer> & {

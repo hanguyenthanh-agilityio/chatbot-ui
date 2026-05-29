@@ -50,7 +50,6 @@ const meta = {
   tags: ["autodocs"],
   subcomponents: { CardHeader, CardContent },
   parameters: {
-    layout: "centered",
     a11y: {
       config: {
         rules: [{ id: "color-contrast", enabled: true }],

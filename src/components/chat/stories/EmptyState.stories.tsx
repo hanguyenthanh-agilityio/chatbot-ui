@@ -1,30 +1,15 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { fn, userEvent, within } from "storybook/test";
 
 import { ChatEmptyState } from "@/components/chat/empty-state";
 import { QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
-import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
-import { cn } from "@/utils/class-name";
-
-const inChatPanel: Decorator = (Story) => (
-  <section
-    className={cn(
-      THEME_SHELL_CLASSES.chatPanel,
-      "mx-auto flex min-h-chat-viewport w-full max-w-3xl rounded-shell border p-6 shadow-shell-panel",
-      "bg-glass-panel-chat text-white",
-      THEME_SHELL_UTILITIES.border,
-    )}
-  >
-    <Story />
-  </section>
-);
+import { inChatTranscript } from "@/mocks/storybook";
 
 const meta = {
   title: "Chat/EmptyState",
   component: ChatEmptyState,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:
@@ -32,7 +17,7 @@ const meta = {
       },
     },
   },
-  decorators: [inChatPanel],
+  decorators: [inChatTranscript],
   args: {
     quickActions: QUICK_ACTIONS_BY_ROLE.user,
     onSelectPrompt: fn(),
