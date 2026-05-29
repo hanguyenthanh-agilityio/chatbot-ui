@@ -149,7 +149,10 @@ export function useChatThreads({
 
   // Sync messages from useChat to the active thread in state
   useEffect(() => {
-    if (isInternalChangeRef.current) return;
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setData((prev) => {
@@ -318,9 +321,6 @@ export function useChatThreads({
 
     isInternalChangeRef.current = true;
     setMessages([]);
-    setTimeout(() => {
-      isInternalChangeRef.current = false;
-    }, 0);
   }
 
   return {

@@ -234,7 +234,6 @@ export function useWorkspaceApp(
     }
     clearError();
     setInput("");
-    autoSubmittedApprovalIdsRef.current.clear();
     resetActiveThread();
   }
 
