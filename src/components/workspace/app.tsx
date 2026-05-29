@@ -111,6 +111,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     handleToolApproval,
     handleRoleChange,
     handleStop,
+    handleResetChatPanel,
   } = useWorkspaceApp(authRole ?? "user", authSessions);
 
   const accountPanel = (
@@ -212,7 +213,8 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <ChatPanelResetButton
-                      disabled={isLoading || messages.length === 0}
+                      disabled={messages.length === 0}
+                      onClick={handleResetChatPanel}
                     />
                     <ThemeToggle />
                   </div>

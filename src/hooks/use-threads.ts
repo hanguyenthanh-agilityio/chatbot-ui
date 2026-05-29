@@ -292,17 +292,44 @@ export function useChatThreads({
     const empty = createEmptyThread(provider);
     setData((prev) => ({
       ...prev,
-      [role]: { threads: [empty], activeId: empty.id }
+      [role]: { threads: [empty], activeId: empty.id },
     }));
     setMessages([]);
   }
 
-  return { 
-    activeThread, 
-    allThreads, 
-    switchThread, 
-    createNewThread, 
-    deleteThread, 
-    clearThread 
+  /** Clear the active thread in place (header reset — like "clear chat" in other AI apps). */
+  function resetActiveThread() {
+    const now = new Date().toISOString();
+    setData((prev) => {
+      const roleData = prev[role];
+      return {
+        ...prev,
+        [role]: {
+          ...roleData,
+          threads: updateThreadInList(roleData.threads, roleData.activeId, {
+            messages: [],
+            title: CHAT_THREAD_COPY.defaultTitle,
+            preview: CHAT_THREAD_COPY.emptyPreview,
+            updatedAt: now,
+          }),
+        },
+      };
+    });
+
+    isInternalChangeRef.current = true;
+    setMessages([]);
+    setTimeout(() => {
+      isInternalChangeRef.current = false;
+    }, 0);
+  }
+
+  return {
+    activeThread,
+    allThreads,
+    switchThread,
+    createNewThread,
+    deleteThread,
+    clearThread,
+    resetActiveThread,
   };
 }

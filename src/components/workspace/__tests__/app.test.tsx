@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { ComponentProps, createRef } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -8,6 +8,7 @@ import {
   getAppEmptyHeaderTitleByRole,
   getAppSubtitleByRole,
 } from "@/constants/app";
+import { CHAT_PANEL_RESET_COPY } from "@/constants/chat";
 import {
   DEFAULT_PROVIDER_OPTIONS,
   PROVIDER_OPTION_LABEL,
@@ -109,6 +110,7 @@ function mockWorkspaceState(overrides: Record<string, unknown> = {}) {
     handleToolApproval: vi.fn(),
     handleRoleChange: vi.fn(),
     handleStop: vi.fn(),
+    handleResetChatPanel: vi.fn(),
     ...overrides,
   };
 }
@@ -228,6 +230,20 @@ describe("WorkspaceApp", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByText(DEFAULT_HEADER_HINT)).toBeInTheDocument();
+  });
+
+  it("calls handleResetChatPanel when clear conversation is clicked", () => {
+    const handleResetChatPanel = vi.fn();
+    givenWorkspaceState({
+      messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "Hi" }] }],
+      isEmptyConversation: false,
+      handleResetChatPanel,
+    });
+    renderApp();
+    fireEvent.click(
+      screen.getByRole("button", { name: CHAT_PANEL_RESET_COPY.ariaLabel }),
+    );
+    expect(handleResetChatPanel).toHaveBeenCalledTimes(1);
   });
 
   it("shows success toast when provider reports success", () => {

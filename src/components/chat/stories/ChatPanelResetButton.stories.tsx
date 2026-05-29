@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Resets the entire chat panel (UI only). Sits next to the theme toggle in the header. Toggle **App theme** for light/dark.",
+          "Clears the current conversation (messages, draft input, errors). Stops an in-progress reply if needed. Sits next to the theme toggle in the header.",
       },
     },
   },
