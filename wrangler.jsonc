@@ -2,7 +2,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	// Set CLOUDFLARE_ACCOUNT_ID in CI/local; avoids wrangler user lookup (needs User Details Read).
 	// "account_id": "<your-account-id>",
-	"main": ".open-next/worker.js",
+	"main": "cloudflare-worker.ts",
 	"name": "ai-sdk",
 	"compatibility_date": "2026-05-21",
 	// Run Worker near backends (OpenAI US), not always at the user's edge colo (e.g. HKG).
@@ -28,6 +28,20 @@
 		// see https://opennext.js.org/cloudflare/howtos/image
 		"binding": "IMAGES"
 	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "OPENAI_VALIDATION",
+				"class_name": "OpenAIValidationDO"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1-openai-validation-do",
+			"new_sqlite_classes": ["OpenAIValidationDO"]
+		}
+	],
 	"vars": {
 		"COMPANY_SYSTEM_BASE_URL": "https://ai-sdk-company-system.ha-nguyenthanh.workers.dev",
 		"AI_PROVIDER": "openai",
