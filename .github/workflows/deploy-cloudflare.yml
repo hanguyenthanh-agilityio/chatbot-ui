@@ -154,7 +154,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Unit tests + coverage
-        run: pnpm run test:coverage:ci
+        run: |
+          pnpm run test:update
+          pnpm run test:coverage:ci
         env:
           VITEST: "true"
           CI: "true"

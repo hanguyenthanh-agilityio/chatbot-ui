@@ -8,9 +8,17 @@ import { validateOpenAIKey } from "@/lib/openai-key-validation";
 import type { OpenAIKeyValidationRequestBody } from "@/types/api";
 import { getErrorMessage } from "@/utils/error";
 
+type OpenAIValidationNamespace = {
+  idFromName(name: string): unknown;
+  get(
+    id: unknown,
+    options?: { locationHint?: string },
+  ): { fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> };
+};
+
 declare global {
   interface CloudflareEnv {
-    OPENAI_VALIDATION?: DurableObjectNamespace;
+    OPENAI_VALIDATION?: OpenAIValidationNamespace;
   }
 }
 
