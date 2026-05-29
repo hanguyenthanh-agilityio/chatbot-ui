@@ -2,6 +2,16 @@
 
 @import "tailwindcss";
 
+@layer base {
+  a[href],
+  button:not(:disabled),
+  select:not(:disabled),
+  summary,
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
 @custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
 /*

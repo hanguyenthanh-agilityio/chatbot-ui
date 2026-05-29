@@ -21,6 +21,23 @@ import {
 // Utils
 import { cn } from "@/utils/class-name";
 
+const COMPOSER_TEXTAREA_MAX_HEIGHT_PX = 150;
+
+function syncComposerTextareaHeight(textarea: HTMLTextAreaElement) {
+  textarea.style.height = "auto";
+  const scrollHeight = textarea.scrollHeight;
+  const height = Math.min(scrollHeight, COMPOSER_TEXTAREA_MAX_HEIGHT_PX);
+  textarea.style.height = `${height}px`;
+  textarea.style.overflowY =
+    scrollHeight > COMPOSER_TEXTAREA_MAX_HEIGHT_PX ? "auto" : "hidden";
+
+  const lineHeight = Number.parseFloat(getComputedStyle(textarea).lineHeight);
+  const singleLineHeight = Number.isFinite(lineHeight) ? lineHeight : 22;
+  return (
+    textarea.value.includes("\n") || scrollHeight > singleLineHeight * 1.25
+  );
+}
+
 export type ChatComposerProps = {
   input: string;
   canSend: boolean;
@@ -48,12 +65,24 @@ export function ChatComposer({
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isMultiline, setIsMultiline] = useState(false);
 
   useEffect(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
-    textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
+
+    const syncLayout = () => {
+      setIsMultiline(syncComposerTextareaHeight(textarea));
+    };
+
+    syncLayout();
+
+    if (typeof ResizeObserver === "undefined") return;
+
+    const resizeObserver = new ResizeObserver(syncLayout);
+    resizeObserver.observe(textarea);
+
+    return () => resizeObserver.disconnect();
   }, [input]);
 
   const IME_COMPOSING_KEYCODE = 229;
@@ -76,7 +105,7 @@ export function ChatComposer({
         "px-4 py-3 sm:px-6 lg:px-8",
       )}
     >
-      <div className="mx-auto w-full max-w-3xl flex flex-col gap-2">
+      <div className="flex w-full min-w-0 max-w-none flex-col gap-2">
         {errorMessage ? (
           <div
             className={
@@ -88,7 +117,10 @@ export function ChatComposer({
         ) : null}
 
         <div
-          className="relative"
+          className={cn(
+            "relative min-w-0 w-full",
+            !isProviderReady && "cursor-pointer",
+          )}
           onMouseEnter={() => !isProviderReady && setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
           onClick={() => !isProviderReady && setShowTooltip(true)}
@@ -102,7 +134,8 @@ export function ChatComposer({
           <form
             onSubmit={onSubmitAction}
             className={cn(
-              "flex w-full items-center gap-3 rounded-composer-field px-4 py-2.5 shadow-composer-input backdrop-blur-xl bg-glass-input transition-all duration-200",
+              "flex w-full min-w-0 gap-3 rounded-composer-field px-4 py-2.5 shadow-composer-input backdrop-blur-xl bg-glass-input transition-all duration-200",
+              isMultiline ? "items-end" : "items-center",
               FORM_FIELD_PANEL_CLASSES,
               "focus-within:border-violet-400/55 focus-within:ring-2 focus-within:ring-violet-400/20 light:focus-within:border-app-border-emphasis light:focus-within:ring-amber-700/25",
             )}
@@ -116,10 +149,11 @@ export function ChatComposer({
               aria-label={CHAT_COMPOSER_COPY.ariaLabel}
               disabled={!isProviderReady}
               rows={1}
-              className="max-h-composer-textarea flex-1 resize-none overflow-y-auto border-none bg-transparent text-sm leading-composer text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-app-accent light:placeholder:text-app-fg-faint"
+              wrap="soft"
+              className="max-h-composer-textarea min-w-0 w-full flex-1 resize-none overflow-x-hidden overflow-y-hidden break-words border-none bg-transparent py-0 text-sm leading-composer text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-app-accent light:placeholder:text-app-fg-faint"
             />
 
-            <div className="flex shrink-0 self-end">
+            <div className="flex shrink-0">
               {isLoading ? (
                 <button
                   type="button"
@@ -138,7 +172,7 @@ export function ChatComposer({
                   disabled={!canSend}
                   aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
                   className={cn(
-                    "grid h-10 w-10 min-h-10 min-w-10 place-items-center rounded-xl transition-all duration-200",
+                    "grid h-10 w-10 min-h-10 min-w-10 cursor-pointer place-items-center rounded-xl transition-all duration-200",
                     "disabled:cursor-not-allowed disabled:opacity-30",
                     "hover:scale-hover-btn hover:shadow-btn-brand",
                     canSend

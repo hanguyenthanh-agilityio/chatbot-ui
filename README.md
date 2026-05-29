@@ -6,17 +6,17 @@ A focused Next.js chat application for personal time-off management. Employees c
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16.1.6 (App Router) |
-| Language | TypeScript 5 |
-| React | 19.2.3 |
-| Package manager | pnpm 10 |
-| AI SDK | Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) |
-| LLM providers | OpenAI (`@ai-sdk/openai`) / Ollama (OpenAI-compatible) |
-| Validation | Zod v4 |
-| Styling | Tailwind CSS v4 |
-| Mock REST API | json-server v1 (flat JSON file) |
+| Layer           | Technology                                             |
+| --------------- | ------------------------------------------------------ |
+| Framework       | Next.js 16.1.6 (App Router)                            |
+| Language        | TypeScript 5                                           |
+| React           | 19.2.3                                                 |
+| Package manager | pnpm 10                                                |
+| AI SDK          | Vercel AI SDK v6 (`ai`, `@ai-sdk/react`)               |
+| LLM providers   | OpenAI (`@ai-sdk/openai`) / Ollama (OpenAI-compatible) |
+| Validation      | Zod v4                                                 |
+| Styling         | Tailwind CSS v4                                        |
+| Mock REST API   | json-server v1 (flat JSON file)                        |
 
 ---
 
@@ -173,27 +173,27 @@ COMPANY_SYSTEM_PORT=4100
 
 ## Scripts
 
-| Script | What it does |
-|---|---|
-| `pnpm dev` | Start Next.js + json-server + Ollama concurrently |
-| `pnpm dev:web` | Next.js only |
-| `pnpm dev:company-system` | json-server on port 4100 |
-| `pnpm dev:ollama` | Start Ollama if installed and not already running |
-| `pnpm build` | Production build |
-| `pnpm start` | Start production server |
-| `pnpm lint` | ESLint |
-| `pnpm company-system:reset` | Restore `company-system.json` from seed |
-| `pnpm ollama:pull` | Pull default chat model (`qwen2.5:3b`) |
-| `pnpm ollama:pull:vision` | Pull vision model (`gemma3:4b`) |
+| Script                      | What it does                                      |
+| --------------------------- | ------------------------------------------------- |
+| `pnpm dev`                  | Start Next.js + json-server + Ollama concurrently |
+| `pnpm dev:web`              | Next.js only                                      |
+| `pnpm dev:company-system`   | json-server on port 4100                          |
+| `pnpm dev:ollama`           | Start Ollama if installed and not already running |
+| `pnpm build`                | Production build                                  |
+| `pnpm start`                | Start production server                           |
+| `pnpm lint`                 | ESLint                                            |
+| `pnpm company-system:reset` | Restore `company-system.json` from seed           |
+| `pnpm ollama:pull`          | Pull default chat model (`qwen2.5:3b`)            |
+| `pnpm ollama:pull:vision`   | Pull vision model (`gemma3:4b`)                   |
 
 ---
 
 ## Provider Behaviour
 
-| Environment | Allowed providers | Key entry |
-|---|---|---|
-| Development | OpenAI + Ollama | Via sidebar UI or env |
-| Production (`NODE_ENV=production`) | OpenAI only | Via sidebar UI or `OPENAI_API_KEY` env |
+| Environment                        | Allowed providers | Key entry                              |
+| ---------------------------------- | ----------------- | -------------------------------------- |
+| Development                        | OpenAI + Ollama   | Via sidebar UI or env                  |
+| Production (`NODE_ENV=production`) | OpenAI only       | Via sidebar UI or `OPENAI_API_KEY` env |
 
 In production the provider selector is hidden (single option = no dropdown). If `NEXT_PUBLIC_OPENAI_SERVER_READY=true`, the UI skips manual key entry and uses the server-configured key directly.
 
@@ -210,24 +210,6 @@ To reset to seed state:
 ```bash
 pnpm company-system:reset
 ```
-
----
-
-## Deploy (GitHub → Cloudflare)
-
-On **every push** to any branch, GitHub Actions runs `.github/workflows/deploy-cloudflare.yml`:
-
-| Target | Branch | URL pattern |
-|--------|--------|-------------|
-| Storybook | any | `https://<branch-slug>.chatbot-ui-storybook.pages.dev` |
-| Coverage | any | `https://<branch-slug>.chatbot-ui-coverage.pages.dev` |
-| App (Worker) | feature branches | `https://<branch-slug>-ai-sdk.<account>.workers.dev` (preview alias) |
-| App (Worker) | `main` | production Worker `ai-sdk` (does not use preview alias) |
-
-Branch slug: ref name with `/` replaced by `-` (e.g. `feat/chatbot-ui-light-dark` → `feat-chatbot-ui-light-dark`).
-
-1. Connect the repo to GitHub and add secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (see comments at the top of the workflow file).
-2. In Cloudflare, ensure Pages projects exist: `chatbot-ui-storybook`, `chatbot-ui-coverage`, and a Worker matching `wrangler.jsonc` (`ai-sdk`) with **Preview URLs** enabled (Wrangler ≥ 4.21).
 
 ---
 
