@@ -514,7 +514,6 @@
   --layout-max-message-column-user: 85%;
   --layout-radius-shell: 1.75rem;
   --layout-shell-blur: 28px;
-  --layout-chip-blur: 0.625rem;
   --layout-radius-composer-field: 1.125rem;
   --layout-radius-bubble-user: 1.125rem 0.375rem 1.125rem 1.125rem;
   --layout-radius-full: 9999px;
@@ -541,7 +540,6 @@
   --blur-app-blob: 78px;
   --blur-app-blob-accent: 82px;
   --blur-shell: var(--layout-shell-blur);
-  --blur-chip: var(--layout-chip-blur);
 
   --font-primary: var(--font-primary);
   --font-secondary: var(--font-secondary);

@@ -8,7 +8,7 @@ import {
   getAppEmptyHeaderTitleByRole,
   getAppSubtitleByRole,
 } from "@/constants/app";
-import { CHAT_PANEL_RESET_COPY, QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
+import { CHAT_PANEL_RESET_COPY } from "@/constants/chat";
 import {
   DEFAULT_PROVIDER_OPTIONS,
   PROVIDER_OPTION_LABEL,
@@ -244,18 +244,6 @@ describe("WorkspaceApp", () => {
       screen.getByRole("button", { name: CHAT_PANEL_RESET_COPY.ariaLabel }),
     );
     expect(handleResetChatPanel).toHaveBeenCalledTimes(1);
-  });
-
-  it("keeps suggestion chips above the composer when the conversation has messages", () => {
-    givenWorkspaceState({
-      messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "Hi" }] }],
-      isEmptyConversation: false,
-      quickActions: QUICK_ACTIONS_BY_ROLE.user,
-    });
-    renderApp();
-    expect(
-      screen.getByRole("button", { name: "Check balance" }),
-    ).toBeInTheDocument();
   });
 
   it("shows success toast when provider reports success", () => {

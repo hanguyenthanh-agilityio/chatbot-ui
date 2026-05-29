@@ -3,6 +3,7 @@ import { type RefObject } from "react";
 import { LoadingIndicator } from "@/components/chat/loading-indicator";
 import { ChatEmptyState } from "@/components/chat/empty-state";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
+import type { QuickAction } from "@/types/chat";
 import { ChatMessage } from "./message";
 
 type ChatTranscriptProps = {
@@ -12,6 +13,7 @@ type ChatTranscriptProps = {
   userAvatarUrl?: string;
   userAvatarLabel?: string;
   userInitials?: string;
+  quickActions: QuickAction[];
   onSelectPrompt: (prompt: string) => void;
   onToolApproval: (id: string, approved: boolean) => void;
 };
@@ -23,6 +25,7 @@ export function ChatTranscript({
   userAvatarUrl,
   userAvatarLabel = "User avatar",
   userInitials = CHAT_TRANSCRIPT_COPY.userBadge,
+  quickActions,
   onSelectPrompt,
   onToolApproval,
 }: ChatTranscriptProps) {
@@ -34,7 +37,7 @@ export function ChatTranscript({
       className="min-h-0 flex-1 overflow-y-auto px-4 py-6 text-white light:text-app-fg sm:px-6 lg:px-8"
     >
       {messages.length === 0 ? (
-        <ChatEmptyState />
+        <ChatEmptyState quickActions={quickActions} onSelectPrompt={onSelectPrompt} />
       ) : (
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
           {messages.map((message) => (

@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ChatTranscript } from "@/components/transcript";
 import { CHAT_EMPTY_STATE_COPY } from "@/constants/chat";
@@ -37,6 +38,25 @@ describe("ChatTranscript", () => {
       />,
     );
     expect(screen.getByText(CHAT_EMPTY_STATE_COPY.title)).toBeInTheDocument();
+  });
+
+  it("calls onSelectPrompt from a quick action", async () => {
+    const user = userEvent.setup();
+    const onSelectPrompt = vi.fn();
+
+    render(
+      <ChatTranscript
+        {...mockChatTranscriptProps({
+          containerRef: createRef(),
+          onSelectPrompt,
+        })}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Check balance" }));
+    expect(onSelectPrompt).toHaveBeenCalledWith(
+      "How many annual, sick, and personal leave days do I have left?",
+    );
   });
 
   it("shows loading indicator when the last message is from the user", () => {

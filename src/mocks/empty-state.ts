@@ -1,12 +1,15 @@
 import type { ComponentProps } from "react";
 import { ChatEmptyState } from "@/components/chat/empty-state";
+import { QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
 
 export type MockChatEmptyStateProps = ComponentProps<typeof ChatEmptyState>;
 
 export function mockChatEmptyStateProps(
-  _overrides?: Partial<MockChatEmptyStateProps>,
+  overrides?: Partial<MockChatEmptyStateProps>,
 ): MockChatEmptyStateProps {
-  return {};
+  return {
+    quickActions: QUICK_ACTIONS_BY_ROLE.user,
+    onSelectPrompt: () => {},
+    ...overrides,
+  };
 }
-
-export { ChatEmptyState };

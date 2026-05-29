@@ -10,7 +10,6 @@ import {
 
 // Components
 import { Text } from "@/components/ui/text";
-import { ChatQuickActions } from "@/components/chat/quick-actions";
 
 // Constants
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
@@ -21,9 +20,6 @@ import {
 
 // Utils
 import { cn } from "@/utils/class-name";
-
-// Types
-import type { QuickAction } from "@/types/chat";
 
 const COMPOSER_TEXTAREA_MAX_HEIGHT_PX = 150;
 
@@ -53,8 +49,6 @@ export type ChatComposerProps = {
   onInputChange: (value: string) => void;
   onSubmitAction: FormEventHandler<HTMLFormElement>;
   onStopAction: () => void;
-  quickActions?: QuickAction[];
-  onQuickActionSelect?: (prompt: string) => void;
 };
 
 export function ChatComposer({
@@ -68,8 +62,6 @@ export function ChatComposer({
   onInputChange,
   onSubmitAction,
   onStopAction,
-  quickActions = [],
-  onQuickActionSelect,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -114,13 +106,6 @@ export function ChatComposer({
       )}
     >
       <div className="flex w-full min-w-0 max-w-none flex-col gap-2">
-        {quickActions.length > 0 && onQuickActionSelect ? (
-          <ChatQuickActions
-            quickActions={quickActions}
-            onSelectPrompt={onQuickActionSelect}
-          />
-        ) : null}
-
         {errorMessage ? (
           <div
             className={
