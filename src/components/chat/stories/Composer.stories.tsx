@@ -5,6 +5,7 @@ import { ChatComposer } from "@/components/chat/composer";
 import {
   CHAT_COMPOSER_COPY,
   MOCK_CHAT_SAMPLE_MESSAGES,
+  QUICK_ACTIONS_BY_ROLE,
 } from "@/constants/chat";
 import {
   STORYBOOK_THEME_GLOBAL,
@@ -105,6 +106,8 @@ const meta = {
     helperText: CHAT_COMPOSER_COPY.defaultHelperText,
     errorMessage: null,
     inputTooltip: MOCK_COMPOSER_TOOLTIP,
+    quickActions: QUICK_ACTIONS_BY_ROLE.user,
+    onQuickActionSelect: fn(),
   },
   argTypes: {
     input: { table: { disable: true } },

@@ -7,7 +7,7 @@ import {
   ChatComposer,
   type ChatComposerProps,
 } from "@/components/chat/composer";
-import { CHAT_COMPOSER_COPY } from "@/constants/chat";
+import { CHAT_COMPOSER_COPY, QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
 import {
   mockChatComposerProps,
   MOCK_COMPOSER_TOOLTIP,
@@ -160,5 +160,18 @@ describe("ChatComposer", () => {
       await user.click(getTooltipWrapper());
       expectTooltipVisible();
     });
+  });
+
+  it("renders quick actions above the input when provided", () => {
+    renderComposer({
+      quickActions: QUICK_ACTIONS_BY_ROLE.user,
+      onQuickActionSelect: vi.fn(),
+    });
+
+    for (const action of QUICK_ACTIONS_BY_ROLE.user) {
+      expect(
+        screen.getByRole("button", { name: action.label }),
+      ).toBeInTheDocument();
+    }
   });
 });
