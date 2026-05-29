@@ -1,44 +1,14 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-
+import { createOpenAI } from "@ai-sdk/openai";
+import { generateText } from "ai";
 import {
   API_COMMON_ERROR_COPY,
   OPENAI_VALIDATION_API_COPY,
 } from "@/constants/api";
-import { validateOpenAIApiKey } from "@/lib/openai-key-validation";
 import type { OpenAIKeyValidationRequestBody } from "@/types/api";
+import { getErrorMessage } from "@/utils/error";
 
-const OPENAI_VALIDATION_DO_NAME = "openai-key-validation";
-const OPENAI_VALIDATION_DO_LOCATION = "wnam" as const;
-
-function badRequest(message: string, details?: string) {
-  return Response.json({ ok: false, message, details }, { status: 400 });
-}
-
-async function validateViaDurableObject(
-  apiKey: string,
-): Promise<Response | null> {
-  try {
-    const { env } = await getCloudflareContext({ async: true });
-    const namespace = env.OPENAI_VALIDATION;
-    if (!namespace) {
-      return null;
-    }
-
-    const id = namespace.idFromName(OPENAI_VALIDATION_DO_NAME);
-    const stub = namespace.get(id, {
-      locationHint: OPENAI_VALIDATION_DO_LOCATION,
-    });
-
-    return stub.fetch(
-      new Request("https://openai-validation.internal/validate", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ apiKey }),
-      }),
-    );
-  } catch {
-    return null;
-  }
+function badRequest(message: string) {
+  return Response.json({ ok: false, message }, { status: 400 });
 }
 
 export async function POST(req: Request) {
@@ -54,11 +24,29 @@ export async function POST(req: Request) {
     return badRequest(OPENAI_VALIDATION_API_COPY.missingApiKey);
   }
 
-  const viaDo = await validateViaDurableObject(apiKey);
-  if (viaDo) {
-    return viaDo;
-  }
+  try {
+    const openai = createOpenAI({
+      apiKey,
+      baseURL: OPENAI_VALIDATION_API_COPY.baseUrl,
+    });
 
-  const result = await validateOpenAIApiKey(apiKey);
-  return Response.json(result, { status: result.ok ? 200 : 400 });
+    await generateText({
+      model: openai.chat(process.env.OPENAI_MODEL ?? OPENAI_VALIDATION_API_COPY.testModel),
+      prompt: OPENAI_VALIDATION_API_COPY.testPrompt,
+    });
+
+    return Response.json({
+      ok: true,
+      message: OPENAI_VALIDATION_API_COPY.valid,
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        message: OPENAI_VALIDATION_API_COPY.invalid,
+        details: getErrorMessage(error),
+      },
+      { status: 400 },
+    );
+  }
 }
