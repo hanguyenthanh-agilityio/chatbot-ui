@@ -7,6 +7,7 @@ export {
   FILE_PREVIEW_KIND,
   type ComposerAttachment,
   type FilePreviewKind,
+  type LibraryRecentFile,
 } from "@/lib/file-preview/types";
 export {
   createAttachmentId,

@@ -180,65 +180,65 @@ export function ChatComposer({
                 isMultiline ? "items-end" : "items-center",
               )}
             >
-            {attachmentMenu ? (
-              <ComposerAttachmentMenu
+              {attachmentMenu ? (
+                <ComposerAttachmentMenu
+                  disabled={!isProviderReady}
+                  fileInputRef={fileInputRef}
+                  onOpenFilePicker={() => fileInputRef.current?.click()}
+                  onFileSelected={attachmentMenu.onFileSelected}
+                />
+              ) : null}
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(event) => onInputChange(event.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={CHAT_COMPOSER_COPY.placeholder}
+                aria-label={CHAT_COMPOSER_COPY.ariaLabel}
                 disabled={!isProviderReady}
-                fileInputRef={fileInputRef}
-                onOpenFilePicker={() => fileInputRef.current?.click()}
-                onFileSelected={attachmentMenu.onFileSelected}
+                rows={1}
+                wrap="soft"
+                className="max-h-composer-textarea min-w-0 w-full flex-1 resize-none overflow-x-hidden overflow-y-hidden break-words border-none bg-transparent py-0 text-sm leading-composer text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-app-accent light:placeholder:text-app-fg-faint"
               />
-            ) : null}
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={(event) => onInputChange(event.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={CHAT_COMPOSER_COPY.placeholder}
-              aria-label={CHAT_COMPOSER_COPY.ariaLabel}
-              disabled={!isProviderReady}
-              rows={1}
-              wrap="soft"
-              className="max-h-composer-textarea min-w-0 w-full flex-1 resize-none overflow-x-hidden overflow-y-hidden break-words border-none bg-transparent py-0 text-sm leading-composer text-white/90 caret-violet-400/90 outline-none placeholder:text-white/46 disabled:cursor-not-allowed disabled:opacity-50 light:text-app-fg light:caret-app-accent light:placeholder:text-app-fg-faint"
-            />
 
-            <div className="flex shrink-0">
-              {isLoading ? (
-                <button
-                  type="button"
-                  onClick={onStopAction}
-                  aria-label={CHAT_COMPOSER_COPY.stopButtonLabel}
-                  className={cn(
-                    COMPOSER_STOP_BUTTON_CLASS,
-                    "grid h-10 w-10 min-h-10 min-w-10 place-items-center",
-                  )}
-                >
-                  <span className="composer-stop-button-icon" aria-hidden />
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={!canSend}
-                  aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
-                  className={cn(
-                    "grid h-10 w-10 min-h-10 min-w-10 cursor-pointer place-items-center rounded-xl transition-all duration-200",
-                    "disabled:cursor-not-allowed disabled:opacity-30",
-                    "hover:scale-hover-btn hover:shadow-btn-brand",
-                    canSend
-                      ? "bg-btn-active text-white light:hover:brightness-105"
-                      : "bg-btn-disabled text-white/75 light:bg-app-btn-brand-disabled light:text-white/85",
-                  )}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-4 w-4"
+              <div className="flex shrink-0">
+                {isLoading ? (
+                  <button
+                    type="button"
+                    onClick={onStopAction}
+                    aria-label={CHAT_COMPOSER_COPY.stopButtonLabel}
+                    className={cn(
+                      COMPOSER_STOP_BUTTON_CLASS,
+                      "grid h-10 w-10 min-h-10 min-w-10 place-items-center",
+                    )}
                   >
-                    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                  </svg>
-                </button>
-              )}
-            </div>
+                    <span className="composer-stop-button-icon" aria-hidden />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={!canSend}
+                    aria-label={CHAT_COMPOSER_COPY.sendButtonLabel}
+                    className={cn(
+                      "grid h-10 w-10 min-h-10 min-w-10 cursor-pointer place-items-center rounded-xl transition-all duration-200",
+                      "disabled:cursor-not-allowed disabled:opacity-30",
+                      "hover:scale-hover-btn hover:shadow-btn-brand",
+                      canSend
+                        ? "bg-btn-active text-white light:hover:brightness-105"
+                        : "bg-btn-disabled text-white/75 light:bg-app-btn-brand-disabled light:text-white/85",
+                    )}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-4 w-4"
+                    >
+                      <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
           </form>
         </div>

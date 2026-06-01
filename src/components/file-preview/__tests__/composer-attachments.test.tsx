@@ -35,7 +35,18 @@ describe("ComposerAttachmentMenu", () => {
     expect(onOpenFilePicker).toHaveBeenCalledTimes(1);
   });
 
-  it("shows recent files on hover", async () => {
+  it("does not show Add from library", async () => {
+    const user = userEvent.setup();
+    renderMenu();
+
+    await user.click(
+      screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+    );
+
+    expect(screen.queryByText(/add from library/i)).not.toBeInTheDocument();
+  });
+
+  it("shows recent files flyout with mock data on hover", async () => {
     const user = userEvent.setup();
     renderMenu();
 
@@ -43,9 +54,50 @@ describe("ComposerAttachmentMenu", () => {
       screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
     );
     fireEvent.mouseEnter(
-      screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel }).parentElement!,
+      screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel }),
     );
 
     expect(screen.getByText("leave-policy-2026.pdf")).toBeInTheDocument();
+    expect(screen.getByText(/240\.0 KB · Yesterday/)).toBeInTheDocument();
+    expect(screen.getByText(FILE_PREVIEW_COPY.recentFilesComingSoon)).toBeInTheDocument();
+    expect(screen.getByText(FILE_PREVIEW_COPY.recentFilesComingSoonHint)).toBeInTheDocument();
+  });
+
+  it("does not attach when clicking a mock recent file", async () => {
+    const user = userEvent.setup();
+    const { onFileSelected } = renderMenu();
+
+    await user.click(
+      screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+    );
+    fireEvent.mouseEnter(
+      screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel }),
+    );
+    await user.click(screen.getByText("leave-policy-2026.pdf"));
+
+    expect(onFileSelected).not.toHaveBeenCalled();
+  });
+
+  it("shows empty state when there are no recent files", async () => {
+    const user = userEvent.setup();
+    const fileInputRef = createRef<HTMLInputElement>();
+
+    render(
+      <ComposerAttachmentMenu
+        fileInputRef={fileInputRef}
+        onOpenFilePicker={vi.fn()}
+        onFileSelected={vi.fn()}
+        recentFiles={[]}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+    );
+    fireEvent.mouseEnter(
+      screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel }),
+    );
+
+    expect(screen.getByText(FILE_PREVIEW_COPY.recentFilesEmpty)).toBeInTheDocument();
   });
 });

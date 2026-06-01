@@ -3,29 +3,69 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type ChangeEvent,
+  type CSSProperties,
   type ReactNode,
   type RefObject,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   FILE_PREVIEW_ACCEPT,
   FILE_PREVIEW_COPY,
   MOCK_RECENT_FILES,
   formatFileSize,
   type ComposerAttachment,
-  type FilePreviewKind,
+  type LibraryRecentFile,
 } from "@/lib/file-preview";
+import {
+  FileKindIcon,
+  getFileKindLabel,
+} from "@/components/file-preview/file-kind-icon";
+import { Button } from "@/components/ui/button";
+import {
+  ChevronRightIcon,
+  ClockIcon,
+  CloseIcon,
+  PlusIcon,
+  UploadIcon,
+} from "@/components/ui/icons";
 import { cn } from "@/utils/class-name";
-import { Badge } from "@/components/ui/badge";
-import { Text } from "@/components/ui/text";
+
+/** Neutralize default ghost styles so composer attachment controls keep their shell look. */
+const ATTACHMENT_BUTTON_RESET = cn(
+  "!h-auto !min-h-0 !w-auto !min-w-0 !rounded-none !border-0 !bg-transparent !px-0 !py-0 !font-normal !shadow-none",
+  "hover:!brightness-100 light:hover:!brightness-100",
+);
+
+const MENU_PANEL_CLASS = cn(
+  "rounded-2xl border shadow-panel backdrop-blur-xl",
+  "border-white/12 bg-slate-900/95",
+  "light:border-app-border light:bg-app-surface-raised light:shadow-panel-sm",
+);
+
+const MENU_ITEM_CLASS = cn(
+  "flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors",
+  "text-white/90 hover:bg-white/8",
+  "light:text-app-fg light:hover:bg-app-hover",
+);
+
+const MENU_ITEM_LABEL_CLASS =
+  "min-w-0 flex-1 text-sm font-medium leading-snug text-inherit";
+
+const portalSubscribe = () => () => {};
+const getPortalSnapshot = () => typeof document !== "undefined";
+const getServerPortalSnapshot = () => false;
 
 type ComposerAttachmentMenuProps = {
   disabled?: boolean;
   fileInputRef: RefObject<HTMLInputElement | null>;
   onOpenFilePicker: () => void;
   onFileSelected: (file: File) => void;
+  recentFiles?: readonly LibraryRecentFile[];
 };
 
 type ComposerAttachmentChipProps = {
@@ -36,7 +76,11 @@ type ComposerAttachmentChipProps = {
 function MenuIcon({ children }: { children: ReactNode }) {
   return (
     <span
-      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/6 text-white/70 light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted"
+      className={cn(
+        "grid h-9 w-9 shrink-0 place-items-center rounded-lg border",
+        "border-white/10 bg-white/6 text-white/75",
+        "light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-muted",
+      )}
       aria-hidden
     >
       {children}
@@ -44,17 +88,84 @@ function MenuIcon({ children }: { children: ReactNode }) {
   );
 }
 
-function FileKindIcon({ kind }: { kind: FilePreviewKind }) {
+function formatRecentMeta(file: LibraryRecentFile) {
+  const parts: string[] = [];
+  if (file.sizeBytes != null) parts.push(formatFileSize(file.sizeBytes));
+  if (file.lastUsedLabel) parts.push(file.lastUsedLabel);
+  return parts.join(" · ");
+}
+
+function RecentFilesFlyout({
+  id,
+  files,
+  style,
+}: {
+  id: string;
+  files: readonly LibraryRecentFile[];
+  style: CSSProperties;
+}) {
   return (
-    <span
-      className={cn(
-        "grid h-8 w-8 shrink-0 place-items-center rounded-lg border text-[10px] font-semibold uppercase tracking-wide",
-        "border-white/12 bg-white/8 text-white/70 light:border-app-border light:bg-app-surface-subtle light:text-app-fg-muted",
-      )}
-      aria-hidden
+    <div
+      id={id}
+      role="group"
+      aria-label={FILE_PREVIEW_COPY.recentFilesLabel}
+      style={style}
+      className={cn("fixed z-200 w-70", MENU_PANEL_CLASS)}
     >
-      {kind}
-    </span>
+      <div className="p-1">
+        {files.length === 0 ? (
+          <p className="px-2.5 py-3 text-xs text-white/45 light:text-app-fg-faint">
+            {FILE_PREVIEW_COPY.recentFilesEmpty}
+          </p>
+        ) : (
+          <ul className="space-y-0.5" aria-disabled>
+            {files.map((file) => (
+              <li key={file.id}>
+                <div
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-xl px-2 py-2",
+                    "cursor-not-allowed select-none opacity-80",
+                  )}
+                  title={FILE_PREVIEW_COPY.recentFilesComingSoonHint}
+                >
+                  <FileKindIcon kind={file.kind} size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold leading-snug text-white/95 light:text-app-fg">
+                      {file.name}
+                    </p>
+                    <p className="mt-0.5 truncate text-xs text-white/45 light:text-app-fg-faint">
+                      <span className="uppercase tracking-wide">
+                        {getFileKindLabel(file.kind)}
+                      </span>
+                      {formatRecentMeta(file) ? (
+                        <span className="normal-case">
+                          {" · "}
+                          {formatRecentMeta(file)}
+                        </span>
+                      ) : null}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div
+        className={cn(
+          "border-t px-3 py-2 text-center",
+          "border-white/8 light:border-app-border-subtle",
+        )}
+      >
+        <p className="text-[11px] font-medium uppercase tracking-wide text-white/50 light:text-app-fg-faint">
+          {FILE_PREVIEW_COPY.recentFilesComingSoon}
+        </p>
+        <p className="mt-0.5 text-xs text-white/40 light:text-app-fg-faint">
+          {FILE_PREVIEW_COPY.recentFilesComingSoonHint}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -68,39 +179,27 @@ export function ComposerAttachmentChip({ file, onRemove }: ComposerAttachmentChi
     >
       <FileKindIcon kind={file.kind} />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-white/90 light:text-app-fg">
+        <p className="truncate text-sm font-semibold leading-snug text-white/95 light:text-app-fg">
           {file.name}
         </p>
-        {file.sizeBytes != null ? (
-          <p className="text-xs text-white/45 light:text-app-fg-faint">
-            {formatFileSize(file.sizeBytes)}
-          </p>
-        ) : null}
+        <p className="text-xs uppercase tracking-wide text-white/45 light:text-app-fg-faint">
+          {getFileKindLabel(file.kind)}
+        </p>
       </div>
-      <Badge size="sm" variant="neutral" className="hidden shrink-0 uppercase sm:inline-flex">
-        {file.kind}
-      </Badge>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={onRemove}
         aria-label={FILE_PREVIEW_COPY.removeAttachmentLabel(file.name)}
         className={cn(
-          "grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-lg text-white/50 transition-colors",
+          ATTACHMENT_BUTTON_RESET,
+          "grid h-7 w-7 shrink-0 place-items-center rounded-lg text-white/50 transition-colors",
           "hover:bg-white/10 hover:text-white/90",
           "light:text-app-fg-faint light:hover:bg-app-hover light:hover:text-app-fg",
         )}
       >
-        <svg
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          className="h-3.5 w-3.5"
-          aria-hidden
-        >
-          <path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round" />
-        </svg>
-      </button>
+        <CloseIcon className="h-3.5 w-3.5" />
+      </Button>
     </div>
   );
 }
@@ -110,20 +209,77 @@ export function ComposerAttachmentMenu({
   fileInputRef,
   onOpenFilePicker,
   onFileSelected,
+  recentFiles = MOCK_RECENT_FILES,
 }: ComposerAttachmentMenuProps) {
   const menuId = useId();
+  const recentMenuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const recentTriggerRef = useRef<HTMLDivElement>(null);
+  const recentCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isRecentOpen, setIsRecentOpen] = useState(false);
+  const [recentFlyoutStyle, setRecentFlyoutStyle] = useState<CSSProperties>({});
+  const canUsePortal = useSyncExternalStore(
+    portalSubscribe,
+    getPortalSnapshot,
+    getServerPortalSnapshot,
+  );
+
+  useEffect(() => () => clearRecentCloseTimer(), []);
+
+  useLayoutEffect(() => {
+    if (!isRecentOpen || !recentTriggerRef.current) {
+      return;
+    }
+
+    function updatePosition() {
+      const trigger = recentTriggerRef.current;
+      if (!trigger) return;
+
+      const rect = trigger.getBoundingClientRect();
+      const gap = 6;
+      const flyoutWidth = 280;
+      const flyoutMaxHeight = 320;
+      const viewportPadding = 8;
+
+      let left = rect.right + gap;
+      if (left + flyoutWidth > window.innerWidth - viewportPadding) {
+        left = rect.left - flyoutWidth - gap;
+      }
+
+      let top = rect.top;
+      if (top + flyoutMaxHeight > window.innerHeight - viewportPadding) {
+        top = Math.max(
+          viewportPadding,
+          window.innerHeight - flyoutMaxHeight - viewportPadding,
+        );
+      }
+
+      setRecentFlyoutStyle({
+        top,
+        left,
+      });
+    }
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [isRecentOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
 
     function handlePointerDown(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
-        setIsRecentOpen(false);
-      }
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      const flyout = document.getElementById(recentMenuId);
+      if (flyout?.contains(target)) return;
+      setIsOpen(false);
+      setIsRecentOpen(false);
     }
 
     function handleEscape(event: KeyboardEvent) {
@@ -139,7 +295,33 @@ export function ComposerAttachmentMenu({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [isOpen]);
+  }, [isOpen, recentMenuId]);
+
+  function clearRecentCloseTimer() {
+    if (recentCloseTimerRef.current) {
+      clearTimeout(recentCloseTimerRef.current);
+      recentCloseTimerRef.current = null;
+    }
+  }
+
+  function openRecentFlyout() {
+    clearRecentCloseTimer();
+    setIsRecentOpen(true);
+  }
+
+  function scheduleCloseRecentFlyout() {
+    clearRecentCloseTimer();
+    recentCloseTimerRef.current = setTimeout(() => {
+      setIsRecentOpen(false);
+      recentCloseTimerRef.current = null;
+    }, 120);
+  }
+
+  function closeMenu() {
+    clearRecentCloseTimer();
+    setIsOpen(false);
+    setIsRecentOpen(false);
+  }
 
   function handleToggleMenu() {
     if (disabled) return;
@@ -154,9 +336,21 @@ export function ComposerAttachmentMenu({
     event.target.value = "";
     if (!file) return;
     onFileSelected(file);
-    setIsOpen(false);
-    setIsRecentOpen(false);
+    closeMenu();
   }
+
+  const recentFlyout =
+    isRecentOpen && canUsePortal ? (
+      createPortal(
+        <div
+          onMouseEnter={openRecentFlyout}
+          onMouseLeave={scheduleCloseRecentFlyout}
+        >
+          <RecentFilesFlyout id={recentMenuId} files={recentFiles} style={recentFlyoutStyle} />
+        </div>,
+        document.body,
+      )
+    ) : null;
 
   return (
     <div ref={rootRef} className="relative shrink-0">
@@ -170,8 +364,9 @@ export function ComposerAttachmentMenu({
         onChange={handleFileChange}
       />
 
-      <button
+      <Button
         type="button"
+        variant="ghost"
         disabled={disabled}
         aria-label={FILE_PREVIEW_COPY.attachMenuAriaLabel}
         aria-expanded={isOpen}
@@ -180,6 +375,7 @@ export function ComposerAttachmentMenu({
         title={FILE_PREVIEW_COPY.attachMenuLabel}
         onClick={handleToggleMenu}
         className={cn(
+          ATTACHMENT_BUTTON_RESET,
           "grid h-10 w-10 min-h-10 min-w-10 cursor-pointer place-items-center rounded-xl border transition-colors duration-200",
           "border-white/12 bg-white/6 text-white/80 hover:border-violet-400/45 hover:bg-white/10",
           "disabled:cursor-not-allowed disabled:opacity-40",
@@ -187,114 +383,71 @@ export function ComposerAttachmentMenu({
           isOpen && "border-violet-400/55 bg-white/10 light:border-app-border-emphasis",
         )}
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          className="h-4 w-4"
-          aria-hidden
-        >
-          <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-        </svg>
-      </button>
+        <PlusIcon className="h-4 w-4" />
+      </Button>
 
       {isOpen ? (
         <div
           id={menuId}
           role="menu"
           className={cn(
-            "absolute bottom-full left-0 z-50 mb-2 min-w-56 overflow-hidden rounded-2xl border p-1.5 shadow-panel",
-            "border-white/12 bg-slate-900/95 backdrop-blur-xl",
-            "light:border-app-border light:bg-app-surface-raised light:shadow-panel-sm",
+            "absolute bottom-full left-0 z-[120] mb-2 min-w-[15.5rem] overflow-visible p-1.5",
+            MENU_PANEL_CLASS,
           )}
         >
-          <button
+          <Button
             type="button"
+            variant="ghost"
             role="menuitem"
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 text-left text-sm text-white/90 transition-colors hover:bg-white/8 light:text-app-fg light:hover:bg-app-hover"
+            className={cn(
+              ATTACHMENT_BUTTON_RESET,
+              MENU_ITEM_CLASS,
+              "w-full cursor-pointer text-sm",
+            )}
             onClick={() => {
               onOpenFilePicker();
-              setIsOpen(false);
-              setIsRecentOpen(false);
+              closeMenu();
             }}
           >
             <MenuIcon>
-              <svg
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                className="h-4 w-4"
-              >
-                <path d="M8 2v9M5 8l3 3 3-3" />
-                <path d="M3 13h10" strokeLinecap="round" />
-              </svg>
+              <UploadIcon className="h-[18px] w-[18px]" />
             </MenuIcon>
-            {FILE_PREVIEW_COPY.addFilesLabel}
-          </button>
+            <span className={MENU_ITEM_LABEL_CLASS}>{FILE_PREVIEW_COPY.addFilesLabel}</span>
+          </Button>
 
           <div
-            className="relative"
-            onMouseEnter={() => setIsRecentOpen(true)}
-            onMouseLeave={() => setIsRecentOpen(false)}
+            ref={recentTriggerRef}
+            onMouseEnter={openRecentFlyout}
+            onMouseLeave={scheduleCloseRecentFlyout}
           >
             <div
               role="menuitem"
+              aria-haspopup="true"
               aria-expanded={isRecentOpen}
-              className="flex w-full cursor-default items-center gap-3 rounded-xl px-2.5 py-2 text-left text-sm text-white/90 transition-colors hover:bg-white/8 light:text-app-fg light:hover:bg-app-hover"
+              aria-controls={isRecentOpen ? recentMenuId : undefined}
+              className={cn(
+                MENU_ITEM_CLASS,
+                "cursor-default text-sm",
+                isRecentOpen && "bg-white/8 light:bg-app-hover",
+              )}
+              onClick={() => {
+                clearRecentCloseTimer();
+                setIsRecentOpen((open) => !open);
+              }}
             >
               <MenuIcon>
-                <svg
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="h-4 w-4"
-                >
-                  <path d="M3 4h10v8H3z" />
-                  <path d="M5 2h6v2H5z" />
-                </svg>
+                <ClockIcon className="h-[18px] w-[18px]" />
               </MenuIcon>
-              <span className="min-w-0 flex-1">{FILE_PREVIEW_COPY.recentFilesLabel}</span>
-              <svg
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                className={cn(
-                  "h-3.5 w-3.5 shrink-0 text-white/50 transition-transform light:text-app-fg-faint",
-                  isRecentOpen && "rotate-90",
-                )}
-                aria-hidden
-              >
-                <path d="M6 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <span className={MENU_ITEM_LABEL_CLASS}>
+                {FILE_PREVIEW_COPY.recentFilesLabel}
+              </span>
+              <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-white/45 light:text-app-fg-faint" />
             </div>
-
-            {isRecentOpen ? (
-              <div
-                role="group"
-                aria-label={FILE_PREVIEW_COPY.recentFilesLabel}
-                className="mb-1 ml-11 mr-1 space-y-0.5 rounded-xl border border-white/8 bg-white/4 p-1 light:border-app-border-subtle light:bg-app-surface-subtle"
-              >
-                {MOCK_RECENT_FILES.map((file) => (
-                  <div
-                    key={file.id}
-                    className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-xs text-white/45 light:text-app-fg-faint"
-                    aria-disabled
-                  >
-                    <span className="truncate">{file.name}</span>
-                    <span className="shrink-0 text-compact-10 uppercase tracking-wide">
-                      {FILE_PREVIEW_COPY.recentFilesComingSoon}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : null}
           </div>
         </div>
       ) : null}
+
+      {recentFlyout}
     </div>
   );
 }

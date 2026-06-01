@@ -61,3 +61,80 @@ export function RefreshIcon({ className, strokeWidth = 2, ...props }: IconProps)
     </svg>
   );
 }
+
+export function UploadIcon({ className, strokeWidth = 1.75, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn(className)}
+      aria-hidden
+      {...STROKE_ICON_PROPS}
+      strokeWidth={strokeWidth}
+      {...props}
+    >
+      <path d="M12 3v10M8.5 9.5 12 6l3.5 3.5" />
+      <path d="M5 14.5v3.5a2 2 0 002 2h10a2 2 0 002-2v-3.5" />
+    </svg>
+  );
+}
+
+export function ClockIcon({ className, strokeWidth = 1.75, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn(className)}
+      aria-hidden
+      {...STROKE_ICON_PROPS}
+      strokeWidth={strokeWidth}
+      {...props}
+    >
+      <circle cx="12" cy="12" r="8.25" />
+      <path d="M12 8v4.25l2.75 1.5" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon({ className, strokeWidth = 1.5, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={cn(className)}
+      aria-hidden
+      {...STROKE_ICON_PROPS}
+      strokeWidth={strokeWidth}
+      {...props}
+    >
+      <path d="M6 4l4 4-4 4" />
+    </svg>
+  );
+}
+
+export function PlusIcon({ className, strokeWidth = 2, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn(className)}
+      aria-hidden
+      {...STROKE_ICON_PROPS}
+      strokeWidth={strokeWidth}
+      {...props}
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+export function CloseIcon({ className, strokeWidth = 1.75, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      className={cn(className)}
+      aria-hidden
+      {...STROKE_ICON_PROPS}
+      strokeWidth={strokeWidth}
+      {...props}
+    >
+      <path d="M4 4l8 8M12 4l-8 8" />
+    </svg>
+  );
+}

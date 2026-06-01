@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { FILE_PREVIEW_KIND } from "@/lib/file-preview/types";
+import { FILE_PREVIEW_KIND } from "@/lib/file-preview";
 import { useComposerAttachment } from "@/lib/file-preview/use-composer-attachment";
 
 describe("useComposerAttachment", () => {
