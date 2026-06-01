@@ -7,7 +7,6 @@ import { PROVIDER_STATUS_COPY } from "@/constants/provider";
 const meta = {
   title: "Chat/ProviderSelector",
   component: ProviderSelector,
-  parameters: { layout: "centered" },
 } satisfies Meta<typeof ProviderSelector>;
 
 export default meta;

@@ -130,6 +130,7 @@ export function useWorkspaceApp(
     switchThread,
     createNewThread,
     deleteThread,
+    resetActiveThread,
   } = useChatThreads({
     messages,
     setMessages,
@@ -232,6 +233,15 @@ export function useWorkspaceApp(
     clearError();
   }
 
+  function handleResetChatPanel() {
+    if (isLoading) {
+      stop();
+    }
+    clearError();
+    setInput("");
+    resetActiveThread();
+  }
+
   function handleRoleChange(role: AppRole) {
     if (role === selectedRole) {
       return;
@@ -288,5 +298,6 @@ export function useWorkspaceApp(
     handleToolApproval,
     handleRoleChange,
     handleStop,
+    handleResetChatPanel,
   };
 }

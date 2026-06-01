@@ -149,7 +149,10 @@ export function useChatThreads({
 
   // Sync messages from useChat to the active thread in state
   useEffect(() => {
-    if (isInternalChangeRef.current) return;
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setData((prev) => {
@@ -292,17 +295,41 @@ export function useChatThreads({
     const empty = createEmptyThread(provider);
     setData((prev) => ({
       ...prev,
-      [role]: { threads: [empty], activeId: empty.id }
+      [role]: { threads: [empty], activeId: empty.id },
     }));
     setMessages([]);
   }
 
-  return { 
-    activeThread, 
-    allThreads, 
-    switchThread, 
-    createNewThread, 
-    deleteThread, 
-    clearThread 
+  /** Clear the active thread in place (header reset — like "clear chat" in other AI apps). */
+  function resetActiveThread() {
+    const now = new Date().toISOString();
+    setData((prev) => {
+      const roleData = prev[role];
+      return {
+        ...prev,
+        [role]: {
+          ...roleData,
+          threads: updateThreadInList(roleData.threads, roleData.activeId, {
+            messages: [],
+            title: CHAT_THREAD_COPY.defaultTitle,
+            preview: CHAT_THREAD_COPY.emptyPreview,
+            updatedAt: now,
+          }),
+        },
+      };
+    });
+
+    isInternalChangeRef.current = true;
+    setMessages([]);
+  }
+
+  return {
+    activeThread,
+    allThreads,
+    switchThread,
+    createNewThread,
+    deleteThread,
+    clearThread,
+    resetActiveThread,
   };
 }

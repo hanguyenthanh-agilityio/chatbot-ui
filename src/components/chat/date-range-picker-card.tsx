@@ -21,6 +21,18 @@ const CALENDAR_WEEKEND_HEADER_CLASSES = "text-white/18 light:text-app-fg-faint";
 const CALENDAR_MONTH_LABEL_CLASSES =
   "text-sm font-bold text-white light:text-app-fg";
 
+const SLOT_TRACK_CLASSES =
+  "flex gap-1 rounded-lg border border-white/12 bg-white/6 p-1 light:border-stone-200 light:bg-stone-100";
+
+const SLOT_BUTTON_BASE =
+  "flex-1 cursor-pointer rounded-md border border-transparent py-2 text-sm font-semibold transition-all duration-150";
+
+const SLOT_BUTTON_IDLE =
+  "text-white/55 hover:bg-white/10 hover:text-white/90 light:text-stone-600 light:hover:bg-stone-200/70 light:hover:text-stone-900";
+
+const SLOT_BUTTON_ACTIVE =
+  "border-white/20 bg-white/20 text-white shadow-sm light:border-amber-700/25 light:bg-app-accent light:text-white light:shadow-[0_1px_3px_color-mix(in_srgb,var(--palette-amber-800)_28%,transparent)]";
+
 const MONTHS = [
   "January",
   "February",
@@ -550,7 +562,6 @@ export function DateRangePickerCard({
                   isSelected &&
                     !showHalf &&
                     "bg-white font-semibold text-slate-900 light:bg-app-accent light:text-white",
-                  isSelected && showHalf && "font-semibold",
                   !isSelected &&
                     isWknd &&
                     cn(
@@ -578,21 +589,32 @@ export function DateRangePickerCard({
                 )}
               >
                 {showHalf && (
-                  <span
-                    className={cn(
-                      "pointer-events-none absolute inset-0 rounded-full",
-                      halfSlot === "morning"
-                        ? "bg-datepicker-half-morning"
-                        : "bg-datepicker-half-afternoon",
-                    )}
-                  />
+                  <>
+                    <span
+                      className={cn(
+                        "pointer-events-none absolute inset-0 rounded-full",
+                        halfSlot === "morning"
+                          ? "bg-datepicker-half-morning"
+                          : "bg-datepicker-half-afternoon",
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset",
+                        "ring-white/20 light:ring-app-accent/25",
+                      )}
+                    />
+                  </>
                 )}
-                {/* Day number sits on top of the gradient overlay. */}
                 <span
                   className={cn(
-                    isSelected
-                      ? "relative z-10 text-slate-900 light:text-white"
-                      : "relative z-10",
+                    "relative z-10",
+                    isSelected &&
+                      !showHalf &&
+                      "font-semibold text-slate-900 light:text-white",
+                    isSelected &&
+                      showHalf &&
+                      "font-semibold text-slate-900 light:text-app-fg",
                   )}
                 >
                   {Number(iso.slice(8))}
@@ -607,7 +629,7 @@ export function DateRangePickerCard({
       {startDate && (
         <>
           <div className={CALENDAR_DIVIDER_CLASSES} />
-          <div className="mt-3 flex gap-2">
+          <div className={cn("mt-3", SLOT_TRACK_CLASSES)}>
             {SLOT_OPTIONS.map(({ label, value }) => {
               const isActive = activeBoundarySlot === value;
               const isDisabledSlot = disabled || isSlotDisabled(value);
@@ -618,10 +640,10 @@ export function DateRangePickerCard({
                   disabled={isDisabledSlot}
                   onClick={() => handleSelectTimeSlot(value)}
                   className={cn(
-                    "flex-1 cursor-pointer rounded border py-2 text-sm font-medium transition border-white/14 text-white/40 hover:bg-white/8 hover:text-white/70 light:border-app-border light:text-app-fg-tertiary light:hover:bg-app-hover light:hover:text-app-fg-muted",
-                    isActive &&
-                      !isDisabledSlot &&
-                      "border-white/30 bg-white/16 text-white light:border-app-border-emphasis light:bg-app-accent-soft light:text-app-fg",
+                    SLOT_BUTTON_BASE,
+                    isActive && !isDisabledSlot
+                      ? SLOT_BUTTON_ACTIVE
+                      : SLOT_BUTTON_IDLE,
                     isDisabledSlot && "cursor-not-allowed opacity-40",
                   )}
                 >

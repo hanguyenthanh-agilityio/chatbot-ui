@@ -53,7 +53,6 @@ const meta = {
   title: "Workspace/AuthPanel",
   component: AuthPanel,
   decorators: [inSidebarShell],
-  parameters: { layout: "centered" },
   args: {
     onRoleChange: fn(),
   },
