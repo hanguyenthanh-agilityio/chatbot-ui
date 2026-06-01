@@ -25,7 +25,6 @@ import {
   FileKindIcon,
   getFileKindLabel,
 } from "@/components/file-preview/file-kind-icon";
-import { Button } from "@/components/ui/button";
 import {
   ChevronRightIcon,
   ClockIcon,
@@ -34,12 +33,6 @@ import {
   UploadIcon,
 } from "@/components/ui/icons";
 import { cn } from "@/utils/class-name";
-
-/** Neutralize default ghost styles so composer attachment controls keep their shell look. */
-const ATTACHMENT_BUTTON_RESET = cn(
-  "!h-auto !min-h-0 !w-auto !min-w-0 !rounded-none !border-0 !bg-transparent !px-0 !py-0 !font-normal !shadow-none",
-  "hover:!brightness-100 light:hover:!brightness-100",
-);
 
 const MENU_PANEL_CLASS = cn(
   "rounded-2xl border shadow-panel backdrop-blur-xl",
@@ -118,36 +111,39 @@ function RecentFilesFlyout({
             {FILE_PREVIEW_COPY.recentFilesEmpty}
           </p>
         ) : (
-          <ul className="space-y-0.5" aria-disabled>
-            {files.map((file) => (
-              <li key={file.id}>
-                <div
-                  className={cn(
-                    "flex items-center gap-2.5 rounded-xl px-2 py-2",
-                    "cursor-not-allowed select-none opacity-80",
-                  )}
-                  title={FILE_PREVIEW_COPY.recentFilesComingSoonHint}
-                >
-                  <FileKindIcon kind={file.kind} size="sm" />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold leading-snug text-white/95 light:text-app-fg">
-                      {file.name}
-                    </p>
-                    <p className="mt-0.5 truncate text-xs text-white/45 light:text-app-fg-faint">
-                      <span className="uppercase tracking-wide">
-                        {getFileKindLabel(file.kind)}
-                      </span>
-                      {formatRecentMeta(file) ? (
-                        <span className="normal-case">
-                          {" · "}
-                          {formatRecentMeta(file)}
+          <ul className="space-y-0.5">
+            {files.map((file) => {
+              const recentMeta = formatRecentMeta(file);
+              return (
+                <li key={file.id}>
+                  <div
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-xl px-2 py-2",
+                      "cursor-not-allowed select-none opacity-80",
+                    )}
+                    title={FILE_PREVIEW_COPY.recentFilesComingSoonHint}
+                  >
+                    <FileKindIcon kind={file.kind} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold leading-snug text-white/95 light:text-app-fg">
+                        {file.name}
+                      </p>
+                      <p className="mt-0.5 truncate text-xs text-white/45 light:text-app-fg-faint">
+                        <span className="uppercase tracking-wide">
+                          {getFileKindLabel(file.kind)}
                         </span>
-                      ) : null}
-                    </p>
+                        {recentMeta ? (
+                          <span className="normal-case">
+                            {" · "}
+                            {recentMeta}
+                          </span>
+                        ) : null}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
@@ -186,20 +182,18 @@ export function ComposerAttachmentChip({ file, onRemove }: ComposerAttachmentChi
           {getFileKindLabel(file.kind)}
         </p>
       </div>
-      <Button
+      <button
         type="button"
-        variant="ghost"
         onClick={onRemove}
         aria-label={FILE_PREVIEW_COPY.removeAttachmentLabel(file.name)}
         className={cn(
-          ATTACHMENT_BUTTON_RESET,
-          "grid h-7 w-7 shrink-0 place-items-center rounded-lg text-white/50 transition-colors",
+          "grid h-7 w-7 shrink-0 cursor-pointer place-items-center rounded-lg text-white/50 transition-colors",
           "hover:bg-white/10 hover:text-white/90",
           "light:text-app-fg-faint light:hover:bg-app-hover light:hover:text-app-fg",
         )}
       >
         <CloseIcon className="h-3.5 w-3.5" />
-      </Button>
+      </button>
     </div>
   );
 }
@@ -224,78 +218,6 @@ export function ComposerAttachmentMenu({
     getPortalSnapshot,
     getServerPortalSnapshot,
   );
-
-  useEffect(() => () => clearRecentCloseTimer(), []);
-
-  useLayoutEffect(() => {
-    if (!isRecentOpen || !recentTriggerRef.current) {
-      return;
-    }
-
-    function updatePosition() {
-      const trigger = recentTriggerRef.current;
-      if (!trigger) return;
-
-      const rect = trigger.getBoundingClientRect();
-      const gap = 6;
-      const flyoutWidth = 280;
-      const flyoutMaxHeight = 320;
-      const viewportPadding = 8;
-
-      let left = rect.right + gap;
-      if (left + flyoutWidth > window.innerWidth - viewportPadding) {
-        left = rect.left - flyoutWidth - gap;
-      }
-
-      let top = rect.top;
-      if (top + flyoutMaxHeight > window.innerHeight - viewportPadding) {
-        top = Math.max(
-          viewportPadding,
-          window.innerHeight - flyoutMaxHeight - viewportPadding,
-        );
-      }
-
-      setRecentFlyoutStyle({
-        top,
-        left,
-      });
-    }
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [isRecentOpen]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    function handlePointerDown(event: MouseEvent) {
-      const target = event.target as Node;
-      if (rootRef.current?.contains(target)) return;
-      const flyout = document.getElementById(recentMenuId);
-      if (flyout?.contains(target)) return;
-      setIsOpen(false);
-      setIsRecentOpen(false);
-    }
-
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-        setIsRecentOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [isOpen, recentMenuId]);
 
   function clearRecentCloseTimer() {
     if (recentCloseTimerRef.current) {
@@ -323,21 +245,61 @@ export function ComposerAttachmentMenu({
     setIsRecentOpen(false);
   }
 
-  function handleToggleMenu() {
-    if (disabled) return;
-    setIsOpen((open) => {
-      if (open) setIsRecentOpen(false);
-      return !open;
-    });
-  }
+  useEffect(() => () => clearRecentCloseTimer(), []);
 
-  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
-    onFileSelected(file);
-    closeMenu();
-  }
+  useLayoutEffect(() => {
+    if (!isRecentOpen || !recentTriggerRef.current) return;
+
+    const trigger = recentTriggerRef.current;
+    const rect = trigger.getBoundingClientRect();
+    const gap = 6;
+    const flyoutWidth = 280;
+    const flyoutMaxHeight = 320;
+    const viewportPadding = 8;
+
+    let left = rect.right + gap;
+    if (left + flyoutWidth > window.innerWidth - viewportPadding) {
+      left = rect.left - flyoutWidth - gap;
+    }
+
+    let top = rect.top;
+    if (top + flyoutMaxHeight > window.innerHeight - viewportPadding) {
+      top = Math.max(
+        viewportPadding,
+        window.innerHeight - flyoutMaxHeight - viewportPadding,
+      );
+    }
+
+    setRecentFlyoutStyle({ top, left });
+  }, [isRecentOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handlePointerDown(event: MouseEvent) {
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (document.getElementById(recentMenuId)?.contains(target)) return;
+      clearRecentCloseTimer();
+      setIsOpen(false);
+      setIsRecentOpen(false);
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        clearRecentCloseTimer();
+        setIsOpen(false);
+        setIsRecentOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, recentMenuId]);
 
   const recentFlyout =
     isRecentOpen && canUsePortal ? (
@@ -361,21 +323,31 @@ export function ComposerAttachmentMenu({
         className="sr-only"
         tabIndex={-1}
         aria-hidden
-        onChange={handleFileChange}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          const file = event.target.files?.[0];
+          event.target.value = "";
+          if (!file) return;
+          onFileSelected(file);
+          closeMenu();
+        }}
       />
 
-      <Button
+      <button
         type="button"
-        variant="ghost"
         disabled={disabled}
         aria-label={FILE_PREVIEW_COPY.attachMenuAriaLabel}
         aria-expanded={isOpen}
         aria-haspopup="menu"
         aria-controls={isOpen ? menuId : undefined}
         title={FILE_PREVIEW_COPY.attachMenuLabel}
-        onClick={handleToggleMenu}
+        onClick={() => {
+          if (disabled) return;
+          setIsOpen((open) => {
+            if (open) setIsRecentOpen(false);
+            return !open;
+          });
+        }}
         className={cn(
-          ATTACHMENT_BUTTON_RESET,
           "grid h-10 w-10 min-h-10 min-w-10 cursor-pointer place-items-center rounded-xl border transition-colors duration-200",
           "border-white/12 bg-white/6 text-white/80 hover:border-violet-400/45 hover:bg-white/10",
           "disabled:cursor-not-allowed disabled:opacity-40",
@@ -384,7 +356,7 @@ export function ComposerAttachmentMenu({
         )}
       >
         <PlusIcon className="h-4 w-4" />
-      </Button>
+      </button>
 
       {isOpen ? (
         <div
@@ -395,15 +367,10 @@ export function ComposerAttachmentMenu({
             MENU_PANEL_CLASS,
           )}
         >
-          <Button
+          <button
             type="button"
-            variant="ghost"
             role="menuitem"
-            className={cn(
-              ATTACHMENT_BUTTON_RESET,
-              MENU_ITEM_CLASS,
-              "w-full cursor-pointer text-sm",
-            )}
+            className={cn(MENU_ITEM_CLASS, "w-full cursor-pointer text-sm")}
             onClick={() => {
               onOpenFilePicker();
               closeMenu();
@@ -413,7 +380,7 @@ export function ComposerAttachmentMenu({
               <UploadIcon className="h-[18px] w-[18px]" />
             </MenuIcon>
             <span className={MENU_ITEM_LABEL_CLASS}>{FILE_PREVIEW_COPY.addFilesLabel}</span>
-          </Button>
+          </button>
 
           <div
             ref={recentTriggerRef}
