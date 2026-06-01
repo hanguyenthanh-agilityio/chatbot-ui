@@ -1,29 +1,14 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { fn, userEvent, within } from "storybook/test";
 
 import { DateRangePickerCard } from "@/components/chat/date-range-picker-card";
-import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
-import { cn } from "@/utils/class-name";
-
-const inChatTranscript: Decorator = (Story) => (
-  <section
-    className={cn(
-      THEME_SHELL_CLASSES.chatPanel,
-      "mx-auto flex w-full max-w-3xl flex-col items-center rounded-shell border p-6 shadow-shell-panel",
-      "bg-glass-panel-chat text-white",
-      THEME_SHELL_UTILITIES.border,
-    )}
-  >
-    <Story />
-  </section>
-);
+import { inChatTranscript } from "@/mocks/storybook";
 
 const meta = {
   title: "Chat/DateRangePickerCard",
   component: DateRangePickerCard,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:

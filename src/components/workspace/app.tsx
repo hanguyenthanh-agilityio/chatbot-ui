@@ -250,7 +250,6 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               userAvatarUrl={auth.session.avatar}
               userAvatarLabel={`${auth.session.name} avatar`}
               userInitials={getInitialsFromName(auth.session.name)}
-              quickActions={quickActions}
               onSelectPrompt={handlePromptSelect}
               onToolApproval={handleToolApproval}
             />
@@ -259,6 +258,8 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               canSend={canSend}
               isLoading={isLoading}
               isProviderReady={provider.isProviderReady}
+              quickActions={quickActions}
+              onQuickActionSelect={handlePromptSelect}
               inputTooltip={
                 !provider.isProviderReady
                   ? CHAT_COMPOSER_COPY.verifyProviderTooltip

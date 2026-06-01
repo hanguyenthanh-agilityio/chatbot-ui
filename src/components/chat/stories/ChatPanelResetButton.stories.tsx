@@ -1,13 +1,19 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
+
+const centerInCanvas: Decorator = (Story) => (
+  <div className="flex w-full justify-center">
+    <Story />
+  </div>
+);
 
 const meta = {
   title: "Chat/ChatPanelResetButton",
   component: ChatPanelResetButton,
   tags: ["autodocs"],
+  decorators: [centerInCanvas],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:

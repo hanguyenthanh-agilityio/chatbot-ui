@@ -1,0 +1,24 @@
+/* Canvas: center stories; outer frame height follows content (no forced full-panel stretch). */
+
+.sb-show-main #storybook-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  height: auto;
+  margin: 0;
+  padding: 1.5rem;
+  background: var(--bg-app-shell);
+  background-attachment: fixed;
+  color: var(--foreground);
+}
+
+.sb-show-main #storybook-root > * {
+  width: auto;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  height: auto;
+  min-height: 0;
+}

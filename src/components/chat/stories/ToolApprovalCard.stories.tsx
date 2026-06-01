@@ -12,7 +12,6 @@ const meta = {
   component: ToolApprovalCard,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:

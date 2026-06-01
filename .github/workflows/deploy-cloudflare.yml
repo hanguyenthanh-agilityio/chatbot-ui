@@ -14,6 +14,7 @@ on:
   push:
     branches:
       - fix/redeploy-cloudflare
+      - feat/quick-actions-above-composer
       - main
   workflow_dispatch:
 

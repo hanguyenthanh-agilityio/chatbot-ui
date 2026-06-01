@@ -13,12 +13,18 @@
   max-height: none !important;
   overflow: visible !important;
   display: flex !important;
+  align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
+  padding: 1.5rem !important;
 }
 
 /* Theme decorator should stay within the preview frame. */
 .sbdocs .sbdocs-preview .docs-story > div {
   width: 100% !important;
   max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
 }

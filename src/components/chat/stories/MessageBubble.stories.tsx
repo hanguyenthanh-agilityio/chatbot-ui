@@ -11,7 +11,6 @@ const meta = {
   component: MessageBubble,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:

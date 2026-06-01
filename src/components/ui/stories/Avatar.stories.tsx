@@ -1,4 +1,4 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, within } from "storybook/test";
 
 import {
@@ -7,6 +7,8 @@ import {
   type AvatarSize,
 } from "@/components/ui/avatar";
 import { APP_ASSISTANT_AVATAR_ALT } from "@/constants/app";
+import { inStorybookUiPanel } from "@/mocks/storybook";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
 
 const AVATAR_VARIANT_OPTIONS = ["assistant", "user"] as const;
 type AvatarStoryVariant = (typeof AVATAR_VARIANT_OPTIONS)[number];
@@ -50,18 +52,12 @@ function renderAvatarFromArgs({
   );
 }
 
-const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-glass-panel p-6 text-white light:border-app-border">
-    <Story />
-  </div>
-);
-
 const meta = {
   title: "UI/Avatar",
   component: Avatar,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    ...STORYBOOK_INLINE_CANVAS_PARAMETERS,
     docs: {
       description: {
         component:
@@ -116,7 +112,7 @@ const meta = {
     },
   },
   render: renderAvatarFromArgs,
-  decorators: [panelDecorator],
+  decorators: [inStorybookUiPanel],
 } satisfies Meta<AvatarStoryArgs>;
 
 export default meta;

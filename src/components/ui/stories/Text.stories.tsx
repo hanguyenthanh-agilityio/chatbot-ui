@@ -1,15 +1,11 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 // Components
 import { Text } from "@/components/ui/text";
 import { TEXT_VARIANT_OPTIONS } from "@/constants/text";
 import type { TextVariant } from "@/types/text";
-
-const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-glass-panel p-6 text-white light:border-app-border">
-    <Story />
-  </div>
-);
+import { inStorybookUiPanel } from "@/mocks/storybook";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
 
 function VariantGrid({
   variants = TEXT_VARIANT_OPTIONS,
@@ -34,7 +30,7 @@ const meta = {
   component: Text,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    ...STORYBOOK_INLINE_CANVAS_PARAMETERS,
     a11y: {
       config: {
         rules: [{ id: "color-contrast", enabled: true }],
@@ -61,7 +57,7 @@ const meta = {
     },
     className: { control: "text", table: { category: "Appearance" } },
   },
-  decorators: [panelDecorator],
+  decorators: [inStorybookUiPanel],
 } satisfies Meta<typeof Text>;
 
 export default meta;

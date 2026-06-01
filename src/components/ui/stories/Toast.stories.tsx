@@ -8,11 +8,12 @@ import {
   TOAST_PERSISTENT_DURATION_MS,
   TOAST_VARIANTS,
 } from "@/constants/toast";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
 
 function ToastPreviewFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="flex w-full min-h-22 items-start justify-end p-4">
-      <div className="w-full max-w-sm">{children}</div>
+    <div className="inline-flex items-center justify-center p-4">
+      <div className="w-fit max-w-sm">{children}</div>
     </div>
   );
 }
@@ -28,7 +29,7 @@ const meta = {
   component: Toast,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    ...STORYBOOK_INLINE_CANVAS_PARAMETERS,
     docs: {
       description: {
         component:
