@@ -88,22 +88,20 @@ export function ComposerAttachmentMenu({
     isOpen,
     isRecentOpen,
     recentFlyoutStyle,
-    canUsePortal,
     closeMenu,
-    openRecent,
-    scheduleCloseRecent,
     toggleMenu,
+    recentHover,
   } = useComposerAttachmentMenu();
 
   const recentFlyout =
-    isRecentOpen && canUsePortal ? (
+    isRecentOpen && typeof document !== "undefined" ? (
       createPortal(
         <RecentFilesFlyout
           recentMenuId={recentMenuId}
           recentFiles={recentFiles}
           style={recentFlyoutStyle}
-          onPointerEnter={openRecent}
-          onPointerLeave={scheduleCloseRecent}
+          onPointerEnter={recentHover.onEnter}
+          onPointerLeave={recentHover.onLeave}
         />,
         document.body,
       )
@@ -175,8 +173,8 @@ export function ComposerAttachmentMenu({
 
           <div
             ref={recentTriggerRef}
-            onMouseEnter={openRecent}
-            onMouseLeave={scheduleCloseRecent}
+            onMouseEnter={recentHover.onEnter}
+            onMouseLeave={recentHover.onLeave}
           >
             <div
               role="menuitem"

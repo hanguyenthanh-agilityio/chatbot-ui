@@ -1,5 +1,8 @@
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
-import type { FilePreviewKind, LibraryRecentFile } from "@/types/file-attachment";
+import type {
+  FilePreviewKind,
+  LibraryRecentFile,
+} from "@/types/file-attachment";
 import { cn } from "@/utils/class-name";
 
 export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
@@ -11,10 +14,10 @@ export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
 };
 
 export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
-  [FILE_PREVIEW_KIND.PDF]: "bg-[#E5484D]",
-  [FILE_PREVIEW_KIND.DOCX]: "bg-[#3B82F6]",
-  [FILE_PREVIEW_KIND.MP4]: "bg-[#8B5CF6]",
-  [FILE_PREVIEW_KIND.MP3]: "bg-[#14B8A6]",
+  [FILE_PREVIEW_KIND.PDF]: "bg-red-500",
+  [FILE_PREVIEW_KIND.DOCX]: "bg-blue-500",
+  [FILE_PREVIEW_KIND.MP4]: "bg-violet-500",
+  [FILE_PREVIEW_KIND.MP3]: "bg-teal-500",
   [FILE_PREVIEW_KIND.UNKNOWN]: "bg-neutral-500",
 };
 
@@ -53,6 +56,15 @@ export const COMPOSER_ATTACH_CHIP_REMOVE_CLASS = cn(
 export const COMPOSER_ATTACH_MENU_CLASS = cn(
   "absolute bottom-full left-0 z-120 mb-2 min-w-[15.5rem] overflow-visible p-1.5",
 );
+
+/** Recent-files flyout layout (portal positioning). */
+export const RECENT_FLYOUT_LAYOUT = {
+  width: 280,
+  maxHeight: 320,
+  gap: 6,
+  viewportPadding: 8,
+  hoverCloseDelayMs: 120,
+} as const;
 
 export const FILE_PREVIEW_ACCEPT =
   ".pdf,.docx,.mp4,.mp3,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,audio/mpeg,audio/mp3";
