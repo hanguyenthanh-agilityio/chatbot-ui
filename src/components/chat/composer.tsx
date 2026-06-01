@@ -181,12 +181,14 @@ export function ChatComposer({
               )}
             >
               {attachmentMenu ? (
-                <ComposerAttachmentMenu
-                  disabled={!isProviderReady}
-                  fileInputRef={fileInputRef}
-                  onOpenFilePicker={() => fileInputRef.current?.click()}
-                  onFileSelected={attachmentMenu.onFileSelected}
-                />
+                <div className="shrink-0 self-center">
+                  <ComposerAttachmentMenu
+                    disabled={!isProviderReady}
+                    fileInputRef={fileInputRef}
+                    onOpenFilePicker={() => fileInputRef.current?.click()}
+                    onFileSelected={attachmentMenu.onFileSelected}
+                  />
+                </div>
               ) : null}
               <textarea
                 ref={textareaRef}

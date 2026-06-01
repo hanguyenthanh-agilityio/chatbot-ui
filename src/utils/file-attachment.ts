@@ -1,4 +1,8 @@
-import { FILE_PREVIEW_KIND, type FilePreviewKind } from "@/types/file-attachment";
+import {
+  FILE_PREVIEW_KIND,
+  type FilePreviewKind,
+  type LibraryRecentFile,
+} from "@/types/file-attachment";
 
 const EXTENSION_KIND: Record<string, FilePreviewKind> = {
   pdf: FILE_PREVIEW_KIND.PDF,
@@ -32,6 +36,13 @@ export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+export function formatLibraryFileMeta(file: LibraryRecentFile) {
+  const parts: string[] = [];
+  if (file.sizeBytes != null) parts.push(formatFileSize(file.sizeBytes));
+  if (file.lastUsedLabel) parts.push(file.lastUsedLabel);
+  return parts.join(" · ");
 }
 
 export function createAttachmentId(prefix: string) {
