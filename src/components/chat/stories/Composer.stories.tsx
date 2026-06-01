@@ -7,6 +7,7 @@ import {
   MOCK_CHAT_SAMPLE_MESSAGES,
   QUICK_ACTIONS_BY_ROLE,
 } from "@/constants/chat";
+import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
 import {
   STORYBOOK_THEME_GLOBAL,
   SHELL_BACKDROP_BLUR_28,
@@ -18,6 +19,7 @@ import {
   mockChatComposerProps,
   MOCK_COMPOSER_TOOLTIP,
 } from "@/mocks/chat-composer";
+import { MOCK_COMPOSER_ATTACHMENT } from "@/mocks/file-attachment";
 import { cn } from "@/utils/class-name";
 
 /** Chat panel shell — height hugs composer (no fake transcript spacer). */
@@ -255,5 +257,24 @@ export const Dark: Story = {
     initialInput: "List my pending requests",
     canSend: true,
     isProviderReady: true,
+  },
+};
+
+/** Composer with attachment menu and attached file chip. */
+export const WithFileAttachment: Story = {
+  args: {
+    initialInput: "Summarize this document",
+    canSend: true,
+    isProviderReady: true,
+    attachmentMenu: { onFileSelected: fn() },
+    attachedFile: MOCK_COMPOSER_ATTACHMENT,
+    onRemoveAttachedFile: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText(MOCK_COMPOSER_ATTACHMENT.name)).toBeInTheDocument();
+    await expect(
+      canvas.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+    ).toBeInTheDocument();
   },
 };

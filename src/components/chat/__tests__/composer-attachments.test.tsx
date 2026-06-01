@@ -2,10 +2,14 @@ import { createRef } from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ComposerAttachmentMenu } from "@/components/file-preview/composer-attachments";
-import { FILE_PREVIEW_COPY } from "@/lib/file-preview";
+import {
+  ComposerAttachmentChip,
+  ComposerAttachmentMenu,
+} from "@/components/chat/composer-attachments";
+import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
+import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
-function renderMenu() {
+function renderMenu(overrides: { recentFiles?: readonly [] } = {}) {
   const fileInputRef = createRef<HTMLInputElement>();
   const onOpenFilePicker = vi.fn();
   const onFileSelected = vi.fn();
@@ -15,6 +19,7 @@ function renderMenu() {
       fileInputRef={fileInputRef}
       onOpenFilePicker={onOpenFilePicker}
       onFileSelected={onFileSelected}
+      {...overrides}
     />,
   );
 
@@ -80,16 +85,7 @@ describe("ComposerAttachmentMenu", () => {
 
   it("shows empty state when there are no recent files", async () => {
     const user = userEvent.setup();
-    const fileInputRef = createRef<HTMLInputElement>();
-
-    render(
-      <ComposerAttachmentMenu
-        fileInputRef={fileInputRef}
-        onOpenFilePicker={vi.fn()}
-        onFileSelected={vi.fn()}
-        recentFiles={[]}
-      />,
-    );
+    renderMenu({ recentFiles: [] });
 
     await user.click(
       screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
@@ -99,5 +95,46 @@ describe("ComposerAttachmentMenu", () => {
     );
 
     expect(screen.getByText(FILE_PREVIEW_COPY.recentFilesEmpty)).toBeInTheDocument();
+  });
+
+  it("closes menu on Escape", async () => {
+    const user = userEvent.setup();
+    renderMenu();
+
+    await user.click(
+      screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+    );
+    expect(screen.getByRole("menu")).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
+});
+
+describe("ComposerAttachmentChip", () => {
+  afterEach(cleanup);
+
+  it("renders file name and remove control", async () => {
+    const user = userEvent.setup();
+    const onRemove = vi.fn();
+
+    render(
+      <ComposerAttachmentChip
+        file={{
+          id: "chip-1",
+          name: "policy.pdf",
+          kind: FILE_PREVIEW_KIND.PDF,
+        }}
+        onRemove={onRemove}
+      />,
+    );
+
+    expect(screen.getByText("policy.pdf")).toBeInTheDocument();
+    expect(screen.getByText("PDF")).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: FILE_PREVIEW_COPY.removeAttachmentLabel("policy.pdf") }),
+    );
+    expect(onRemove).toHaveBeenCalledTimes(1);
   });
 });
