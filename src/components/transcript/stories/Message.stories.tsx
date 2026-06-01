@@ -36,13 +36,13 @@ function TranscriptRow({
 }) {
   return (
     <article
-      className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}
+      className={`flex w-full gap-3 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser ? <MessageAvatar initials="EM" isUser={false} /> : null}
       <div
         className={
           isUser
-            ? "flex max-w-message-column-user flex-col items-end"
+            ? "flex min-w-0 max-w-message-column-user shrink-0 flex-col items-end"
             : "min-w-0 max-w-full flex-1"
         }
       >
@@ -68,69 +68,73 @@ function MessageUiPreview({
   assistantText,
   tablePreset,
 }: Args) {
-  switch (view) {
-    case "user":
-      return (
-        <TranscriptRow isUser>
-          <MessageBubble isUser text={userText} />
-        </TranscriptRow>
-      );
-    case "assistant":
-      return (
-        <TranscriptRow isUser={false}>
-          <MessageBubble isUser={false} text={assistantText} />
-        </TranscriptRow>
-      );
-    case "table":
-      return (
-        <TranscriptRow isUser={false}>
-          <MessageBubble isUser={false} fullWidth>
-            <ToolOutputTable
-              {...(tablePreset === "balance"
-                ? mockBalanceTableProps()
-                : mockMyRequestsTableProps())}
-              onActionClick={fn()}
+  const row = (() => {
+    switch (view) {
+      case "user":
+        return (
+          <TranscriptRow isUser>
+            <MessageBubble isUser text={userText} />
+          </TranscriptRow>
+        );
+      case "assistant":
+        return (
+          <TranscriptRow isUser={false}>
+            <MessageBubble isUser={false} text={assistantText} />
+          </TranscriptRow>
+        );
+      case "table":
+        return (
+          <TranscriptRow isUser={false}>
+            <MessageBubble isUser={false} fullWidth>
+              <ToolOutputTable
+                {...(tablePreset === "balance"
+                  ? mockBalanceTableProps()
+                  : mockMyRequestsTableProps())}
+                onActionClick={fn()}
+              />
+            </MessageBubble>
+          </TranscriptRow>
+        );
+      case "approval":
+        return (
+          <TranscriptRow isUser={false}>
+            <ToolApprovalCard
+              title={submitCopy.title}
+              description={Array.from(
+                { length: 4 },
+                () =>
+                  "Annual leave from 2026-07-01 to 2026-07-03. Reason: Family trip.",
+              ).join(" ")}
+              confirmLabel={submitCopy.confirmLabel}
+              cancelLabel={submitCopy.cancelLabel}
+              onConfirm={fn()}
+              onCancel={fn()}
             />
-          </MessageBubble>
-        </TranscriptRow>
-      );
-    case "approval":
-      return (
-        <TranscriptRow isUser={false}>
-          <ToolApprovalCard
-            title={submitCopy.title}
-            description={Array.from(
-              { length: 4 },
-              () =>
-                "Annual leave from 2026-07-01 to 2026-07-03. Reason: Family trip.",
-            ).join(" ")}
-            confirmLabel={submitCopy.confirmLabel}
-            cancelLabel={submitCopy.cancelLabel}
-            onConfirm={fn()}
-            onCancel={fn()}
-          />
-        </TranscriptRow>
-      );
-    case "thinking":
-      return (
-        <TranscriptRow isUser={false}>
-          <LoadingIndicator
-            showAvatar={false}
-            label="Thinking"
-            className="max-w-thread-thinking"
-          />
-        </TranscriptRow>
-      );
-    case "stopped":
-      return (
-        <TranscriptRow isUser={false}>
-          <MessageBubble
-            isUser={false}
-            placeholder={CHAT_TRANSCRIPT_COPY.responseStopped}
-          />
-        </TranscriptRow>
-      );
-  }
+          </TranscriptRow>
+        );
+      case "thinking":
+        return (
+          <TranscriptRow isUser={false}>
+            <LoadingIndicator
+              showAvatar={false}
+              label="Thinking"
+              className="max-w-thread-thinking"
+            />
+          </TranscriptRow>
+        );
+      case "stopped":
+        return (
+          <TranscriptRow isUser={false}>
+            <MessageBubble
+              isUser={false}
+              placeholder={CHAT_TRANSCRIPT_COPY.responseStopped}
+            />
+          </TranscriptRow>
+        );
+    }
+  })();
+
+  return <div className="mx-auto w-full max-w-3xl">{row}</div>;
 }
 
 const meta = {
