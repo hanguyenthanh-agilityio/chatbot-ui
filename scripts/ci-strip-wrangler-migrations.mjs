@@ -1,14 +1,7 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 
-const path = "wrangler.jsonc";
-const text = readFileSync(path, "utf8");
-
-// DO migrations must be applied via `wrangler deploy`, not `wrangler versions upload`.
-const stripped = text.replace(/\r?\n\t"migrations"\s*:\s*\[[\s\S]*?\],?\r?\n/, "\n");
-
-if (stripped === text) {
-  console.log("No migrations block to strip in wrangler.jsonc");
-} else {
-  writeFileSync(path, stripped);
-  console.log("Stripped migrations from wrangler.jsonc for versions upload");
-}
+const script = path.join(path.dirname(fileURLToPath(import.meta.url)), "ci-strip-wrangler-block.mjs");
+const result = spawnSync(process.execPath, [script, "migrations"], { stdio: "inherit" });
+process.exit(result.status ?? 1);

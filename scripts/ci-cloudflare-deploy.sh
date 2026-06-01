@@ -32,7 +32,7 @@ deploy_preview() {
   fi
 
   echo "::warning::wrangler versions upload failed; retrying without service bindings."
-  node scripts/ci-strip-wrangler-services.mjs
+  node scripts/ci-strip-wrangler-block.mjs services
   if pnpm exec wrangler versions upload --preview-alias "$alias"; then
     write_preview_summary "$alias"
     return 0
