@@ -1,20 +1,14 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { ComposerAttachment } from "@/lib/file-preview/types";
+import type { ComposerAttachment } from "@/types/file-attachment";
 import {
   createAttachmentId,
   inferFilePreviewKind,
   isSupportedPreviewKind,
-} from "@/lib/file-preview/utils";
+} from "@/utils/file-attachment";
 
-export type UseComposerAttachmentResult = {
-  attachedFile: ComposerAttachment | null;
-  attachFile: (file: File) => void;
-  clearAttachment: () => void;
-};
-
-export function useComposerAttachment(): UseComposerAttachmentResult {
+export function useComposerAttachment() {
   const [attachedFile, setAttachedFile] = useState<ComposerAttachment | null>(
     null,
   );
@@ -25,9 +19,7 @@ export function useComposerAttachment(): UseComposerAttachmentResult {
 
   const attachFile = useCallback((file: File) => {
     const kind = inferFilePreviewKind(file);
-    if (!isSupportedPreviewKind(kind)) {
-      return;
-    }
+    if (!isSupportedPreviewKind(kind)) return;
 
     setAttachedFile({
       id: createAttachmentId("attach"),
@@ -38,9 +30,5 @@ export function useComposerAttachment(): UseComposerAttachmentResult {
     });
   }, []);
 
-  return {
-    attachedFile,
-    attachFile,
-    clearAttachment,
-  };
+  return { attachedFile, attachFile, clearAttachment };
 }

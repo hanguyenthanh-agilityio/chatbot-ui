@@ -1,4 +1,4 @@
-import { FILE_PREVIEW_KIND, type FilePreviewKind } from "@/lib/file-preview/types";
+import { FILE_PREVIEW_KIND, type FilePreviewKind } from "@/types/file-attachment";
 
 const EXTENSION_KIND: Record<string, FilePreviewKind> = {
   pdf: FILE_PREVIEW_KIND.PDF,

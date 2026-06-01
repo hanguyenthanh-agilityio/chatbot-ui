@@ -17,13 +17,11 @@ export type ComposerAttachment = {
   mimeType?: string;
 };
 
-/** Saved file entry shown under Recent files (Library-backed in ChatGPT). */
 export type LibraryRecentFile = {
   id: string;
   name: string;
   kind: FilePreviewKind;
   sizeBytes?: number;
   mimeType?: string;
-  /** Relative label, e.g. "Yesterday" (ChatGPT shows recency in the list). */
   lastUsedLabel?: string;
 };

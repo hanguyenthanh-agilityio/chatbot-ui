@@ -138,3 +138,56 @@ export function CloseIcon({ className, strokeWidth = 1.75, ...props }: IconProps
     </svg>
   );
 }
+
+export function FileDocumentIcon({ className, strokeWidth = 1.5, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn(className)}
+      aria-hidden
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M7 4.5h6.8L16.5 8.2V19a1.25 1.25 0 01-1.25 1.25H7.25A1.25 1.25 0 016 19V5.75A1.25 1.25 0 017.25 4.5H7z" />
+      <path d="M14 4.5V8.2h3.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function FileVideoIcon({ className, strokeWidth = 1.5, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn(className)}
+      aria-hidden
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      {...props}
+    >
+      <rect x="5" y="7" width="14" height="10" rx="2" />
+      <path d="M11 10.5v5l4.5-2.5L11 10.5z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function FileAudioIcon({ className, strokeWidth = 1.5, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn(className)}
+      aria-hidden
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      {...props}
+    >
+      <path d="M9.5 8.5v8a2 2 0 11-4 0v-8" />
+      <path d="M9.5 8.5c0-2.5 2.5-4 5.5-2.5 1.5.8 2.5 2.4 2.5 4.2v5.3a2 2 0 11-4 0" />
+    </svg>
+  );
+}

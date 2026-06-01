@@ -27,7 +27,7 @@ import {
 } from "@/constants/chat";
 import { PROVIDER_HELPER_HINT_COPY } from "@/constants/provider";
 import { useChatAutoScroll } from "@/hooks/use-auto-scroll";
-import { useComposerAttachment } from "@/lib/file-preview";
+import { useComposerAttachment } from "@/hooks/use-composer-attachment";
 import { useChatThreads } from "@/hooks/use-threads";
 import { useProviderSelection } from "@/hooks/use-provider";
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
