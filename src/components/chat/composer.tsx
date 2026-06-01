@@ -14,8 +14,8 @@ import { ChatQuickActions } from "@/components/chat/quick-actions";
 import {
   ComposerAttachmentChip,
   ComposerAttachmentMenu,
-  type ComposerAttachment,
-} from "@/components/file-preview/composer-attachments";
+} from "@/components/chat/composer-attachments";
+import type { ComposerAttachment } from "@/types/file-attachment";
 
 // Constants
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
@@ -181,12 +181,14 @@ export function ChatComposer({
               )}
             >
               {attachmentMenu ? (
-                <ComposerAttachmentMenu
-                  disabled={!isProviderReady}
-                  fileInputRef={fileInputRef}
-                  onOpenFilePicker={() => fileInputRef.current?.click()}
-                  onFileSelected={attachmentMenu.onFileSelected}
-                />
+                <div className="shrink-0 self-center">
+                  <ComposerAttachmentMenu
+                    disabled={!isProviderReady}
+                    fileInputRef={fileInputRef}
+                    onOpenFilePicker={() => fileInputRef.current?.click()}
+                    onFileSelected={attachmentMenu.onFileSelected}
+                  />
+                </div>
               ) : null}
               <textarea
                 ref={textareaRef}
