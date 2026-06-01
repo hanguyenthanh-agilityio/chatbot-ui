@@ -11,6 +11,11 @@ import {
 // Components
 import { Text } from "@/components/ui/text";
 import { ChatQuickActions } from "@/components/chat/quick-actions";
+import {
+  ComposerAttachmentChip,
+  ComposerAttachmentMenu,
+  type ComposerAttachment,
+} from "@/components/file-preview/composer-attachments";
 
 // Constants
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
@@ -55,6 +60,11 @@ export type ChatComposerProps = {
   onStopAction: () => void;
   quickActions?: QuickAction[];
   onQuickActionSelect?: (prompt: string) => void;
+  attachmentMenu?: {
+    onFileSelected: (file: File) => void;
+  };
+  attachedFile?: ComposerAttachment | null;
+  onRemoveAttachedFile?: () => void;
 };
 
 export function ChatComposer({
@@ -70,8 +80,12 @@ export function ChatComposer({
   onStopAction,
   quickActions = [],
   onQuickActionSelect,
+  attachmentMenu,
+  attachedFile = null,
+  onRemoveAttachedFile,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [isMultiline, setIsMultiline] = useState(false);
 
@@ -149,12 +163,31 @@ export function ChatComposer({
           <form
             onSubmit={onSubmitAction}
             className={cn(
-              "flex w-full min-w-0 gap-3 rounded-composer-field px-4 py-2.5 shadow-composer-input backdrop-blur-xl bg-glass-input transition-all duration-200",
-              isMultiline ? "items-end" : "items-center",
+              "flex w-full min-w-0 flex-col gap-2 rounded-composer-field px-3 py-2.5 shadow-composer-input backdrop-blur-xl bg-glass-input transition-all duration-200 sm:px-4",
               FORM_FIELD_PANEL_CLASSES,
               "focus-within:border-violet-400/55 focus-within:ring-2 focus-within:ring-violet-400/20 light:focus-within:border-app-border-emphasis light:focus-within:ring-amber-700/25",
             )}
           >
+            {attachedFile && onRemoveAttachedFile ? (
+              <ComposerAttachmentChip
+                file={attachedFile}
+                onRemove={onRemoveAttachedFile}
+              />
+            ) : null}
+            <div
+              className={cn(
+                "flex w-full min-w-0 gap-2 sm:gap-3",
+                isMultiline ? "items-end" : "items-center",
+              )}
+            >
+            {attachmentMenu ? (
+              <ComposerAttachmentMenu
+                disabled={!isProviderReady}
+                fileInputRef={fileInputRef}
+                onOpenFilePicker={() => fileInputRef.current?.click()}
+                onFileSelected={attachmentMenu.onFileSelected}
+              />
+            ) : null}
             <textarea
               ref={textareaRef}
               value={input}
@@ -205,6 +238,7 @@ export function ChatComposer({
                   </svg>
                 </button>
               )}
+            </div>
             </div>
           </form>
         </div>

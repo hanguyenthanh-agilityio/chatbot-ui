@@ -112,6 +112,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     handleRoleChange,
     handleStop,
     handleResetChatPanel,
+    composerAttachment,
   } = useWorkspaceApp(authRole ?? "user", authSessions);
 
   const accountPanel = (
@@ -260,6 +261,11 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               isProviderReady={provider.isProviderReady}
               quickActions={quickActions}
               onQuickActionSelect={handlePromptSelect}
+              attachmentMenu={{
+                onFileSelected: composerAttachment.attachFile,
+              }}
+              attachedFile={composerAttachment.attachedFile}
+              onRemoveAttachedFile={composerAttachment.clearAttachment}
               inputTooltip={
                 !provider.isProviderReady
                   ? CHAT_COMPOSER_COPY.verifyProviderTooltip

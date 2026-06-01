@@ -27,6 +27,7 @@ import {
 } from "@/constants/chat";
 import { PROVIDER_HELPER_HINT_COPY } from "@/constants/provider";
 import { useChatAutoScroll } from "@/hooks/use-auto-scroll";
+import { useComposerAttachment } from "@/lib/file-preview";
 import { useChatThreads } from "@/hooks/use-threads";
 import { useProviderSelection } from "@/hooks/use-provider";
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
@@ -47,6 +48,7 @@ export function useWorkspaceApp(
   const provider = useProviderSelection({
     requireOpenAIApiKeyVerification: REQUIRE_OPENAI_KEY_VERIFICATION,
   });
+  const composerAttachment = useComposerAttachment();
   const authSession = authSessions[selectedRole] ?? authSessions.user;
   const auth = useMemo(
     () => ({
@@ -299,5 +301,6 @@ export function useWorkspaceApp(
     handleRoleChange,
     handleStop,
     handleResetChatPanel,
+    composerAttachment,
   };
 }
