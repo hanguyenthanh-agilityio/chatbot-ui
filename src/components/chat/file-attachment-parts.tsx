@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import {
   FileAudioIcon,
   FileDocumentIcon,
+  FileImageIcon,
   FileVideoIcon,
 } from "@/components/ui/icons";
 import {
@@ -23,6 +24,7 @@ import { cn } from "@/utils/class-name";
 function fileKindIconComponent(kind: FilePreviewKind) {
   if (kind === FILE_PREVIEW_KIND.MP4) return FileVideoIcon;
   if (kind === FILE_PREVIEW_KIND.MP3) return FileAudioIcon;
+  if (kind === FILE_PREVIEW_KIND.IMAGE) return FileImageIcon;
   return FileDocumentIcon;
 }
 

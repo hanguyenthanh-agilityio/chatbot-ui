@@ -8,6 +8,7 @@ import { ProviderSelector } from "@/components/chat/provider-selector";
 import { ChatComposer } from "@/components/chat/composer";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ChatTranscript } from "@/components/transcript";
+import { FilePreviewPanel } from "@/components/chat/file-preview-panel";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Toast } from "@/components/ui/toast";
@@ -165,7 +166,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           {/* Tools (compact) — left rail */}
           <aside
             className={cn(
-              "flex min-h-0 flex-col overflow-hidden rounded-shell border backdrop-blur-shell shadow-shell !px-2",
+              "flex min-h-0 flex-col overflow-hidden rounded-shell border backdrop-blur-shell shadow-shell px-2!",
               "bg-glass-panel",
               THEME_SHELL_UTILITIES.border,
               THEME_SHELL_UTILITIES.text,
@@ -279,19 +280,26 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             />
           </section>
 
-          {/* Nav — right rail */}
-          <ThreadSidebar
-            variant="nav"
-            activeThread={activeThread}
-            allThreads={allThreads}
-            disabled={isLoading}
-            accountPanel={null}
-            providerPanel={null}
-            headerActions={null}
-            onSwitchThread={switchThread}
-            onCreateThread={createNewThread}
-            onDeleteThread={deleteThread}
-          />
+          {/* Column 3 (right rail): threads OR file preview */}
+          {composerAttachment.attachedFile ? (
+            <FilePreviewPanel
+              file={composerAttachment.attachedFile}
+              onClose={composerAttachment.clearAttachment}
+            />
+          ) : (
+            <ThreadSidebar
+              variant="nav"
+              activeThread={activeThread}
+              allThreads={allThreads}
+              disabled={isLoading}
+              accountPanel={null}
+              providerPanel={null}
+              headerActions={null}
+              onSwitchThread={switchThread}
+              onCreateThread={createNewThread}
+              onDeleteThread={deleteThread}
+            />
+          )}
         </div>
       </div>
     </main>

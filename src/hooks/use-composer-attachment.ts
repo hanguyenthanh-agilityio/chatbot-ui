@@ -27,6 +27,7 @@ export function useComposerAttachment() {
       kind,
       sizeBytes: file.size,
       mimeType: file.type || undefined,
+      rawFile: file,
     });
   }, []);
 

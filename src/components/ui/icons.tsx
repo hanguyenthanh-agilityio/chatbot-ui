@@ -191,3 +191,23 @@ export function FileAudioIcon({ className, strokeWidth = 1.5, ...props }: IconPr
     </svg>
   );
 }
+
+export function FileImageIcon({ className, strokeWidth = 1.5, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={cn(className)}
+      aria-hidden
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <rect x="5" y="6.5" width="14" height="11" rx="2" />
+      <path d="M9.2 11.1a1.1 1.1 0 11-2.2 0 1.1 1.1 0 012.2 0z" fill="currentColor" stroke="none" />
+      <path d="M7 16l3.6-3.8a1 1 0 011.4 0L15.5 16l1.3-1.3a1 1 0 011.4 0L19 15.5" />
+    </svg>
+  );
+}

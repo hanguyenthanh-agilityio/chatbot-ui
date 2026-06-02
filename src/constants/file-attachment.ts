@@ -6,6 +6,7 @@ import type {
 import { cn } from "@/utils/class-name";
 
 export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
+  [FILE_PREVIEW_KIND.IMAGE]: "IMAGE",
   [FILE_PREVIEW_KIND.PDF]: "PDF",
   [FILE_PREVIEW_KIND.DOCX]: "DOCX",
   [FILE_PREVIEW_KIND.MP4]: "MP4",
@@ -14,6 +15,7 @@ export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
 };
 
 export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
+  [FILE_PREVIEW_KIND.IMAGE]: "bg-amber-500",
   [FILE_PREVIEW_KIND.PDF]: "bg-red-500",
   [FILE_PREVIEW_KIND.DOCX]: "bg-blue-500",
   [FILE_PREVIEW_KIND.MP4]: "bg-violet-500",
@@ -67,7 +69,7 @@ export const RECENT_FLYOUT_LAYOUT = {
 } as const;
 
 export const FILE_PREVIEW_ACCEPT =
-  ".pdf,.docx,.mp4,.mp3,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,audio/mpeg,audio/mp3";
+  ".png,.jpg,.jpeg,.gif,.webp,.pdf,.docx,.mp4,.mp3,image/png,image/jpeg,image/gif,image/webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,audio/mpeg,audio/mp3";
 
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
