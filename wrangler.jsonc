@@ -37,10 +37,12 @@
 		]
 	},
 	"migrations": [
-		{
-			"tag": "v1",
-			"new_classes": ["OpenAIValidationDO"]
-		}
+  	{
+    	"tag": "v1",
+    	"new_sqlite_classes": [
+      	"OpenAIValidationDO"
+    	]
+  	}
 	],
 	"vars": {
 		"COMPANY_SYSTEM_BASE_URL": "https://ai-sdk-company-system.ha-nguyenthanh.workers.dev",
