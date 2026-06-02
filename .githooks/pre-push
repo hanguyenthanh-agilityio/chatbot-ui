@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Block pushing CI-only paths to GitLab (origin). Use `git push github` for Cloudflare build scripts.
+set -euo pipefail
+
+remote_name="${1:-}"
+if [ "$remote_name" != "origin" ]; then
+  exit 0
+fi
+
+blocked_pattern='^(scripts/|\.github/)'
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "0000000000000000000000000000000000000000" ] && continue
+
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    range="$local_sha"
+  else
+    range="${remote_sha}..${local_sha}"
+  fi
+
+  if git diff --name-only $range | grep -qE "$blocked_pattern"; then
+    echo "pre-push: blocked push to GitLab (origin) — commits change scripts/ or .github/." >&2
+    echo "pre-push: push app/test code with: git push origin <branch> (without those paths)" >&2
+    echo "pre-push: push CI/build changes with: git push github <branch>" >&2
+    exit 1
+  fi
+done
+
+exit 0
