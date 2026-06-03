@@ -1,7 +1,14 @@
-import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
 
-const script = path.join(path.dirname(fileURLToPath(import.meta.url)), "ci-strip-wrangler-block.mjs");
-const result = spawnSync(process.execPath, [script, "services"], { stdio: "inherit" });
-process.exit(result.status ?? 1);
+const path = "wrangler.jsonc";
+const text = readFileSync(path, "utf8");
+
+// Remove the services block (OpenNext self-reference) so wrangler skips workers/services API.
+const stripped = text.replace(/\r?\n\t"services"\s*:\s*\[[\s\S]*?\],?\r?\n/, "\n");
+
+if (stripped === text) {
+  console.log("No services block to strip in wrangler.jsonc");
+} else {
+  writeFileSync(path, stripped);
+  console.log("Stripped services from wrangler.jsonc for fallback deploy");
+}

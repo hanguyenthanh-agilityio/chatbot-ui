@@ -15,8 +15,6 @@ on:
     branches:
       - fix/redeploy-cloudflare
       - feat/quick-actions-above-composer
-      - feat/composer-file-attachment
-      - feat/composer-file-attachment-tests
       - main
   workflow_dispatch:
 
