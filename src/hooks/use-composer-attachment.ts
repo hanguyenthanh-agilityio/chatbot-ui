@@ -8,6 +8,10 @@ import {
   isSupportedPreviewKind,
 } from "@/utils/file-attachment";
 
+/**
+ * Holds the single file attached to the composer (metadata only).
+ * Menu UI is handled by useComposerAttachmentMenu.
+ */
 export function useComposerAttachment() {
   const [attachedFile, setAttachedFile] = useState<ComposerAttachment | null>(
     null,
@@ -19,6 +23,7 @@ export function useComposerAttachment() {
 
   const attachFile = useCallback((file: File) => {
     const kind = inferFilePreviewKind(file);
+    // Ignore unsupported types (e.g. .zip) — no chip is shown.
     if (!isSupportedPreviewKind(kind)) return;
 
     setAttachedFile({
