@@ -8,6 +8,11 @@ import {
 import type { CSSProperties } from "react";
 
 const EXTENSION_KIND: Record<string, FilePreviewKind> = {
+  png: FILE_PREVIEW_KIND.IMAGE,
+  jpg: FILE_PREVIEW_KIND.IMAGE,
+  jpeg: FILE_PREVIEW_KIND.IMAGE,
+  gif: FILE_PREVIEW_KIND.IMAGE,
+  webp: FILE_PREVIEW_KIND.IMAGE,
   pdf: FILE_PREVIEW_KIND.PDF,
   docx: FILE_PREVIEW_KIND.DOCX,
   mp4: FILE_PREVIEW_KIND.MP4,
@@ -15,6 +20,10 @@ const EXTENSION_KIND: Record<string, FilePreviewKind> = {
 };
 
 const MIME_KIND: Record<string, FilePreviewKind> = {
+  "image/png": FILE_PREVIEW_KIND.IMAGE,
+  "image/jpeg": FILE_PREVIEW_KIND.IMAGE,
+  "image/gif": FILE_PREVIEW_KIND.IMAGE,
+  "image/webp": FILE_PREVIEW_KIND.IMAGE,
   "application/pdf": FILE_PREVIEW_KIND.PDF,
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
     FILE_PREVIEW_KIND.DOCX,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 // Components
 import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
@@ -8,6 +8,7 @@ import { ProviderSelector } from "@/components/chat/provider-selector";
 import { ChatComposer } from "@/components/chat/composer";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ChatTranscript } from "@/components/transcript";
+import { FilePreviewPanel } from "@/components/chat/file-preview-panel";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Toast } from "@/components/ui/toast";
@@ -115,6 +116,26 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     composerAttachment,
   } = useWorkspaceApp(authRole ?? "user", authSessions);
 
+  const [isFilePreviewOpen, setIsFilePreviewOpen] = useState(false);
+
+  const handleAttachFile = (file: File) => {
+    composerAttachment.attachFile(file);
+    setIsFilePreviewOpen(true);
+  };
+
+  const handleRemoveAttachedFile = () => {
+    setIsFilePreviewOpen(false);
+    composerAttachment.clearAttachment();
+  };
+
+  const handleOpenAttachedFilePreview = () => {
+    setIsFilePreviewOpen(true);
+  };
+
+  const handleCloseFilePreview = () => {
+    setIsFilePreviewOpen(false);
+  };
+
   const accountPanel = (
     <AuthPanel
       role={auth.role}
@@ -165,7 +186,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           {/* Tools (compact) — left rail */}
           <aside
             className={cn(
-              "flex min-h-0 flex-col overflow-hidden rounded-shell border backdrop-blur-shell shadow-shell !px-2",
+              "flex min-h-0 flex-col overflow-hidden rounded-shell border backdrop-blur-shell shadow-shell px-2!",
               "bg-glass-panel",
               THEME_SHELL_UTILITIES.border,
               THEME_SHELL_UTILITIES.text,
@@ -262,10 +283,11 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               quickActions={quickActions}
               onQuickActionSelect={handlePromptSelect}
               attachmentMenu={{
-                onFileSelected: composerAttachment.attachFile,
+                onFileSelected: handleAttachFile,
               }}
               attachedFile={composerAttachment.attachedFile}
-              onRemoveAttachedFile={composerAttachment.clearAttachment}
+              onOpenAttachedFilePreview={handleOpenAttachedFilePreview}
+              onRemoveAttachedFile={handleRemoveAttachedFile}
               inputTooltip={
                 !provider.isProviderReady
                   ? CHAT_COMPOSER_COPY.verifyProviderTooltip
@@ -279,19 +301,26 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             />
           </section>
 
-          {/* Nav — right rail */}
-          <ThreadSidebar
-            variant="nav"
-            activeThread={activeThread}
-            allThreads={allThreads}
-            disabled={isLoading}
-            accountPanel={null}
-            providerPanel={null}
-            headerActions={null}
-            onSwitchThread={switchThread}
-            onCreateThread={createNewThread}
-            onDeleteThread={deleteThread}
-          />
+          {/* Column 3 (right rail): threads OR file preview */}
+          {isFilePreviewOpen && composerAttachment.attachedFile ? (
+            <FilePreviewPanel
+              file={composerAttachment.attachedFile}
+              onClose={handleCloseFilePreview}
+            />
+          ) : (
+            <ThreadSidebar
+              variant="nav"
+              activeThread={activeThread}
+              allThreads={allThreads}
+              disabled={isLoading}
+              accountPanel={null}
+              providerPanel={null}
+              headerActions={null}
+              onSwitchThread={switchThread}
+              onCreateThread={createNewThread}
+              onDeleteThread={deleteThread}
+            />
+          )}
         </div>
       </div>
     </main>
