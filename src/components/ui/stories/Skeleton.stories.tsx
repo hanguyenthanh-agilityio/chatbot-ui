@@ -1,18 +1,13 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const panelDecorator: Decorator = (Story) => (
-  <div className="w-64 space-y-2 rounded-2xl border border-white/10 bg-glass-panel p-6 text-white light:border-app-border">
-    <Story />
-  </div>
-);
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
 
 const meta = {
   title: "UI/Skeleton",
   component: Skeleton,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
+    ...STORYBOOK_INLINE_CANVAS_PARAMETERS,
     docs: {
       description: {
         component:
@@ -20,7 +15,13 @@ const meta = {
       },
     },
   },
-  decorators: [panelDecorator],
+  decorators: [
+    (Story) => (
+      <div className="inline-flex w-64 flex-col gap-2 rounded-2xl border border-white/10 bg-glass-panel p-6 text-white light:border-app-border">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof Skeleton>;
 
 export default meta;

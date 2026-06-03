@@ -3,7 +3,6 @@ import { createRef } from "react";
 import { ChatTranscript } from "@/components/transcript";
 import {
   MOCK_CHAT_SAMPLE_MESSAGES,
-  QUICK_ACTIONS_BY_ROLE,
 } from "@/constants/chat";
 import {
   mockAssistantTextMessage,
@@ -19,7 +18,6 @@ export function mockChatTranscriptProps(
     containerRef: createRef<HTMLDivElement>() as RefObject<HTMLDivElement>,
     messages: [],
     isLoading: false,
-    quickActions: QUICK_ACTIONS_BY_ROLE.user,
     onSelectPrompt: () => {},
     onToolApproval: () => {},
     ...overrides,

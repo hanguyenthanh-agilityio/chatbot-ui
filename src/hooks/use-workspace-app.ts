@@ -27,10 +27,16 @@ import {
 } from "@/constants/chat";
 import { PROVIDER_HELPER_HINT_COPY } from "@/constants/provider";
 import { useChatAutoScroll } from "@/hooks/use-auto-scroll";
+import { useComposerAttachment } from "@/hooks/use-composer-attachment";
 import { useChatThreads } from "@/hooks/use-threads";
 import { useProviderSelection } from "@/hooks/use-provider";
 import type { AppRole, MockAuthSession } from "@/lib/auth/session";
+import { isProductionLike } from "@/lib/runtime-env";
 import { getDisplayErrorMessage } from "@/utils/error";
+
+const REQUIRE_OPENAI_KEY_VERIFICATION =
+  !isProductionLike() ||
+  process.env.NEXT_PUBLIC_OPENAI_SERVER_READY !== "true";
 
 export function useWorkspaceApp(
   authRole: AppRole,
@@ -40,8 +46,9 @@ export function useWorkspaceApp(
   const [selectedRole, setSelectedRole] = useState<AppRole>(authRole ?? "user");
   const autoSubmittedApprovalIdsRef = useRef<Set<string>>(new Set());
   const provider = useProviderSelection({
-    requireOpenAIApiKeyVerification: true,
+    requireOpenAIApiKeyVerification: REQUIRE_OPENAI_KEY_VERIFICATION,
   });
+  const composerAttachment = useComposerAttachment();
   const authSession = authSessions[selectedRole] ?? authSessions.user;
   const auth = useMemo(
     () => ({
@@ -125,6 +132,7 @@ export function useWorkspaceApp(
     switchThread,
     createNewThread,
     deleteThread,
+    resetActiveThread,
   } = useChatThreads({
     messages,
     setMessages,
@@ -227,6 +235,15 @@ export function useWorkspaceApp(
     clearError();
   }
 
+  function handleResetChatPanel() {
+    if (isLoading) {
+      stop();
+    }
+    clearError();
+    setInput("");
+    resetActiveThread();
+  }
+
   function handleRoleChange(role: AppRole) {
     if (role === selectedRole) {
       return;
@@ -283,5 +300,7 @@ export function useWorkspaceApp(
     handleToolApproval,
     handleRoleChange,
     handleStop,
+    handleResetChatPanel,
+    composerAttachment,
   };
 }

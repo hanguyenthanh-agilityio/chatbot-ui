@@ -1,4 +1,4 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { fn } from "storybook/test";
 import {
   Badge,
@@ -6,12 +6,8 @@ import {
   BADGE_VARIANT_OPTIONS,
   type BadgeVariant,
 } from "@/components/ui/badge";
-
-const panelDecorator: Decorator = (Story) => (
-  <div className="rounded-2xl border border-white/10 bg-glass-panel p-6 text-white">
-    <Story />
-  </div>
-);
+import { inStorybookUiPanel } from "@/mocks/storybook";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
 
 function VariantGrid({
   variants = BADGE_VARIANT_OPTIONS,
@@ -33,7 +29,7 @@ const meta = {
   title: "UI/Badge",
   component: Badge,
   parameters: {
-    layout: "centered",
+    ...STORYBOOK_INLINE_CANVAS_PARAMETERS,
     a11y: {
       config: {
         rules: [{ id: "color-contrast", enabled: true }],
@@ -61,7 +57,7 @@ const meta = {
     className: { control: "text", table: { category: "Appearance" } },
     onClick: { table: { category: "Actions" } },
   },
-  decorators: [panelDecorator],
+  decorators: [inStorybookUiPanel],
 } satisfies Meta<typeof Badge>;
 
 export default meta;

@@ -24,7 +24,11 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html", "lcov"],
       reportsDirectory: "./coverage",
-      include: ["src/components/**/*.tsx"],
+      include: [
+        "src/components/**/*.tsx",
+        "src/hooks/**/*.ts",
+        "src/utils/**/*.ts",
+      ],
       exclude: [
         "src/**/*.stories.{ts,tsx}",
         "src/**/*.test.{ts,tsx}",
@@ -39,7 +43,12 @@ export default defineConfig({
           name: "unit",
           environment: "jsdom",
           setupFiles: [path.join(dirname, "vitest.setup.ts")],
-          include: ["src/components/**/*.test.{ts,tsx}"],
+          include: [
+            "src/components/**/*.test.{ts,tsx}",
+            "src/hooks/**/*.test.{ts,tsx}",
+            "src/utils/**/*.test.{ts,tsx}",
+            "src/lib/**/*.test.{ts,tsx}",
+          ],
         },
       },
       {

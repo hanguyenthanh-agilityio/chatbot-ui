@@ -16,7 +16,6 @@ const meta = {
   component: ToolOutputTable,
   tags: ["autodocs"],
   parameters: {
-    layout: "centered",
     docs: {
       description: {
         component:

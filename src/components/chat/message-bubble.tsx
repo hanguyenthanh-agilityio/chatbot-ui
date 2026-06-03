@@ -36,7 +36,7 @@ export function MessageBubble({
         "rounded-2xl border px-4 py-2.5 text-sm leading-relaxed shadow-bubble-assistant backdrop-blur-md",
         "border-white/11 bg-bubble-assistant text-white/88",
         "light:border-app-border light:text-app-fg light:backdrop-blur-none",
-        fullWidth ? "max-w-full" : "max-w-bubble-assistant",
+        fullWidth ? "w-full max-w-full" : "w-fit max-w-full",
       )}
     >
       {text ? <span className="whitespace-pre-wrap">{text}</span> : null}
