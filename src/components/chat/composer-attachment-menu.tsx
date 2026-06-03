@@ -10,7 +10,6 @@ import {
   PlusIcon,
   UploadIcon,
 } from "@/components/ui/icons";
-import { AttachmentMenuIcon } from "./attachment-menu-icon";
 import { RecentFilesFlyout } from "./recent-files-flyout";
 import { isBrowser } from "@/lib/browser";
 import {
@@ -28,6 +27,12 @@ import { useComposerAttachmentMenu } from "@/hooks/use-composer-attachment-menu"
 import type { LibraryRecentFile } from "@/types/file-attachment";
 import { cn } from "@/utils/class-name";
 import { readSelectedFileFromInput } from "@/utils/file-attachment";
+
+const menuItemIconBoxClass = cn(
+  "grid h-9 w-9 shrink-0 place-items-center rounded-lg border",
+  "border-white/10 bg-white/6 text-white/75",
+  "light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-muted",
+);
 
 export function ComposerAttachmentMenu({
   disabled = false,
@@ -127,9 +132,9 @@ export function ComposerAttachmentMenu({
               closeMenu();
             }}
           >
-            <AttachmentMenuIcon>
+            <span className={menuItemIconBoxClass} aria-hidden>
               <UploadIcon className={COMPOSER_ATTACH_ICON_LG_CLASS} />
-            </AttachmentMenuIcon>
+            </span>
             <span className={COMPOSER_ATTACH_MENU_ITEM_LABEL_CLASS}>
               {FILE_PREVIEW_COPY.addFilesLabel}
             </span>
@@ -151,9 +156,9 @@ export function ComposerAttachmentMenu({
                 isRecentOpen && "bg-white/8 light:bg-app-hover",
               )}
             >
-              <AttachmentMenuIcon>
+              <span className={menuItemIconBoxClass} aria-hidden>
                 <ClockIcon className={COMPOSER_ATTACH_ICON_LG_CLASS} />
-              </AttachmentMenuIcon>
+              </span>
               <span className={COMPOSER_ATTACH_MENU_ITEM_LABEL_CLASS}>
                 {FILE_PREVIEW_COPY.recentFilesLabel}
               </span>
