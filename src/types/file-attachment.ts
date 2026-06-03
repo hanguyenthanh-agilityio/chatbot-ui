@@ -1,4 +1,5 @@
 export const FILE_PREVIEW_KIND = {
+  IMAGE: "image",
   PDF: "pdf",
   DOCX: "docx",
   MP4: "mp4",
@@ -15,6 +16,11 @@ export type BaseAttachment = {
   kind: FilePreviewKind;
   sizeBytes?: number;
   mimeType?: string;
+  /**
+   * Keep the original File so preview UIs can create an object URL.
+   * (Client-only; never sent to the server.)
+   */
+  rawFile?: File;
 };
 
 export type ComposerAttachment = BaseAttachment;
