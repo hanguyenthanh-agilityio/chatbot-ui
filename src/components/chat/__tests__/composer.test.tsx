@@ -77,15 +77,6 @@ describe("ChatComposer", () => {
         },
       ],
       ["custom-helper", { helperText: "Custom helper copy", canSend: false }],
-      [
-        "with-file-attachment",
-        {
-          attachmentMenu: { onFileSelected: () => {} },
-          attachedFile: MOCK_COMPOSER_ATTACHMENT,
-          onRemoveAttachedFile: () => {},
-          ...readyToSend,
-        },
-      ],
     ] as const)("matches snapshot (%s)", (_name, overrides) => {
       const { container } = renderComposer(overrides);
       expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();

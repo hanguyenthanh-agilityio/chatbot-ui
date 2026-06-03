@@ -63,6 +63,7 @@ export type ChatComposerProps = {
     onFileSelected: (file: File) => void;
   };
   attachedFile?: ComposerAttachment | null;
+  onOpenAttachedFilePreview?: () => void;
   onRemoveAttachedFile?: () => void;
 };
 
@@ -81,6 +82,7 @@ export function ChatComposer({
   onQuickActionSelect,
   attachmentMenu,
   attachedFile = null,
+  onOpenAttachedFilePreview,
   onRemoveAttachedFile,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -170,6 +172,7 @@ export function ChatComposer({
             {attachedFile && onRemoveAttachedFile ? (
               <ComposerAttachmentChip
                 file={attachedFile}
+                onOpenPreview={onOpenAttachedFilePreview}
                 onRemove={onRemoveAttachedFile}
               />
             ) : null}
