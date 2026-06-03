@@ -2,10 +2,8 @@ import { createRef } from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  ComposerAttachmentChip,
-  ComposerAttachmentMenu,
-} from "@/components/chat/composer-attachments";
+import { ComposerAttachmentChip } from "@/components/chat/composer-attachment-chip";
+import { ComposerAttachmentMenu } from "@/components/chat/composer-attachment-menu";
 import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 

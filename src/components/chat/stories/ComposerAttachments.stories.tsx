@@ -1,10 +1,8 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/nextjs-vite";
 import { createRef } from "react";
 import { expect, fn, userEvent, within } from "storybook/test";
-import {
-  ComposerAttachmentChip,
-  ComposerAttachmentMenu,
-} from "@/components/chat/composer-attachments";
+import { ComposerAttachmentChip } from "@/components/chat/composer-attachment-chip";
+import { ComposerAttachmentMenu } from "@/components/chat/composer-attachment-menu";
 import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
 import {
   STORYBOOK_THEME_GLOBAL,
