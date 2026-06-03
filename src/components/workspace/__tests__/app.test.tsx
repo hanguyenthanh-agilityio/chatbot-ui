@@ -111,6 +111,11 @@ function mockWorkspaceState(overrides: Record<string, unknown> = {}) {
     handleRoleChange: vi.fn(),
     handleStop: vi.fn(),
     handleResetChatPanel: vi.fn(),
+    composerAttachment: {
+      attachedFile: null,
+      attachFile: vi.fn(),
+      clearAttachment: vi.fn(),
+    },
     ...overrides,
   };
 }

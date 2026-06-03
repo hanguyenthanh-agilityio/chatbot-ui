@@ -529,6 +529,7 @@
   --layout-chat-empty-max: 32.5rem;
   --layout-loading-card-width: 18.75rem;
   --layout-composer-textarea-max-height: 9.375rem;
+  --layout-file-preview-image-max-height: calc(100dvh - 16rem);
   --layout-chat-viewport-height: 70vh;
   --layout-page-min-sm: calc(100vh - 1.5rem);
   --layout-page-min-md: calc(100vh - 2.5rem);
@@ -644,6 +645,7 @@
   --min-height-page-dvh: var(--layout-page-min-dvh);
   --min-height-preview: var(--layout-min-preview);
   --max-height-composer-textarea: var(--layout-composer-textarea-max-height);
+  --max-height-file-preview-image: var(--layout-file-preview-image-max-height);
   --radius-shell: var(--layout-radius-shell);
   --radius-composer-field: var(--layout-radius-composer-field);
   --radius-bubble-user: var(--layout-radius-bubble-user);

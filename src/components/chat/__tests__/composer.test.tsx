@@ -12,6 +12,8 @@ import {
   mockChatComposerProps,
   MOCK_COMPOSER_TOOLTIP,
 } from "@/mocks/chat-composer";
+import { MOCK_COMPOSER_ATTACHMENT } from "@/mocks/file-attachment";
+import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
 
 const { ariaLabel, defaultHelperText, sendButtonLabel } = CHAT_COMPOSER_COPY;
 
@@ -75,6 +77,15 @@ describe("ChatComposer", () => {
         },
       ],
       ["custom-helper", { helperText: "Custom helper copy", canSend: false }],
+      [
+        "with-file-attachment",
+        {
+          attachmentMenu: { onFileSelected: () => {} },
+          attachedFile: MOCK_COMPOSER_ATTACHMENT,
+          onRemoveAttachedFile: () => {},
+          ...readyToSend,
+        },
+      ],
     ] as const)("matches snapshot (%s)", (_name, overrides) => {
       const { container } = renderComposer(overrides);
       expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
@@ -160,6 +171,20 @@ describe("ChatComposer", () => {
       await user.click(getTooltipWrapper());
       expectTooltipVisible();
     });
+  });
+
+  it("renders attachment menu and chip when configured", () => {
+    renderComposer({
+      attachmentMenu: { onFileSelected: vi.fn() },
+      attachedFile: MOCK_COMPOSER_ATTACHMENT,
+      onRemoveAttachedFile: vi.fn(),
+      ...readyToSend,
+    });
+
+    expect(screen.getByText(MOCK_COMPOSER_ATTACHMENT.name)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+    ).toBeInTheDocument();
   });
 
   it("renders quick actions above the input when provided", () => {
