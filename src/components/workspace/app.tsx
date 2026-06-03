@@ -118,15 +118,23 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
 
   const [isFilePreviewOpen, setIsFilePreviewOpen] = useState(false);
 
-  function handleAttachFile(file: File) {
+  const handleAttachFile = (file: File) => {
     composerAttachment.attachFile(file);
     setIsFilePreviewOpen(true);
-  }
+  };
 
-  function handleRemoveAttachedFile() {
+  const handleRemoveAttachedFile = () => {
     setIsFilePreviewOpen(false);
     composerAttachment.clearAttachment();
-  }
+  };
+
+  const handleOpenAttachedFilePreview = () => {
+    setIsFilePreviewOpen(true);
+  };
+
+  const handleCloseFilePreview = () => {
+    setIsFilePreviewOpen(false);
+  };
 
   const accountPanel = (
     <AuthPanel
@@ -278,7 +286,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
                 onFileSelected: handleAttachFile,
               }}
               attachedFile={composerAttachment.attachedFile}
-              onOpenAttachedFilePreview={() => setIsFilePreviewOpen(true)}
+              onOpenAttachedFilePreview={handleOpenAttachedFilePreview}
               onRemoveAttachedFile={handleRemoveAttachedFile}
               inputTooltip={
                 !provider.isProviderReady
@@ -297,7 +305,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           {isFilePreviewOpen && composerAttachment.attachedFile ? (
             <FilePreviewPanel
               file={composerAttachment.attachedFile}
-              onClose={() => setIsFilePreviewOpen(false)}
+              onClose={handleCloseFilePreview}
             />
           ) : (
             <ThreadSidebar

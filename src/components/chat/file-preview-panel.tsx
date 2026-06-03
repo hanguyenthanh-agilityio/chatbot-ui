@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CloseIcon } from "@/components/ui/icons";
@@ -12,6 +13,22 @@ import { FILE_PREVIEW_KIND, type ComposerAttachment } from "@/types/file-attachm
 import { formatFileSize } from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
+const PREVIEW_FRAME_CLASS = cn(
+  "rounded-2xl border p-1 sm:p-1.5",
+  "bg-white/2 light:bg-app-surface-subtle",
+  THEME_SHELL_UTILITIES.borderSubtle,
+);
+
+const IMAGE_FALLBACK_CLASS = cn(
+  PREVIEW_FRAME_CLASS,
+  "flex min-h-preview flex-col items-center justify-center gap-3 px-6 py-10 text-center",
+);
+
+type ImagePreviewState = {
+  file: File;
+  url: string;
+};
+
 export function FilePreviewPanel({
   file,
   onClose,
@@ -20,18 +37,38 @@ export function FilePreviewPanel({
   onClose: () => void;
 }) {
   const meta = file.sizeBytes != null ? formatFileSize(file.sizeBytes) : null;
-  const [objectUrl, setObjectUrl] = useState<string | null>(null);
+  const imageFile =
+    file.kind === FILE_PREVIEW_KIND.IMAGE ? file.rawFile : undefined;
+  const [preview, setPreview] = useState<ImagePreviewState | null>(null);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   useEffect(() => {
-    if (file.kind !== FILE_PREVIEW_KIND.IMAGE || !file.rawFile) {
-      setObjectUrl(null);
-      return;
-    }
+    if (!imageFile) return;
 
-    const url = URL.createObjectURL(file.rawFile);
-    setObjectUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file.kind, file.rawFile]);
+    let cancelled = false;
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (cancelled || typeof reader.result !== "string") return;
+
+      setPreview({ file: imageFile, url: reader.result });
+      setImageLoadFailed(false);
+    };
+
+    reader.onerror = () => {
+      if (!cancelled) setImageLoadFailed(true);
+    };
+
+    reader.readAsDataURL(imageFile);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [imageFile]);
+
+  const objectUrl =
+    imageFile && preview?.file === imageFile ? preview.url : null;
+  const showImage = objectUrl != null && !imageLoadFailed;
 
   return (
     <aside
@@ -87,30 +124,27 @@ export function FilePreviewPanel({
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3 sm:px-3 sm:py-4">
-        {/* Preview area: full-width within column 3 */}
         {file.kind === FILE_PREVIEW_KIND.IMAGE ? (
-          objectUrl ? (
-            <div
-              className={cn(
-                "rounded-2xl border p-1 sm:p-1.5",
-                "bg-white/2 light:bg-app-surface-subtle",
-                THEME_SHELL_UTILITIES.borderSubtle,
-              )}
-            >
-              <img
+          showImage && objectUrl ? (
+            <div className={PREVIEW_FRAME_CLASS}>
+              <Image
                 src={objectUrl}
                 alt={file.name}
-                className={cn(
-                  "w-full rounded-xl object-contain",
-                  // Fill the column and reduce empty space below.
-                  "max-h-[calc(100dvh-16rem)]",
-                )}
+                width={1600}
+                height={1200}
+                unoptimized
+                sizes="100vw"
+                onError={() => setImageLoadFailed(true)}
+                className="h-auto w-full max-h-file-preview-image rounded-xl object-contain"
               />
             </div>
           ) : (
-            <Text variant="captionMuted" className="px-0.5">
-              Image preview is not available.
-            </Text>
+            <div className={IMAGE_FALLBACK_CLASS}>
+              <FileKindIcon kind={FILE_PREVIEW_KIND.IMAGE} />
+              <Text variant="captionMuted">
+                {FILE_PREVIEW_COPY.imagePreviewUnavailable}
+              </Text>
+            </div>
           )
         ) : (
           <Text variant="captionMuted" className="px-0.5">
@@ -121,4 +155,3 @@ export function FilePreviewPanel({
     </aside>
   );
 }
-

@@ -132,7 +132,7 @@ export function RecentFilesFlyout({
             "border-white/8 light:border-app-border-subtle",
           )}
         >
-          <p className="text-[11px] font-medium uppercase tracking-wide text-white/50 light:text-app-fg-faint">
+          <p className="text-compact-11 font-medium uppercase tracking-wide text-white/50 light:text-app-fg-faint">
             {FILE_PREVIEW_COPY.recentFilesComingSoon}
           </p>
           <p className="mt-0.5 text-xs text-white/40 light:text-app-fg-faint">

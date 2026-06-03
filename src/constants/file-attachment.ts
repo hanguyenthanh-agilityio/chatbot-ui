@@ -82,6 +82,7 @@ export const FILE_PREVIEW_COPY = {
   removeAttachmentLabel: (name: string) => `Remove ${name}`,
   closePreviewLabel: "Close preview",
   openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
+  imagePreviewUnavailable: "Image preview is not available.",
 } as const;
 
 export const MOCK_RECENT_FILES: readonly LibraryRecentFile[] = [
