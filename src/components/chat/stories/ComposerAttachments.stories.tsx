@@ -3,7 +3,8 @@ import { createRef } from "react";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { ComposerAttachmentChip } from "@/components/chat/composer-attachment-chip";
 import { ComposerAttachmentMenu } from "@/components/chat/composer-attachment-menu";
-import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
+import { RecentFilesFlyout } from "@/components/chat/recent-files-flyout";
+import { FILE_PREVIEW_COPY, MOCK_RECENT_FILES } from "@/constants/file-attachment";
 import {
   STORYBOOK_THEME_GLOBAL,
   STORYBOOK_INLINE_CANVAS_PARAMETERS,
@@ -61,7 +62,9 @@ export const AttachmentMenu: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+      canvas.getByRole("button", {
+        name: FILE_PREVIEW_COPY.attachMenuAriaLabel,
+      }),
     );
     await expect(
       canvas.getByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel }),
@@ -83,10 +86,14 @@ export const AttachmentMenuRecentFlyout: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
+      canvas.getByRole("button", {
+        name: FILE_PREVIEW_COPY.attachMenuAriaLabel,
+      }),
     );
     await userEvent.hover(
-      canvas.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel }),
+      canvas.getByRole("menuitem", {
+        name: FILE_PREVIEW_COPY.recentFilesLabel,
+      }),
     );
     const body = within(document.body);
     await expect(body.getByText("leave-policy-2026.pdf")).toBeInTheDocument();
@@ -99,6 +106,32 @@ export const AttachmentMenuRecentFlyout: Story = {
 export const AttachmentChip: Story = {
   render: () => (
     <ComposerAttachmentChip file={MOCK_COMPOSER_ATTACHMENT} onRemove={fn()} />
+  ),
+};
+
+/** Recent flyout in isolation (empty state). */
+export const RecentFilesFlyoutEmpty: Story = {
+  render: () => (
+    <RecentFilesFlyout
+      recentMenuId="story-recent-empty"
+      recentFiles={[]}
+      style={{ position: "relative" }}
+      onPointerEnter={fn()}
+      onPointerLeave={fn()}
+    />
+  ),
+};
+
+/** Recent flyout in isolation (mock files). */
+export const RecentFilesFlyoutWithFiles: Story = {
+  render: () => (
+    <RecentFilesFlyout
+      recentMenuId="story-recent-files"
+      recentFiles={MOCK_RECENT_FILES}
+      style={{ position: "relative" }}
+      onPointerEnter={fn()}
+      onPointerLeave={fn()}
+    />
   ),
 };
 
