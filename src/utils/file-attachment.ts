@@ -1,3 +1,4 @@
+import type { ChangeEvent } from "react";
 import { RECENT_FLYOUT_LAYOUT } from "@/constants/file-attachment";
 import {
   FILE_PREVIEW_KIND,
@@ -52,6 +53,15 @@ export function createAttachmentId(prefix: string) {
     return `${prefix}-${crypto.randomUUID()}`;
   }
   return `${prefix}-${Date.now()}`;
+}
+
+/** Read the first picked file and reset the input so the same file can be selected again. */
+export function readSelectedFileFromInput(
+  event: ChangeEvent<HTMLInputElement>,
+): File | undefined {
+  const file = event.target.files?.[0];
+  event.target.value = "";
+  return file;
 }
 
 export function getRecentFlyoutPosition(

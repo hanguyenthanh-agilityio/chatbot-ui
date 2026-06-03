@@ -10,12 +10,10 @@ import {
 
 // Components
 import { Text } from "@/components/ui/text";
+import { SendIcon } from "@/components/ui/icons";
 import { ChatQuickActions } from "@/components/chat/quick-actions";
-import {
-  ComposerAttachmentChip,
-  ComposerAttachmentMenu,
-} from "@/components/chat/composer-attachments";
-import type { ComposerAttachment } from "@/types/file-attachment";
+import { ComposerAttachmentChip } from "@/components/chat/composer-attachment-chip";
+import { ComposerAttachmentMenu } from "@/components/chat/composer-attachment-menu";
 
 // Constants
 import { CHAT_COMPOSER_COPY } from "@/constants/chat";
@@ -29,6 +27,7 @@ import { cn } from "@/utils/class-name";
 
 // Types
 import type { QuickAction } from "@/types/chat";
+import type { ComposerAttachment } from "@/types/file-attachment";
 
 const COMPOSER_TEXTAREA_MAX_HEIGHT_PX = 150;
 
@@ -230,14 +229,7 @@ export function ChatComposer({
                         : "bg-btn-disabled text-white/75 light:bg-app-btn-brand-disabled light:text-white/85",
                     )}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="h-4 w-4"
-                    >
-                      <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                    </svg>
+                    <SendIcon className="h-4 w-4" />
                   </button>
                 )}
               </div>
