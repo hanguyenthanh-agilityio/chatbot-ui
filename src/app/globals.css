@@ -529,7 +529,13 @@
   --layout-chat-empty-max: 32.5rem;
   --layout-loading-card-width: 18.75rem;
   --layout-composer-textarea-max-height: 9.375rem;
+  /* File preview: image cap + column-3 width defaults (18rem lg / 20rem xl). */
   --layout-file-preview-image-max-height: calc(100dvh - 16rem);
+  --layout-file-preview-panel-default-width: 18rem;
+  --layout-file-preview-panel-min-width: 15rem;
+  --layout-file-preview-panel-max-width: 35rem;
+  --layout-workspace-col-3-width-lg: 18rem;
+  --layout-workspace-col-3-width-xl: 20rem;
   --layout-chat-viewport-height: 70vh;
   --layout-page-min-sm: calc(100vh - 1.5rem);
   --layout-page-min-md: calc(100vh - 2.5rem);
@@ -646,6 +652,8 @@
   --min-height-preview: var(--layout-min-preview);
   --max-height-composer-textarea: var(--layout-composer-textarea-max-height);
   --max-height-file-preview-image: var(--layout-file-preview-image-max-height);
+  --width-file-preview-panel-min: var(--layout-file-preview-panel-min-width);
+  --width-file-preview-panel-max: var(--layout-file-preview-panel-max-width);
   --radius-shell: var(--layout-radius-shell);
   --radius-composer-field: var(--layout-radius-composer-field);
   --radius-bubble-user: var(--layout-radius-bubble-user);

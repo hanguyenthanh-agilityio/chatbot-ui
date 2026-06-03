@@ -1,4 +1,4 @@
-import { RECENT_FLYOUT_LAYOUT } from "@/constants/file-attachment";
+import { FILE_PREVIEW_PANEL_WIDTH, RECENT_FLYOUT_LAYOUT } from "@/constants/file-attachment";
 import {
   FILE_PREVIEW_KIND,
   type FilePreviewKind,
@@ -61,6 +61,53 @@ export function createAttachmentId(prefix: string) {
     return `${prefix}-${crypto.randomUUID()}`;
   }
   return `${prefix}-${Date.now()}`;
+}
+
+export function clampFilePreviewPanelWidth(
+  width: number,
+  viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1280,
+) {
+  // Cap max width so chat column keeps usable space on smaller desktops.
+  const max = Math.min(
+    FILE_PREVIEW_PANEL_WIDTH.max,
+    Math.floor(viewportWidth * FILE_PREVIEW_PANEL_WIDTH.viewportMaxRatio),
+  );
+
+  return Math.min(max, Math.max(FILE_PREVIEW_PANEL_WIDTH.min, Math.round(width)));
+}
+
+/** Pointer-drag resize for column 3. Updates grid via --workspace-col-3-width in WorkspaceApp (not Tailwind resize). */
+export function bindFilePreviewPanelResize({
+  startX,
+  startWidth,
+  onWidthChange,
+  onActiveChange,
+}: {
+  startX: number;
+  startWidth: number;
+  onWidthChange: (width: number) => void;
+  onActiveChange: (active: boolean) => void;
+}) {
+  const handlePointerMove = (event: PointerEvent) => {
+    // Dragging left edge left → wider preview column.
+    onWidthChange(
+      clampFilePreviewPanelWidth(startWidth + (startX - event.clientX), window.innerWidth),
+    );
+  };
+
+  const handlePointerUp = () => {
+    onActiveChange(false);
+    document.body.style.removeProperty("cursor");
+    document.body.style.removeProperty("user-select");
+    window.removeEventListener("pointermove", handlePointerMove);
+    window.removeEventListener("pointerup", handlePointerUp);
+  };
+
+  onActiveChange(true);
+  document.body.style.cursor = "col-resize";
+  document.body.style.userSelect = "none";
+  window.addEventListener("pointermove", handlePointerMove);
+  window.addEventListener("pointerup", handlePointerUp);
 }
 
 export function getRecentFlyoutPosition(

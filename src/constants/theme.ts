@@ -67,9 +67,9 @@ export const THEME_SHELL_UTILITIES = {
 
 /** Workspace layout tokens (keep JSX readable; update once here). */
 export const WORKSPACE_GRID_COLS_LG =
-  "lg:grid-cols-[20rem_minmax(0,1fr)_18rem]" as const;
+  "lg:grid-cols-[20rem_minmax(0,1fr)_minmax(0,var(--workspace-col-3-width,var(--layout-workspace-col-3-width-lg)))]" as const;
 export const WORKSPACE_GRID_COLS_XL =
-  "xl:grid-cols-[20rem_minmax(0,1fr)_20rem]" as const;
+  "xl:grid-cols-[20rem_minmax(0,1fr)_minmax(0,var(--workspace-col-3-width,var(--layout-workspace-col-3-width-xl)))]" as const;
 
 /** Shell blur intensity (matches globals.css layout blur tokens). */
 export const SHELL_BACKDROP_BLUR_28 = "backdrop-blur-[28px]" as const;
