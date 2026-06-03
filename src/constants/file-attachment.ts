@@ -80,6 +80,8 @@ export const FILE_PREVIEW_COPY = {
   recentFilesComingSoon: "Coming soon",
   recentFilesComingSoonHint: "Preview only — not available yet",
   removeAttachmentLabel: (name: string) => `Remove ${name}`,
+  closePreviewLabel: "Close preview",
+  openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
 } as const;
 
 export const MOCK_RECENT_FILES: readonly LibraryRecentFile[] = [

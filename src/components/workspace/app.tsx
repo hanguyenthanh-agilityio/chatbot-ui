@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 // Components
 import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
@@ -115,6 +115,18 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
     handleResetChatPanel,
     composerAttachment,
   } = useWorkspaceApp(authRole ?? "user", authSessions);
+
+  const [isFilePreviewOpen, setIsFilePreviewOpen] = useState(false);
+
+  function handleAttachFile(file: File) {
+    composerAttachment.attachFile(file);
+    setIsFilePreviewOpen(true);
+  }
+
+  function handleRemoveAttachedFile() {
+    setIsFilePreviewOpen(false);
+    composerAttachment.clearAttachment();
+  }
 
   const accountPanel = (
     <AuthPanel
@@ -263,10 +275,11 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               quickActions={quickActions}
               onQuickActionSelect={handlePromptSelect}
               attachmentMenu={{
-                onFileSelected: composerAttachment.attachFile,
+                onFileSelected: handleAttachFile,
               }}
               attachedFile={composerAttachment.attachedFile}
-              onRemoveAttachedFile={composerAttachment.clearAttachment}
+              onOpenAttachedFilePreview={() => setIsFilePreviewOpen(true)}
+              onRemoveAttachedFile={handleRemoveAttachedFile}
               inputTooltip={
                 !provider.isProviderReady
                   ? CHAT_COMPOSER_COPY.verifyProviderTooltip
@@ -281,10 +294,10 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           </section>
 
           {/* Column 3 (right rail): threads OR file preview */}
-          {composerAttachment.attachedFile ? (
+          {isFilePreviewOpen && composerAttachment.attachedFile ? (
             <FilePreviewPanel
               file={composerAttachment.attachedFile}
-              onClose={composerAttachment.clearAttachment}
+              onClose={() => setIsFilePreviewOpen(false)}
             />
           ) : (
             <ThreadSidebar

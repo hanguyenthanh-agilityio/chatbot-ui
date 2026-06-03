@@ -34,9 +34,11 @@ import { cn } from "@/utils/class-name";
 export function ComposerAttachmentChip({
   file,
   onRemove,
+  onOpenPreview,
 }: {
   file: ComposerAttachment;
   onRemove: () => void;
+  onOpenPreview?: () => void;
 }) {
   return (
     <div
@@ -45,15 +47,24 @@ export function ComposerAttachmentChip({
         "border-white/12 bg-white/6 light:border-app-border light:bg-app-surface-subtle",
       )}
     >
-      <FileKindIcon kind={file.kind} />
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold leading-snug text-white/95 light:text-app-fg">
-          {file.name}
-        </p>
-        <p className="text-xs uppercase tracking-wide text-white/45 light:text-app-fg-faint">
-          {FILE_KIND_LABEL[file.kind]}
-        </p>
-      </div>
+      <Button
+        type="button"
+        variant="composerAttachMenuItem"
+        onClick={onOpenPreview}
+        disabled={!onOpenPreview}
+        aria-label={FILE_PREVIEW_COPY.openAttachmentPreviewLabel(file.name)}
+        className="min-w-0 flex-1 gap-2 rounded-lg px-0 py-0"
+      >
+        <FileKindIcon kind={file.kind} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold leading-snug text-white/95 light:text-app-fg">
+            {file.name}
+          </p>
+          <p className="text-xs uppercase tracking-wide text-white/45 light:text-app-fg-faint">
+            {FILE_KIND_LABEL[file.kind]}
+          </p>
+        </div>
+      </Button>
       <Button
         type="button"
         variant="composerAttachChipRemove"

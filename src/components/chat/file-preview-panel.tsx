@@ -78,8 +78,8 @@ export function FilePreviewPanel({
           type="button"
           variant="composerAttachChipRemove"
           onClick={onClose}
-          aria-label={FILE_PREVIEW_COPY.removeAttachmentLabel(file.name)}
-          title={FILE_PREVIEW_COPY.removeAttachmentLabel(file.name)}
+          aria-label={FILE_PREVIEW_COPY.closePreviewLabel}
+          title={FILE_PREVIEW_COPY.closePreviewLabel}
           className="mt-0.5"
         >
           <CloseIcon className="h-3.5 w-3.5" />
