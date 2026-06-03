@@ -9,7 +9,7 @@ export const FILE_PREVIEW_KIND = {
 export type FilePreviewKind =
   (typeof FILE_PREVIEW_KIND)[keyof typeof FILE_PREVIEW_KIND];
 
-export type ComposerAttachment = {
+export type BaseAttachment = {
   id: string;
   name: string;
   kind: FilePreviewKind;
@@ -17,11 +17,8 @@ export type ComposerAttachment = {
   mimeType?: string;
 };
 
-export type LibraryRecentFile = {
-  id: string;
-  name: string;
-  kind: FilePreviewKind;
-  sizeBytes?: number;
-  mimeType?: string;
+export type ComposerAttachment = BaseAttachment;
+
+export type LibraryRecentFile = BaseAttachment & {
   lastUsedLabel?: string;
 };

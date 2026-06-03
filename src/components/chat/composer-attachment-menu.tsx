@@ -68,6 +68,15 @@ export function ComposerAttachmentMenu({
     closeMenu();
   }
 
+  function handleToggleClick() {
+    toggleMenu();
+  }
+
+  function handleAddFilesClick() {
+    onOpenFilePicker();
+    closeMenu();
+  }
+
   const recentFlyout =
     isRecentOpen && isBrowser() ? (
       createPortal(
@@ -103,10 +112,7 @@ export function ComposerAttachmentMenu({
         aria-haspopup="menu"
         aria-controls={isOpen ? menuId : undefined}
         title={FILE_PREVIEW_COPY.attachMenuLabel}
-        onClick={() => {
-          if (disabled) return;
-          toggleMenu();
-        }}
+        onClick={handleToggleClick}
         className={cn(
           isOpen &&
             "border-violet-400/55 bg-white/10 light:border-app-border-emphasis",
@@ -127,10 +133,7 @@ export function ComposerAttachmentMenu({
             variant="composerAttachMenuItem"
             role="menuitem"
             className="cursor-pointer text-sm"
-            onClick={() => {
-              onOpenFilePicker();
-              closeMenu();
-            }}
+            onClick={handleAddFilesClick}
           >
             <span className={menuItemIconBoxClass} aria-hidden>
               <UploadIcon className={COMPOSER_ATTACH_ICON_LG_CLASS} />
