@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { convertDocxFileToHtml } from "@/utils/docx-preview";
+import { convertDocxFileToHtml } from "@/utils/file-preview";
 
 type FileKeyedPreview<T> = {
   file: File;

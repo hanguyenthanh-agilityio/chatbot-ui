@@ -16,3 +16,11 @@ export async function convertDocxFileToHtml(file: File): Promise<string> {
   const { value } = await mammoth.convertToHtml({ arrayBuffer });
   return value;
 }
+
+/** Chrome/Edge PDF viewer: hide thumbnail sidebar; keep toolbar (page, zoom, download). */
+const PDF_PREVIEW_EMBED_FRAGMENT = "navpanes=0&view=FitH";
+
+export function withPdfEmbedParams(dataUrl: string) {
+  const base = dataUrl.split("#", 1)[0];
+  return `${base}#${PDF_PREVIEW_EMBED_FRAGMENT}`;
+}

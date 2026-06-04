@@ -7,7 +7,7 @@ import {
 } from "@/constants/file-attachment";
 import { useFileDataUrl } from "@/hooks/use-file-preview";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
-import { withPdfEmbedParams } from "@/utils/pdf-preview";
+import { withPdfEmbedParams } from "@/utils/file-preview";
 
 export function FilePreviewPdf({
   file,

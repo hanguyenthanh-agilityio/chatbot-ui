@@ -1083,6 +1083,11 @@ html[data-theme="light"]
   background: #fff;
 }
 
+/* PDF iframe steals pointer events while shrinking column 3 — disable during drag. */
+[data-resizing="true"] .file-preview-pdf-frame {
+  pointer-events: none;
+}
+
 @keyframes app-skeleton-pulse {
   0%,
   100% {

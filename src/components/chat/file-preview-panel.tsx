@@ -70,6 +70,8 @@ export function FilePreviewPanel({
     event.preventDefault();
     const container = event.currentTarget.parentElement;
     bindFilePreviewPanelResize({
+      handle: event.currentTarget,
+      pointerId: event.pointerId,
       startX: event.clientX,
       startWidth:
         width ??
@@ -81,7 +83,10 @@ export function FilePreviewPanel({
   };
 
   return (
-    <div className="relative min-h-0 min-w-0 w-full lg:h-full">
+    <div
+      className="relative min-h-0 min-w-0 w-full lg:h-full"
+      data-resizing={isResizing}
+    >
       <div
         role="separator"
         aria-orientation="vertical"
