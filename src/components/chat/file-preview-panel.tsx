@@ -1,7 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { CloseIcon } from "@/components/ui/icons";
 import { Text } from "@/components/ui/text";
@@ -19,8 +23,14 @@ import {
   FILE_PREVIEW_RESIZE_HANDLE_CLASS,
 } from "@/constants/file-attachment";
 import { THEME_SHELL_UTILITIES } from "@/constants/theme";
-import { FILE_PREVIEW_KIND, type ComposerAttachment } from "@/types/file-attachment";
-import { bindFilePreviewPanelResize, formatFileSize } from "@/utils/file-attachment";
+import {
+  FILE_PREVIEW_KIND,
+  type ComposerAttachment,
+} from "@/types/file-attachment";
+import {
+  bindFilePreviewPanelResize,
+  formatFileSize,
+} from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
 type ImagePreviewState = {

@@ -68,7 +68,8 @@ export function ThreadSidebar({
     <aside
       className={cn(
         THEME_SHELL_CLASSES.sidebar,
-        "flex w-full flex-col rounded-shell border backdrop-blur-shell shadow-shell lg:h-full lg:min-h-0 lg:overflow-hidden lg:max-w-sm",
+        "flex w-full shrink-0 flex-col rounded-shell border backdrop-blur-shell shadow-shell",
+        "lg:h-full lg:min-h-0 lg:max-w-sm lg:shrink lg:overflow-hidden",
         "bg-glass-panel",
         THEME_SHELL_UTILITIES.border,
         THEME_SHELL_UTILITIES.text,

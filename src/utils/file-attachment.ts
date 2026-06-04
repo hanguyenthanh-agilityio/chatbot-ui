@@ -1,6 +1,8 @@
-import type { ChangeEvent } from "react";
-import type { CSSProperties } from "react";
-import { FILE_PREVIEW_PANEL_WIDTH, RECENT_FLYOUT_LAYOUT } from "@/constants/file-attachment";
+import type { ChangeEvent, CSSProperties } from "react";
+import {
+  FILE_PREVIEW_PANEL_WIDTH,
+  RECENT_FLYOUT_LAYOUT,
+} from "@/constants/file-attachment";
 import {
   FILE_PREVIEW_KIND,
   type FilePreviewKind,
@@ -74,7 +76,10 @@ export function clampFilePreviewPanelWidth(
     Math.floor(viewportWidth * FILE_PREVIEW_PANEL_WIDTH.viewportMaxRatio),
   );
 
-  return Math.min(max, Math.max(FILE_PREVIEW_PANEL_WIDTH.min, Math.round(width)));
+  return Math.min(
+    max,
+    Math.max(FILE_PREVIEW_PANEL_WIDTH.min, Math.round(width)),
+  );
 }
 
 /** Pointer-drag resize for column 3. Updates grid via --workspace-col-3-width in WorkspaceApp (not Tailwind resize). */
@@ -92,7 +97,10 @@ export function bindFilePreviewPanelResize({
   const handlePointerMove = (event: PointerEvent) => {
     // Dragging left edge left → wider preview column.
     onWidthChange(
-      clampFilePreviewPanelWidth(startWidth + (startX - event.clientX), window.innerWidth),
+      clampFilePreviewPanelWidth(
+        startWidth + (startX - event.clientX),
+        window.innerWidth,
+      ),
     );
   };
 
