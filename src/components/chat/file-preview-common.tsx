@@ -3,8 +3,27 @@
 import type { ReactNode } from "react";
 import { FileKindIcon } from "@/components/chat/file-kind-icon";
 import { Text } from "@/components/ui/text";
-import { FILE_PREVIEW_FALLBACK_CLASS } from "@/constants/file-attachment";
+import {
+  FILE_PREVIEW_FALLBACK_CLASS,
+  getFilePreviewMessages,
+  type FilePreviewMediaKind,
+} from "@/constants/file-attachment";
 import type { FilePreviewKind } from "@/types/file-attachment";
+
+function FilePreviewFallback({
+  message,
+  kind,
+}: {
+  message: string;
+  kind?: FilePreviewKind;
+}) {
+  return (
+    <div className={FILE_PREVIEW_FALLBACK_CLASS}>
+      {kind != null ? <FileKindIcon kind={kind} /> : null}
+      <Text variant="captionMuted">{message}</Text>
+    </div>
+  );
+}
 
 export function FilePreviewUnavailable({
   kind,
@@ -13,20 +32,11 @@ export function FilePreviewUnavailable({
   kind: FilePreviewKind;
   message: string;
 }) {
-  return (
-    <div className={FILE_PREVIEW_FALLBACK_CLASS}>
-      <FileKindIcon kind={kind} />
-      <Text variant="captionMuted">{message}</Text>
-    </div>
-  );
+  return <FilePreviewFallback kind={kind} message={message} />;
 }
 
 export function FilePreviewLoading({ message }: { message: string }) {
-  return (
-    <div className={FILE_PREVIEW_FALLBACK_CLASS}>
-      <Text variant="captionMuted">{message}</Text>
-    </div>
-  );
+  return <FilePreviewFallback message={message} />;
 }
 
 export function FilePreviewEmbeddedBody({
@@ -35,28 +45,30 @@ export function FilePreviewEmbeddedBody({
   file,
   isLoading,
   hasFailed,
-  loadingMessage,
-  unavailableMessage,
   children,
 }: {
   contentClassName: string;
-  kind: FilePreviewKind;
+  kind: FilePreviewMediaKind;
   file: File | undefined;
   isLoading: boolean;
   hasFailed: boolean;
-  loadingMessage: string;
-  unavailableMessage: string;
   children: ReactNode;
 }) {
-  if (!file || hasFailed) {
+  const messages = getFilePreviewMessages(kind);
+
+  if (!file) {
     return (
-      <FilePreviewUnavailable kind={kind} message={unavailableMessage} />
+      <FilePreviewUnavailable kind={kind} message={messages.missingFile} />
     );
+  }
+
+  if (hasFailed) {
+    return <FilePreviewUnavailable kind={kind} message={messages.failed} />;
   }
 
   return (
     <div className={contentClassName}>
-      {isLoading ? <FilePreviewLoading message={loadingMessage} /> : null}
+      {isLoading ? <FilePreviewLoading message={messages.loading} /> : null}
       {children}
     </div>
   );

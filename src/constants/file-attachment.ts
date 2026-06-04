@@ -166,13 +166,45 @@ export const FILE_PREVIEW_COPY = {
   removeAttachmentLabel: (name: string) => `Remove ${name}`,
   closePreviewLabel: "Close preview",
   openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
-  imagePreviewUnavailable: "Image preview is not available.",
+  previewNoFile: "No file selected for preview.",
+  imagePreviewLoading: "Loading image preview…",
+  imagePreviewFailed: "Could not load this image for preview.",
   docxPreviewLoading: "Loading document preview…",
-  docxPreviewUnavailable: "Document preview is not available.",
+  docxPreviewFailed: "Could not convert this document for preview.",
   pdfPreviewLoading: "Loading PDF preview…",
-  pdfPreviewUnavailable: "PDF preview is not available.",
+  pdfPreviewFailed: "Could not load this PDF for preview.",
   resizePreviewLabel: "Resize file preview panel",
 } as const;
+
+export type FilePreviewMediaKind =
+  | typeof FILE_PREVIEW_KIND.IMAGE
+  | typeof FILE_PREVIEW_KIND.PDF
+  | typeof FILE_PREVIEW_KIND.DOCX;
+
+const FILE_PREVIEW_MEDIA_MESSAGES: Record<
+  FilePreviewMediaKind,
+  { loading: string; failed: string }
+> = {
+  [FILE_PREVIEW_KIND.IMAGE]: {
+    loading: FILE_PREVIEW_COPY.imagePreviewLoading,
+    failed: FILE_PREVIEW_COPY.imagePreviewFailed,
+  },
+  [FILE_PREVIEW_KIND.PDF]: {
+    loading: FILE_PREVIEW_COPY.pdfPreviewLoading,
+    failed: FILE_PREVIEW_COPY.pdfPreviewFailed,
+  },
+  [FILE_PREVIEW_KIND.DOCX]: {
+    loading: FILE_PREVIEW_COPY.docxPreviewLoading,
+    failed: FILE_PREVIEW_COPY.docxPreviewFailed,
+  },
+};
+
+export function getFilePreviewMessages(kind: FilePreviewMediaKind) {
+  return {
+    missingFile: FILE_PREVIEW_COPY.previewNoFile,
+    ...FILE_PREVIEW_MEDIA_MESSAGES[kind],
+  };
+}
 
 export const MOCK_RECENT_FILES: readonly LibraryRecentFile[] = [
   {

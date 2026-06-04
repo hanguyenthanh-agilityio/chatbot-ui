@@ -1,10 +1,7 @@
 "use client";
 
 import { FilePreviewEmbeddedBody } from "@/components/chat/file-preview-common";
-import {
-  FILE_PREVIEW_COPY,
-  FILE_PREVIEW_PDF_CONTENT_CLASS,
-} from "@/constants/file-attachment";
+import { FILE_PREVIEW_PDF_CONTENT_CLASS } from "@/constants/file-attachment";
 import { useFileDataUrl } from "@/hooks/use-file-preview";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 import { withPdfEmbedParams } from "@/utils/file-preview";
@@ -25,8 +22,6 @@ export function FilePreviewPdf({
       file={file}
       isLoading={isLoading}
       hasFailed={hasFailed}
-      loadingMessage={FILE_PREVIEW_COPY.pdfPreviewLoading}
-      unavailableMessage={FILE_PREVIEW_COPY.pdfPreviewUnavailable}
     >
       {url ? (
         <iframe

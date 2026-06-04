@@ -2,11 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { FilePreviewUnavailable } from "@/components/chat/file-preview-common";
-import {
-  FILE_PREVIEW_COPY,
-  FILE_PREVIEW_FRAME_CLASS,
-} from "@/constants/file-attachment";
+import { FilePreviewEmbeddedBody } from "@/components/chat/file-preview-common";
+import { FILE_PREVIEW_FRAME_CLASS } from "@/constants/file-attachment";
 import { useFileDataUrl } from "@/hooks/use-file-preview";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
@@ -19,38 +16,30 @@ export function FilePreviewImage({
 }) {
   const { url, isLoading, hasFailed } = useFileDataUrl(file);
   const [renderFailed, setRenderFailed] = useState(false);
-  const showImage = url != null && !hasFailed && !renderFailed;
-
-  if (!file || hasFailed) {
-    return (
-      <FilePreviewUnavailable
-        kind={FILE_PREVIEW_KIND.IMAGE}
-        message={FILE_PREVIEW_COPY.imagePreviewUnavailable}
-      />
-    );
-  }
-
-  if (isLoading || !showImage) {
-    return (
-      <FilePreviewUnavailable
-        kind={FILE_PREVIEW_KIND.IMAGE}
-        message={FILE_PREVIEW_COPY.imagePreviewUnavailable}
-      />
-    );
-  }
+  const failed = hasFailed || renderFailed;
 
   return (
-    <div className={FILE_PREVIEW_FRAME_CLASS}>
-      <Image
-        src={url}
-        alt={name}
-        width={1600}
-        height={1200}
-        unoptimized
-        sizes="100vw"
-        onError={() => setRenderFailed(true)}
-        className="h-auto w-full max-h-file-preview-image rounded-xl object-contain"
-      />
-    </div>
+    <FilePreviewEmbeddedBody
+      contentClassName=""
+      kind={FILE_PREVIEW_KIND.IMAGE}
+      file={file}
+      isLoading={!failed && (isLoading || url == null)}
+      hasFailed={failed}
+    >
+      {url ? (
+        <div className={FILE_PREVIEW_FRAME_CLASS}>
+          <Image
+            src={url}
+            alt={name}
+            width={1600}
+            height={1200}
+            unoptimized
+            sizes="100vw"
+            onError={() => setRenderFailed(true)}
+            className="h-auto w-full max-h-file-preview-image rounded-xl object-contain"
+          />
+        </div>
+      ) : null}
+    </FilePreviewEmbeddedBody>
   );
 }
