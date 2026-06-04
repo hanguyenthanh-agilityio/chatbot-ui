@@ -7,75 +7,32 @@ import { Input } from "@/components/ui/input";
 import {
   ChevronRightIcon,
   ClockIcon,
-  CloseIcon,
   PlusIcon,
   UploadIcon,
 } from "@/components/ui/icons";
+import { RecentFilesFlyout } from "./recent-files-flyout";
+import { isBrowser } from "@/lib/browser";
 import {
-  AttachmentMenuIcon,
-  FileKindIcon,
-  RecentFilesFlyout,
-} from "./file-attachment-parts";
-import {
+  COMPOSER_ATTACH_ICON_LG_CLASS,
+  COMPOSER_ATTACH_ICON_XS_CLASS,
   COMPOSER_ATTACH_MENU_CLASS,
   COMPOSER_ATTACH_MENU_ITEM_CLASS,
   COMPOSER_ATTACH_MENU_ITEM_LABEL_CLASS,
   COMPOSER_ATTACH_MENU_PANEL_CLASS,
-  COMPOSER_ATTACH_TOGGLE_ICON_CLASS,
-  FILE_KIND_LABEL,
   FILE_PREVIEW_ACCEPT,
   FILE_PREVIEW_COPY,
   MOCK_RECENT_FILES,
 } from "@/constants/file-attachment";
 import { useComposerAttachmentMenu } from "@/hooks/use-composer-attachment-menu";
-import type { ComposerAttachment, LibraryRecentFile } from "@/types/file-attachment";
+import type { LibraryRecentFile } from "@/types/file-attachment";
 import { cn } from "@/utils/class-name";
+import { readSelectedFileFromInput } from "@/utils/file-attachment";
 
-export function ComposerAttachmentChip({
-  file,
-  onRemove,
-  onOpenPreview,
-}: {
-  file: ComposerAttachment;
-  onRemove: () => void;
-  onOpenPreview?: () => void;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex min-w-0 items-center gap-2 rounded-xl border px-2 py-1.5",
-        "border-white/12 bg-white/6 light:border-app-border light:bg-app-surface-subtle",
-      )}
-    >
-      <Button
-        type="button"
-        variant="composerAttachMenuItem"
-        onClick={onOpenPreview}
-        disabled={!onOpenPreview}
-        aria-label={FILE_PREVIEW_COPY.openAttachmentPreviewLabel(file.name)}
-        className="min-w-0 flex-1 gap-2 rounded-lg px-0 py-0"
-      >
-        <FileKindIcon kind={file.kind} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold leading-snug text-white/95 light:text-app-fg">
-            {file.name}
-          </p>
-          <p className="text-xs uppercase tracking-wide text-white/45 light:text-app-fg-faint">
-            {FILE_KIND_LABEL[file.kind]}
-          </p>
-        </div>
-      </Button>
-      <Button
-        type="button"
-        variant="composerAttachChipRemove"
-        onClick={onRemove}
-        aria-label={FILE_PREVIEW_COPY.removeAttachmentLabel(file.name)}
-      >
-        <CloseIcon className="h-3.5 w-3.5" />
-      </Button>
-    </div>
-  );
-}
+const menuItemIconBoxClass = cn(
+  "grid h-9 w-9 shrink-0 place-items-center rounded-lg border",
+  "border-white/10 bg-white/6 text-white/75",
+  "light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-muted",
+);
 
 export function ComposerAttachmentMenu({
   disabled = false,
@@ -104,8 +61,24 @@ export function ComposerAttachmentMenu({
     recentHover,
   } = useComposerAttachmentMenu();
 
+  function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = readSelectedFileFromInput(event);
+    if (!file) return;
+    onFileSelected(file);
+    closeMenu();
+  }
+
+  function handleToggleClick() {
+    toggleMenu();
+  }
+
+  function handleAddFilesClick() {
+    onOpenFilePicker();
+    closeMenu();
+  }
+
   const recentFlyout =
-    isRecentOpen && typeof document !== "undefined" ? (
+    isRecentOpen && isBrowser() ? (
       createPortal(
         <RecentFilesFlyout
           recentMenuId={recentMenuId}
@@ -127,13 +100,7 @@ export function ComposerAttachmentMenu({
         className="sr-only"
         tabIndex={-1}
         aria-hidden
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const file = event.target.files?.[0];
-          event.target.value = "";
-          if (!file) return;
-          onFileSelected(file);
-          closeMenu();
-        }}
+        onChange={handleFileInputChange}
       />
 
       <Button
@@ -145,16 +112,13 @@ export function ComposerAttachmentMenu({
         aria-haspopup="menu"
         aria-controls={isOpen ? menuId : undefined}
         title={FILE_PREVIEW_COPY.attachMenuLabel}
-        onClick={() => {
-          if (disabled) return;
-          toggleMenu();
-        }}
+        onClick={handleToggleClick}
         className={cn(
           isOpen &&
             "border-violet-400/55 bg-white/10 light:border-app-border-emphasis",
         )}
       >
-        <PlusIcon className={COMPOSER_ATTACH_TOGGLE_ICON_CLASS} strokeWidth={2} />
+        <PlusIcon className={COMPOSER_ATTACH_ICON_XS_CLASS} strokeWidth={2} />
       </Button>
 
       {isOpen ? (
@@ -169,14 +133,11 @@ export function ComposerAttachmentMenu({
             variant="composerAttachMenuItem"
             role="menuitem"
             className="cursor-pointer text-sm"
-            onClick={() => {
-              onOpenFilePicker();
-              closeMenu();
-            }}
+            onClick={handleAddFilesClick}
           >
-            <AttachmentMenuIcon>
-              <UploadIcon className="h-[18px] w-[18px]" />
-            </AttachmentMenuIcon>
+            <span className={menuItemIconBoxClass} aria-hidden>
+              <UploadIcon className={COMPOSER_ATTACH_ICON_LG_CLASS} />
+            </span>
             <span className={COMPOSER_ATTACH_MENU_ITEM_LABEL_CLASS}>
               {FILE_PREVIEW_COPY.addFilesLabel}
             </span>
@@ -198,13 +159,18 @@ export function ComposerAttachmentMenu({
                 isRecentOpen && "bg-white/8 light:bg-app-hover",
               )}
             >
-              <AttachmentMenuIcon>
-                <ClockIcon className="h-[18px] w-[18px]" />
-              </AttachmentMenuIcon>
+              <span className={menuItemIconBoxClass} aria-hidden>
+                <ClockIcon className={COMPOSER_ATTACH_ICON_LG_CLASS} />
+              </span>
               <span className={COMPOSER_ATTACH_MENU_ITEM_LABEL_CLASS}>
                 {FILE_PREVIEW_COPY.recentFilesLabel}
               </span>
-              <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-white/45 light:text-app-fg-faint" />
+              <ChevronRightIcon
+                className={cn(
+                  COMPOSER_ATTACH_ICON_XS_CLASS,
+                  "shrink-0 text-white/45 light:text-app-fg-faint",
+                )}
+              />
             </div>
           </div>
         </div>
@@ -214,5 +180,3 @@ export function ComposerAttachmentMenu({
     </div>
   );
 }
-
-export type { ComposerAttachment };

@@ -1,10 +1,11 @@
+import type { ChangeEvent } from "react";
+import type { CSSProperties } from "react";
 import { FILE_PREVIEW_PANEL_WIDTH, RECENT_FLYOUT_LAYOUT } from "@/constants/file-attachment";
 import {
   FILE_PREVIEW_KIND,
   type FilePreviewKind,
   type LibraryRecentFile,
 } from "@/types/file-attachment";
-import type { CSSProperties } from "react";
 
 const EXTENSION_KIND: Record<string, FilePreviewKind> = {
   png: FILE_PREVIEW_KIND.IMAGE,
@@ -108,6 +109,15 @@ export function bindFilePreviewPanelResize({
   document.body.style.userSelect = "none";
   window.addEventListener("pointermove", handlePointerMove);
   window.addEventListener("pointerup", handlePointerUp);
+}
+
+/** Read the first picked file and reset the input so the same file can be selected again. */
+export function readSelectedFileFromInput(
+  event: ChangeEvent<HTMLInputElement>,
+): File | undefined {
+  const file = event.target.files?.[0];
+  event.target.value = "";
+  return file;
 }
 
 export function getRecentFlyoutPosition(

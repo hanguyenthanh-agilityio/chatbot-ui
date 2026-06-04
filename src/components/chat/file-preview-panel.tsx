@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CloseIcon } from "@/components/ui/icons";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
-import { FileKindIcon } from "@/components/chat/file-attachment-parts";
+import { FileKindIcon } from "@/components/chat/file-kind-icon";
 import {
   FILE_KIND_LABEL,
   FILE_PREVIEW_COPY,
