@@ -82,6 +82,12 @@ export const FILE_PREVIEW_FALLBACK_CLASS = cn(
   "flex min-h-preview flex-col items-center justify-center gap-3 px-6 py-10 text-center",
 );
 
+/** Scrollable DOCX preview host (docx-preview renders into `.docx-preview-body`). */
+export const FILE_PREVIEW_DOCX_CONTENT_CLASS = cn(
+  FILE_PREVIEW_FRAME_CLASS,
+  "file-preview-docx-content relative min-w-0 max-w-full max-h-file-preview-image overflow-y-auto overflow-x-hidden p-0.5",
+);
+
 /** Desktop-only drag handle between chat and preview. Sits outside the panel; height inset matches rounded-shell corners. */
 export const FILE_PREVIEW_RESIZE_HANDLE_CLASS = cn(
   "group/resize absolute top-[var(--radius-shell)] bottom-[var(--radius-shell)] left-0 z-20 hidden w-4 -translate-x-1/2 cursor-col-resize touch-none lg:flex lg:items-center lg:justify-center",
@@ -137,6 +143,8 @@ export const FILE_PREVIEW_COPY = {
   closePreviewLabel: "Close preview",
   openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
   imagePreviewUnavailable: "Image preview is not available.",
+  docxPreviewLoading: "Loading document preview…",
+  docxPreviewUnavailable: "Document preview is not available.",
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 

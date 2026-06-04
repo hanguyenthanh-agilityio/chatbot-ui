@@ -11,6 +11,7 @@ import { CloseIcon } from "@/components/ui/icons";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
 import { FileKindIcon } from "@/components/chat/file-kind-icon";
+import { FilePreviewDocx } from "@/components/chat/file-preview-docx";
 import {
   FILE_KIND_LABEL,
   FILE_PREVIEW_COPY,
@@ -37,6 +38,56 @@ type ImagePreviewState = {
   file: File;
   url: string;
 };
+
+function FilePreviewPanelContent({
+  file,
+  showImage,
+  objectUrl,
+  onImageError,
+}: {
+  file: ComposerAttachment;
+  showImage: boolean;
+  objectUrl: string | null;
+  onImageError: () => void;
+}) {
+  if (file.kind === FILE_PREVIEW_KIND.IMAGE) {
+    if (showImage && objectUrl) {
+      return (
+        <div className={FILE_PREVIEW_FRAME_CLASS}>
+          <Image
+            src={objectUrl}
+            alt={file.name}
+            width={1600}
+            height={1200}
+            unoptimized
+            sizes="100vw"
+            onError={onImageError}
+            className="h-auto w-full max-h-file-preview-image rounded-xl object-contain"
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className={FILE_PREVIEW_FALLBACK_CLASS}>
+        <FileKindIcon kind={FILE_PREVIEW_KIND.IMAGE} />
+        <Text variant="captionMuted">
+          {FILE_PREVIEW_COPY.imagePreviewUnavailable}
+        </Text>
+      </div>
+    );
+  }
+
+  if (file.kind === FILE_PREVIEW_KIND.DOCX) {
+    return <FilePreviewDocx file={file.rawFile} />;
+  }
+
+  return (
+    <Text variant="captionMuted" className="px-0.5">
+      Preview panel layout is ready. File rendering will be added next.
+    </Text>
+  );
+}
 
 /** Column-3 preview panel: image preview, fallback UI, and desktop resize handle. */
 export function FilePreviewPanel({
@@ -161,33 +212,12 @@ export function FilePreviewPanel({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3 sm:px-3 sm:py-4">
-          {file.kind === FILE_PREVIEW_KIND.IMAGE ? (
-            showImage && objectUrl ? (
-              <div className={FILE_PREVIEW_FRAME_CLASS}>
-                <Image
-                  src={objectUrl}
-                  alt={file.name}
-                  width={1600}
-                  height={1200}
-                  unoptimized
-                  sizes="100vw"
-                  onError={() => setImageLoadFailed(true)}
-                  className="h-auto w-full max-h-file-preview-image rounded-xl object-contain"
-                />
-              </div>
-            ) : (
-              <div className={FILE_PREVIEW_FALLBACK_CLASS}>
-                <FileKindIcon kind={FILE_PREVIEW_KIND.IMAGE} />
-                <Text variant="captionMuted">
-                  {FILE_PREVIEW_COPY.imagePreviewUnavailable}
-                </Text>
-              </div>
-            )
-          ) : (
-            <Text variant="captionMuted" className="px-0.5">
-              Preview panel layout is ready. File rendering will be added next.
-            </Text>
-          )}
+          <FilePreviewPanelContent
+            file={file}
+            showImage={showImage}
+            objectUrl={objectUrl}
+            onImageError={() => setImageLoadFailed(true)}
+          />
         </div>
       </aside>
     </div>

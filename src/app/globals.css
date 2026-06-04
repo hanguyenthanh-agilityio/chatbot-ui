@@ -947,6 +947,83 @@ html[data-theme="light"] .app-chat-header {
   box-shadow: var(--shadow-shell-header);
 }
 
+/* docx-preview: wrap + scale to fit column 3 (see fitDocxPreviewToColumn). */
+.file-preview-docx-content {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.file-preview-docx-content .docx-preview-body {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.file-preview-docx-content .docx-preview-scale-host {
+  width: 100%;
+  overflow: hidden;
+}
+
+.file-preview-docx-content .docx-preview-wrapper {
+  margin: 0;
+  padding: 4px 3px !important;
+  background: #fff;
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--palette-black) 10%, transparent);
+}
+
+/* docx-preview defaults to large page margins (~96px) on section — keep compact. */
+.file-preview-docx-content .docx-preview-wrapper section,
+.file-preview-docx-content .docx-preview-wrapper section.docx-preview {
+  padding: 10px 8px !important;
+  margin: 0 0 10px !important;
+}
+
+/* Tailwind preflight removes list bullets; restore inside preview only. */
+.file-preview-docx-content .docx-preview-wrapper ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin: 0.25em 0;
+}
+
+.file-preview-docx-content .docx-preview-wrapper ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin: 0.25em 0;
+}
+
+.file-preview-docx-content .docx-preview-wrapper li {
+  display: list-item;
+}
+
+/* Text wraps; tables keep column layout (scaled by fitDocxPreviewToColumn). */
+.file-preview-docx-content .docx-preview-wrapper p,
+.file-preview-docx-content .docx-preview-wrapper span,
+.file-preview-docx-content .docx-preview-wrapper li {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.file-preview-docx-content .docx-preview-wrapper table {
+  max-width: 100%;
+  width: auto;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+.file-preview-docx-content .docx-preview-wrapper img {
+  max-width: 100%;
+  height: auto;
+}
+
+.file-preview-docx-content .docx-preview-styles {
+  display: block;
+  max-width: 100%;
+}
+
 @keyframes app-skeleton-pulse {
   0%,
   100% {
