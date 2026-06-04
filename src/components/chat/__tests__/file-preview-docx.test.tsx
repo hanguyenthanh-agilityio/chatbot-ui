@@ -11,9 +11,7 @@ const DOCX_FILE = new File(["docx"], "handbook.docx", {
   type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 });
 
-function mockPreviewState(
-  state: Partial<ReturnType<typeof useDocxPreview>>,
-) {
+function mockPreviewState(state: Partial<ReturnType<typeof useDocxPreview>>) {
   mockUseDocxPreview.mockReturnValue({
     html: null,
     isLoading: false,
@@ -30,9 +28,18 @@ describe("FilePreviewDocx", () => {
   });
 
   it.each([
-    ["unavailable", { file: undefined, isLoading: false, hasFailed: false }],
-    ["loading", { file: DOCX_FILE, isLoading: true, hasFailed: false, html: null }],
-    ["failed", { file: DOCX_FILE, isLoading: false, hasFailed: true }],
+    [
+      "unavailable",
+      { file: undefined, isLoading: false, hasFailed: false, html: null },
+    ],
+    [
+      "loading",
+      { file: DOCX_FILE, isLoading: true, hasFailed: false, html: null },
+    ],
+    [
+      "failed",
+      { file: DOCX_FILE, isLoading: false, hasFailed: true, html: null },
+    ],
     [
       "ready",
       {
@@ -42,10 +49,13 @@ describe("FilePreviewDocx", () => {
         html: "<p>Preview</p>",
       },
     ],
-  ] as const)("matches snapshot (%s)", (_name, { file, isLoading, hasFailed, html }) => {
-    mockPreviewState({ isLoading, hasFailed, html: html ?? null });
+  ] as const)(
+    "matches snapshot (%s)",
+    (_name, { file, isLoading, hasFailed, html }) => {
+      mockPreviewState({ isLoading, hasFailed, html });
 
-    const { container } = render(<FilePreviewDocx file={file} />);
-    expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
-  });
+      const { container } = render(<FilePreviewDocx file={file} />);
+      expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
+    },
+  );
 });

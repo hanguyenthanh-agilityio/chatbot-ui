@@ -3,23 +3,30 @@
 import { useEffect, useState } from "react";
 import { convertDocxFileToHtml } from "@/utils/docx-preview";
 
+type DocxPreviewState = {
+  file: File;
+  html: string | null;
+  hasFailed: boolean;
+};
+
 export function useDocxPreview(docxFile: File | undefined) {
-  const [html, setHtml] = useState<string | null>(null);
-  const [hasFailed, setHasFailed] = useState(false);
+  const [preview, setPreview] = useState<DocxPreviewState | null>(null);
 
   useEffect(() => {
     if (!docxFile) return;
 
     let cancelled = false;
-    setHtml(null);
-    setHasFailed(false);
 
     convertDocxFileToHtml(docxFile)
       .then((value) => {
-        if (!cancelled) setHtml(value);
+        if (!cancelled) {
+          setPreview({ file: docxFile, html: value, hasFailed: false });
+        }
       })
       .catch(() => {
-        if (!cancelled) setHasFailed(true);
+        if (!cancelled) {
+          setPreview({ file: docxFile, html: null, hasFailed: true });
+        }
       });
 
     return () => {
@@ -27,11 +34,17 @@ export function useDocxPreview(docxFile: File | undefined) {
     };
   }, [docxFile]);
 
-  const isLoading = docxFile != null && html == null && !hasFailed;
+  const current =
+    docxFile != null && preview?.file === docxFile ? preview : null;
+  const html = current?.html ?? null;
+  const hasFailed = current?.hasFailed ?? false;
+  const isLoading =
+    docxFile != null &&
+    (current == null || (current.html == null && !current.hasFailed));
 
   return {
     html,
     isLoading,
-    hasFailed: docxFile != null && hasFailed,
+    hasFailed,
   };
 }

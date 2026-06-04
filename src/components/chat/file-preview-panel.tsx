@@ -135,6 +135,10 @@ export function FilePreviewPanel({
     imageFile && preview?.file === imageFile ? preview.url : null;
   const showImage = objectUrl != null && !imageLoadFailed;
 
+  const handleImageError = () => {
+    setImageLoadFailed(true);
+  };
+
   // width null in parent → measure current column; custom resize sets px on grid.
   const startResize = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -217,14 +221,17 @@ export function FilePreviewPanel({
             "flex min-h-0 flex-1 flex-col overflow-hidden py-3",
             file.kind === FILE_PREVIEW_KIND.DOCX
               ? "px-2 sm:px-3"
-              : cn("overflow-y-auto pl-2 pr-0 sm:pl-3", FILE_PREVIEW_SCROLL_CLASS),
+              : cn(
+                  "overflow-y-auto pl-2 pr-0 sm:pl-3",
+                  FILE_PREVIEW_SCROLL_CLASS,
+                ),
           )}
         >
           <FilePreviewPanelContent
             file={file}
             showImage={showImage}
             objectUrl={objectUrl}
-            onImageError={() => setImageLoadFailed(true)}
+            onImageError={handleImageError}
           />
         </div>
       </aside>
