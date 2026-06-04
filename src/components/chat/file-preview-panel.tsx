@@ -22,6 +22,7 @@ import {
   FILE_PREVIEW_RESIZE_GRIP_CLASS,
   FILE_PREVIEW_RESIZE_GRIP_DOT_CLASS,
   FILE_PREVIEW_RESIZE_HANDLE_CLASS,
+  FILE_PREVIEW_SCROLL_CLASS,
 } from "@/constants/file-attachment";
 import { THEME_SHELL_UTILITIES } from "@/constants/theme";
 import {
@@ -211,7 +212,13 @@ export function FilePreviewPanel({
           </Button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3 sm:px-3 sm:py-4">
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden py-3 pl-2 pr-0 sm:pl-3",
+            file.kind !== FILE_PREVIEW_KIND.DOCX &&
+              cn("overflow-y-auto", FILE_PREVIEW_SCROLL_CLASS),
+          )}
+        >
           <FilePreviewPanelContent
             file={file}
             showImage={showImage}

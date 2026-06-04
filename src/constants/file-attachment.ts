@@ -83,9 +83,12 @@ export const FILE_PREVIEW_FALLBACK_CLASS = cn(
 );
 
 /** Scrollable DOCX preview host (docx-preview renders into `.docx-preview-body`). */
+export const FILE_PREVIEW_SCROLL_CLASS = "file-preview-thin-scroll";
+
 export const FILE_PREVIEW_DOCX_CONTENT_CLASS = cn(
-  FILE_PREVIEW_FRAME_CLASS,
-  "file-preview-docx-content relative min-w-0 max-w-full max-h-file-preview-image overflow-y-auto overflow-x-hidden p-0.5",
+  "file-preview-docx-content file-preview-thin-scroll",
+  "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-y-auto overflow-x-hidden",
+  "rounded-2xl border border-white/8 bg-white light:border-app-border-subtle",
 );
 
 /** Desktop-only drag handle between chat and preview. Sits outside the panel; height inset matches rounded-shell corners. */
