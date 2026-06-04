@@ -36,7 +36,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Column-3 DOCX preview. Visual preview uses `docx-preview`; plain-text extraction uses `mammoth` elsewhere.",
+          "Column-3 DOCX preview. Converts the file to HTML with `mammoth`.",
       },
     },
   },
@@ -77,8 +77,7 @@ export const LoadingVisual: Story = {
       <div className={FILE_PREVIEW_FALLBACK_CLASS}>
         <Text variant="captionMuted">{FILE_PREVIEW_COPY.docxPreviewLoading}</Text>
       </div>
-      <div className="docx-preview-styles" aria-hidden />
-      <div className="docx-preview-body min-h-0 w-full min-w-0 max-w-full overflow-x-hidden" />
+      <div className="file-preview-docx-html min-h-0 w-full min-w-0 max-w-full" />
     </div>
   ),
 };

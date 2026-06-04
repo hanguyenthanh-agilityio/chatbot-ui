@@ -82,7 +82,7 @@ export const FILE_PREVIEW_FALLBACK_CLASS = cn(
   "flex min-h-preview flex-col items-center justify-center gap-3 px-6 py-10 text-center",
 );
 
-/** Scrollable DOCX preview host (docx-preview renders into `.docx-preview-body`). */
+/** Scrollable DOCX preview host (mammoth HTML in `.file-preview-docx-html`). */
 export const FILE_PREVIEW_SCROLL_CLASS = "file-preview-thin-scroll";
 
 export const FILE_PREVIEW_DOCX_CONTENT_CLASS = cn(

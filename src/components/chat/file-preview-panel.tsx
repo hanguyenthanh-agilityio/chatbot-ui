@@ -214,9 +214,10 @@ export function FilePreviewPanel({
 
         <div
           className={cn(
-            "flex min-h-0 flex-1 flex-col overflow-hidden py-3 pl-2 pr-0 sm:pl-3",
-            file.kind !== FILE_PREVIEW_KIND.DOCX &&
-              cn("overflow-y-auto", FILE_PREVIEW_SCROLL_CLASS),
+            "flex min-h-0 flex-1 flex-col overflow-hidden py-3",
+            file.kind === FILE_PREVIEW_KIND.DOCX
+              ? "px-2 sm:px-3"
+              : cn("overflow-y-auto pl-2 pr-0 sm:pl-3", FILE_PREVIEW_SCROLL_CLASS),
           )}
         >
           <FilePreviewPanelContent

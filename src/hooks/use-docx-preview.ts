@@ -1,61 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  fitDocxPreviewToColumn,
-  renderDocxFilePreview,
-} from "@/utils/docx-preview";
+import { useEffect, useState } from "react";
+import { convertDocxFileToHtml } from "@/utils/docx-preview";
 
 export function useDocxPreview(docxFile: File | undefined) {
-  const bodyRef = useRef<HTMLDivElement>(null);
-  const styleRef = useRef<HTMLDivElement>(null);
-  const [renderedFile, setRenderedFile] = useState<File | null>(null);
+  const [html, setHtml] = useState<string | null>(null);
   const [hasFailed, setHasFailed] = useState(false);
 
   useEffect(() => {
-    const body = bodyRef.current;
-    const style = styleRef.current;
-    if (!docxFile || !body || !style) return;
+    if (!docxFile) return;
 
     let cancelled = false;
+    setHtml(null);
     setHasFailed(false);
 
-    const scheduleFit = () => {
-      requestAnimationFrame(() => {
-        if (!cancelled) fitDocxPreviewToColumn(body);
-      });
-    };
-
-    renderDocxFilePreview(docxFile, body, style)
-      .then(() => {
-        if (cancelled) return;
-        setRenderedFile(docxFile);
-        scheduleFit();
+    convertDocxFileToHtml(docxFile)
+      .then((value) => {
+        if (!cancelled) setHtml(value);
       })
       .catch(() => {
-        if (cancelled) return;
-        setHasFailed(true);
-        body.replaceChildren();
-        style.replaceChildren();
+        if (!cancelled) setHasFailed(true);
       });
-
-    const resizeObserver = new ResizeObserver(scheduleFit);
-    resizeObserver.observe(body);
 
     return () => {
       cancelled = true;
-      resizeObserver.disconnect();
-      body.replaceChildren();
-      style.replaceChildren();
     };
   }, [docxFile]);
 
-  const isLoading =
-    docxFile != null && renderedFile !== docxFile && !hasFailed;
+  const isLoading = docxFile != null && html == null && !hasFailed;
 
   return {
-    bodyRef,
-    styleRef,
+    html,
     isLoading,
     hasFailed: docxFile != null && hasFailed,
   };

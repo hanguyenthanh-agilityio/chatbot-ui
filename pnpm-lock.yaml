@@ -17,9 +17,6 @@ importers:
       ai:
         specifier: ^6.0.81
         version: 6.0.189(zod@4.4.3)
-      docx-preview:
-        specifier: ^0.3.7
-        version: 0.3.7
       mammoth:
         specifier: ^1.11.0
         version: 1.12.0
@@ -3077,9 +3074,6 @@ packages:
   doctrine@3.0.0:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
-
-  docx-preview@0.3.7:
-    resolution: {integrity: sha512-Lav69CTA/IYZPJTsKH7oYeoZjyg96N0wEJMNslGJnZJ+dMUZK85Lt5ASC79yUlD48ecWjuv+rkcmFt6EVPV0Xg==}
 
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
@@ -8218,10 +8212,6 @@ snapshots:
   doctrine@3.0.0:
     dependencies:
       esutils: 2.0.3
-
-  docx-preview@0.3.7:
-    dependencies:
-      jszip: 3.10.1
 
   dom-accessibility-api@0.5.16: {}
 

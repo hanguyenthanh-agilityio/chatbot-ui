@@ -15,8 +15,7 @@ function mockPreviewState(
   state: Partial<ReturnType<typeof useDocxPreview>>,
 ) {
   mockUseDocxPreview.mockReturnValue({
-    bodyRef: { current: null },
-    styleRef: { current: null },
+    html: null,
     isLoading: false,
     hasFailed: false,
     ...state,
@@ -32,11 +31,19 @@ describe("FilePreviewDocx", () => {
 
   it.each([
     ["unavailable", { file: undefined, isLoading: false, hasFailed: false }],
-    ["loading", { file: DOCX_FILE, isLoading: true, hasFailed: false }],
+    ["loading", { file: DOCX_FILE, isLoading: true, hasFailed: false, html: null }],
     ["failed", { file: DOCX_FILE, isLoading: false, hasFailed: true }],
-    ["ready", { file: DOCX_FILE, isLoading: false, hasFailed: false }],
-  ] as const)("matches snapshot (%s)", (_name, { file, isLoading, hasFailed }) => {
-    mockPreviewState({ isLoading, hasFailed });
+    [
+      "ready",
+      {
+        file: DOCX_FILE,
+        isLoading: false,
+        hasFailed: false,
+        html: "<p>Preview</p>",
+      },
+    ],
+  ] as const)("matches snapshot (%s)", (_name, { file, isLoading, hasFailed, html }) => {
+    mockPreviewState({ isLoading, hasFailed, html: html ?? null });
 
     const { container } = render(<FilePreviewDocx file={file} />);
     expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();

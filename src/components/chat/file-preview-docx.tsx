@@ -11,7 +11,7 @@ import { useDocxPreview } from "@/hooks/use-docx-preview";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
 export function FilePreviewDocx({ file }: { file: File | undefined }) {
-  const { bodyRef, styleRef, isLoading, hasFailed } = useDocxPreview(file);
+  const { html, isLoading, hasFailed } = useDocxPreview(file);
 
   if (!file) {
     return (
@@ -42,11 +42,12 @@ export function FilePreviewDocx({ file }: { file: File | undefined }) {
           <Text variant="captionMuted">{FILE_PREVIEW_COPY.docxPreviewLoading}</Text>
         </div>
       ) : null}
-      <div ref={styleRef} className="docx-preview-styles" aria-hidden />
-      <div
-        ref={bodyRef}
-        className="docx-preview-body min-h-0 w-full min-w-0 max-w-full overflow-x-hidden"
-      />
+      {html ? (
+        <div
+          className="file-preview-docx-html"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      ) : null}
     </div>
   );
 }
