@@ -1066,6 +1066,23 @@ html[data-theme="light"]
   height: auto;
 }
 
+.file-preview-pdf-content {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--min-height-preview);
+  box-sizing: border-box;
+}
+
+.file-preview-pdf-frame {
+  display: block;
+  width: 100%;
+  min-height: var(--max-height-file-preview-image);
+  flex: 1 1 auto;
+  border: 0;
+  background: #fff;
+}
+
 @keyframes app-skeleton-pulse {
   0%,
   100% {

@@ -82,13 +82,34 @@ export const FILE_PREVIEW_FALLBACK_CLASS = cn(
   "flex min-h-preview flex-col items-center justify-center gap-3 px-6 py-10 text-center",
 );
 
-/** Scrollable DOCX preview host (mammoth HTML in `.file-preview-docx-html`). */
 export const FILE_PREVIEW_SCROLL_CLASS = "file-preview-thin-scroll";
+export const FILE_PREVIEW_EMBEDDED_KINDS = new Set<FilePreviewKind>([
+  FILE_PREVIEW_KIND.DOCX,
+  FILE_PREVIEW_KIND.PDF,
+]);
 
-export const FILE_PREVIEW_DOCX_CONTENT_CLASS = cn(
-  "file-preview-docx-content file-preview-thin-scroll",
-  "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-y-auto overflow-x-hidden",
+export function isFilePreviewEmbeddedKind(kind: FilePreviewKind) {
+  return FILE_PREVIEW_EMBEDDED_KINDS.has(kind);
+}
+
+const FILE_PREVIEW_EMBEDDED_SHELL_CLASS = cn(
+  "file-preview-thin-scroll",
+  "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col",
   "rounded-2xl border border-white/8 bg-white light:border-app-border-subtle",
+);
+
+/** Scrollable DOCX preview host (mammoth HTML in `.file-preview-docx-html`). */
+export const FILE_PREVIEW_DOCX_CONTENT_CLASS = cn(
+  "file-preview-docx-content",
+  FILE_PREVIEW_EMBEDDED_SHELL_CLASS,
+  "overflow-y-auto overflow-x-hidden",
+);
+
+/** PDF preview host (iframe with data URL). */
+export const FILE_PREVIEW_PDF_CONTENT_CLASS = cn(
+  "file-preview-pdf-content",
+  FILE_PREVIEW_EMBEDDED_SHELL_CLASS,
+  "overflow-hidden",
 );
 
 /** Desktop-only drag handle between chat and preview. Sits outside the panel; height inset matches rounded-shell corners. */
@@ -148,6 +169,8 @@ export const FILE_PREVIEW_COPY = {
   imagePreviewUnavailable: "Image preview is not available.",
   docxPreviewLoading: "Loading document preview…",
   docxPreviewUnavailable: "Document preview is not available.",
+  pdfPreviewLoading: "Loading PDF preview…",
+  pdfPreviewUnavailable: "PDF preview is not available.",
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 
