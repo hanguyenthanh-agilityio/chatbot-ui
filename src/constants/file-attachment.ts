@@ -173,13 +173,19 @@ export const FILE_PREVIEW_COPY = {
   docxPreviewFailed: "Could not convert this document for preview.",
   pdfPreviewLoading: "Loading PDF preview…",
   pdfPreviewFailed: "Could not load this PDF for preview.",
+  mp4PreviewLoading: "Loading video preview…",
+  mp4PreviewFailed: "Could not load this video for preview.",
+  mp3PreviewLoading: "Loading audio preview…",
+  mp3PreviewFailed: "Could not load this audio for preview.",
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 
 export type FilePreviewMediaKind =
   | typeof FILE_PREVIEW_KIND.IMAGE
   | typeof FILE_PREVIEW_KIND.PDF
-  | typeof FILE_PREVIEW_KIND.DOCX;
+  | typeof FILE_PREVIEW_KIND.DOCX
+  | typeof FILE_PREVIEW_KIND.MP4
+  | typeof FILE_PREVIEW_KIND.MP3;
 
 const FILE_PREVIEW_MEDIA_MESSAGES: Record<
   FilePreviewMediaKind,
@@ -196,6 +202,14 @@ const FILE_PREVIEW_MEDIA_MESSAGES: Record<
   [FILE_PREVIEW_KIND.DOCX]: {
     loading: FILE_PREVIEW_COPY.docxPreviewLoading,
     failed: FILE_PREVIEW_COPY.docxPreviewFailed,
+  },
+  [FILE_PREVIEW_KIND.MP4]: {
+    loading: FILE_PREVIEW_COPY.mp4PreviewLoading,
+    failed: FILE_PREVIEW_COPY.mp4PreviewFailed,
+  },
+  [FILE_PREVIEW_KIND.MP3]: {
+    loading: FILE_PREVIEW_COPY.mp3PreviewLoading,
+    failed: FILE_PREVIEW_COPY.mp3PreviewFailed,
   },
 };
 

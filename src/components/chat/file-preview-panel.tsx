@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { FileKindIcon } from "@/components/chat/file-kind-icon";
 import { FilePreviewDocx } from "@/components/chat/file-preview-docx";
 import { FilePreviewImage } from "@/components/chat/file-preview-image";
+import { FilePreviewMp3, FilePreviewMp4 } from "@/components/chat/file-preview-media";
 import { FilePreviewPdf } from "@/components/chat/file-preview-pdf";
 import {
   FILE_KIND_LABEL,
@@ -42,10 +43,14 @@ function FilePreviewPanelContent({ file }: { file: ComposerAttachment }) {
       return <FilePreviewDocx file={file.rawFile} />;
     case FILE_PREVIEW_KIND.PDF:
       return <FilePreviewPdf file={file.rawFile} name={file.name} />;
+    case FILE_PREVIEW_KIND.MP4:
+      return <FilePreviewMp4 file={file.rawFile} name={file.name} />;
+    case FILE_PREVIEW_KIND.MP3:
+      return <FilePreviewMp3 file={file.rawFile} name={file.name} />;
     default:
       return (
         <Text variant="captionMuted" className="px-0.5">
-          Preview panel layout is ready. File rendering will be added next.
+          Preview is not available for this file type.
         </Text>
       );
   }
