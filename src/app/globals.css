@@ -1108,6 +1108,118 @@ html[data-theme="light"]
   pointer-events: none;
 }
 
+/* Code-style file preview (JSON / CSV) — Cursor / VS Code–like editor chrome. */
+.file-preview-code-content {
+  --file-preview-code-bg: #1e1e1e;
+  --file-preview-code-gutter-bg: #1e1e1e;
+  --file-preview-code-gutter-fg: #858585;
+  --file-preview-code-fg: #d4d4d4;
+  --file-preview-code-token-key: #9cdcfe;
+  --file-preview-code-token-string: #ce9178;
+  --file-preview-code-token-number: #b5cea8;
+  --file-preview-code-token-boolean: #569cd6;
+  --file-preview-code-token-null: #569cd6;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--min-height-preview);
+  box-sizing: border-box;
+  background: var(--file-preview-code-bg);
+}
+
+html[data-theme="light"] .file-preview-code-content {
+  --file-preview-code-bg: #ffffff;
+  --file-preview-code-gutter-bg: #f8f8f8;
+  --file-preview-code-gutter-fg: #237893;
+  --file-preview-code-fg: #1f1f1f;
+  --file-preview-code-token-key: #0451a5;
+  --file-preview-code-token-string: #a31515;
+  --file-preview-code-token-number: #098658;
+  --file-preview-code-token-boolean: #0000ff;
+  --file-preview-code-token-null: #0000ff;
+}
+
+.file-preview-code {
+  min-height: 100%;
+  color: var(--file-preview-code-fg);
+  background: var(--file-preview-code-bg);
+  font-family: var(
+    --font-mono,
+    ui-monospace,
+    "Cascadia Code",
+    "Source Code Pro",
+    Menlo,
+    Consolas,
+    monospace
+  );
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.file-preview-code-scroll {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 100%;
+  min-width: min-content;
+}
+
+.file-preview-code-gutter {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  padding: 0.75rem 0;
+  background: var(--file-preview-code-gutter-bg);
+  border-right: 1px solid rgb(255 255 255 / 0.06);
+  user-select: none;
+}
+
+html[data-theme="light"] .file-preview-code-gutter {
+  border-right-color: var(--color-app-border-subtle);
+}
+
+.file-preview-code-line-number {
+  padding: 0 0.875rem 0 0.75rem;
+  min-width: 2.75rem;
+  text-align: right;
+  color: var(--file-preview-code-gutter-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.file-preview-code-body {
+  margin: 0;
+  padding: 0.75rem 1rem 0.75rem 0.5rem;
+  overflow-x: auto;
+  background: transparent;
+  color: inherit;
+}
+
+.file-preview-code-body code {
+  display: block;
+  white-space: pre;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.file-preview-code-token-key {
+  color: var(--file-preview-code-token-key);
+}
+
+.file-preview-code-token-string {
+  color: var(--file-preview-code-token-string);
+}
+
+.file-preview-code-token-number {
+  color: var(--file-preview-code-token-number);
+}
+
+.file-preview-code-token-boolean,
+.file-preview-code-token-null {
+  color: var(--file-preview-code-token-boolean);
+}
+
 @keyframes app-skeleton-pulse {
   0%,
   100% {

@@ -19,6 +19,8 @@ const EXTENSION_KIND: Record<string, FilePreviewKind> = {
   docx: FILE_PREVIEW_KIND.DOCX,
   mp4: FILE_PREVIEW_KIND.MP4,
   mp3: FILE_PREVIEW_KIND.MP3,
+  csv: FILE_PREVIEW_KIND.CSV,
+  json: FILE_PREVIEW_KIND.JSON,
 };
 
 const MIME_KIND: Record<string, FilePreviewKind> = {
@@ -32,6 +34,10 @@ const MIME_KIND: Record<string, FilePreviewKind> = {
   "video/mp4": FILE_PREVIEW_KIND.MP4,
   "audio/mpeg": FILE_PREVIEW_KIND.MP3,
   "audio/mp3": FILE_PREVIEW_KIND.MP3,
+  "text/csv": FILE_PREVIEW_KIND.CSV,
+  "application/csv": FILE_PREVIEW_KIND.CSV,
+  "application/json": FILE_PREVIEW_KIND.JSON,
+  "text/json": FILE_PREVIEW_KIND.JSON,
 };
 
 export function inferFilePreviewKind(file: File): FilePreviewKind {

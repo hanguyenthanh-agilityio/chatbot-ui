@@ -4,6 +4,8 @@ export const FILE_PREVIEW_KIND = {
   DOCX: "docx",
   MP4: "mp4",
   MP3: "mp3",
+  CSV: "csv",
+  JSON: "json",
   UNKNOWN: "unknown",
 } as const;
 

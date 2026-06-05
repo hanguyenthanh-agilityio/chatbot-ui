@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { convertDocxFileToHtml } from "@/utils/file-preview";
+import {
+  convertDocxFileToHtml,
+  parseJsonFile,
+  readCsvFileText,
+} from "@/utils/file-preview";
 
 type FileKeyedPreview<T> = {
   file: File;
@@ -106,6 +110,34 @@ export function useDocxPreview(docxFile: File | undefined) {
 
   return {
     html: value,
+    isLoading,
+    hasFailed,
+  };
+}
+
+export function useJsonPreview(jsonFile: File | undefined) {
+  const loadJson = useCallback((file: File) => parseJsonFile(file), []);
+  const { value, isLoading, hasFailed } = useAsyncFilePreview(
+    jsonFile,
+    loadJson,
+  );
+
+  return {
+    text: value,
+    isLoading,
+    hasFailed,
+  };
+}
+
+export function useCsvPreview(csvFile: File | undefined) {
+  const loadCsv = useCallback((file: File) => readCsvFileText(file), []);
+  const { value, isLoading, hasFailed } = useAsyncFilePreview(
+    csvFile,
+    loadCsv,
+  );
+
+  return {
+    text: value,
     isLoading,
     hasFailed,
   };

@@ -9,8 +9,10 @@ import { CloseIcon } from "@/components/ui/icons";
 import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
 import { FileKindIcon } from "@/components/chat/file-kind-icon";
+import { FilePreviewCsv } from "@/components/chat/file-preview-csv";
 import { FilePreviewDocx } from "@/components/chat/file-preview-docx";
 import { FilePreviewImage } from "@/components/chat/file-preview-image";
+import { FilePreviewJson } from "@/components/chat/file-preview-json";
 import { FilePreviewMp3, FilePreviewMp4 } from "@/components/chat/file-preview-media";
 import { FilePreviewPdf } from "@/components/chat/file-preview-pdf";
 import {
@@ -47,6 +49,10 @@ function FilePreviewPanelContent({ file }: { file: ComposerAttachment }) {
       return <FilePreviewMp4 file={file.rawFile} name={file.name} />;
     case FILE_PREVIEW_KIND.MP3:
       return <FilePreviewMp3 file={file.rawFile} name={file.name} />;
+    case FILE_PREVIEW_KIND.CSV:
+      return <FilePreviewCsv file={file.rawFile} />;
+    case FILE_PREVIEW_KIND.JSON:
+      return <FilePreviewJson file={file.rawFile} />;
     default:
       return (
         <Text variant="captionMuted" className="px-0.5">

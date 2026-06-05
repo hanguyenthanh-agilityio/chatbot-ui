@@ -11,6 +11,8 @@ export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
   [FILE_PREVIEW_KIND.DOCX]: "DOCX",
   [FILE_PREVIEW_KIND.MP4]: "MP4",
   [FILE_PREVIEW_KIND.MP3]: "MP3",
+  [FILE_PREVIEW_KIND.CSV]: "CSV",
+  [FILE_PREVIEW_KIND.JSON]: "JSON",
   [FILE_PREVIEW_KIND.UNKNOWN]: "FILE",
 };
 
@@ -20,6 +22,8 @@ export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
   [FILE_PREVIEW_KIND.DOCX]: "bg-blue-500",
   [FILE_PREVIEW_KIND.MP4]: "bg-violet-500",
   [FILE_PREVIEW_KIND.MP3]: "bg-teal-500",
+  [FILE_PREVIEW_KIND.CSV]: "bg-emerald-500",
+  [FILE_PREVIEW_KIND.JSON]: "bg-orange-500",
   [FILE_PREVIEW_KIND.UNKNOWN]: "bg-neutral-500",
 };
 
@@ -86,6 +90,8 @@ export const FILE_PREVIEW_SCROLL_CLASS = "file-preview-thin-scroll";
 export const FILE_PREVIEW_EMBEDDED_KINDS = new Set<FilePreviewKind>([
   FILE_PREVIEW_KIND.DOCX,
   FILE_PREVIEW_KIND.PDF,
+  FILE_PREVIEW_KIND.CSV,
+  FILE_PREVIEW_KIND.JSON,
 ]);
 
 export function isFilePreviewEmbeddedKind(kind: FilePreviewKind) {
@@ -110,6 +116,14 @@ export const FILE_PREVIEW_PDF_CONTENT_CLASS = cn(
   "file-preview-pdf-content",
   FILE_PREVIEW_EMBEDDED_SHELL_CLASS,
   "overflow-hidden",
+);
+
+/** Scrollable code-style preview host (JSON, CSV). */
+export const FILE_PREVIEW_CODE_CONTENT_CLASS = cn(
+  "file-preview-code-content",
+  "file-preview-thin-scroll",
+  "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col",
+  "overflow-auto rounded-2xl border border-white/8 light:border-app-border-subtle",
 );
 
 /** Desktop-only drag handle between chat and preview. Sits outside the panel; height inset matches rounded-shell corners. */
@@ -153,7 +167,7 @@ export const FILE_PREVIEW_PANEL_WIDTH = {
 } as const;
 
 export const FILE_PREVIEW_ACCEPT =
-  ".png,.jpg,.jpeg,.gif,.webp,.pdf,.docx,.mp4,.mp3,image/png,image/jpeg,image/gif,image/webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,audio/mpeg,audio/mp3";
+  ".png,.jpg,.jpeg,.gif,.webp,.pdf,.docx,.mp4,.mp3,.csv,.json,image/png,image/jpeg,image/gif,image/webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,audio/mpeg,audio/mp3,text/csv,application/csv,application/json,text/json";
 
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
@@ -177,6 +191,10 @@ export const FILE_PREVIEW_COPY = {
   mp4PreviewFailed: "Could not load this video for preview.",
   mp3PreviewLoading: "Loading audio preview…",
   mp3PreviewFailed: "Could not load this audio for preview.",
+  csvPreviewLoading: "Loading CSV preview…",
+  csvPreviewFailed: "Could not parse this CSV for preview.",
+  jsonPreviewLoading: "Loading JSON preview…",
+  jsonPreviewFailed: "Could not parse this JSON for preview.",
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 
@@ -185,7 +203,9 @@ export type FilePreviewMediaKind =
   | typeof FILE_PREVIEW_KIND.PDF
   | typeof FILE_PREVIEW_KIND.DOCX
   | typeof FILE_PREVIEW_KIND.MP4
-  | typeof FILE_PREVIEW_KIND.MP3;
+  | typeof FILE_PREVIEW_KIND.MP3
+  | typeof FILE_PREVIEW_KIND.CSV
+  | typeof FILE_PREVIEW_KIND.JSON;
 
 const FILE_PREVIEW_MEDIA_MESSAGES: Record<
   FilePreviewMediaKind,
@@ -210,6 +230,14 @@ const FILE_PREVIEW_MEDIA_MESSAGES: Record<
   [FILE_PREVIEW_KIND.MP3]: {
     loading: FILE_PREVIEW_COPY.mp3PreviewLoading,
     failed: FILE_PREVIEW_COPY.mp3PreviewFailed,
+  },
+  [FILE_PREVIEW_KIND.CSV]: {
+    loading: FILE_PREVIEW_COPY.csvPreviewLoading,
+    failed: FILE_PREVIEW_COPY.csvPreviewFailed,
+  },
+  [FILE_PREVIEW_KIND.JSON]: {
+    loading: FILE_PREVIEW_COPY.jsonPreviewLoading,
+    failed: FILE_PREVIEW_COPY.jsonPreviewFailed,
   },
 };
 
