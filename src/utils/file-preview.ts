@@ -16,7 +16,7 @@ export function sanitizeDocxPreviewHtml(html: string): string {
   return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 }
 
-/** Convert a local DOCX file to HTML for column-3 preview (client-only). */
+/** DOCX → HTML for column-3 preview (sanitized before render). */
 export async function convertDocxFileToHtml(file: File): Promise<string> {
   const mammoth = await loadMammoth();
   const arrayBuffer = await file.arrayBuffer();
@@ -27,6 +27,18 @@ export async function convertDocxFileToHtml(file: File): Promise<string> {
   return sanitizeDocxPreviewHtml(value);
 }
 
+/** DOCX → plain text for attach-time read (AI/RAG; separate from HTML preview). */
+export async function extractDocxFileText(file: File): Promise<string> {
+  const mammoth = await loadMammoth();
+  const arrayBuffer = await file.arrayBuffer();
+  const { value } = await mammoth.extractRawText({ arrayBuffer });
+  const text = value.trim();
+  if (!text) {
+    throw new Error("File is empty");
+  }
+  return text;
+}
+
 /** Chrome/Edge PDF viewer: hide thumbnail sidebar; keep toolbar (page, zoom, download). */
 const PDF_PREVIEW_EMBED_FRAGMENT = "navpanes=0&view=FitH";
 
@@ -35,7 +47,7 @@ export function withPdfEmbedParams(dataUrl: string) {
   return `${base}#${PDF_PREVIEW_EMBED_FRAGMENT}`;
 }
 
-/** Read local JSON/CSV text for column-3 code preview (client-only). */
+/** CSV/JSON → text for column-3 code preview (also reused by attach-time read). */
 export async function readCodePreviewFile(
   file: File,
   kind: "csv" | "json",
