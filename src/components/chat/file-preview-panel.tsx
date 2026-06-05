@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import {
-  useEffect,
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
@@ -12,17 +10,18 @@ import { Text } from "@/components/ui/text";
 import { Badge } from "@/components/ui/badge";
 import { FileKindIcon } from "@/components/chat/file-kind-icon";
 import { FilePreviewDocx } from "@/components/chat/file-preview-docx";
+import { FilePreviewImage } from "@/components/chat/file-preview-image";
+import { FilePreviewPdf } from "@/components/chat/file-preview-pdf";
 import {
   FILE_KIND_LABEL,
   FILE_PREVIEW_COPY,
-  FILE_PREVIEW_FALLBACK_CLASS,
-  FILE_PREVIEW_FRAME_CLASS,
   FILE_PREVIEW_PANEL_CLASS,
   FILE_PREVIEW_PANEL_WIDTH,
   FILE_PREVIEW_RESIZE_GRIP_CLASS,
   FILE_PREVIEW_RESIZE_GRIP_DOT_CLASS,
   FILE_PREVIEW_RESIZE_HANDLE_CLASS,
   FILE_PREVIEW_SCROLL_CLASS,
+  isFilePreviewEmbeddedKind,
 } from "@/constants/file-attachment";
 import { THEME_SHELL_UTILITIES } from "@/constants/theme";
 import {
@@ -35,62 +34,24 @@ import {
 } from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
-type ImagePreviewState = {
-  file: File;
-  url: string;
-};
-
-function FilePreviewPanelContent({
-  file,
-  showImage,
-  objectUrl,
-  onImageError,
-}: {
-  file: ComposerAttachment;
-  showImage: boolean;
-  objectUrl: string | null;
-  onImageError: () => void;
-}) {
-  if (file.kind === FILE_PREVIEW_KIND.IMAGE) {
-    if (showImage && objectUrl) {
+function FilePreviewPanelContent({ file }: { file: ComposerAttachment }) {
+  switch (file.kind) {
+    case FILE_PREVIEW_KIND.IMAGE:
+      return <FilePreviewImage file={file.rawFile} name={file.name} />;
+    case FILE_PREVIEW_KIND.DOCX:
+      return <FilePreviewDocx file={file.rawFile} />;
+    case FILE_PREVIEW_KIND.PDF:
+      return <FilePreviewPdf file={file.rawFile} name={file.name} />;
+    default:
       return (
-        <div className={FILE_PREVIEW_FRAME_CLASS}>
-          <Image
-            src={objectUrl}
-            alt={file.name}
-            width={1600}
-            height={1200}
-            unoptimized
-            sizes="100vw"
-            onError={onImageError}
-            className="h-auto w-full max-h-file-preview-image rounded-xl object-contain"
-          />
-        </div>
-      );
-    }
-
-    return (
-      <div className={FILE_PREVIEW_FALLBACK_CLASS}>
-        <FileKindIcon kind={FILE_PREVIEW_KIND.IMAGE} />
-        <Text variant="captionMuted">
-          {FILE_PREVIEW_COPY.imagePreviewUnavailable}
+        <Text variant="captionMuted" className="px-0.5">
+          Preview panel layout is ready. File rendering will be added next.
         </Text>
-      </div>
-    );
+      );
   }
-
-  if (file.kind === FILE_PREVIEW_KIND.DOCX) {
-    return <FilePreviewDocx file={file.rawFile} />;
-  }
-
-  return (
-    <Text variant="captionMuted" className="px-0.5">
-      Preview panel layout is ready. File rendering will be added next.
-    </Text>
-  );
 }
 
-/** Column-3 preview panel: image preview, fallback UI, and desktop resize handle. */
+/** Column-3 preview panel: file preview by kind and desktop resize handle. */
 export function FilePreviewPanel({
   file,
   width,
@@ -103,47 +64,14 @@ export function FilePreviewPanel({
   onClose: () => void;
 }) {
   const meta = file.sizeBytes != null ? formatFileSize(file.sizeBytes) : null;
-  const imageFile =
-    file.kind === FILE_PREVIEW_KIND.IMAGE ? file.rawFile : undefined;
-  const [preview, setPreview] = useState<ImagePreviewState | null>(null);
-  const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
 
-  // Data URL avoids blob revoke issues in Strict Mode; setState runs in reader callbacks only.
-  useEffect(() => {
-    if (!imageFile) return;
-
-    let cancelled = false;
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      if (cancelled || typeof reader.result !== "string") return;
-      setPreview({ file: imageFile, url: reader.result });
-      setImageLoadFailed(false);
-    };
-    reader.onerror = () => {
-      if (!cancelled) setImageLoadFailed(true);
-    };
-    reader.readAsDataURL(imageFile);
-
-    return () => {
-      cancelled = true;
-    };
-  }, [imageFile]);
-
-  const objectUrl =
-    imageFile && preview?.file === imageFile ? preview.url : null;
-  const showImage = objectUrl != null && !imageLoadFailed;
-
-  const handleImageError = () => {
-    setImageLoadFailed(true);
-  };
-
-  // width null in parent → measure current column; custom resize sets px on grid.
   const startResize = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.preventDefault();
     const container = event.currentTarget.parentElement;
     bindFilePreviewPanelResize({
+      handle: event.currentTarget,
+      pointerId: event.pointerId,
       startX: event.clientX,
       startWidth:
         width ??
@@ -155,8 +83,10 @@ export function FilePreviewPanel({
   };
 
   return (
-    <div className="relative min-h-0 min-w-0 w-full lg:h-full">
-      {/* Handle is a sibling of the panel (not inside aside) so it sits on the column seam. */}
+    <div
+      className="relative min-h-0 min-w-0 w-full lg:h-full"
+      data-resizing={isResizing}
+    >
       <div
         role="separator"
         aria-orientation="vertical"
@@ -219,7 +149,7 @@ export function FilePreviewPanel({
         <div
           className={cn(
             "flex min-h-0 flex-1 flex-col overflow-hidden py-3",
-            file.kind === FILE_PREVIEW_KIND.DOCX
+            isFilePreviewEmbeddedKind(file.kind)
               ? "px-2 sm:px-3"
               : cn(
                   "overflow-y-auto pl-2 pr-0 sm:pl-3",
@@ -227,12 +157,7 @@ export function FilePreviewPanel({
                 ),
           )}
         >
-          <FilePreviewPanelContent
-            file={file}
-            showImage={showImage}
-            objectUrl={objectUrl}
-            onImageError={handleImageError}
-          />
+          <FilePreviewPanelContent file={file} />
         </div>
       </aside>
     </div>

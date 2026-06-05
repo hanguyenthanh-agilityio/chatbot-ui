@@ -84,17 +84,22 @@ export function clampFilePreviewPanelWidth(
 
 /** Pointer-drag resize for column 3. Updates grid via --workspace-col-3-width in WorkspaceApp (not Tailwind resize). */
 export function bindFilePreviewPanelResize({
+  handle,
+  pointerId,
   startX,
   startWidth,
   onWidthChange,
   onActiveChange,
 }: {
+  handle: HTMLElement;
+  pointerId: number;
   startX: number;
   startWidth: number;
   onWidthChange: (width: number) => void;
   onActiveChange: (active: boolean) => void;
 }) {
   const handlePointerMove = (event: PointerEvent) => {
+    if (event.pointerId !== pointerId) return;
     // Dragging left edge left → wider preview column.
     onWidthChange(
       clampFilePreviewPanelWidth(
@@ -104,19 +109,26 @@ export function bindFilePreviewPanelResize({
     );
   };
 
-  const handlePointerUp = () => {
+  const endResize = (event: PointerEvent) => {
+    if (event.pointerId !== pointerId) return;
     onActiveChange(false);
     document.body.style.removeProperty("cursor");
     document.body.style.removeProperty("user-select");
-    window.removeEventListener("pointermove", handlePointerMove);
-    window.removeEventListener("pointerup", handlePointerUp);
+    handle.removeEventListener("pointermove", handlePointerMove);
+    handle.removeEventListener("pointerup", endResize);
+    handle.removeEventListener("pointercancel", endResize);
+    if (handle.hasPointerCapture(pointerId)) {
+      handle.releasePointerCapture(pointerId);
+    }
   };
 
   onActiveChange(true);
   document.body.style.cursor = "col-resize";
   document.body.style.userSelect = "none";
-  window.addEventListener("pointermove", handlePointerMove);
-  window.addEventListener("pointerup", handlePointerUp);
+  handle.setPointerCapture(pointerId);
+  handle.addEventListener("pointermove", handlePointerMove);
+  handle.addEventListener("pointerup", endResize);
+  handle.addEventListener("pointercancel", endResize);
 }
 
 /** Read the first picked file and reset the input so the same file can be selected again. */
