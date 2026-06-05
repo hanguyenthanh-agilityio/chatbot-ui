@@ -66,6 +66,23 @@ export function useFileDataUrl(file: File | undefined) {
   };
 }
 
+/** Track `<img>` / media decode failures keyed by `File` (resets when file changes). */
+export function useFileRenderFailure(file: File | undefined) {
+  const [renderFailedFile, setRenderFailedFile] = useState<File | null>(null);
+  const renderFailed = file != null && renderFailedFile === file;
+
+  const handleRenderError = useCallback(() => {
+    if (file) setRenderFailedFile(file);
+  }, [file]);
+
+  useEffect(() => {
+    if (!file) return;
+    return () => setRenderFailedFile(null);
+  }, [file]);
+
+  return { renderFailed, handleRenderError };
+}
+
 /** Track async file conversion keyed by `File` (extend for other converters). */
 export function useAsyncFilePreview<T>(
   file: File | undefined,

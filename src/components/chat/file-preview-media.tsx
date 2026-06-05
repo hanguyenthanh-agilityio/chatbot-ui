@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { FilePreviewEmbeddedBody } from "@/components/chat/file-preview-common";
 import { FILE_PREVIEW_FRAME_CLASS } from "@/constants/file-attachment";
-import { useFileDataUrl } from "@/hooks/use-file-preview";
+import { useFileDataUrl, useFileRenderFailure } from "@/hooks/use-file-preview";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
 type MediaPreviewKind =
@@ -22,7 +21,7 @@ function FilePreviewMediaPlayer({
   playerClassName: string;
 }) {
   const { url, isLoading, hasFailed } = useFileDataUrl(file);
-  const [renderFailed, setRenderFailed] = useState(false);
+  const { renderFailed, handleRenderError } = useFileRenderFailure(file);
   const failed = hasFailed || renderFailed;
   const isVideo = kind === FILE_PREVIEW_KIND.MP4;
 
@@ -44,7 +43,7 @@ function FilePreviewMediaPlayer({
               playsInline
               className={playerClassName}
               aria-label={name}
-              onError={() => setRenderFailed(true)}
+              onError={handleRenderError}
             />
           ) : (
             <audio
@@ -53,7 +52,7 @@ function FilePreviewMediaPlayer({
               preload="metadata"
               className={playerClassName}
               aria-label={name}
-              onError={() => setRenderFailed(true)}
+              onError={handleRenderError}
             />
           )}
         </div>
