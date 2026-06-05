@@ -192,9 +192,9 @@ export const FILE_PREVIEW_COPY = {
   mp3PreviewLoading: "Loading audio preview…",
   mp3PreviewFailed: "Could not load this audio for preview.",
   csvPreviewLoading: "Loading CSV preview…",
-  csvPreviewFailed: "Could not parse this CSV for preview.",
+  csvPreviewFailed: "Could not load this CSV for preview.",
   jsonPreviewLoading: "Loading JSON preview…",
-  jsonPreviewFailed: "Could not parse this JSON for preview.",
+  jsonPreviewFailed: "Could not load this JSON for preview.",
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 

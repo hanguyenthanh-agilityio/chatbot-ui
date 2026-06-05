@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   convertDocxFileToHtml,
-  parseJsonFile,
-  readCsvFileText,
+  readCodePreviewFile,
 } from "@/utils/file-preview";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
@@ -121,10 +120,7 @@ export function useCodeFilePreview(
   kind: typeof FILE_PREVIEW_KIND.CSV | typeof FILE_PREVIEW_KIND.JSON,
 ) {
   const load = useCallback(
-    (input: File) =>
-      kind === FILE_PREVIEW_KIND.JSON
-        ? parseJsonFile(input)
-        : readCsvFileText(input),
+    (input: File) => readCodePreviewFile(input, kind),
     [kind],
   );
   const { value, isLoading, hasFailed } = useAsyncFilePreview(file, load);

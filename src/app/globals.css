@@ -1108,17 +1108,12 @@ html[data-theme="light"]
   pointer-events: none;
 }
 
-/* Code-style file preview (JSON / CSV) — Cursor / VS Code–like editor chrome. */
+/* Code-style file preview (JSON / CSV). */
 .file-preview-code-content {
   --file-preview-code-bg: #1e1e1e;
   --file-preview-code-gutter-bg: #1e1e1e;
   --file-preview-code-gutter-fg: #858585;
   --file-preview-code-fg: #d4d4d4;
-  --file-preview-code-token-key: #9cdcfe;
-  --file-preview-code-token-string: #ce9178;
-  --file-preview-code-token-number: #b5cea8;
-  --file-preview-code-token-boolean: #569cd6;
-  --file-preview-code-token-null: #569cd6;
 
   width: 100%;
   max-width: 100%;
@@ -1133,11 +1128,6 @@ html[data-theme="light"] .file-preview-code-content {
   --file-preview-code-gutter-bg: #f8f8f8;
   --file-preview-code-gutter-fg: #237893;
   --file-preview-code-fg: #1f1f1f;
-  --file-preview-code-token-key: #0451a5;
-  --file-preview-code-token-string: #a31515;
-  --file-preview-code-token-number: #098658;
-  --file-preview-code-token-boolean: #0000ff;
-  --file-preview-code-token-null: #0000ff;
 }
 
 .file-preview-code {
@@ -1201,23 +1191,6 @@ html[data-theme="light"] .file-preview-code-gutter {
   font-size: inherit;
   line-height: inherit;
   color: inherit;
-}
-
-.file-preview-code-token-key {
-  color: var(--file-preview-code-token-key);
-}
-
-.file-preview-code-token-string {
-  color: var(--file-preview-code-token-string);
-}
-
-.file-preview-code-token-number {
-  color: var(--file-preview-code-token-number);
-}
-
-.file-preview-code-token-boolean,
-.file-preview-code-token-null {
-  color: var(--file-preview-code-token-boolean);
 }
 
 @keyframes app-skeleton-pulse {
