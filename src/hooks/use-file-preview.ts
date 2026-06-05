@@ -6,6 +6,7 @@ import {
   parseJsonFile,
   readCsvFileText,
 } from "@/utils/file-preview";
+import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
 type FileKeyedPreview<T> = {
   file: File;
@@ -115,26 +116,18 @@ export function useDocxPreview(docxFile: File | undefined) {
   };
 }
 
-export function useJsonPreview(jsonFile: File | undefined) {
-  const loadJson = useCallback((file: File) => parseJsonFile(file), []);
-  const { value, isLoading, hasFailed } = useAsyncFilePreview(
-    jsonFile,
-    loadJson,
+export function useCodeFilePreview(
+  file: File | undefined,
+  kind: typeof FILE_PREVIEW_KIND.CSV | typeof FILE_PREVIEW_KIND.JSON,
+) {
+  const load = useCallback(
+    (input: File) =>
+      kind === FILE_PREVIEW_KIND.JSON
+        ? parseJsonFile(input)
+        : readCsvFileText(input),
+    [kind],
   );
-
-  return {
-    text: value,
-    isLoading,
-    hasFailed,
-  };
-}
-
-export function useCsvPreview(csvFile: File | undefined) {
-  const loadCsv = useCallback((file: File) => readCsvFileText(file), []);
-  const { value, isLoading, hasFailed } = useAsyncFilePreview(
-    csvFile,
-    loadCsv,
-  );
+  const { value, isLoading, hasFailed } = useAsyncFilePreview(file, load);
 
   return {
     text: value,
