@@ -1088,6 +1088,26 @@ html[data-theme="light"]
   pointer-events: none;
 }
 
+.file-preview-mp4 {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  max-height: var(--max-height-file-preview-image);
+  border-radius: 0.75rem;
+  background: #000;
+}
+
+.file-preview-mp3 {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+[data-resizing="true"] .file-preview-mp4,
+[data-resizing="true"] .file-preview-mp3 {
+  pointer-events: none;
+}
+
 @keyframes app-skeleton-pulse {
   0%,
   100% {
