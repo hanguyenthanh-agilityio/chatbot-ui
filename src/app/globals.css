@@ -947,6 +947,125 @@ html[data-theme="light"] .app-chat-header {
   box-shadow: var(--shadow-shell-header);
 }
 
+/* DOCX preview (mammoth HTML) + thin scrollbar in column 3. */
+.file-preview-thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--palette-black) 28%, transparent)
+    transparent;
+}
+
+.file-preview-thin-scroll::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+.file-preview-thin-scroll::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+.file-preview-thin-scroll::-webkit-scrollbar-track {
+  margin: 1px 0;
+  background: transparent;
+}
+
+.file-preview-thin-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--palette-black) 32%, transparent);
+  background-clip: padding-box;
+}
+
+.file-preview-thin-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--palette-black) 40%, transparent);
+}
+
+html[data-theme="light"] .file-preview-thin-scroll {
+  scrollbar-color: color-mix(in srgb, var(--palette-black) 20%, transparent)
+    transparent;
+}
+
+html[data-theme="light"] .file-preview-thin-scroll::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--palette-black) 20%, transparent);
+}
+
+html[data-theme="light"]
+  .file-preview-thin-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--palette-black) 32%, transparent);
+}
+
+.file-preview-docx-content {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.file-preview-docx-html {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 1.25rem 1.25rem 1.5rem;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+  color: #1a1a1a;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+/* Word / mammoth often adds left indent; keep horizontal rhythm even in the column. */
+.file-preview-docx-html p,
+.file-preview-docx-html h1,
+.file-preview-docx-html h2,
+.file-preview-docx-html h3,
+.file-preview-docx-html h4,
+.file-preview-docx-html li {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.file-preview-docx-html p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.file-preview-docx-html ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin: 0.5em 0;
+}
+
+.file-preview-docx-html ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin: 0.5em 0;
+}
+
+.file-preview-docx-html li {
+  display: list-item;
+}
+
+.file-preview-docx-html table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.file-preview-docx-html th,
+.file-preview-docx-html td {
+  padding: 0.35rem 0.5rem;
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+
+.file-preview-docx-html img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 @keyframes app-skeleton-pulse {
   0%,
   100% {
