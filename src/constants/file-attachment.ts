@@ -65,6 +65,55 @@ export const COMPOSER_ATTACH_MENU_CLASS = cn(
   "absolute bottom-full left-0 z-120 mb-2 min-w-[15.5rem] overflow-visible p-1.5",
 );
 
+/** Right-rail file preview panel (column 3). Styles live here; resize logic in utils/file-attachment. */
+export const FILE_PREVIEW_PANEL_CLASS = cn(
+  "flex h-full min-h-preview w-full min-w-0 flex-col overflow-hidden rounded-shell border shadow-shell",
+  "bg-glass-panel backdrop-blur-shell",
+  "border-white/9 text-white light:border-app-border-muted light:text-app-fg",
+);
+
+export const FILE_PREVIEW_FRAME_CLASS = cn(
+  "rounded-2xl border p-1 sm:p-1.5",
+  "border-white/8 bg-white/2 light:border-app-border-subtle light:bg-app-surface-subtle",
+);
+
+export const FILE_PREVIEW_FALLBACK_CLASS = cn(
+  FILE_PREVIEW_FRAME_CLASS,
+  "flex min-h-preview flex-col items-center justify-center gap-3 px-6 py-10 text-center",
+);
+
+/** Scrollable DOCX preview host (mammoth HTML in `.file-preview-docx-html`). */
+export const FILE_PREVIEW_SCROLL_CLASS = "file-preview-thin-scroll";
+
+export const FILE_PREVIEW_DOCX_CONTENT_CLASS = cn(
+  "file-preview-docx-content file-preview-thin-scroll",
+  "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-y-auto overflow-x-hidden",
+  "rounded-2xl border border-white/8 bg-white light:border-app-border-subtle",
+);
+
+/** Desktop-only drag handle between chat and preview. Sits outside the panel; height inset matches rounded-shell corners. */
+export const FILE_PREVIEW_RESIZE_HANDLE_CLASS = cn(
+  "group/resize absolute top-[var(--radius-shell)] bottom-[var(--radius-shell)] left-0 z-20 hidden w-4 -translate-x-1/2 cursor-col-resize touch-none lg:flex lg:items-center lg:justify-center",
+  "before:absolute before:inset-y-0 before:left-1/2 before:w-px before:-translate-x-1/2 before:rounded-full before:transition-colors before:duration-200",
+  "before:bg-white/6 group-hover/resize:before:bg-white/18 data-[resizing=true]:before:bg-violet-400/65",
+  "light:before:bg-app-border-subtle light:group-hover/resize:before:bg-app-border light:data-[resizing=true]:before:bg-app-fg-faint",
+);
+
+export const FILE_PREVIEW_RESIZE_GRIP_CLASS = cn(
+  "relative z-10 flex flex-col gap-1 rounded-full border px-1.5 py-2 transition-all duration-200",
+  "border-white/14 bg-white/8 text-white/55 opacity-100 shadow-sm",
+  "group-hover/resize:border-white/22 group-hover/resize:bg-white/12 group-hover/resize:text-white/80 group-hover/resize:shadow-md",
+  "group-data-[resizing=true]/resize:border-violet-400/55 group-data-[resizing=true]/resize:bg-white/14 group-data-[resizing=true]/resize:text-white group-data-[resizing=true]/resize:shadow-md",
+  "light:border-app-border light:bg-white light:text-app-fg-faint light:shadow-panel-sm",
+  "light:group-hover/resize:border-app-border-emphasis light:group-hover/resize:bg-white light:group-hover/resize:text-app-fg-muted light:group-hover/resize:shadow-panel",
+  "light:group-data-[resizing=true]/resize:border-app-border-emphasis light:group-data-[resizing=true]/resize:bg-app-surface-subtle light:group-data-[resizing=true]/resize:text-app-fg",
+);
+
+export const FILE_PREVIEW_RESIZE_GRIP_DOT_CLASS = cn(
+  "h-1 w-1 rounded-full bg-current opacity-70 transition-opacity duration-200",
+  "group-hover/resize:opacity-90 group-data-[resizing=true]/resize:opacity-100",
+);
+
 /** Recent-files flyout layout (portal positioning). */
 export const RECENT_FLYOUT_LAYOUT = {
   width: 280,
@@ -72,6 +121,14 @@ export const RECENT_FLYOUT_LAYOUT = {
   gap: 6,
   viewportPadding: 8,
   hoverCloseDelayMs: 120,
+} as const;
+
+/** Resizable file preview panel width (px); CSS tokens in globals.css. */
+export const FILE_PREVIEW_PANEL_WIDTH = {
+  default: 288,
+  min: 240,
+  max: 560,
+  viewportMaxRatio: 0.45,
 } as const;
 
 export const FILE_PREVIEW_ACCEPT =
@@ -89,6 +146,9 @@ export const FILE_PREVIEW_COPY = {
   closePreviewLabel: "Close preview",
   openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
   imagePreviewUnavailable: "Image preview is not available.",
+  docxPreviewLoading: "Loading document preview…",
+  docxPreviewUnavailable: "Document preview is not available.",
+  resizePreviewLabel: "Resize file preview panel",
 } as const;
 
 export const MOCK_RECENT_FILES: readonly LibraryRecentFile[] = [

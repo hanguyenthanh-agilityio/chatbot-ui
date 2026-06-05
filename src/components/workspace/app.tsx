@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore, type CSSProperties } from "react";
 
 // Components
 import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
@@ -35,6 +35,7 @@ import type { AIProviderName } from "@/lib/ai-provider";
 
 // Utils
 import { getInitialsFromName } from "@/utils/avatar";
+import { clampFilePreviewPanelWidth } from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
 // Hooks
@@ -117,6 +118,16 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
   } = useWorkspaceApp(authRole ?? "user", authSessions);
 
   const [isFilePreviewOpen, setIsFilePreviewOpen] = useState(false);
+  // null = use default column-3 width (same as ThreadSidebar). Set only after user drags resize.
+  const [filePreviewWidth, setFilePreviewWidth] = useState<number | null>(null);
+
+  const attachedFile = composerAttachment.attachedFile;
+  const isFilePreviewVisible = isFilePreviewOpen && attachedFile != null;
+  // Override grid column 3 only when user has resized; otherwise CSS tokens (18rem / 20rem) apply.
+  const workspaceGridStyle =
+    isFilePreviewVisible && filePreviewWidth != null
+      ? ({ "--workspace-col-3-width": `${filePreviewWidth}px` } as CSSProperties)
+      : undefined;
 
   const handleAttachFile = (file: File) => {
     composerAttachment.attachFile(file);
@@ -125,6 +136,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
 
   const handleRemoveAttachedFile = () => {
     setIsFilePreviewOpen(false);
+    setFilePreviewWidth(null); // restore default column width for ThreadSidebar
     composerAttachment.clearAttachment();
   };
 
@@ -134,6 +146,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
 
   const handleCloseFilePreview = () => {
     setIsFilePreviewOpen(false);
+    setFilePreviewWidth(null); // closing preview only hides panel; attachment stays in composer
   };
 
   const accountPanel = (
@@ -182,6 +195,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             WORKSPACE_GRID_COLS_LG,
             WORKSPACE_GRID_COLS_XL,
           )}
+          style={workspaceGridStyle}
         >
           {/* Tools (compact) — left rail */}
           <aside
@@ -205,7 +219,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
           <section
             className={cn(
               THEME_SHELL_CLASSES.chatPanel,
-              "flex min-h-0 flex-1 flex-col overflow-hidden rounded-shell border shadow-shell-panel light:backdrop-blur-none",
+              "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-shell border shadow-shell-panel light:backdrop-blur-none",
               SHELL_BACKDROP_BLUR_28,
               "bg-glass-panel-chat",
               THEME_SHELL_UTILITIES.border,
@@ -285,7 +299,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               attachmentMenu={{
                 onFileSelected: handleAttachFile,
               }}
-              attachedFile={composerAttachment.attachedFile}
+              attachedFile={attachedFile}
               onOpenAttachedFilePreview={handleOpenAttachedFilePreview}
               onRemoveAttachedFile={handleRemoveAttachedFile}
               inputTooltip={
@@ -301,10 +315,14 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             />
           </section>
 
-          {/* Column 3 (right rail): threads OR file preview */}
-          {isFilePreviewOpen && composerAttachment.attachedFile ? (
+          {/* Column 3: ThreadSidebar by default; FilePreviewPanel replaces it when open (same column width). */}
+          {isFilePreviewVisible ? (
             <FilePreviewPanel
-              file={composerAttachment.attachedFile}
+              file={attachedFile}
+              width={filePreviewWidth}
+              onWidthChange={(nextWidth) =>
+                setFilePreviewWidth(clampFilePreviewPanelWidth(nextWidth))
+              }
               onClose={handleCloseFilePreview}
             />
           ) : (
