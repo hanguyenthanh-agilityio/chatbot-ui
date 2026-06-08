@@ -7,8 +7,8 @@ import {
   FILE_PREVIEW_CODE_CONTENT_CLASS,
   FILE_PREVIEW_FALLBACK_CLASS,
   getFilePreviewMessages,
-  type FilePreviewMediaKind,
 } from "@/constants/file-attachment";
+import type { FilePreviewMediaKind } from "@/types/file-attachment";
 import { useCodeFilePreview } from "@/hooks/use-file-preview";
 import type {
   CodeFilePreviewKind,

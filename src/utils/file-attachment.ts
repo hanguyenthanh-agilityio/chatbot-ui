@@ -1,7 +1,7 @@
 import type { ChangeEvent, CSSProperties } from "react";
 import {
+  FILE_PREVIEW_KIND_MAPS,
   FILE_PREVIEW_PANEL_WIDTH,
-  FILE_PREVIEW_TYPE_DEFINITIONS,
   RECENT_FLYOUT_LAYOUT,
 } from "@/constants/file-attachment";
 import {
@@ -10,35 +10,14 @@ import {
   type LibraryRecentFile,
 } from "@/types/file-attachment";
 
-function buildExtensionKindMap() {
-  const map: Record<string, FilePreviewKind> = {};
-  for (const { kind, extensions } of FILE_PREVIEW_TYPE_DEFINITIONS) {
-    for (const extension of extensions) {
-      map[extension] = kind;
-    }
-  }
-  return map;
-}
-
-function buildMimeKindMap() {
-  const map: Record<string, FilePreviewKind> = {};
-  for (const { kind, mimeTypes } of FILE_PREVIEW_TYPE_DEFINITIONS) {
-    for (const mimeType of mimeTypes) {
-      map[mimeType] = kind;
-    }
-  }
-  return map;
-}
-
-const EXTENSION_KIND = buildExtensionKindMap();
-const MIME_KIND = buildMimeKindMap();
-
 export function inferFilePreviewKind(file: File): FilePreviewKind {
-  const mimeKind = MIME_KIND[file.type];
+  const mimeKind = FILE_PREVIEW_KIND_MAPS.mimeKind[file.type];
   if (mimeKind) return mimeKind;
 
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
-  return EXTENSION_KIND[extension] ?? FILE_PREVIEW_KIND.UNKNOWN;
+  return (
+    FILE_PREVIEW_KIND_MAPS.extensionKind[extension] ?? FILE_PREVIEW_KIND.UNKNOWN
+  );
 }
 
 export function isSupportedPreviewKind(kind: FilePreviewKind): boolean {

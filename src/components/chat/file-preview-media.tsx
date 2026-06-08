@@ -3,11 +3,10 @@
 import { FilePreviewEmbeddedBody } from "@/components/chat/file-preview-common";
 import { FILE_PREVIEW_FRAME_CLASS } from "@/constants/file-attachment";
 import { useFileDataUrl, useFileRenderFailure } from "@/hooks/use-file-preview";
-import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
-
-type MediaPreviewKind =
-  | typeof FILE_PREVIEW_KIND.MP4
-  | typeof FILE_PREVIEW_KIND.MP3;
+import {
+  FILE_PREVIEW_KIND,
+  type MediaFilePreviewKind,
+} from "@/types/file-attachment";
 
 function FilePreviewMediaPlayer({
   kind,
@@ -15,7 +14,7 @@ function FilePreviewMediaPlayer({
   name,
   playerClassName,
 }: {
-  kind: MediaPreviewKind;
+  kind: MediaFilePreviewKind;
   file: File | undefined;
   name: string;
   playerClassName: string;

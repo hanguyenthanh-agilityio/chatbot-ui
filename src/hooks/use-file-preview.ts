@@ -83,7 +83,7 @@ export function useFileRenderFailure(file: File | undefined) {
   return { renderFailed, handleRenderError };
 }
 
-/** Track async file conversion keyed by `File` (extend for other converters). */
+/** Track async file reads keyed by `File` (DOCX HTML, CSV/JSON text, etc.). */
 export function useAsyncFilePreview<T>(
   file: File | undefined,
   load: (input: File) => Promise<T>,

@@ -20,7 +20,7 @@ export function sanitizeDocxPreviewHtml(html: string): string {
   return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 }
 
-/** Convert a local DOCX file to HTML for column-3 preview (client-only). */
+/** Convert a local DOCX file to HTML for the right-rail preview panel (client-only). */
 export async function convertDocxFileToHtml(file: File): Promise<string> {
   const mammoth = await loadMammoth();
   const arrayBuffer = await file.arrayBuffer();
@@ -41,13 +41,20 @@ export function withPdfEmbedParams(dataUrl: string) {
 
 const CODE_PREVIEW_EMPTY_FILE_ERROR = "File is empty";
 const CODE_PREVIEW_JSON_INDENT = 2;
+const CODE_PREVIEW_LINE_ENDING = "\n";
 
-/** Read local JSON/CSV text for column-3 code preview (client-only). */
+function normalizeCodePreviewText(text: string): string {
+  return text
+    .replace(/\r\n/g, CODE_PREVIEW_LINE_ENDING)
+    .replace(/\r/g, CODE_PREVIEW_LINE_ENDING);
+}
+
+/** Read local CSV/JSON text for the right-rail code preview (client-only). */
 export async function readCodePreviewFile(
   file: File,
   kind: CodeFilePreviewKind,
 ): Promise<string> {
-  const text = (await file.text()).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const text = normalizeCodePreviewText(await file.text());
   if (!text.trim()) {
     throw new Error(CODE_PREVIEW_EMPTY_FILE_ERROR);
   }

@@ -1,7 +1,13 @@
-import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
+import {
+  FILE_PREVIEW_CODE_KINDS,
+  FILE_PREVIEW_KIND,
+} from "@/types/file-attachment";
 import type {
   FilePreviewKind,
+  FilePreviewMediaKind,
+  FilePreviewTypeDefinition,
   LibraryRecentFile,
+  SupportedFilePreviewKind,
 } from "@/types/file-attachment";
 import { cn } from "@/utils/class-name";
 
@@ -87,21 +93,29 @@ export const FILE_PREVIEW_FALLBACK_CLASS = cn(
 );
 
 export const FILE_PREVIEW_SCROLL_CLASS = "file-preview-thin-scroll";
+
 export const FILE_PREVIEW_EMBEDDED_KINDS = new Set<FilePreviewKind>([
   FILE_PREVIEW_KIND.DOCX,
   FILE_PREVIEW_KIND.PDF,
-  FILE_PREVIEW_KIND.CSV,
-  FILE_PREVIEW_KIND.JSON,
+  ...FILE_PREVIEW_CODE_KINDS,
 ]);
 
 export function isFilePreviewEmbeddedKind(kind: FilePreviewKind) {
   return FILE_PREVIEW_EMBEDDED_KINDS.has(kind);
 }
 
-const FILE_PREVIEW_EMBEDDED_SHELL_CLASS = cn(
+const FILE_PREVIEW_CONTENT_HOST_LAYOUT_CLASS = cn(
   "file-preview-thin-scroll",
   "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col",
-  "rounded-2xl border border-white/8 bg-white light:border-app-border-subtle",
+);
+
+const FILE_PREVIEW_EMBEDDED_BORDER_CLASS =
+  "rounded-2xl border border-white/8 light:border-app-border-subtle";
+
+const FILE_PREVIEW_EMBEDDED_SHELL_CLASS = cn(
+  FILE_PREVIEW_CONTENT_HOST_LAYOUT_CLASS,
+  FILE_PREVIEW_EMBEDDED_BORDER_CLASS,
+  "bg-white",
 );
 
 /** Scrollable DOCX preview host (mammoth HTML in `.file-preview-docx-html`). */
@@ -118,12 +132,12 @@ export const FILE_PREVIEW_PDF_CONTENT_CLASS = cn(
   "overflow-hidden",
 );
 
-/** Scrollable code-style preview host (JSON, CSV). */
+/** Host for scrollable CSV/JSON preview (theme tokens in globals.css). */
 export const FILE_PREVIEW_CODE_CONTENT_CLASS = cn(
   "file-preview-code-content",
-  "file-preview-thin-scroll",
-  "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col",
-  "overflow-auto rounded-2xl border border-white/8 light:border-app-border-subtle",
+  FILE_PREVIEW_CONTENT_HOST_LAYOUT_CLASS,
+  FILE_PREVIEW_EMBEDDED_BORDER_CLASS,
+  "overflow-auto",
 );
 
 /** Desktop-only drag handle between chat and preview. Sits outside the panel; height inset matches rounded-shell corners. */
@@ -165,17 +179,6 @@ export const FILE_PREVIEW_PANEL_WIDTH = {
   max: 560,
   viewportMaxRatio: 0.45,
 } as const;
-
-type SupportedFilePreviewKind = Exclude<
-  FilePreviewKind,
-  typeof FILE_PREVIEW_KIND.UNKNOWN
->;
-
-export type FilePreviewTypeDefinition = {
-  kind: SupportedFilePreviewKind;
-  extensions: readonly string[];
-  mimeTypes: readonly string[];
-};
 
 /** Single source of truth for supported upload/preview file types. */
 export const FILE_PREVIEW_TYPE_DEFINITIONS = [
@@ -235,6 +238,28 @@ export const FILE_PREVIEW_ACCEPT = buildFilePreviewAccept(
   FILE_PREVIEW_TYPE_DEFINITIONS,
 );
 
+export function buildFilePreviewKindMaps(
+  definitions: readonly FilePreviewTypeDefinition[],
+) {
+  const extensionKind: Record<string, FilePreviewKind> = {};
+  const mimeKind: Record<string, FilePreviewKind> = {};
+
+  for (const { kind, extensions, mimeTypes } of definitions) {
+    for (const extension of extensions) {
+      extensionKind[extension] = kind;
+    }
+    for (const mimeType of mimeTypes) {
+      mimeKind[mimeType] = kind;
+    }
+  }
+
+  return { extensionKind, mimeKind };
+}
+
+export const FILE_PREVIEW_KIND_MAPS = buildFilePreviewKindMaps(
+  FILE_PREVIEW_TYPE_DEFINITIONS,
+);
+
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
   attachMenuAriaLabel: "Open attachment menu",
@@ -247,6 +272,7 @@ export const FILE_PREVIEW_COPY = {
   closePreviewLabel: "Close preview",
   openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
   previewNoFile: "No file selected for preview.",
+  previewUnavailable: "Preview is not available for this file type.",
   previewLoading: (fileTypeLabel: string) =>
     `Loading ${fileTypeLabel} preview…`,
   previewFailed: (fileTypeLabel: string) =>
@@ -256,38 +282,35 @@ export const FILE_PREVIEW_COPY = {
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 
-export type FilePreviewMediaKind =
-  | typeof FILE_PREVIEW_KIND.IMAGE
-  | typeof FILE_PREVIEW_KIND.PDF
-  | typeof FILE_PREVIEW_KIND.DOCX
-  | typeof FILE_PREVIEW_KIND.MP4
-  | typeof FILE_PREVIEW_KIND.MP3
-  | typeof FILE_PREVIEW_KIND.CSV
-  | typeof FILE_PREVIEW_KIND.JSON;
+type FilePreviewFailedAction = "load" | "convert";
 
-/** Natural-language labels used in loading/failed preview copy. */
-const FILE_PREVIEW_MESSAGE_LABEL: Record<FilePreviewMediaKind, string> = {
-  [FILE_PREVIEW_KIND.IMAGE]: "image",
-  [FILE_PREVIEW_KIND.PDF]: "PDF",
-  [FILE_PREVIEW_KIND.DOCX]: "document",
-  [FILE_PREVIEW_KIND.MP4]: "video",
-  [FILE_PREVIEW_KIND.MP3]: "audio",
-  [FILE_PREVIEW_KIND.CSV]: "CSV",
-  [FILE_PREVIEW_KIND.JSON]: "JSON",
+const FILE_PREVIEW_MEDIA_MESSAGE_CONFIG: Record<
+  FilePreviewMediaKind,
+  { label: string; failedAction: FilePreviewFailedAction }
+> = {
+  [FILE_PREVIEW_KIND.IMAGE]: { label: "image", failedAction: "load" },
+  [FILE_PREVIEW_KIND.PDF]: { label: "PDF", failedAction: "load" },
+  [FILE_PREVIEW_KIND.DOCX]: { label: "document", failedAction: "convert" },
+  [FILE_PREVIEW_KIND.MP4]: { label: "video", failedAction: "load" },
+  [FILE_PREVIEW_KIND.MP3]: { label: "audio", failedAction: "load" },
+  [FILE_PREVIEW_KIND.CSV]: { label: "CSV", failedAction: "load" },
+  [FILE_PREVIEW_KIND.JSON]: { label: "JSON", failedAction: "load" },
 };
 
 export function getFilePreviewMessages(kind: FilePreviewMediaKind) {
-  const label = FILE_PREVIEW_MESSAGE_LABEL[kind];
+  const { label, failedAction } = FILE_PREVIEW_MEDIA_MESSAGE_CONFIG[kind];
 
   return {
     missingFile: FILE_PREVIEW_COPY.previewNoFile,
     loading: FILE_PREVIEW_COPY.previewLoading(label),
     failed:
-      kind === FILE_PREVIEW_KIND.DOCX
+      failedAction === "convert"
         ? FILE_PREVIEW_COPY.previewConvertFailed(label)
         : FILE_PREVIEW_COPY.previewFailed(label),
   };
 }
+
+export type { FilePreviewMediaKind, SupportedFilePreviewKind };
 
 export const MOCK_RECENT_FILES: readonly LibraryRecentFile[] = [
   {
