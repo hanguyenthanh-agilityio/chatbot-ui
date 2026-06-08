@@ -213,6 +213,27 @@ pnpm company-system:reset
 
 ---
 
+## Git remotes (GitLab + GitHub)
+
+This repo uses two remotes:
+
+| Remote   | Host    | Use |
+|----------|---------|-----|
+| `origin` | GitLab  | MRs, code review |
+| `github` | GitHub  | Cloudflare deploy (`.github/workflows`) |
+
+Deploy-only files (`.github/`, `scripts/`, `wrangler.jsonc`, …) must **not** be pushed to GitLab. After clone:
+
+```bash
+pnpm setup:git-remotes   # once
+pnpm push:gitlab         # push branch to GitLab
+pnpm push:github         # push full repo to GitHub
+```
+
+Details: [tooling/README.md](tooling/README.md)
+
+---
+
 ## Notes
 
 - If Next.js shows stale Turbopack cache errors, delete `.next/` and rerun `pnpm dev`.

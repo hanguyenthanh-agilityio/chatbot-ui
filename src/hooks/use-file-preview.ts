@@ -83,6 +83,20 @@ export function useFileRenderFailure(file: File | undefined) {
   return { renderFailed, handleRenderError };
 }
 
+/** Data URL read + optional `<img>` / media decode failure (image, MP3, MP4). */
+export function useDataUrlPreviewState(file: File | undefined) {
+  const { url, isLoading, hasFailed } = useFileDataUrl(file);
+  const { renderFailed, handleRenderError } = useFileRenderFailure(file);
+  const failed = hasFailed || renderFailed;
+
+  return {
+    url,
+    failed,
+    handleRenderError,
+    isLoading: !failed && (isLoading || url == null),
+  };
+}
+
 /** Track async file reads keyed by `File` (DOCX HTML, CSV/JSON text, etc.). */
 export function useAsyncFilePreview<T>(
   file: File | undefined,

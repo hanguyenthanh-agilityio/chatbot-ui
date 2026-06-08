@@ -1,24 +1,85 @@
 import {
   FILE_PREVIEW_CODE_KINDS,
   FILE_PREVIEW_KIND,
-} from "@/types/file-attachment";
-import type {
-  FilePreviewKind,
-  FilePreviewMediaKind,
-  FilePreviewTypeDefinition,
-  LibraryRecentFile,
-  SupportedFilePreviewKind,
+  type FilePreviewFailedAction,
+  type FilePreviewKind,
+  type FilePreviewMediaKind,
+  type FilePreviewTypeDefinition,
+  type LibraryRecentFile,
 } from "@/types/file-attachment";
 import { cn } from "@/utils/class-name";
 
+export const COMPOSER_ATTACHMENT_ID_PREFIX = "attach";
+
+/** Attach-time content extraction (not preview UI). */
+export const FILE_ATTACHMENT_CONTENT_COPY = {
+  emptyFile: "File is empty",
+  unsupportedKind: (kind: string) => `Unsupported attachment kind: ${kind}`,
+} as const;
+
+/** CSV/JSON code preview parsing. */
+export const FILE_PREVIEW_CODE_PARSE = {
+  jsonIndent: 2,
+  lineEnding: "\n",
+} as const;
+
+/** Chrome/Edge PDF viewer embed params (hide thumbnail sidebar). */
+export const FILE_PREVIEW_PDF_EMBED = {
+  fragment: "navpanes=0&view=FitH",
+} as const;
+
+const FILE_KIND_META: Record<
+  FilePreviewMediaKind,
+  {
+    badgeLabel: string;
+    messageLabel: string;
+    failedAction: FilePreviewFailedAction;
+  }
+> = {
+  [FILE_PREVIEW_KIND.IMAGE]: {
+    badgeLabel: "IMAGE",
+    messageLabel: "image",
+    failedAction: "load",
+  },
+  [FILE_PREVIEW_KIND.PDF]: {
+    badgeLabel: "PDF",
+    messageLabel: "PDF",
+    failedAction: "load",
+  },
+  [FILE_PREVIEW_KIND.DOCX]: {
+    badgeLabel: "DOCX",
+    messageLabel: "document",
+    failedAction: "convert",
+  },
+  [FILE_PREVIEW_KIND.MP4]: {
+    badgeLabel: "MP4",
+    messageLabel: "video",
+    failedAction: "load",
+  },
+  [FILE_PREVIEW_KIND.MP3]: {
+    badgeLabel: "MP3",
+    messageLabel: "audio",
+    failedAction: "load",
+  },
+  [FILE_PREVIEW_KIND.CSV]: {
+    badgeLabel: "CSV",
+    messageLabel: "CSV",
+    failedAction: "load",
+  },
+  [FILE_PREVIEW_KIND.JSON]: {
+    badgeLabel: "JSON",
+    messageLabel: "JSON",
+    failedAction: "load",
+  },
+};
+
 export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
-  [FILE_PREVIEW_KIND.IMAGE]: "IMAGE",
-  [FILE_PREVIEW_KIND.PDF]: "PDF",
-  [FILE_PREVIEW_KIND.DOCX]: "DOCX",
-  [FILE_PREVIEW_KIND.MP4]: "MP4",
-  [FILE_PREVIEW_KIND.MP3]: "MP3",
-  [FILE_PREVIEW_KIND.CSV]: "CSV",
-  [FILE_PREVIEW_KIND.JSON]: "JSON",
+  ...(Object.fromEntries(
+    (Object.keys(FILE_KIND_META) as FilePreviewMediaKind[]).map((kind) => [
+      kind,
+      FILE_KIND_META[kind].badgeLabel,
+    ]),
+  ) as Record<FilePreviewMediaKind, string>),
   [FILE_PREVIEW_KIND.UNKNOWN]: "FILE",
 };
 
@@ -105,7 +166,7 @@ export function isFilePreviewEmbeddedKind(kind: FilePreviewKind) {
 }
 
 const FILE_PREVIEW_CONTENT_HOST_LAYOUT_CLASS = cn(
-  "file-preview-thin-scroll",
+  FILE_PREVIEW_SCROLL_CLASS,
   "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col",
 );
 
@@ -280,37 +341,22 @@ export const FILE_PREVIEW_COPY = {
   previewConvertFailed: (fileTypeLabel: string) =>
     `Could not convert this ${fileTypeLabel} for preview.`,
   resizePreviewLabel: "Resize file preview panel",
+  panelTitle: "File preview",
+  panelAriaLabel: "File preview",
 } as const;
 
-type FilePreviewFailedAction = "load" | "convert";
-
-const FILE_PREVIEW_MEDIA_MESSAGE_CONFIG: Record<
-  FilePreviewMediaKind,
-  { label: string; failedAction: FilePreviewFailedAction }
-> = {
-  [FILE_PREVIEW_KIND.IMAGE]: { label: "image", failedAction: "load" },
-  [FILE_PREVIEW_KIND.PDF]: { label: "PDF", failedAction: "load" },
-  [FILE_PREVIEW_KIND.DOCX]: { label: "document", failedAction: "convert" },
-  [FILE_PREVIEW_KIND.MP4]: { label: "video", failedAction: "load" },
-  [FILE_PREVIEW_KIND.MP3]: { label: "audio", failedAction: "load" },
-  [FILE_PREVIEW_KIND.CSV]: { label: "CSV", failedAction: "load" },
-  [FILE_PREVIEW_KIND.JSON]: { label: "JSON", failedAction: "load" },
-};
-
 export function getFilePreviewMessages(kind: FilePreviewMediaKind) {
-  const { label, failedAction } = FILE_PREVIEW_MEDIA_MESSAGE_CONFIG[kind];
+  const { messageLabel, failedAction } = FILE_KIND_META[kind];
 
   return {
     missingFile: FILE_PREVIEW_COPY.previewNoFile,
-    loading: FILE_PREVIEW_COPY.previewLoading(label),
+    loading: FILE_PREVIEW_COPY.previewLoading(messageLabel),
     failed:
       failedAction === "convert"
-        ? FILE_PREVIEW_COPY.previewConvertFailed(label)
-        : FILE_PREVIEW_COPY.previewFailed(label),
+        ? FILE_PREVIEW_COPY.previewConvertFailed(messageLabel)
+        : FILE_PREVIEW_COPY.previewFailed(messageLabel),
   };
 }
-
-export type { FilePreviewMediaKind, SupportedFilePreviewKind };
 
 export const MOCK_RECENT_FILES: readonly LibraryRecentFile[] = [
   {

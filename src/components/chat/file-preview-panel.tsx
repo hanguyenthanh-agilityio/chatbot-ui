@@ -3,6 +3,7 @@
 import {
   useState,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
 } from "react";
 import { Button } from "@/components/ui/button";
 import { CloseIcon } from "@/components/ui/icons";
@@ -29,6 +30,7 @@ import { THEME_SHELL_UTILITIES } from "@/constants/theme";
 import {
   FILE_PREVIEW_KIND,
   type ComposerAttachment,
+  type SupportedFilePreviewKind,
 } from "@/types/file-attachment";
 import {
   bindFilePreviewPanelResize,
@@ -36,28 +38,48 @@ import {
 } from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
+const FILE_PREVIEW_PANEL_RENDERERS: Record<
+  SupportedFilePreviewKind,
+  (file: ComposerAttachment) => ReactNode
+> = {
+  [FILE_PREVIEW_KIND.IMAGE]: (file) => (
+    <FilePreviewImage file={file.rawFile} name={file.name} />
+  ),
+  [FILE_PREVIEW_KIND.DOCX]: (file) => (
+    <FilePreviewDocx file={file.rawFile} />
+  ),
+  [FILE_PREVIEW_KIND.PDF]: (file) => (
+    <FilePreviewPdf file={file.rawFile} name={file.name} />
+  ),
+  [FILE_PREVIEW_KIND.MP4]: (file) => (
+    <FilePreviewMp4 file={file.rawFile} name={file.name} />
+  ),
+  [FILE_PREVIEW_KIND.MP3]: (file) => (
+    <FilePreviewMp3 file={file.rawFile} name={file.name} />
+  ),
+  [FILE_PREVIEW_KIND.CSV]: (file) => (
+    <FilePreviewCodeFile file={file.rawFile} kind={FILE_PREVIEW_KIND.CSV} />
+  ),
+  [FILE_PREVIEW_KIND.JSON]: (file) => (
+    <FilePreviewCodeFile file={file.rawFile} kind={FILE_PREVIEW_KIND.JSON} />
+  ),
+};
+
 function FilePreviewPanelContent({ file }: { file: ComposerAttachment }) {
-  switch (file.kind) {
-    case FILE_PREVIEW_KIND.IMAGE:
-      return <FilePreviewImage file={file.rawFile} name={file.name} />;
-    case FILE_PREVIEW_KIND.DOCX:
-      return <FilePreviewDocx file={file.rawFile} />;
-    case FILE_PREVIEW_KIND.PDF:
-      return <FilePreviewPdf file={file.rawFile} name={file.name} />;
-    case FILE_PREVIEW_KIND.MP4:
-      return <FilePreviewMp4 file={file.rawFile} name={file.name} />;
-    case FILE_PREVIEW_KIND.MP3:
-      return <FilePreviewMp3 file={file.rawFile} name={file.name} />;
-    case FILE_PREVIEW_KIND.CSV:
-    case FILE_PREVIEW_KIND.JSON:
-      return <FilePreviewCodeFile file={file.rawFile} kind={file.kind} />;
-    default:
-      return (
-        <Text variant="captionMuted" className="px-0.5">
-          {FILE_PREVIEW_COPY.previewUnavailable}
-        </Text>
-      );
+  const render =
+    file.kind !== FILE_PREVIEW_KIND.UNKNOWN
+      ? FILE_PREVIEW_PANEL_RENDERERS[file.kind]
+      : undefined;
+
+  if (!render) {
+    return (
+      <Text variant="captionMuted" className="px-0.5">
+        {FILE_PREVIEW_COPY.previewUnavailable}
+      </Text>
+    );
   }
+
+  return render(file);
 }
 
 /** Column-3 preview panel: file preview by kind and desktop resize handle. */
@@ -114,7 +136,10 @@ export function FilePreviewPanel({
         </span>
       </div>
 
-      <aside className={FILE_PREVIEW_PANEL_CLASS} aria-label="File preview">
+      <aside
+        className={FILE_PREVIEW_PANEL_CLASS}
+        aria-label={FILE_PREVIEW_COPY.panelAriaLabel}
+      >
         <div
           className={cn(
             "flex items-start justify-between gap-3 border-b px-5 py-4",
@@ -126,7 +151,7 @@ export function FilePreviewPanel({
             <FileKindIcon kind={file.kind} size="sm" />
             <div className="min-w-0">
               <Text as="p" variant="eyebrow">
-                File preview
+                {FILE_PREVIEW_COPY.panelTitle}
               </Text>
               <Text as="p" variant="sectionTitle" className="mt-1 line-clamp-2">
                 {file.name}

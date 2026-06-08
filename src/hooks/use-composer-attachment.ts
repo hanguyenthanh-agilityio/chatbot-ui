@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { COMPOSER_ATTACHMENT_ID_PREFIX } from "@/constants/file-attachment";
 import type { ComposerAttachment } from "@/types/file-attachment";
 import {
   createAttachmentId,
@@ -27,7 +28,7 @@ export function useComposerAttachment() {
     if (!isSupportedPreviewKind(kind)) return;
 
     setAttachedFile({
-      id: createAttachmentId("attach"),
+      id: createAttachmentId(COMPOSER_ATTACHMENT_ID_PREFIX),
       name: file.name,
       kind,
       sizeBytes: file.size,
