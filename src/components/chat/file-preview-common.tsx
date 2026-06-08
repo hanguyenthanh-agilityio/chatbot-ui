@@ -6,13 +6,17 @@ import { Text } from "@/components/ui/text";
 import {
   FILE_PREVIEW_CODE_CONTENT_CLASS,
   FILE_PREVIEW_FALLBACK_CLASS,
+  FILE_PREVIEW_FRAME_CLASS,
   getFilePreviewMessages,
 } from "@/constants/file-attachment";
-import type { FilePreviewMediaKind } from "@/types/file-attachment";
-import { useCodeFilePreview } from "@/hooks/use-file-preview";
+import {
+  useCodeFilePreview,
+  useDataUrlPreviewState,
+} from "@/hooks/use-file-preview";
 import type {
   CodeFilePreviewKind,
   FilePreviewKind,
+  FilePreviewMediaKind,
 } from "@/types/file-attachment";
 
 function FilePreviewFallback({
@@ -41,14 +45,14 @@ export function FilePreviewUnavailable({
 }
 
 export function FilePreviewEmbeddedBody({
-  contentClassName,
+  contentClassName = "",
   kind,
   file,
   isLoading,
   hasFailed,
   children,
 }: {
-  contentClassName: string;
+  contentClassName?: string;
   kind: FilePreviewMediaKind;
   file: File | undefined;
   isLoading: boolean;
@@ -75,6 +79,64 @@ export function FilePreviewEmbeddedBody({
         children
       )}
     </div>
+  );
+}
+
+export function FilePreviewFramedDataUrl({
+  kind,
+  file,
+  children,
+}: {
+  kind: FilePreviewMediaKind;
+  file: File | undefined;
+  children: (props: { url: string; onRenderError: () => void }) => ReactNode;
+}) {
+  const { url, isLoading, failed, handleRenderError } =
+    useDataUrlPreviewState(file);
+
+  return (
+    <FilePreviewEmbeddedBody
+      kind={kind}
+      file={file}
+      isLoading={isLoading}
+      hasFailed={failed}
+    >
+      {url ? (
+        <div className={FILE_PREVIEW_FRAME_CLASS}>
+          {children({ url, onRenderError: handleRenderError })}
+        </div>
+      ) : null}
+    </FilePreviewEmbeddedBody>
+  );
+}
+
+export function FilePreviewAsyncEmbeddedBody({
+  contentClassName,
+  kind,
+  file,
+  isLoading,
+  hasFailed,
+  value,
+  children,
+}: {
+  contentClassName?: string;
+  kind: FilePreviewMediaKind;
+  file: File | undefined;
+  isLoading: boolean;
+  hasFailed: boolean;
+  value: unknown;
+  children: ReactNode;
+}) {
+  return (
+    <FilePreviewEmbeddedBody
+      contentClassName={contentClassName}
+      kind={kind}
+      file={file}
+      isLoading={isLoading}
+      hasFailed={hasFailed}
+    >
+      {value ? children : null}
+    </FilePreviewEmbeddedBody>
   );
 }
 
@@ -110,14 +172,15 @@ export function FilePreviewCodeFile({
   const { text, isLoading, hasFailed } = useCodeFilePreview(file, kind);
 
   return (
-    <FilePreviewEmbeddedBody
+    <FilePreviewAsyncEmbeddedBody
       contentClassName={FILE_PREVIEW_CODE_CONTENT_CLASS}
       kind={kind}
       file={file}
       isLoading={isLoading}
       hasFailed={hasFailed}
+      value={text}
     >
-      {text ? <FilePreviewCodeBody text={text} /> : null}
-    </FilePreviewEmbeddedBody>
+      <FilePreviewCodeBody text={text!} />
+    </FilePreviewAsyncEmbeddedBody>
   );
 }

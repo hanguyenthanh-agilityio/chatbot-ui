@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState, type Dispatch, type SetStateAction } from "react";
+import { COMPOSER_ATTACHMENT_ID_PREFIX } from "@/constants/file-attachment";
 import {
   ATTACHMENT_CONTENT_READ_STATUS,
   type AttachmentContentReadStatus,
@@ -73,7 +74,7 @@ export function useComposerAttachment() {
     const kind = inferFilePreviewKind(file);
     if (!isSupportedPreviewKind(kind)) return;
 
-    const attachmentId = createAttachmentId("attach");
+    const attachmentId = createAttachmentId(COMPOSER_ATTACHMENT_ID_PREFIX);
     const readable = isReadableAttachmentKind(kind);
 
     setAttachedFile({

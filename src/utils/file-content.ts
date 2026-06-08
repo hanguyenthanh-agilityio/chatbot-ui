@@ -1,22 +1,36 @@
 import { PDFParse } from "pdf-parse";
+import { FILE_ATTACHMENT_CONTENT_COPY } from "@/constants/file-attachment";
 import {
+  FILE_PREVIEW_CODE_KINDS,
   FILE_PREVIEW_KIND,
+  type AttachmentContentReader,
+  type CodeFilePreviewKind,
   type FilePreviewKind,
+  type ReadableAttachmentKind,
 } from "@/types/file-attachment";
 import {
+  assertNonEmptyTrimmed,
   extractDocxFileText,
   readCodePreviewFile,
 } from "@/utils/file-preview";
 
-/** Kinds we can turn into plain text for AI/RAG (not preview UI). */
-const READABLE_ATTACHMENT_KINDS = new Set<FilePreviewKind>([
-  FILE_PREVIEW_KIND.PDF,
-  FILE_PREVIEW_KIND.DOCX,
-  FILE_PREVIEW_KIND.CSV,
-  FILE_PREVIEW_KIND.JSON,
-]);
+/** PDF → plain text via pdf-parse (browser-safe build). */
+async function extractPdfFileText(file: File): Promise<string> {
+  const parser = new PDFParse({ data: await file.arrayBuffer() });
+  try {
+    const result = await parser.getText();
+    return assertNonEmptyTrimmed(result.text);
+  } finally {
+    await parser.destroy();
+  }
+}
 
-type AttachmentContentReader = (file: File) => Promise<string>;
+const CODE_ATTACHMENT_READERS = Object.fromEntries(
+  FILE_PREVIEW_CODE_KINDS.map((kind) => [
+    kind,
+    (file: File) => readCodePreviewFile(file, kind),
+  ]),
+) as Record<CodeFilePreviewKind, AttachmentContentReader>;
 
 /** One reader per kind — add new extractors here. */
 const ATTACHMENT_CONTENT_READERS: Partial<
@@ -24,33 +38,13 @@ const ATTACHMENT_CONTENT_READERS: Partial<
 > = {
   [FILE_PREVIEW_KIND.PDF]: extractPdfFileText,
   [FILE_PREVIEW_KIND.DOCX]: extractDocxFileText,
-  [FILE_PREVIEW_KIND.CSV]: (file) =>
-    readCodePreviewFile(file, FILE_PREVIEW_KIND.CSV),
-  [FILE_PREVIEW_KIND.JSON]: (file) =>
-    readCodePreviewFile(file, FILE_PREVIEW_KIND.JSON),
+  ...CODE_ATTACHMENT_READERS,
 };
 
-export function isReadableAttachmentKind(kind: FilePreviewKind): boolean {
-  return READABLE_ATTACHMENT_KINDS.has(kind);
-}
-
-function trimNonEmpty(text: string): string {
-  const trimmed = text.trim();
-  if (!trimmed) {
-    throw new Error("File is empty");
-  }
-  return trimmed;
-}
-
-/** PDF → plain text via pdf-parse (browser-safe build). */
-async function extractPdfFileText(file: File): Promise<string> {
-  const parser = new PDFParse({ data: await file.arrayBuffer() });
-  try {
-    const result = await parser.getText();
-    return trimNonEmpty(result.text);
-  } finally {
-    await parser.destroy();
-  }
+export function isReadableAttachmentKind(
+  kind: FilePreviewKind,
+): kind is ReadableAttachmentKind {
+  return ATTACHMENT_CONTENT_READERS[kind] != null;
 }
 
 /**
@@ -63,7 +57,7 @@ export async function readAttachmentContent(
 ): Promise<string> {
   const reader = ATTACHMENT_CONTENT_READERS[kind];
   if (!reader) {
-    throw new Error(`Unsupported attachment kind: ${kind}`);
+    throw new Error(FILE_ATTACHMENT_CONTENT_COPY.unsupportedKind(kind));
   }
   return reader(file);
 }
