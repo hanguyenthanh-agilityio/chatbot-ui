@@ -1,19 +1,19 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FilePreviewMp3, FilePreviewMp4 } from "@/components/chat/file-preview-media";
 import { getFilePreviewMessages } from "@/constants/file-attachment";
-import { useFileDataUrl } from "@/hooks/use-file-preview";
+import { useDataUrlPreviewState } from "@/hooks/use-file-preview";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
 vi.mock("@/hooks/use-file-preview", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/hooks/use-file-preview")>();
   return {
     ...actual,
-    useFileDataUrl: vi.fn(),
+    useDataUrlPreviewState: vi.fn(),
   };
 });
 
-const mockUseFileDataUrl = vi.mocked(useFileDataUrl);
+const mockUseDataUrlPreviewState = vi.mocked(useDataUrlPreviewState);
 
 const MP4_FILE = new File(["video"], "walkthrough.mp4", { type: "video/mp4" });
 const MP4_FILE_ALT = new File(["video-alt"], "other.mp4", { type: "video/mp4" });
@@ -21,11 +21,14 @@ const MP3_FILE = new File(["audio"], "note.mp3", { type: "audio/mpeg" });
 const MP3_FILE_ALT = new File(["audio-alt"], "other.mp3", { type: "audio/mpeg" });
 const DATA_URL = "data:video/mp4;base64,AAAA";
 
-function mockDataUrlState(state: Partial<ReturnType<typeof useFileDataUrl>>) {
-  mockUseFileDataUrl.mockReturnValue({
+function mockDataUrlState(
+  state: Partial<ReturnType<typeof useDataUrlPreviewState>>,
+) {
+  mockUseDataUrlPreviewState.mockReturnValue({
     url: null,
+    failed: false,
     isLoading: false,
-    hasFailed: false,
+    handleRenderError: vi.fn(),
     ...state,
   });
 }
@@ -57,7 +60,7 @@ describe.each([
     afterEach(cleanup);
 
     beforeEach(() => {
-      mockUseFileDataUrl.mockReset();
+      mockUseDataUrlPreviewState.mockReset();
     });
 
     it("tells the user when no file is selected for preview", () => {
@@ -78,7 +81,7 @@ describe.each([
     });
 
     it("shows a failure message when the file cannot be read", () => {
-      mockDataUrlState({ hasFailed: true });
+      mockDataUrlState({ failed: true });
 
       const { container } = render(<Component file={file} name={file.name} />);
 
@@ -100,14 +103,18 @@ describe.each([
     });
 
     it("shows a failure message when the player fires onError", () => {
-      mockDataUrlState({ url: DATA_URL });
+      const handleRenderError = vi.fn();
+      mockDataUrlState({ url: DATA_URL, handleRenderError });
 
-      const { container } = render(<Component file={file} name={file.name} />);
+      const { container, rerender } = render(
+        <Component file={file} name={file.name} />,
+      );
 
       const player = container.querySelector(selector);
       expect(player).toBeInTheDocument();
 
-      fireEvent.error(player!);
+      mockDataUrlState({ url: DATA_URL, failed: true, handleRenderError });
+      rerender(<Component file={file} name={file.name} />);
 
       expect(screen.getByText(messages.failed)).toBeInTheDocument();
       expect(container.querySelector(selector)).not.toBeInTheDocument();
@@ -120,10 +127,11 @@ describe.each([
         <Component file={file} name={file.name} />,
       );
 
-      const player = container.querySelector(selector);
-      fireEvent.error(player!);
+      mockDataUrlState({ url: DATA_URL, failed: true });
+      rerender(<Component file={file} name={file.name} />);
       expect(screen.getByText(messages.failed)).toBeInTheDocument();
 
+      mockDataUrlState({ url: DATA_URL });
       rerender(<Component file={altFile} name={altFile.name} />);
 
       expect(screen.queryByText(messages.failed)).not.toBeInTheDocument();

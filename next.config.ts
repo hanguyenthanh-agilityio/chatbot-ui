@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import type { NextConfig } from "next";
 
 function parseAllowedDevOrigins() {
@@ -16,9 +18,13 @@ const nextConfig: NextConfig = {
 
 export default nextConfig;
 
-// Skip Workers dev runtime during Vitest/CI (prevents workerd SQLITE_BUSY on Linux runners).
-if (!process.env.VITEST && process.env.CI !== "true") {
-  import("@opennextjs/cloudflare").then((m) =>
+// Cloudflare dev runtime only when wrangler config exists (GitHub deploy checkout).
+if (
+  !process.env.VITEST &&
+  process.env.CI !== "true" &&
+  existsSync(path.join(process.cwd(), "wrangler.jsonc"))
+) {
+  void import("@opennextjs/cloudflare").then((m) =>
     m.initOpenNextCloudflareForDev(),
   );
 }

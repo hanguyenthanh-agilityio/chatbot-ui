@@ -27,6 +27,28 @@ export const FILE_PREVIEW_CODE_KINDS = [
 
 export type CodeFilePreviewKind = (typeof FILE_PREVIEW_CODE_KINDS)[number];
 
+/** Kinds with attach-time plain-text extraction (PDF, DOCX, CSV, JSON). */
+export const READABLE_ATTACHMENT_KINDS = [
+  FILE_PREVIEW_KIND.PDF,
+  FILE_PREVIEW_KIND.DOCX,
+  ...FILE_PREVIEW_CODE_KINDS,
+] as const;
+
+export type ReadableAttachmentKind =
+  (typeof READABLE_ATTACHMENT_KINDS)[number];
+
+export type AttachmentContentReader = (file: File) => Promise<string>;
+
+export type FilePreviewFailedAction = "load" | "convert";
+
+export type RawFilePreviewProps = {
+  file: File | undefined;
+};
+
+export type NamedRawFilePreviewProps = RawFilePreviewProps & {
+  name: string;
+};
+
 export type MediaFilePreviewKind =
   | typeof FILE_PREVIEW_KIND.MP4
   | typeof FILE_PREVIEW_KIND.MP3;
