@@ -52,7 +52,10 @@ export async function readCodePreviewFile(
   file: File,
   kind: "csv" | "json",
 ): Promise<string> {
-  const text = (await file.text()).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const text = (await file.text())
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .trim();
   if (!text.trim()) {
     throw new Error("File is empty");
   }
