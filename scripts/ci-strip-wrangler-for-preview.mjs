@@ -6,7 +6,7 @@ const script = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   "ci-strip-wrangler-block.mjs",
 );
-const result = spawnSync(process.execPath, [script, "services"], {
+const result = spawnSync(process.execPath, [script, "migrations", "durable_objects"], {
   stdio: "inherit",
 });
 process.exit(result.status ?? 1);
