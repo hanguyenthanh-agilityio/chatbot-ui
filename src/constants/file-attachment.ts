@@ -166,8 +166,74 @@ export const FILE_PREVIEW_PANEL_WIDTH = {
   viewportMaxRatio: 0.45,
 } as const;
 
-export const FILE_PREVIEW_ACCEPT =
-  ".png,.jpg,.jpeg,.gif,.webp,.pdf,.docx,.mp4,.mp3,.csv,.json,image/png,image/jpeg,image/gif,image/webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,audio/mpeg,audio/mp3,text/csv,application/csv,application/json,text/json";
+type SupportedFilePreviewKind = Exclude<
+  FilePreviewKind,
+  typeof FILE_PREVIEW_KIND.UNKNOWN
+>;
+
+export type FilePreviewTypeDefinition = {
+  kind: SupportedFilePreviewKind;
+  extensions: readonly string[];
+  mimeTypes: readonly string[];
+};
+
+/** Single source of truth for supported upload/preview file types. */
+export const FILE_PREVIEW_TYPE_DEFINITIONS = [
+  {
+    kind: FILE_PREVIEW_KIND.IMAGE,
+    extensions: ["png", "jpg", "jpeg", "gif", "webp"],
+    mimeTypes: ["image/png", "image/jpeg", "image/gif", "image/webp"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.PDF,
+    extensions: ["pdf"],
+    mimeTypes: ["application/pdf"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.DOCX,
+    extensions: ["docx"],
+    mimeTypes: [
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.MP4,
+    extensions: ["mp4"],
+    mimeTypes: ["video/mp4"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.MP3,
+    extensions: ["mp3"],
+    mimeTypes: ["audio/mpeg", "audio/mp3"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.CSV,
+    extensions: ["csv"],
+    mimeTypes: ["text/csv", "application/csv"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.JSON,
+    extensions: ["json"],
+    mimeTypes: ["application/json", "text/json"],
+  },
+] as const satisfies readonly FilePreviewTypeDefinition[];
+
+function buildFilePreviewAccept(
+  definitions: readonly FilePreviewTypeDefinition[],
+) {
+  const parts: string[] = [];
+  for (const { extensions, mimeTypes } of definitions) {
+    for (const extension of extensions) {
+      parts.push(`.${extension}`);
+    }
+    parts.push(...mimeTypes);
+  }
+  return parts.join(",");
+}
+
+export const FILE_PREVIEW_ACCEPT = buildFilePreviewAccept(
+  FILE_PREVIEW_TYPE_DEFINITIONS,
+);
 
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
@@ -181,20 +247,12 @@ export const FILE_PREVIEW_COPY = {
   closePreviewLabel: "Close preview",
   openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
   previewNoFile: "No file selected for preview.",
-  imagePreviewLoading: "Loading image preview…",
-  imagePreviewFailed: "Could not load this image for preview.",
-  docxPreviewLoading: "Loading document preview…",
-  docxPreviewFailed: "Could not convert this document for preview.",
-  pdfPreviewLoading: "Loading PDF preview…",
-  pdfPreviewFailed: "Could not load this PDF for preview.",
-  mp4PreviewLoading: "Loading video preview…",
-  mp4PreviewFailed: "Could not load this video for preview.",
-  mp3PreviewLoading: "Loading audio preview…",
-  mp3PreviewFailed: "Could not load this audio for preview.",
-  csvPreviewLoading: "Loading CSV preview…",
-  csvPreviewFailed: "Could not load this CSV for preview.",
-  jsonPreviewLoading: "Loading JSON preview…",
-  jsonPreviewFailed: "Could not load this JSON for preview.",
+  previewLoading: (fileTypeLabel: string) =>
+    `Loading ${fileTypeLabel} preview…`,
+  previewFailed: (fileTypeLabel: string) =>
+    `Could not load this ${fileTypeLabel} for preview.`,
+  previewConvertFailed: (fileTypeLabel: string) =>
+    `Could not convert this ${fileTypeLabel} for preview.`,
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 
@@ -207,44 +265,27 @@ export type FilePreviewMediaKind =
   | typeof FILE_PREVIEW_KIND.CSV
   | typeof FILE_PREVIEW_KIND.JSON;
 
-const FILE_PREVIEW_MEDIA_MESSAGES: Record<
-  FilePreviewMediaKind,
-  { loading: string; failed: string }
-> = {
-  [FILE_PREVIEW_KIND.IMAGE]: {
-    loading: FILE_PREVIEW_COPY.imagePreviewLoading,
-    failed: FILE_PREVIEW_COPY.imagePreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.PDF]: {
-    loading: FILE_PREVIEW_COPY.pdfPreviewLoading,
-    failed: FILE_PREVIEW_COPY.pdfPreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.DOCX]: {
-    loading: FILE_PREVIEW_COPY.docxPreviewLoading,
-    failed: FILE_PREVIEW_COPY.docxPreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.MP4]: {
-    loading: FILE_PREVIEW_COPY.mp4PreviewLoading,
-    failed: FILE_PREVIEW_COPY.mp4PreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.MP3]: {
-    loading: FILE_PREVIEW_COPY.mp3PreviewLoading,
-    failed: FILE_PREVIEW_COPY.mp3PreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.CSV]: {
-    loading: FILE_PREVIEW_COPY.csvPreviewLoading,
-    failed: FILE_PREVIEW_COPY.csvPreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.JSON]: {
-    loading: FILE_PREVIEW_COPY.jsonPreviewLoading,
-    failed: FILE_PREVIEW_COPY.jsonPreviewFailed,
-  },
+/** Natural-language labels used in loading/failed preview copy. */
+const FILE_PREVIEW_MESSAGE_LABEL: Record<FilePreviewMediaKind, string> = {
+  [FILE_PREVIEW_KIND.IMAGE]: "image",
+  [FILE_PREVIEW_KIND.PDF]: "PDF",
+  [FILE_PREVIEW_KIND.DOCX]: "document",
+  [FILE_PREVIEW_KIND.MP4]: "video",
+  [FILE_PREVIEW_KIND.MP3]: "audio",
+  [FILE_PREVIEW_KIND.CSV]: "CSV",
+  [FILE_PREVIEW_KIND.JSON]: "JSON",
 };
 
 export function getFilePreviewMessages(kind: FilePreviewMediaKind) {
+  const label = FILE_PREVIEW_MESSAGE_LABEL[kind];
+
   return {
     missingFile: FILE_PREVIEW_COPY.previewNoFile,
-    ...FILE_PREVIEW_MEDIA_MESSAGES[kind],
+    loading: FILE_PREVIEW_COPY.previewLoading(label),
+    failed:
+      kind === FILE_PREVIEW_KIND.DOCX
+        ? FILE_PREVIEW_COPY.previewConvertFailed(label)
+        : FILE_PREVIEW_COPY.previewFailed(label),
   };
 }
 

@@ -5,7 +5,7 @@ import {
   convertDocxFileToHtml,
   readCodePreviewFile,
 } from "@/utils/file-preview";
-import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
+import type { CodeFilePreviewKind } from "@/types/file-attachment";
 
 type FileKeyedPreview<T> = {
   file: File;
@@ -134,7 +134,7 @@ export function useDocxPreview(docxFile: File | undefined) {
 
 export function useCodeFilePreview(
   file: File | undefined,
-  kind: typeof FILE_PREVIEW_KIND.CSV | typeof FILE_PREVIEW_KIND.JSON,
+  kind: CodeFilePreviewKind,
 ) {
   const load = useCallback(
     (input: File) => readCodePreviewFile(input, kind),

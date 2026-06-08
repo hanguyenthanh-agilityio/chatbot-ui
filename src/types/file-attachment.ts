@@ -12,6 +12,10 @@ export const FILE_PREVIEW_KIND = {
 export type FilePreviewKind =
   (typeof FILE_PREVIEW_KIND)[keyof typeof FILE_PREVIEW_KIND];
 
+export type CodeFilePreviewKind =
+  | typeof FILE_PREVIEW_KIND.CSV
+  | typeof FILE_PREVIEW_KIND.JSON;
+
 export type BaseAttachment = {
   id: string;
   name: string;

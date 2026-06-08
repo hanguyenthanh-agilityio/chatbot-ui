@@ -1,4 +1,8 @@
 import DOMPurify from "dompurify";
+import {
+  FILE_PREVIEW_KIND,
+  type CodeFilePreviewKind,
+} from "@/types/file-attachment";
 
 type MammothModule = typeof import("mammoth");
 
@@ -35,18 +39,21 @@ export function withPdfEmbedParams(dataUrl: string) {
   return `${base}#${PDF_PREVIEW_EMBED_FRAGMENT}`;
 }
 
+const CODE_PREVIEW_EMPTY_FILE_ERROR = "File is empty";
+const CODE_PREVIEW_JSON_INDENT = 2;
+
 /** Read local JSON/CSV text for column-3 code preview (client-only). */
 export async function readCodePreviewFile(
   file: File,
-  kind: "csv" | "json",
+  kind: CodeFilePreviewKind,
 ): Promise<string> {
   const text = (await file.text()).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   if (!text.trim()) {
-    throw new Error("File is empty");
+    throw new Error(CODE_PREVIEW_EMPTY_FILE_ERROR);
   }
 
-  if (kind === "json") {
-    return JSON.stringify(JSON.parse(text), null, 2);
+  if (kind === FILE_PREVIEW_KIND.JSON) {
+    return JSON.stringify(JSON.parse(text), null, CODE_PREVIEW_JSON_INDENT);
   }
 
   return text;

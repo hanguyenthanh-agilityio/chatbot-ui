@@ -1,6 +1,7 @@
 import type { ChangeEvent, CSSProperties } from "react";
 import {
   FILE_PREVIEW_PANEL_WIDTH,
+  FILE_PREVIEW_TYPE_DEFINITIONS,
   RECENT_FLYOUT_LAYOUT,
 } from "@/constants/file-attachment";
 import {
@@ -9,36 +10,28 @@ import {
   type LibraryRecentFile,
 } from "@/types/file-attachment";
 
-const EXTENSION_KIND: Record<string, FilePreviewKind> = {
-  png: FILE_PREVIEW_KIND.IMAGE,
-  jpg: FILE_PREVIEW_KIND.IMAGE,
-  jpeg: FILE_PREVIEW_KIND.IMAGE,
-  gif: FILE_PREVIEW_KIND.IMAGE,
-  webp: FILE_PREVIEW_KIND.IMAGE,
-  pdf: FILE_PREVIEW_KIND.PDF,
-  docx: FILE_PREVIEW_KIND.DOCX,
-  mp4: FILE_PREVIEW_KIND.MP4,
-  mp3: FILE_PREVIEW_KIND.MP3,
-  csv: FILE_PREVIEW_KIND.CSV,
-  json: FILE_PREVIEW_KIND.JSON,
-};
+function buildExtensionKindMap() {
+  const map: Record<string, FilePreviewKind> = {};
+  for (const { kind, extensions } of FILE_PREVIEW_TYPE_DEFINITIONS) {
+    for (const extension of extensions) {
+      map[extension] = kind;
+    }
+  }
+  return map;
+}
 
-const MIME_KIND: Record<string, FilePreviewKind> = {
-  "image/png": FILE_PREVIEW_KIND.IMAGE,
-  "image/jpeg": FILE_PREVIEW_KIND.IMAGE,
-  "image/gif": FILE_PREVIEW_KIND.IMAGE,
-  "image/webp": FILE_PREVIEW_KIND.IMAGE,
-  "application/pdf": FILE_PREVIEW_KIND.PDF,
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-    FILE_PREVIEW_KIND.DOCX,
-  "video/mp4": FILE_PREVIEW_KIND.MP4,
-  "audio/mpeg": FILE_PREVIEW_KIND.MP3,
-  "audio/mp3": FILE_PREVIEW_KIND.MP3,
-  "text/csv": FILE_PREVIEW_KIND.CSV,
-  "application/csv": FILE_PREVIEW_KIND.CSV,
-  "application/json": FILE_PREVIEW_KIND.JSON,
-  "text/json": FILE_PREVIEW_KIND.JSON,
-};
+function buildMimeKindMap() {
+  const map: Record<string, FilePreviewKind> = {};
+  for (const { kind, mimeTypes } of FILE_PREVIEW_TYPE_DEFINITIONS) {
+    for (const mimeType of mimeTypes) {
+      map[mimeType] = kind;
+    }
+  }
+  return map;
+}
+
+const EXTENSION_KIND = buildExtensionKindMap();
+const MIME_KIND = buildMimeKindMap();
 
 export function inferFilePreviewKind(file: File): FilePreviewKind {
   const mimeKind = MIME_KIND[file.type];
