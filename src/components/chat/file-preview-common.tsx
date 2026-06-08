@@ -4,11 +4,16 @@ import type { ReactNode } from "react";
 import { FileKindIcon } from "@/components/chat/file-kind-icon";
 import { Text } from "@/components/ui/text";
 import {
+  FILE_PREVIEW_CODE_CONTENT_CLASS,
   FILE_PREVIEW_FALLBACK_CLASS,
   getFilePreviewMessages,
-  type FilePreviewMediaKind,
 } from "@/constants/file-attachment";
-import type { FilePreviewKind } from "@/types/file-attachment";
+import type { FilePreviewMediaKind } from "@/types/file-attachment";
+import { useCodeFilePreview } from "@/hooks/use-file-preview";
+import type {
+  CodeFilePreviewKind,
+  FilePreviewKind,
+} from "@/types/file-attachment";
 
 function FilePreviewFallback({
   message,
@@ -33,10 +38,6 @@ export function FilePreviewUnavailable({
   message: string;
 }) {
   return <FilePreviewFallback kind={kind} message={message} />;
-}
-
-export function FilePreviewLoading({ message }: { message: string }) {
-  return <FilePreviewFallback message={message} />;
 }
 
 export function FilePreviewEmbeddedBody({
@@ -68,8 +69,51 @@ export function FilePreviewEmbeddedBody({
 
   return (
     <div className={contentClassName}>
-      {isLoading ? <FilePreviewLoading message={messages.loading} /> : null}
+      {isLoading ? <FilePreviewFallback message={messages.loading} /> : null}
       {children}
     </div>
+  );
+}
+
+function FilePreviewCodeBody({ text }: { text: string }) {
+  const lines = text.split("\n");
+
+  return (
+    <div className="file-preview-code">
+      <div className="file-preview-code-scroll">
+        <div className="file-preview-code-gutter" aria-hidden>
+          {lines.map((_, index) => (
+            <div key={index} className="file-preview-code-line-number">
+              {index + 1}
+            </div>
+          ))}
+        </div>
+        <pre className="file-preview-code-body">
+          <code>{text}</code>
+        </pre>
+      </div>
+    </div>
+  );
+}
+
+export function FilePreviewCodeFile({
+  file,
+  kind,
+}: {
+  file: File | undefined;
+  kind: CodeFilePreviewKind;
+}) {
+  const { text, isLoading, hasFailed } = useCodeFilePreview(file, kind);
+
+  return (
+    <FilePreviewEmbeddedBody
+      contentClassName={FILE_PREVIEW_CODE_CONTENT_CLASS}
+      kind={kind}
+      file={file}
+      isLoading={isLoading}
+      hasFailed={hasFailed}
+    >
+      {text ? <FilePreviewCodeBody text={text} /> : null}
+    </FilePreviewEmbeddedBody>
   );
 }

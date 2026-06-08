@@ -1,7 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { convertDocxFileToHtml } from "@/utils/file-preview";
+import {
+  convertDocxFileToHtml,
+  readCodePreviewFile,
+} from "@/utils/file-preview";
+import type { CodeFilePreviewKind } from "@/types/file-attachment";
 
 type FileKeyedPreview<T> = {
   file: File;
@@ -79,7 +83,7 @@ export function useFileRenderFailure(file: File | undefined) {
   return { renderFailed, handleRenderError };
 }
 
-/** Track async file conversion keyed by `File` (extend for other converters). */
+/** Track async file reads keyed by `File` (DOCX HTML, CSV/JSON text, etc.). */
 export function useAsyncFilePreview<T>(
   file: File | undefined,
   load: (input: File) => Promise<T>,
@@ -123,6 +127,23 @@ export function useDocxPreview(docxFile: File | undefined) {
 
   return {
     html: value,
+    isLoading,
+    hasFailed,
+  };
+}
+
+export function useCodeFilePreview(
+  file: File | undefined,
+  kind: CodeFilePreviewKind,
+) {
+  const load = useCallback(
+    (input: File) => readCodePreviewFile(input, kind),
+    [kind],
+  );
+  const { value, isLoading, hasFailed } = useAsyncFilePreview(file, load);
+
+  return {
+    text: value,
     isLoading,
     hasFailed,
   };
