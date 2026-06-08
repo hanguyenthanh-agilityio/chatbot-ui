@@ -24,8 +24,10 @@ const ATTACHMENT_CONTENT_READERS: Partial<
 > = {
   [FILE_PREVIEW_KIND.PDF]: extractPdfFileText,
   [FILE_PREVIEW_KIND.DOCX]: extractDocxFileText,
-  [FILE_PREVIEW_KIND.CSV]: (file) => readCodePreviewFile(file, "csv"),
-  [FILE_PREVIEW_KIND.JSON]: (file) => readCodePreviewFile(file, "json"),
+  [FILE_PREVIEW_KIND.CSV]: (file) =>
+    readCodePreviewFile(file, FILE_PREVIEW_KIND.CSV),
+  [FILE_PREVIEW_KIND.JSON]: (file) =>
+    readCodePreviewFile(file, FILE_PREVIEW_KIND.JSON),
 };
 
 export function isReadableAttachmentKind(kind: FilePreviewKind): boolean {

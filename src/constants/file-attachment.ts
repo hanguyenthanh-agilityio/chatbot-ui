@@ -1,7 +1,13 @@
-import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
+import {
+  FILE_PREVIEW_CODE_KINDS,
+  FILE_PREVIEW_KIND,
+} from "@/types/file-attachment";
 import type {
   FilePreviewKind,
+  FilePreviewMediaKind,
+  FilePreviewTypeDefinition,
   LibraryRecentFile,
+  SupportedFilePreviewKind,
 } from "@/types/file-attachment";
 import { cn } from "@/utils/class-name";
 
@@ -87,21 +93,29 @@ export const FILE_PREVIEW_FALLBACK_CLASS = cn(
 );
 
 export const FILE_PREVIEW_SCROLL_CLASS = "file-preview-thin-scroll";
+
 export const FILE_PREVIEW_EMBEDDED_KINDS = new Set<FilePreviewKind>([
   FILE_PREVIEW_KIND.DOCX,
   FILE_PREVIEW_KIND.PDF,
-  FILE_PREVIEW_KIND.CSV,
-  FILE_PREVIEW_KIND.JSON,
+  ...FILE_PREVIEW_CODE_KINDS,
 ]);
 
 export function isFilePreviewEmbeddedKind(kind: FilePreviewKind) {
   return FILE_PREVIEW_EMBEDDED_KINDS.has(kind);
 }
 
-const FILE_PREVIEW_EMBEDDED_SHELL_CLASS = cn(
+const FILE_PREVIEW_CONTENT_HOST_LAYOUT_CLASS = cn(
   "file-preview-thin-scroll",
   "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col",
-  "rounded-2xl border border-white/8 bg-white light:border-app-border-subtle",
+);
+
+const FILE_PREVIEW_EMBEDDED_BORDER_CLASS =
+  "rounded-2xl border border-white/8 light:border-app-border-subtle";
+
+const FILE_PREVIEW_EMBEDDED_SHELL_CLASS = cn(
+  FILE_PREVIEW_CONTENT_HOST_LAYOUT_CLASS,
+  FILE_PREVIEW_EMBEDDED_BORDER_CLASS,
+  "bg-white",
 );
 
 /** Scrollable DOCX preview host (mammoth HTML in `.file-preview-docx-html`). */
@@ -118,12 +132,12 @@ export const FILE_PREVIEW_PDF_CONTENT_CLASS = cn(
   "overflow-hidden",
 );
 
-/** Scrollable code-style preview host (JSON, CSV). */
+/** Host for scrollable CSV/JSON preview (theme tokens in globals.css). */
 export const FILE_PREVIEW_CODE_CONTENT_CLASS = cn(
   "file-preview-code-content",
-  "file-preview-thin-scroll",
-  "relative flex min-h-0 min-w-0 max-w-full flex-1 flex-col",
-  "overflow-auto rounded-2xl border border-white/8 light:border-app-border-subtle",
+  FILE_PREVIEW_CONTENT_HOST_LAYOUT_CLASS,
+  FILE_PREVIEW_EMBEDDED_BORDER_CLASS,
+  "overflow-auto",
 );
 
 /** Desktop-only drag handle between chat and preview. Sits outside the panel; height inset matches rounded-shell corners. */
@@ -166,8 +180,85 @@ export const FILE_PREVIEW_PANEL_WIDTH = {
   viewportMaxRatio: 0.45,
 } as const;
 
-export const FILE_PREVIEW_ACCEPT =
-  ".png,.jpg,.jpeg,.gif,.webp,.pdf,.docx,.mp4,.mp3,.csv,.json,image/png,image/jpeg,image/gif,image/webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/mp4,audio/mpeg,audio/mp3,text/csv,application/csv,application/json,text/json";
+/** Single source of truth for supported upload/preview file types. */
+export const FILE_PREVIEW_TYPE_DEFINITIONS = [
+  {
+    kind: FILE_PREVIEW_KIND.IMAGE,
+    extensions: ["png", "jpg", "jpeg", "gif", "webp"],
+    mimeTypes: ["image/png", "image/jpeg", "image/gif", "image/webp"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.PDF,
+    extensions: ["pdf"],
+    mimeTypes: ["application/pdf"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.DOCX,
+    extensions: ["docx"],
+    mimeTypes: [
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.MP4,
+    extensions: ["mp4"],
+    mimeTypes: ["video/mp4"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.MP3,
+    extensions: ["mp3"],
+    mimeTypes: ["audio/mpeg", "audio/mp3"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.CSV,
+    extensions: ["csv"],
+    mimeTypes: ["text/csv", "application/csv"],
+  },
+  {
+    kind: FILE_PREVIEW_KIND.JSON,
+    extensions: ["json"],
+    mimeTypes: ["application/json", "text/json"],
+  },
+] as const satisfies readonly FilePreviewTypeDefinition[];
+
+function buildFilePreviewAccept(
+  definitions: readonly FilePreviewTypeDefinition[],
+) {
+  const parts: string[] = [];
+  for (const { extensions, mimeTypes } of definitions) {
+    for (const extension of extensions) {
+      parts.push(`.${extension}`);
+    }
+    parts.push(...mimeTypes);
+  }
+  return parts.join(",");
+}
+
+export const FILE_PREVIEW_ACCEPT = buildFilePreviewAccept(
+  FILE_PREVIEW_TYPE_DEFINITIONS,
+);
+
+export function buildFilePreviewKindMaps(
+  definitions: readonly FilePreviewTypeDefinition[],
+) {
+  const extensionKind: Record<string, FilePreviewKind> = {};
+  const mimeKind: Record<string, FilePreviewKind> = {};
+
+  for (const { kind, extensions, mimeTypes } of definitions) {
+    for (const extension of extensions) {
+      extensionKind[extension] = kind;
+    }
+    for (const mimeType of mimeTypes) {
+      mimeKind[mimeType] = kind;
+    }
+  }
+
+  return { extensionKind, mimeKind };
+}
+
+export const FILE_PREVIEW_KIND_MAPS = buildFilePreviewKindMaps(
+  FILE_PREVIEW_TYPE_DEFINITIONS,
+);
 
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
@@ -181,72 +272,45 @@ export const FILE_PREVIEW_COPY = {
   closePreviewLabel: "Close preview",
   openAttachmentPreviewLabel: (name: string) => `Preview ${name}`,
   previewNoFile: "No file selected for preview.",
-  imagePreviewLoading: "Loading image preview…",
-  imagePreviewFailed: "Could not load this image for preview.",
-  docxPreviewLoading: "Loading document preview…",
-  docxPreviewFailed: "Could not convert this document for preview.",
-  pdfPreviewLoading: "Loading PDF preview…",
-  pdfPreviewFailed: "Could not load this PDF for preview.",
-  mp4PreviewLoading: "Loading video preview…",
-  mp4PreviewFailed: "Could not load this video for preview.",
-  mp3PreviewLoading: "Loading audio preview…",
-  mp3PreviewFailed: "Could not load this audio for preview.",
-  csvPreviewLoading: "Loading CSV preview…",
-  csvPreviewFailed: "Could not load this CSV for preview.",
-  jsonPreviewLoading: "Loading JSON preview…",
-  jsonPreviewFailed: "Could not load this JSON for preview.",
+  previewUnavailable: "Preview is not available for this file type.",
+  previewLoading: (fileTypeLabel: string) =>
+    `Loading ${fileTypeLabel} preview…`,
+  previewFailed: (fileTypeLabel: string) =>
+    `Could not load this ${fileTypeLabel} for preview.`,
+  previewConvertFailed: (fileTypeLabel: string) =>
+    `Could not convert this ${fileTypeLabel} for preview.`,
   resizePreviewLabel: "Resize file preview panel",
 } as const;
 
-export type FilePreviewMediaKind =
-  | typeof FILE_PREVIEW_KIND.IMAGE
-  | typeof FILE_PREVIEW_KIND.PDF
-  | typeof FILE_PREVIEW_KIND.DOCX
-  | typeof FILE_PREVIEW_KIND.MP4
-  | typeof FILE_PREVIEW_KIND.MP3
-  | typeof FILE_PREVIEW_KIND.CSV
-  | typeof FILE_PREVIEW_KIND.JSON;
+type FilePreviewFailedAction = "load" | "convert";
 
-const FILE_PREVIEW_MEDIA_MESSAGES: Record<
+const FILE_PREVIEW_MEDIA_MESSAGE_CONFIG: Record<
   FilePreviewMediaKind,
-  { loading: string; failed: string }
+  { label: string; failedAction: FilePreviewFailedAction }
 > = {
-  [FILE_PREVIEW_KIND.IMAGE]: {
-    loading: FILE_PREVIEW_COPY.imagePreviewLoading,
-    failed: FILE_PREVIEW_COPY.imagePreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.PDF]: {
-    loading: FILE_PREVIEW_COPY.pdfPreviewLoading,
-    failed: FILE_PREVIEW_COPY.pdfPreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.DOCX]: {
-    loading: FILE_PREVIEW_COPY.docxPreviewLoading,
-    failed: FILE_PREVIEW_COPY.docxPreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.MP4]: {
-    loading: FILE_PREVIEW_COPY.mp4PreviewLoading,
-    failed: FILE_PREVIEW_COPY.mp4PreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.MP3]: {
-    loading: FILE_PREVIEW_COPY.mp3PreviewLoading,
-    failed: FILE_PREVIEW_COPY.mp3PreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.CSV]: {
-    loading: FILE_PREVIEW_COPY.csvPreviewLoading,
-    failed: FILE_PREVIEW_COPY.csvPreviewFailed,
-  },
-  [FILE_PREVIEW_KIND.JSON]: {
-    loading: FILE_PREVIEW_COPY.jsonPreviewLoading,
-    failed: FILE_PREVIEW_COPY.jsonPreviewFailed,
-  },
+  [FILE_PREVIEW_KIND.IMAGE]: { label: "image", failedAction: "load" },
+  [FILE_PREVIEW_KIND.PDF]: { label: "PDF", failedAction: "load" },
+  [FILE_PREVIEW_KIND.DOCX]: { label: "document", failedAction: "convert" },
+  [FILE_PREVIEW_KIND.MP4]: { label: "video", failedAction: "load" },
+  [FILE_PREVIEW_KIND.MP3]: { label: "audio", failedAction: "load" },
+  [FILE_PREVIEW_KIND.CSV]: { label: "CSV", failedAction: "load" },
+  [FILE_PREVIEW_KIND.JSON]: { label: "JSON", failedAction: "load" },
 };
 
 export function getFilePreviewMessages(kind: FilePreviewMediaKind) {
+  const { label, failedAction } = FILE_PREVIEW_MEDIA_MESSAGE_CONFIG[kind];
+
   return {
     missingFile: FILE_PREVIEW_COPY.previewNoFile,
-    ...FILE_PREVIEW_MEDIA_MESSAGES[kind],
+    loading: FILE_PREVIEW_COPY.previewLoading(label),
+    failed:
+      failedAction === "convert"
+        ? FILE_PREVIEW_COPY.previewConvertFailed(label)
+        : FILE_PREVIEW_COPY.previewFailed(label),
   };
 }
+
+export type { FilePreviewMediaKind, SupportedFilePreviewKind };
 
 export const MOCK_RECENT_FILES: readonly LibraryRecentFile[] = [
   {

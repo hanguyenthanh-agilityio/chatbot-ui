@@ -7,12 +7,12 @@ import {
   FILE_PREVIEW_CODE_CONTENT_CLASS,
   FILE_PREVIEW_FALLBACK_CLASS,
   getFilePreviewMessages,
-  type FilePreviewMediaKind,
 } from "@/constants/file-attachment";
+import type { FilePreviewMediaKind } from "@/types/file-attachment";
 import { useCodeFilePreview } from "@/hooks/use-file-preview";
-import {
-  FILE_PREVIEW_KIND,
-  type FilePreviewKind,
+import type {
+  CodeFilePreviewKind,
+  FilePreviewKind,
 } from "@/types/file-attachment";
 
 function FilePreviewFallback({
@@ -38,10 +38,6 @@ export function FilePreviewUnavailable({
   message: string;
 }) {
   return <FilePreviewFallback kind={kind} message={message} />;
-}
-
-export function FilePreviewLoading({ message }: { message: string }) {
-  return <FilePreviewFallback message={message} />;
 }
 
 export function FilePreviewEmbeddedBody({
@@ -73,7 +69,11 @@ export function FilePreviewEmbeddedBody({
 
   return (
     <div className={contentClassName}>
-      {isLoading ? <FilePreviewLoading message={messages.loading} /> : children}
+      {isLoading ? (
+        <FilePreviewFallback message={messages.loading} />
+      ) : (
+        children
+      )}
     </div>
   );
 }
@@ -99,10 +99,6 @@ function FilePreviewCodeBody({ text }: { text: string }) {
     </div>
   );
 }
-
-type CodeFilePreviewKind =
-  | typeof FILE_PREVIEW_KIND.CSV
-  | typeof FILE_PREVIEW_KIND.JSON;
 
 export function FilePreviewCodeFile({
   file,

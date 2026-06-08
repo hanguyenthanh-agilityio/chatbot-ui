@@ -54,7 +54,7 @@ function FilePreviewPanelContent({ file }: { file: ComposerAttachment }) {
     default:
       return (
         <Text variant="captionMuted" className="px-0.5">
-          Preview is not available for this file type.
+          {FILE_PREVIEW_COPY.previewUnavailable}
         </Text>
       );
   }
