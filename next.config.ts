@@ -14,6 +14,8 @@ function parseAllowedDevOrigins() {
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: parseAllowedDevOrigins(),
+  // Keep browser-only parsers out of the RSC/server graph when imported transitively.
+  serverExternalPackages: ["pdf-parse"],
 };
 
 export default nextConfig;

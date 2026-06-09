@@ -13,6 +13,7 @@ name: Deploy to Cloudflare
 on:
   push:
     branches:
+      - fix/pdf-attach-browser-bundle
       - feat/chatbot-ui-light-dark
       - fix/redeploy-cloudflare
       - feat/quick-actions-above-composer
