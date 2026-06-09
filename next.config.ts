@@ -24,6 +24,7 @@ export default nextConfig;
 if (
   !process.env.VITEST &&
   process.env.CI !== "true" &&
+  process.env.NODE_ENV === "development" &&
   existsSync(path.join(process.cwd(), "wrangler.jsonc"))
 ) {
   void import("@opennextjs/cloudflare").then((m) =>
