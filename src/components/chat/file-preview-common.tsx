@@ -107,7 +107,7 @@ export function FilePreviewFramedDataUrl({
   );
 }
 
-export function FilePreviewAsyncEmbeddedBody({
+export function FilePreviewAsyncEmbeddedBody<T>({
   contentClassName,
   kind,
   file,
@@ -121,8 +121,9 @@ export function FilePreviewAsyncEmbeddedBody({
   file: File | undefined;
   isLoading: boolean;
   hasFailed: boolean;
-  value: unknown;
-  children: ReactNode;
+  value: T | null | undefined;
+  /** Render prop — avoids evaluating preview UI before async `value` is ready. */
+  children: (value: NonNullable<T>) => ReactNode;
 }) {
   return (
     <FilePreviewEmbeddedBody
@@ -132,7 +133,7 @@ export function FilePreviewAsyncEmbeddedBody({
       isLoading={isLoading}
       hasFailed={hasFailed}
     >
-      {value ? children : null}
+      {value != null ? children(value) : null}
     </FilePreviewEmbeddedBody>
   );
 }
@@ -176,7 +177,7 @@ export function FilePreviewCodeFile({
       hasFailed={hasFailed}
       value={text}
     >
-      <FilePreviewCodeBody text={text!} />
+      {(resolvedText) => <FilePreviewCodeBody text={resolvedText} />}
     </FilePreviewAsyncEmbeddedBody>
   );
 }
