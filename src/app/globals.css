@@ -1131,7 +1131,6 @@ html[data-theme="light"] .file-preview-code-content {
 }
 
 .file-preview-code {
-  min-height: 100%;
   color: var(--file-preview-code-fg);
   background: var(--file-preview-code-bg);
   font-family: var(
@@ -1150,7 +1149,7 @@ html[data-theme="light"] .file-preview-code-content {
 .file-preview-code-scroll {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  min-height: 100%;
+  align-items: start;
   min-width: min-content;
 }
 
