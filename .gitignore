@@ -60,7 +60,7 @@ storybook-static
 # GitHub Actions / Cloudflare deploy — local only; never commit on GitLab branches.
 # GitLab: git push origin (files stay on disk, not in commits).
 # GitHub: only push feat/cloudflare-deploy to github remote (that branch keeps deploy files tracked).
-.github
+.github/
 public/_headers
 cloudflare-worker.ts
 open-next.config.ts
