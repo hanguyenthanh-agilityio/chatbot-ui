@@ -88,6 +88,10 @@ export function isDarkTheme(theme: Theme): boolean {
   return theme === ThemeMode.Dark;
 }
 
+export function getOppositeTheme(theme: Theme): Theme {
+  return isDarkTheme(theme) ? ThemeMode.Light : ThemeMode.Dark;
+}
+
 export function getThemeToggleAriaLabel(theme: Theme) {
   return isDarkTheme(theme)
     ? THEME_TOGGLE_ARIA_LABEL.toLight

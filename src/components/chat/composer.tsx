@@ -164,9 +164,9 @@ export function ChatComposer({
           onClick={() => !isProviderReady && setShowTooltip(true)}
         >
           {showTooltip && !isProviderReady && inputTooltip ? (
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/12 bg-slate-800 px-3 py-1.5 text-xs text-white shadow-lg light:border-app-border light:bg-app-surface-muted light:text-app-fg light:shadow-panel-sm">
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/12 bg-glass-panel px-3 py-1.5 text-xs text-white/90 shadow-lg backdrop-blur-md light:border-app-border light:bg-app-surface-muted light:text-app-fg light:shadow-panel-sm">
               {inputTooltip}
-              <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-800 light:border-t-app-border-muted" />
+              <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-white/12 light:border-t-app-border-muted" />
             </div>
           ) : null}
           <form

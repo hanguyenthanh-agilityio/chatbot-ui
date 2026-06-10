@@ -13,8 +13,7 @@ import {
 import {
   DEFAULT_THEME,
   THEME_CHANGE_EVENT,
-  isDarkTheme,
-  ThemeMode,
+  getOppositeTheme,
   type Theme,
 } from "@/constants/theme";
 
@@ -25,7 +24,7 @@ import { getThemeFromDocument, persistTheme } from "@/lib/theme";
 type ThemeContextValue = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
+  toggleTheme: () => Theme;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -46,8 +45,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     persistTheme(next);
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setTheme(isDarkTheme(theme) ? ThemeMode.Light : ThemeMode.Dark);
+  const toggleTheme = useCallback((): Theme => {
+    const next = getOppositeTheme(theme);
+    setTheme(next);
+    return next;
   }, [setTheme, theme]);
 
   const value = useMemo(

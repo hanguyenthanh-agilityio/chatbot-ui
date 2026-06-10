@@ -10,7 +10,6 @@ import { MoonIcon, SunIcon } from "@/components/ui/icons";
 import {
   getThemeToggleAriaLabel,
   isDarkTheme,
-  ThemeMode,
   type Theme,
 } from "@/constants/theme";
 
@@ -25,8 +24,7 @@ export function ThemeToggle({
   const isDark = isDarkTheme(theme);
 
   function handleToggle() {
-    const nextTheme = isDark ? ThemeMode.Light : ThemeMode.Dark;
-    toggleTheme();
+    const nextTheme = toggleTheme();
     onToggle?.(nextTheme);
   }
 
