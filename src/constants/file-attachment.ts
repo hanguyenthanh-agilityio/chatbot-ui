@@ -14,6 +14,7 @@ export const COMPOSER_ATTACHMENT_ID_PREFIX = "attach";
 /** Attach-time content extraction (not preview UI). */
 export const FILE_ATTACHMENT_CONTENT_COPY = {
   emptyFile: "File is empty",
+  invalidJson: "Invalid JSON file",
   unsupportedKind: (kind: string) => `Unsupported attachment kind: ${kind}`,
 } as const;
 
