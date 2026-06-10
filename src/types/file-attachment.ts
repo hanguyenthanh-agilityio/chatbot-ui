@@ -12,6 +12,20 @@ export const FILE_PREVIEW_KIND = {
 export type FilePreviewKind =
   (typeof FILE_PREVIEW_KIND)[keyof typeof FILE_PREVIEW_KIND];
 
+export const ATTACHMENT_CONTENT_READ_STATUS = {
+  /** Text extraction in progress after attach. */
+  PENDING: "pending",
+  /** Plain text available on `content`. */
+  READY: "ready",
+  /** Extraction failed (corrupt/empty file). */
+  FAILED: "failed",
+  /** Kind has no text reader yet (image, mp3, mp4). */
+  UNSUPPORTED: "unsupported",
+} as const;
+
+export type AttachmentContentReadStatus =
+  (typeof ATTACHMENT_CONTENT_READ_STATUS)[keyof typeof ATTACHMENT_CONTENT_READ_STATUS];
+
 export type SupportedFilePreviewKind = Exclude<
   FilePreviewKind,
   typeof FILE_PREVIEW_KIND.UNKNOWN
@@ -66,6 +80,12 @@ export type BaseAttachment = {
    * (Client-only; never sent to the server.)
    */
   rawFile?: File;
+  /**
+   * Plain text extracted on attach for AI/RAG chunking.
+   * Not rendered in preview UI — see useComposerAttachment + file-content utils.
+   */
+  content?: string;
+  contentReadStatus?: AttachmentContentReadStatus;
 };
 
 export type ComposerAttachment = BaseAttachment;

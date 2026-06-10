@@ -127,7 +127,8 @@ export function FilePreviewFramedDataUrl({
 }
 
 function FilePreviewCodeBody({ text }: { text: string }) {
-  const lines = text.split("\n");
+  const normalized = text.trim();
+  const lines = normalized.split("\n");
 
   return (
     <div className="file-preview-code">
@@ -140,7 +141,7 @@ function FilePreviewCodeBody({ text }: { text: string }) {
           ))}
         </div>
         <pre className="file-preview-code-body">
-          <code>{text}</code>
+          <code>{normalized}</code>
         </pre>
       </div>
     </div>
