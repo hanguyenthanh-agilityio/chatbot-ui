@@ -73,8 +73,11 @@ export function FilePreviewEmbeddedBody({
 
   return (
     <div className={contentClassName}>
-      {isLoading ? <FilePreviewFallback message={messages.loading} /> : null}
-      {children}
+      {isLoading ? (
+        <FilePreviewFallback message={messages.loading} />
+      ) : (
+        children
+      )}
     </div>
   );
 }
@@ -139,7 +142,8 @@ export function FilePreviewAsyncEmbeddedBody<T>({
 }
 
 function FilePreviewCodeBody({ text }: { text: string }) {
-  const lines = text.split("\n");
+  const normalized = text.trim();
+  const lines = normalized.split("\n");
 
   return (
     <div className="file-preview-code">
@@ -152,7 +156,7 @@ function FilePreviewCodeBody({ text }: { text: string }) {
           ))}
         </div>
         <pre className="file-preview-code-body">
-          <code>{text}</code>
+          <code>{normalized}</code>
         </pre>
       </div>
     </div>
