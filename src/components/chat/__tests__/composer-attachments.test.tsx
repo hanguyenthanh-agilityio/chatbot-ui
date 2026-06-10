@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -6,9 +6,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ComposerAttachmentChip } from "@/components/chat/composer-attachment-chip";
 import { ComposerAttachmentMenu } from "@/components/chat/composer-attachment-menu";
 import { FileKindIcon } from "@/components/chat/file-kind-icon";
-import {
-  FILE_PREVIEW_COPY,
-} from "@/constants/file-attachment";
+import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
+import * as browser from "@/lib/browser";
 import { MOCK_COMPOSER_ATTACHMENT } from "@/mocks/file-attachment";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 
@@ -30,6 +29,36 @@ function renderAttachmentMenu(
   );
 }
 
+const attachButton = () =>
+  screen.getByRole("button", {
+    name: FILE_PREVIEW_COPY.attachMenuAriaLabel,
+  });
+
+const addFilesMenuItem = () =>
+  screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel });
+
+const queryAddFilesMenuItem = () =>
+  screen.queryByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel });
+
+const fileInput = () => {
+  const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+  if (!input) throw new Error("file input not found");
+  return input;
+};
+
+const recentFilesMenuItem = () =>
+  screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel });
+
+const recentFilesTrigger = () => {
+  const trigger = recentFilesMenuItem().parentElement;
+  if (!trigger) throw new Error("recent files trigger not found");
+  return trigger;
+};
+
+async function openMenu(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(attachButton());
+}
+
 describe("ComposerAttachmentChip", () => {
   afterEach(cleanup);
 
@@ -45,41 +74,116 @@ describe("ComposerAttachmentChip", () => {
 });
 
 describe("ComposerAttachmentMenu", () => {
-  afterEach(cleanup);
+  afterEach(() => {
+    vi.restoreAllMocks();
+    cleanup();
+  });
 
   it("matches snapshot (closed)", () => {
     const { container } = renderAttachmentMenu();
     expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
   });
 
-  it("opens menu when the attach button is clicked", async () => {
-    const user = userEvent.setup();
-    renderAttachmentMenu();
+  describe("handleToggleClick", () => {
+    it("opens the menu when closed", async () => {
+      const user = userEvent.setup();
+      renderAttachmentMenu();
+      await openMenu(user);
 
-    await user.click(
-      screen.getByRole("button", {
-        name: FILE_PREVIEW_COPY.attachMenuAriaLabel,
-      }),
-    );
+      expect(addFilesMenuItem()).toBeInTheDocument();
+    });
 
-    expect(
-      screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel }),
-    ).toBeInTheDocument();
+    it("closes the menu when open", async () => {
+      const user = userEvent.setup();
+      renderAttachmentMenu();
+      await openMenu(user);
+
+      await user.click(attachButton());
+
+      expect(queryAddFilesMenuItem()).not.toBeInTheDocument();
+    });
   });
 
-  it("calls onFileSelected when a file is chosen", async () => {
-    const user = userEvent.setup();
-    const onFileSelected = vi.fn();
-    renderAttachmentMenu({ onFileSelected });
+  describe("handleAddFilesClick", () => {
+    it("calls onOpenFilePicker and closes the menu", async () => {
+      const user = userEvent.setup();
+      const onOpenFilePicker = vi.fn();
+      renderAttachmentMenu({ onOpenFilePicker });
+      await openMenu(user);
 
-    const input =
-      document.querySelector<HTMLInputElement>('input[type="file"]');
-    if (!input) throw new Error("file input not found");
+      await user.click(addFilesMenuItem());
 
-    const file = new File(["x"], "report.pdf", { type: "application/pdf" });
-    await user.upload(input, file);
+      expect(onOpenFilePicker).toHaveBeenCalledTimes(1);
+      expect(queryAddFilesMenuItem()).not.toBeInTheDocument();
+    });
+  });
 
-    expect(onFileSelected).toHaveBeenCalledWith(file);
+  describe("handleFileInputChange", () => {
+    it("calls onFileSelected and closes the menu when a file is chosen", async () => {
+      const user = userEvent.setup();
+      const onFileSelected = vi.fn();
+      renderAttachmentMenu({ onFileSelected });
+      await openMenu(user);
+
+      const file = new File(["x"], "report.pdf", {
+        type: "application/pdf",
+      });
+      await user.upload(fileInput(), file);
+
+      expect(onFileSelected).toHaveBeenCalledWith(file);
+      expect(queryAddFilesMenuItem()).not.toBeInTheDocument();
+    });
+
+    it("does nothing when the file input is empty", () => {
+      const onFileSelected = vi.fn();
+      renderAttachmentMenu({ onFileSelected });
+
+      fireEvent.change(fileInput(), { target: { files: [] } });
+
+      expect(onFileSelected).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("recent files flyout (isRecentOpen)", () => {
+    it("portals flyout to document.body and wires recentMenuId via aria-controls", async () => {
+      const user = userEvent.setup();
+      renderAttachmentMenu();
+      await openMenu(user);
+
+      fireEvent.mouseEnter(recentFilesTrigger());
+
+      const recentItem = recentFilesMenuItem();
+      expect(recentItem).toHaveAttribute("aria-expanded", "true");
+      expect(recentItem).toHaveClass("bg-white/8");
+
+      const recentMenuId = recentItem.getAttribute("aria-controls");
+      expect(recentMenuId).toBeTruthy();
+
+      const flyout = document.getElementById(recentMenuId!);
+      expect(flyout).toBeInTheDocument();
+      expect(flyout).toHaveAttribute("role", "group");
+      expect(flyout).toHaveAttribute(
+        "aria-label",
+        FILE_PREVIEW_COPY.recentFilesLabel,
+      );
+      expect(document.body).toContainElement(flyout!);
+    });
+
+    it("does not portal flyout when isBrowser() is false", async () => {
+      vi.spyOn(browser, "isBrowser").mockReturnValue(false);
+      const user = userEvent.setup();
+      renderAttachmentMenu();
+      await openMenu(user);
+
+      fireEvent.mouseEnter(recentFilesTrigger());
+
+      expect(recentFilesMenuItem()).toHaveAttribute("aria-expanded", "true");
+      expect(
+        screen.queryByRole("group", {
+          name: FILE_PREVIEW_COPY.recentFilesLabel,
+        }),
+      ).not.toBeInTheDocument();
+    });
   });
 });
 
