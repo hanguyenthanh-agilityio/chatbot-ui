@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  createEvent,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { FormEvent } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -37,6 +43,12 @@ function getTextarea() {
 
 function getSendButton() {
   return screen.getByRole("button", { name: sendButtonLabel });
+}
+
+function getInputRow() {
+  const row = getTextarea().parentElement;
+  if (!row) throw new Error("input row not found");
+  return row;
 }
 
 function getTooltipWrapper() {
@@ -130,6 +142,85 @@ describe("ChatComposer", () => {
       await user.keyboard("{Shift>}{Enter}{/Shift}");
       expect(onSubmitAction).not.toHaveBeenCalled();
     });
+
+    it("does not submit on Enter when canSend is false", () => {
+      const onSubmitAction = mockSubmitHandler();
+      renderComposer({
+        input: "Hello",
+        onSubmitAction,
+        isProviderReady: true,
+        canSend: false,
+      });
+      fireEvent.keyDown(getTextarea(), { key: "Enter", code: "Enter" });
+      expect(onSubmitAction).not.toHaveBeenCalled();
+    });
+
+    it("does not submit on Enter while loading", () => {
+      const onSubmitAction = mockSubmitHandler();
+      renderComposer({
+        input: "Hello",
+        onSubmitAction,
+        isProviderReady: true,
+        canSend: true,
+        isLoading: true,
+      });
+      fireEvent.keyDown(getTextarea(), { key: "Enter", code: "Enter" });
+      expect(onSubmitAction).not.toHaveBeenCalled();
+    });
+
+    it("does not submit on Enter during IME composition", () => {
+      const onSubmitAction = mockSubmitHandler();
+      renderComposer({ input: "Hello", onSubmitAction, ...readyToSend });
+      const textarea = getTextarea();
+      const event = createEvent.keyDown(textarea, { key: "Enter", code: "Enter" });
+      Object.defineProperty(event, "isComposing", { value: true });
+      fireEvent(textarea, event);
+      expect(onSubmitAction).not.toHaveBeenCalled();
+    });
+
+    it("does not submit on Enter when IME keyCode is 229", () => {
+      const onSubmitAction = mockSubmitHandler();
+      renderComposer({ input: "Hello", onSubmitAction, ...readyToSend });
+      fireEvent.keyDown(getTextarea(), {
+        key: "Enter",
+        code: "Enter",
+        keyCode: 229,
+      });
+      expect(onSubmitAction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("textarea layout", () => {
+    it("aligns controls to center for a single-line input", () => {
+      renderComposer({ input: "Hello", ...readyToSend });
+      expect(getInputRow()).toHaveClass("items-center");
+      expect(getInputRow()).not.toHaveClass("items-end");
+    });
+
+    it("aligns controls to end when input has a newline", () => {
+      renderComposer({ input: "Line one\nLine two", ...readyToSend });
+      expect(getInputRow()).toHaveClass("items-end");
+      expect(getInputRow()).not.toHaveClass("items-center");
+    });
+
+    it("observes the textarea with ResizeObserver", () => {
+      const observe = vi.fn();
+      const disconnect = vi.fn();
+      class MockResizeObserver {
+        observe = observe;
+        disconnect = disconnect;
+      }
+      vi.stubGlobal("ResizeObserver", MockResizeObserver);
+
+      try {
+        const { unmount } = renderComposer({ input: "Hi", ...readyToSend });
+        expect(observe).toHaveBeenCalledWith(getTextarea());
+        unmount();
+        expect(disconnect).toHaveBeenCalled();
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    });
   });
 
   describe("display", () => {
@@ -173,18 +264,42 @@ describe("ChatComposer", () => {
     });
   });
 
-  it("renders attachment menu and chip when configured", () => {
-    renderComposer({
-      attachmentMenu: { onFileSelected: vi.fn() },
-      attachedFile: MOCK_COMPOSER_ATTACHMENT,
-      onRemoveAttachedFile: vi.fn(),
-      ...readyToSend,
+  describe("attachments", () => {
+    const attachButton = () =>
+      screen.getByRole("button", {
+        name: FILE_PREVIEW_COPY.attachMenuAriaLabel,
+      });
+
+    const addFilesMenuItem = () =>
+      screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel });
+
+    it("renders attachment menu and chip when configured", () => {
+      renderComposer({
+        attachmentMenu: { onFileSelected: vi.fn() },
+        attachedFile: MOCK_COMPOSER_ATTACHMENT,
+        onRemoveAttachedFile: vi.fn(),
+        ...readyToSend,
+      });
+
+      expect(screen.getByText(MOCK_COMPOSER_ATTACHMENT.name)).toBeInTheDocument();
+      expect(attachButton()).toBeInTheDocument();
     });
 
-    expect(screen.getByText(MOCK_COMPOSER_ATTACHMENT.name)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: FILE_PREVIEW_COPY.attachMenuAriaLabel }),
-    ).toBeInTheDocument();
+    it("clicks the hidden file input when Add files is chosen", async () => {
+      const user = userEvent.setup();
+      const clickSpy = vi.spyOn(HTMLInputElement.prototype, "click");
+
+      renderComposer({
+        attachmentMenu: { onFileSelected: vi.fn() },
+        ...readyToSend,
+      });
+
+      await user.click(attachButton());
+      await user.click(addFilesMenuItem());
+
+      expect(clickSpy).toHaveBeenCalled();
+      clickSpy.mockRestore();
+    });
   });
 
   it("renders quick actions above the input when provided", () => {
