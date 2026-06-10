@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useSyncExternalStore, type CSSProperties } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+} from "react";
 
 // Components
 import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
@@ -129,25 +135,39 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
       ? ({ "--workspace-col-3-width": `${filePreviewWidth}px` } as CSSProperties)
       : undefined;
 
-  const handleAttachFile = (file: File) => {
-    composerAttachment.attachFile(file);
-    setIsFilePreviewOpen(true);
-  };
+  const { attachFile, clearAttachment } = composerAttachment;
 
-  const handleRemoveAttachedFile = () => {
+  const handleAttachFile = useCallback(
+    (file: File) => {
+      attachFile(file);
+      setIsFilePreviewOpen(true);
+    },
+    [attachFile],
+  );
+
+  const handleRemoveAttachedFile = useCallback(() => {
     setIsFilePreviewOpen(false);
     setFilePreviewWidth(null); // restore default column width for ThreadSidebar
-    composerAttachment.clearAttachment();
-  };
+    clearAttachment();
+  }, [clearAttachment]);
 
-  const handleOpenAttachedFilePreview = () => {
+  const handleOpenAttachedFilePreview = useCallback(() => {
     setIsFilePreviewOpen(true);
-  };
+  }, []);
 
-  const handleCloseFilePreview = () => {
+  const handleCloseFilePreview = useCallback(() => {
     setIsFilePreviewOpen(false);
     setFilePreviewWidth(null); // closing preview only hides panel; attachment stays in composer
-  };
+  }, []);
+
+  const handleFilePreviewWidthChange = useCallback((nextWidth: number) => {
+    setFilePreviewWidth(clampFilePreviewPanelWidth(nextWidth));
+  }, []);
+
+  const attachmentMenu = useMemo(
+    () => ({ onFileSelected: handleAttachFile }),
+    [handleAttachFile],
+  );
 
   const accountPanel = (
     <AuthPanel
@@ -296,9 +316,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               isProviderReady={provider.isProviderReady}
               quickActions={quickActions}
               onQuickActionSelect={handlePromptSelect}
-              attachmentMenu={{
-                onFileSelected: handleAttachFile,
-              }}
+              attachmentMenu={attachmentMenu}
               attachedFile={attachedFile}
               onOpenAttachedFilePreview={handleOpenAttachedFilePreview}
               onRemoveAttachedFile={handleRemoveAttachedFile}
@@ -320,9 +338,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             <FilePreviewPanel
               file={attachedFile}
               width={filePreviewWidth}
-              onWidthChange={(nextWidth) =>
-                setFilePreviewWidth(clampFilePreviewPanelWidth(nextWidth))
-              }
+              onWidthChange={handleFilePreviewWidthChange}
               onClose={handleCloseFilePreview}
             />
           ) : (

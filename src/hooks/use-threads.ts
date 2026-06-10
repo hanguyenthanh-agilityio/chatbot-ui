@@ -1,7 +1,14 @@
 "use client";
 
 import type { UIMessage } from "ai";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CHAT_THREAD_COPY } from "@/constants/chat";
 import { CHAT_STORAGE_KEYS } from "@/constants/storage";
 import type { AIProviderName } from "@/lib/ai-provider";
@@ -146,6 +153,15 @@ export function useChatThreads({
   
   const previousRoleRef = useRef(role);
   const isInternalChangeRef = useRef(false);
+  const dataRef = useRef(data);
+  const roleRef = useRef(role);
+  const providerRef = useRef(provider);
+
+  useLayoutEffect(() => {
+    dataRef.current = data;
+    roleRef.current = role;
+    providerRef.current = provider;
+  });
 
   // Sync messages from useChat to the active thread in state
   useEffect(() => {
@@ -154,7 +170,6 @@ export function useChatThreads({
       return;
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setData((prev) => {
       const roleData = prev[role];
       const activeThread = roleData.threads.find((t) => t.id === roleData.activeId);
@@ -191,19 +206,19 @@ export function useChatThreads({
 
     previousRoleRef.current = role;
 
-    // Load messages for the new role's active thread
-    const nextRoleData = data[role];
-    const nextActiveThread = nextRoleData.threads.find((t) => t.id === nextRoleData.activeId);
-    
+    const nextRoleData = dataRef.current[role];
+    const nextActiveThread = nextRoleData.threads.find(
+      (t) => t.id === nextRoleData.activeId,
+    );
+
     if (nextActiveThread) {
       isInternalChangeRef.current = true;
       setMessages(nextActiveThread.messages);
-      // Reset ref after a tick to allow messages state to stabilize
       setTimeout(() => {
         isInternalChangeRef.current = false;
       }, 0);
     }
-  }, [role, data, setMessages]);
+  }, [role, setMessages]);
 
   // Persist to storage
   useEffect(() => {
@@ -217,97 +232,109 @@ export function useChatThreads({
 
   const allThreads = useMemo(() => data[role].threads, [data, role]);
 
-  function switchThread(id: string) {
-    if (id === data[role].activeId) return;
+  const switchThread = useCallback(
+    (id: string) => {
+      const snapshot = dataRef.current;
+      const currentRole = roleRef.current;
+      if (id === snapshot[currentRole].activeId) return;
 
+      setData((prev) => ({
+        ...prev,
+        [currentRole]: { ...prev[currentRole], activeId: id },
+      }));
+
+      const nextThread = snapshot[currentRole].threads.find((t) => t.id === id);
+      if (nextThread) {
+        isInternalChangeRef.current = true;
+        setMessages(nextThread.messages);
+        setTimeout(() => {
+          isInternalChangeRef.current = false;
+        }, 0);
+      }
+    },
+    [setMessages],
+  );
+
+  const createNewThread = useCallback(() => {
+    const newThread = createEmptyThread(providerRef.current);
+    const currentRole = roleRef.current;
     setData((prev) => ({
       ...prev,
-      [role]: { ...prev[role], activeId: id },
-    }));
-
-    const nextThread = data[role].threads.find((t) => t.id === id);
-    if (nextThread) {
-      isInternalChangeRef.current = true;
-      setMessages(nextThread.messages);
-      setTimeout(() => {
-        isInternalChangeRef.current = false;
-      }, 0);
-    }
-  }
-
-  function createNewThread() {
-    const newThread = createEmptyThread(provider);
-    setData((prev) => ({
-      ...prev,
-      [role]: {
-        threads: [newThread, ...prev[role].threads],
+      [currentRole]: {
+        threads: [newThread, ...prev[currentRole].threads],
         activeId: newThread.id,
       },
     }));
-    
+
     isInternalChangeRef.current = true;
     setMessages([]);
     setTimeout(() => {
       isInternalChangeRef.current = false;
     }, 0);
-  }
+  }, [setMessages]);
 
-  function deleteThread(id: string) {
-    setData((prev) => {
-      const roleData = prev[role];
-      const nextThreads = roleData.threads.filter((t) => t.id !== id);
-      
-      if (nextThreads.length === 0) {
-        const empty = createEmptyThread(provider);
+  const deleteThread = useCallback(
+    (id: string) => {
+      const snapshot = dataRef.current;
+      const currentRole = roleRef.current;
+      const wasActive = id === snapshot[currentRole].activeId;
+
+      setData((prev) => {
+        const roleData = prev[currentRole];
+        const nextThreads = roleData.threads.filter((t) => t.id !== id);
+
+        if (nextThreads.length === 0) {
+          const empty = createEmptyThread(providerRef.current);
+          return {
+            ...prev,
+            [currentRole]: { threads: [empty], activeId: empty.id },
+          };
+        }
+
+        let nextActiveId = roleData.activeId;
+        if (id === roleData.activeId) {
+          nextActiveId = nextThreads[0].id;
+        }
+
         return {
           ...prev,
-          [role]: { threads: [empty], activeId: empty.id }
+          [currentRole]: { threads: nextThreads, activeId: nextActiveId },
         };
+      });
+
+      if (wasActive) {
+        const roleData = snapshot[currentRole];
+        const nextThreads = roleData.threads.filter((t) => t.id !== id);
+        const nextActiveThread = nextThreads.length > 0 ? nextThreads[0] : null;
+
+        isInternalChangeRef.current = true;
+        setMessages(nextActiveThread ? nextActiveThread.messages : []);
+        setTimeout(() => {
+          isInternalChangeRef.current = false;
+        }, 0);
       }
+    },
+    [setMessages],
+  );
 
-      let nextActiveId = roleData.activeId;
-      if (id === roleData.activeId) {
-        nextActiveId = nextThreads[0].id;
-      }
-
-      return {
-        ...prev,
-        [role]: { threads: nextThreads, activeId: nextActiveId }
-      };
-    });
-
-    // If we deleted the active thread, we need to update messages
-    if (id === data[role].activeId) {
-      const roleData = data[role];
-      const nextThreads = roleData.threads.filter((t) => t.id !== id);
-      const nextActiveThread = nextThreads.length > 0 ? nextThreads[0] : null;
-      
-      isInternalChangeRef.current = true;
-      setMessages(nextActiveThread ? nextActiveThread.messages : []);
-      setTimeout(() => {
-        isInternalChangeRef.current = false;
-      }, 0);
-    }
-  }
-
-  function clearThread() {
-    // This now effectively means "delete all threads for this role and start fresh"
-    const empty = createEmptyThread(provider);
+  const clearThread = useCallback(() => {
+    const empty = createEmptyThread(providerRef.current);
+    const currentRole = roleRef.current;
     setData((prev) => ({
       ...prev,
-      [role]: { threads: [empty], activeId: empty.id },
+      [currentRole]: { threads: [empty], activeId: empty.id },
     }));
     setMessages([]);
-  }
+  }, [setMessages]);
 
-  /** Clear the active thread in place (header reset — like "clear chat" in other AI apps). */
-  function resetActiveThread() {
+  const resetActiveThread = useCallback(() => {
     const now = new Date().toISOString();
+    const currentRole = roleRef.current;
     setData((prev) => {
-      const roleData = prev[role];
+      const roleData = prev[currentRole];
       return {
         ...prev,
-        [role]: {
+        [currentRole]: {
           ...roleData,
           threads: updateThreadInList(roleData.threads, roleData.activeId, {
             messages: [],
@@ -321,7 +348,7 @@ export function useChatThreads({
 
     isInternalChangeRef.current = true;
     setMessages([]);
-  }
+  }, [setMessages]);
 
   return {
     activeThread,

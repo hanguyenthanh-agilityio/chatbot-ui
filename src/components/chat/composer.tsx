@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -110,16 +111,23 @@ export function ChatComposer({
 
   const IME_COMPOSING_KEYCODE = 229;
 
-  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    const isComposing =
-      event.nativeEvent.isComposing ||
-      event.nativeEvent.keyCode === IME_COMPOSING_KEYCODE;
-    if (isComposing) return;
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      if (!isLoading && canSend) event.currentTarget.form?.requestSubmit();
-    }
-  }
+  const handleOpenFilePicker = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLTextAreaElement>) => {
+      const isComposing =
+        event.nativeEvent.isComposing ||
+        event.nativeEvent.keyCode === IME_COMPOSING_KEYCODE;
+      if (isComposing) return;
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        if (!isLoading && canSend) event.currentTarget.form?.requestSubmit();
+      }
+    },
+    [canSend, isLoading],
+  );
 
   return (
     <div
@@ -187,7 +195,7 @@ export function ChatComposer({
                   <ComposerAttachmentMenu
                     disabled={!isProviderReady}
                     fileInputRef={fileInputRef}
-                    onOpenFilePicker={() => fileInputRef.current?.click()}
+                    onOpenFilePicker={handleOpenFilePicker}
                     onFileSelected={attachmentMenu.onFileSelected}
                   />
                 </div>
