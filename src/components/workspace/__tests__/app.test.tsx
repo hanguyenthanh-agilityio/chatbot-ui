@@ -12,6 +12,7 @@ import { CHAT_PANEL_RESET_COPY, QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
 import {
   DEFAULT_PROVIDER_OPTIONS,
   PROVIDER_OPTION_LABEL,
+  PROVIDER_PANEL_COPY,
 } from "@/constants/provider";
 import { DEFAULT_THEME } from "@/constants/theme";
 
@@ -121,13 +122,7 @@ function mockWorkspaceState(overrides: Record<string, unknown> = {}) {
 }
 
 function getProviderCombobox() {
-  const combobox = screen
-    .getAllByRole("combobox")
-    .find((element) => element.querySelector('option[value="openai"]'));
-  if (!combobox) {
-    throw new Error("provider combobox not found");
-  }
-  return combobox;
+  return screen.getByRole("combobox", { name: PROVIDER_PANEL_COPY.label });
 }
 
 type WorkspaceAppProps = ComponentProps<typeof WorkspaceApp>;
@@ -188,7 +183,9 @@ describe("WorkspaceApp", () => {
           name: DEFAULT_HEADER_TITLE,
         }),
       ).not.toBeInTheDocument();
-      expect(document.querySelectorAll(".h-chat-viewport")).toHaveLength(2);
+      expect(screen.getAllByTestId("workspace-hydration-placeholder")).toHaveLength(
+        2,
+      );
     });
   });
 

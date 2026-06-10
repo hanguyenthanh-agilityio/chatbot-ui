@@ -8,8 +8,8 @@ import {
   QUICK_ACTIONS_BY_ROLE,
 } from "@/constants/chat";
 import { FILE_PREVIEW_COPY } from "@/constants/file-attachment";
+import { STORYBOOK_THEME_GLOBAL } from "@/constants/storybook";
 import {
-  STORYBOOK_THEME_GLOBAL,
   SHELL_BACKDROP_BLUR_28,
   THEME_SHELL_CLASSES,
   THEME_SHELL_UTILITIES,

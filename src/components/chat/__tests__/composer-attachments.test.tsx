@@ -40,11 +40,8 @@ const addFilesMenuItem = () =>
 const queryAddFilesMenuItem = () =>
   screen.queryByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel });
 
-const fileInput = () => {
-  const input = document.querySelector<HTMLInputElement>('input[type="file"]');
-  if (!input) throw new Error("file input not found");
-  return input;
-};
+const fileInput = () =>
+  screen.getByLabelText(FILE_PREVIEW_COPY.attachFileInputLabel);
 
 const recentFilesMenuItem = () =>
   screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel });

@@ -327,6 +327,7 @@ export const FILE_PREVIEW_KIND_MAPS = buildFilePreviewKindMaps(
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
   attachMenuAriaLabel: "Open attachment menu",
+  attachFileInputLabel: "Choose file to attach",
   addFilesLabel: "Add photos & files",
   recentFilesLabel: "Recent files",
   recentFilesEmpty: "No recent files",
