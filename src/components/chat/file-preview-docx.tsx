@@ -1,6 +1,6 @@
 "use client";
 
-import { FilePreviewAsyncEmbeddedBody } from "@/components/chat/file-preview-common";
+import { FilePreviewEmbeddedBody } from "@/components/chat/file-preview-common";
 import { FILE_PREVIEW_DOCX_CONTENT_CLASS } from "@/constants/file-attachment";
 import { useDocxPreview } from "@/hooks/use-file-preview";
 import {
@@ -12,13 +12,13 @@ export function FilePreviewDocx({ file }: RawFilePreviewProps) {
   const { html, isLoading, hasFailed } = useDocxPreview(file);
 
   return (
-    <FilePreviewAsyncEmbeddedBody
+    <FilePreviewEmbeddedBody
       contentClassName={FILE_PREVIEW_DOCX_CONTENT_CLASS}
       kind={FILE_PREVIEW_KIND.DOCX}
       file={file}
       isLoading={isLoading}
       hasFailed={hasFailed}
-      value={html}
+      ready={html}
     >
       {(resolvedHtml) => (
         <div
@@ -26,6 +26,6 @@ export function FilePreviewDocx({ file }: RawFilePreviewProps) {
           dangerouslySetInnerHTML={{ __html: resolvedHtml }}
         />
       )}
-    </FilePreviewAsyncEmbeddedBody>
+    </FilePreviewEmbeddedBody>
   );
 }

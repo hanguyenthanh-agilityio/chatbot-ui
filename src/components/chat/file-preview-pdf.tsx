@@ -1,6 +1,6 @@
 "use client";
 
-import { FilePreviewAsyncEmbeddedBody } from "@/components/chat/file-preview-common";
+import { FilePreviewEmbeddedBody } from "@/components/chat/file-preview-common";
 import { FILE_PREVIEW_PDF_CONTENT_CLASS } from "@/constants/file-attachment";
 import { useFileDataUrl } from "@/hooks/use-file-preview";
 import {
@@ -13,13 +13,13 @@ export function FilePreviewPdf({ file, name }: NamedRawFilePreviewProps) {
   const { url, isLoading, hasFailed } = useFileDataUrl(file);
 
   return (
-    <FilePreviewAsyncEmbeddedBody
+    <FilePreviewEmbeddedBody
       contentClassName={FILE_PREVIEW_PDF_CONTENT_CLASS}
       kind={FILE_PREVIEW_KIND.PDF}
       file={file}
       isLoading={isLoading}
       hasFailed={hasFailed}
-      value={url}
+      ready={url}
     >
       {(resolvedUrl) => (
         <iframe
@@ -28,6 +28,6 @@ export function FilePreviewPdf({ file, name }: NamedRawFilePreviewProps) {
           className="file-preview-pdf-frame"
         />
       )}
-    </FilePreviewAsyncEmbeddedBody>
+    </FilePreviewEmbeddedBody>
   );
 }

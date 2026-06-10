@@ -74,15 +74,11 @@ const FILE_KIND_META: Record<
   },
 };
 
-export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
-  ...(Object.fromEntries(
-    (Object.keys(FILE_KIND_META) as FilePreviewMediaKind[]).map((kind) => [
-      kind,
-      FILE_KIND_META[kind].badgeLabel,
-    ]),
-  ) as Record<FilePreviewMediaKind, string>),
-  [FILE_PREVIEW_KIND.UNKNOWN]: "FILE",
-};
+/** Badge text for chips and lists — backed by FILE_KIND_META. */
+export function getFileKindLabel(kind: FilePreviewKind): string {
+  if (kind === FILE_PREVIEW_KIND.UNKNOWN) return "FILE";
+  return FILE_KIND_META[kind].badgeLabel;
+}
 
 export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
   [FILE_PREVIEW_KIND.IMAGE]: "bg-amber-500",

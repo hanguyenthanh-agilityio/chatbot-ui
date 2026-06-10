@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import { FileKindIcon } from "./file-kind-icon";
 import {
   COMPOSER_ATTACH_MENU_PANEL_CLASS,
-  FILE_KIND_LABEL,
+  getFileKindLabel,
   FILE_PREVIEW_COPY,
 } from "@/constants/file-attachment";
 import type { LibraryRecentFile } from "@/types/file-attachment";
@@ -55,7 +55,7 @@ export function RecentFilesFlyout({
                         </p>
                         <p className="mt-0.5 truncate text-xs text-white/45 light:text-app-fg-faint">
                           <span className="uppercase tracking-wide">
-                            {FILE_KIND_LABEL[file.kind]}
+                            {getFileKindLabel(file.kind)}
                           </span>
                           {meta ? (
                             <span className="normal-case">{` · ${meta}`}</span>

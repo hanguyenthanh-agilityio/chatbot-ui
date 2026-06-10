@@ -10,6 +10,23 @@ import {
   type LibraryRecentFile,
 } from "@/types/file-attachment";
 
+const FALLBACK_VIEWPORT = {
+  width: 1280,
+  height: 720,
+} as const;
+
+function getViewportWidth(): number {
+  return typeof window !== "undefined"
+    ? window.innerWidth
+    : FALLBACK_VIEWPORT.width;
+}
+
+function getViewportHeight(): number {
+  return typeof window !== "undefined"
+    ? window.innerHeight
+    : FALLBACK_VIEWPORT.height;
+}
+
 export function inferFilePreviewKind(file: File): FilePreviewKind {
   const mimeKind = FILE_PREVIEW_KIND_MAPS.mimeKind[file.type];
   if (mimeKind) return mimeKind;
@@ -30,14 +47,14 @@ export function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function formatLibraryFileMeta(file: LibraryRecentFile) {
+export function formatLibraryFileMeta(file: LibraryRecentFile): string {
   const parts: string[] = [];
   if (file.sizeBytes != null) parts.push(formatFileSize(file.sizeBytes));
   if (file.lastUsedLabel) parts.push(file.lastUsedLabel);
   return parts.join(" · ");
 }
 
-export function createAttachmentId(prefix: string) {
+export function createAttachmentId(prefix: string): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return `${prefix}-${crypto.randomUUID()}`;
   }
@@ -46,8 +63,8 @@ export function createAttachmentId(prefix: string) {
 
 export function clampFilePreviewPanelWidth(
   width: number,
-  viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1280,
-) {
+  viewportWidth = getViewportWidth(),
+): number {
   // Cap max width so chat column keeps usable space on smaller desktops.
   const max = Math.min(
     FILE_PREVIEW_PANEL_WIDTH.max,
@@ -75,14 +92,14 @@ export function bindFilePreviewPanelResize({
   startWidth: number;
   onWidthChange: (width: number) => void;
   onActiveChange: (active: boolean) => void;
-}) {
+}): void {
   const handlePointerMove = (event: PointerEvent) => {
     if (event.pointerId !== pointerId) return;
     // Dragging left edge left → wider preview column.
     onWidthChange(
       clampFilePreviewPanelWidth(
         startWidth + (startX - event.clientX),
-        window.innerWidth,
+        getViewportWidth(),
       ),
     );
   };
@@ -118,6 +135,7 @@ export function readSelectedFileFromInput(
   return file;
 }
 
+/** Fixed flyout position from menu/row rects; safe when `window` is undefined (SSR). */
 export function getRecentFlyoutPosition(
   recentRow: HTMLElement,
   menuPanel: HTMLElement | null,
@@ -125,17 +143,19 @@ export function getRecentFlyoutPosition(
   const { width, maxHeight, gap, viewportPadding } = RECENT_FLYOUT_LAYOUT;
   const rowRect = recentRow.getBoundingClientRect();
   const menuRect = menuPanel?.getBoundingClientRect();
+  const viewportWidth = getViewportWidth();
+  const viewportHeight = getViewportHeight();
 
   let left = (menuRect?.right ?? rowRect.right) + gap;
-  if (left + width > window.innerWidth - viewportPadding) {
+  if (left + width > viewportWidth - viewportPadding) {
     left = (menuRect?.left ?? rowRect.left) - width - gap;
   }
 
   let top = menuRect?.top ?? rowRect.top;
-  if (top + maxHeight > window.innerHeight - viewportPadding) {
+  if (top + maxHeight > viewportHeight - viewportPadding) {
     top = Math.max(
       viewportPadding,
-      window.innerHeight - maxHeight - viewportPadding,
+      viewportHeight - maxHeight - viewportPadding,
     );
   }
 
