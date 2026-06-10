@@ -1,15 +1,12 @@
 import type { ChangeEvent } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  getFileKindLabel,
-  MOCK_RECENT_FILES,
-  RECENT_FLYOUT_LAYOUT,
-} from "@/constants/file-attachment";
+import { MOCK_RECENT_FILES, RECENT_FLYOUT_LAYOUT } from "@/constants/file-attachment";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 import {
   createAttachmentId,
   formatFileSize,
   formatLibraryFileMeta,
+  getFileKindLabel,
   getRecentFlyoutPosition,
   inferFilePreviewKind,
   isSupportedPreviewKind,

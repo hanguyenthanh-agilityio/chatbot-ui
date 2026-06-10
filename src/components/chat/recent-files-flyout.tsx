@@ -4,11 +4,10 @@ import type { CSSProperties } from "react";
 import { FileKindIcon } from "./file-kind-icon";
 import {
   COMPOSER_ATTACH_MENU_PANEL_CLASS,
-  getFileKindLabel,
   FILE_PREVIEW_COPY,
 } from "@/constants/file-attachment";
 import type { LibraryRecentFile } from "@/types/file-attachment";
-import { formatLibraryFileMeta } from "@/utils/file-attachment";
+import { formatLibraryFileMeta, getFileKindLabel } from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
 export function RecentFilesFlyout({

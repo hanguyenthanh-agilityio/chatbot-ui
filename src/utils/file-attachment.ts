@@ -1,5 +1,6 @@
 import type { ChangeEvent, CSSProperties } from "react";
 import {
+  FILE_KIND_BADGE_LABEL,
   FILE_PREVIEW_KIND_MAPS,
   FILE_PREVIEW_PANEL_WIDTH,
   RECENT_FLYOUT_LAYOUT,
@@ -39,6 +40,10 @@ export function inferFilePreviewKind(file: File): FilePreviewKind {
 
 export function isSupportedPreviewKind(kind: FilePreviewKind): boolean {
   return kind !== FILE_PREVIEW_KIND.UNKNOWN;
+}
+
+export function getFileKindLabel(kind: FilePreviewKind): string {
+  return FILE_KIND_BADGE_LABEL[kind];
 }
 
 export function formatFileSize(bytes: number): string {

@@ -74,11 +74,17 @@ const FILE_KIND_META: Record<
   },
 };
 
-/** Badge text for chips and lists — backed by FILE_KIND_META. */
-export function getFileKindLabel(kind: FilePreviewKind): string {
-  if (kind === FILE_PREVIEW_KIND.UNKNOWN) return "FILE";
-  return FILE_KIND_META[kind].badgeLabel;
-}
+/** Badge text for chips and lists (derived from FILE_KIND_META). */
+export const FILE_KIND_BADGE_LABEL: Record<FilePreviewKind, string> = {
+  [FILE_PREVIEW_KIND.IMAGE]: FILE_KIND_META[FILE_PREVIEW_KIND.IMAGE].badgeLabel,
+  [FILE_PREVIEW_KIND.PDF]: FILE_KIND_META[FILE_PREVIEW_KIND.PDF].badgeLabel,
+  [FILE_PREVIEW_KIND.DOCX]: FILE_KIND_META[FILE_PREVIEW_KIND.DOCX].badgeLabel,
+  [FILE_PREVIEW_KIND.MP4]: FILE_KIND_META[FILE_PREVIEW_KIND.MP4].badgeLabel,
+  [FILE_PREVIEW_KIND.MP3]: FILE_KIND_META[FILE_PREVIEW_KIND.MP3].badgeLabel,
+  [FILE_PREVIEW_KIND.CSV]: FILE_KIND_META[FILE_PREVIEW_KIND.CSV].badgeLabel,
+  [FILE_PREVIEW_KIND.JSON]: FILE_KIND_META[FILE_PREVIEW_KIND.JSON].badgeLabel,
+  [FILE_PREVIEW_KIND.UNKNOWN]: "FILE",
+};
 
 export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
   [FILE_PREVIEW_KIND.IMAGE]: "bg-amber-500",

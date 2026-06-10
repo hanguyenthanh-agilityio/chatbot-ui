@@ -16,7 +16,6 @@ import { FilePreviewImage } from "@/components/chat/file-preview-image";
 import { FilePreviewMp3, FilePreviewMp4 } from "@/components/chat/file-preview-media";
 import { FilePreviewPdf } from "@/components/chat/file-preview-pdf";
 import {
-  getFileKindLabel,
   FILE_PREVIEW_COPY,
   FILE_PREVIEW_PANEL_CLASS,
   FILE_PREVIEW_PANEL_WIDTH,
@@ -35,6 +34,7 @@ import {
 import {
   bindFilePreviewPanelResize,
   formatFileSize,
+  getFileKindLabel,
 } from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
