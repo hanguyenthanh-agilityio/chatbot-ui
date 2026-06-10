@@ -5,7 +5,7 @@ const DEFAULT_ERROR_MESSAGE = ERROR_COPY.unknown;
 
 export function getErrorMessage(
   error: unknown,
-  fallbackMessage = DEFAULT_ERROR_MESSAGE,
+  fallbackMessage: string = DEFAULT_ERROR_MESSAGE,
 ): string {
   switch (true) {
     case error instanceof Error:
@@ -30,7 +30,7 @@ function getNestedErrorMessage(
 
 export function normalizeErrorMessage(
   rawMessage: string,
-  fallbackMessage = DEFAULT_ERROR_MESSAGE,
+  fallbackMessage: string = DEFAULT_ERROR_MESSAGE,
 ): string {
   const trimmedMessage = rawMessage.trim();
   if (!trimmedMessage) return fallbackMessage;
@@ -59,7 +59,7 @@ export function normalizeErrorMessage(
 
 export function getDisplayErrorMessage(
   error: unknown,
-  fallbackMessage = DEFAULT_ERROR_MESSAGE,
+  fallbackMessage: string = DEFAULT_ERROR_MESSAGE,
 ): string {
   return normalizeErrorMessage(getErrorMessage(error, fallbackMessage));
 }
