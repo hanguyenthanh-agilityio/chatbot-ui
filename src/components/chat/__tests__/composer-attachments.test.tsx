@@ -84,7 +84,7 @@ describe("ComposerAttachmentMenu", () => {
     expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
   });
 
-  describe("handleToggleClick", () => {
+  describe("toggleMenu", () => {
     it("opens the menu when closed", async () => {
       const user = userEvent.setup();
       renderAttachmentMenu();
