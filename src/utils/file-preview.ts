@@ -1,4 +1,5 @@
-import DOMPurify from "dompurify";
+"use client";
+
 import {
   FILE_ATTACHMENT_CONTENT_COPY,
   FILE_PREVIEW_CODE_PARSE,
@@ -10,14 +11,26 @@ import {
 } from "@/types/file-attachment";
 
 type MammothModule = typeof import("mammoth");
+type DomPurifyModule = typeof import("dompurify");
 
 let mammothModule: MammothModule | null = null;
+let domPurifyModule: DomPurifyModule["default"] | null = null;
 
+/** Mammoth is browser-only and must not be statically imported (SSR / Worker bundles). */
 async function loadMammoth() {
   if (!mammothModule) {
     mammothModule = await import("mammoth");
   }
   return mammothModule;
+}
+
+/** DOMPurify needs `window`; dynamic import keeps it off the SSR module pass. */
+async function loadDomPurify() {
+  if (!domPurifyModule) {
+    const domPurifyLib = await import("dompurify");
+    domPurifyModule = domPurifyLib.default;
+  }
+  return domPurifyModule;
 }
 
 async function readDocxWithMammoth(file: File) {
@@ -39,12 +52,12 @@ export function assertNonEmptyTrimmed(text: string): string {
   return trimmed;
 }
 
-/** Mammoth emits HTML fragments; sanitize before any `dangerouslySetInnerHTML`. */
-export function sanitizeDocxPreviewHtml(html: string): string {
+/** Mammoth HTML fragments — sanitize before any `dangerouslySetInnerHTML`. */
+async function sanitizeDocxPreviewHtml(html: string): Promise<string> {
+  const DOMPurify = await loadDomPurify();
   return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 }
 
-/** Convert a local DOCX file to HTML for the right-rail preview panel (client-only). */
 export async function convertDocxFileToHtml(file: File): Promise<string> {
   const { mammoth, arrayBuffer } = await readDocxWithMammoth(file);
   const { value } = await mammoth.convertToHtml(
@@ -54,7 +67,6 @@ export async function convertDocxFileToHtml(file: File): Promise<string> {
   return sanitizeDocxPreviewHtml(value);
 }
 
-/** DOCX → plain text for attach-time read (AI/RAG; separate from HTML preview). */
 export async function extractDocxFileText(file: File): Promise<string> {
   const { mammoth, arrayBuffer } = await readDocxWithMammoth(file);
   const { value } = await mammoth.extractRawText({ arrayBuffer });
@@ -66,7 +78,6 @@ export function withPdfEmbedParams(dataUrl: string) {
   return `${base}#${FILE_PREVIEW_PDF_EMBED.fragment}`;
 }
 
-/** Read local CSV/JSON text for preview and attach-time content extraction (client-only). */
 export async function readCodePreviewFile(
   file: File,
   kind: CodeFilePreviewKind,
