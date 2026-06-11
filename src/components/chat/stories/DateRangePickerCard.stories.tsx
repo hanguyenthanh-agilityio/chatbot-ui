@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { fn, userEvent, within } from "storybook/test";
 
 import { DateRangePickerCard } from "@/components/chat/date-range-picker-card";
-import { inChatTranscript } from "@/mocks/storybook";
+import { inChatTranscript } from "@sb/decorators";
 
 const meta = {
   title: "Chat/DateRangePickerCard",

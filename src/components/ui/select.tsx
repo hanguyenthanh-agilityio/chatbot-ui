@@ -70,9 +70,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       <span
         className={cn(
           "pointer-events-none absolute inset-y-0 right-3 flex items-center transition",
-          variant === "panel"
-            ? "text-white/50 peer-focus:text-violet-300/90 light:text-app-fg-faint light:peer-focus:text-app-accent"
-            : "text-white/50 peer-focus:text-violet-300/90 light:text-app-fg-faint light:peer-focus:text-app-accent",
+          "text-white/50 peer-focus:text-violet-300/90 light:text-app-fg-faint light:peer-focus:text-app-accent",
         )}
       >
         <svg

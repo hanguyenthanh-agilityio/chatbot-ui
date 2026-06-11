@@ -17,7 +17,7 @@ import type {
   UseProviderSelectionResult,
 } from "@/types/provider";
 import { session as sessionStorage } from "@/utils/storage";
-import { getErrorMessage } from "@/utils/error";
+import { getErrorMessage, normalizeErrorMessage } from "@/utils/error";
 
 const DEFAULT_PROVIDER_BY_ENV: AIProviderName = isProductionLike()
   ? "openai"
@@ -222,7 +222,10 @@ export function useProviderSelection({
 
       setVerifiedOpenAIKey(null);
       setValidationError(
-        data.details ?? data.message ?? PROVIDER_STATUS_COPY.openaiInvalid,
+        normalizeErrorMessage(
+          data.details ?? data.message ?? PROVIDER_STATUS_COPY.openaiInvalid,
+          PROVIDER_STATUS_COPY.openaiInvalid,
+        ),
       );
     } catch (error) {
       setVerifiedOpenAIKey(null);
@@ -252,7 +255,10 @@ export function useProviderSelection({
       const data = (await response.json()) as OllamaUrlValidationResponse;
       if (!response.ok || !data.ok) {
         throw new Error(
-          data.details ?? data.message ?? PROVIDER_STATUS_COPY.ollamaUrlInvalid,
+          normalizeErrorMessage(
+            data.details ?? data.message ?? PROVIDER_STATUS_COPY.ollamaUrlInvalid,
+            PROVIDER_STATUS_COPY.ollamaUrlInvalid,
+          ),
         );
       }
 

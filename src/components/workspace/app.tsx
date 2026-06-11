@@ -182,7 +182,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
   const sidebarProviderPanel = (
     <Card
       variant="panel"
-      className="p-4 shadow-panel text-white light:text-app-fg"
+      className="min-w-0 p-4 shadow-panel text-white light:text-app-fg"
     >
       <ProviderSelector
         provider={provider}
@@ -190,7 +190,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
         withContainer={false}
       />
       {provider.validationError ? (
-        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400 light:border-app-danger-border light:bg-app-danger-bg light:text-app-danger-fg">
+        <p className="mt-3 min-w-0 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs wrap-break-word text-red-400 light:border-app-danger-border light:bg-app-danger-bg light:text-app-danger-fg">
           {provider.validationError}
         </p>
       ) : null}

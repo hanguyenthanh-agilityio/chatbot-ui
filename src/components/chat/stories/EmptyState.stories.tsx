@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { ChatEmptyState } from "@/components/chat/empty-state";
-import { inChatTranscript } from "@/mocks/storybook";
+import { inChatTranscript } from "@sb/decorators";
 
 const meta = {
   title: "Chat/EmptyState",

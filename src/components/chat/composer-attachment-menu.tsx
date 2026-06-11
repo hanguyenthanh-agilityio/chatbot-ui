@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useCallback, type ChangeEvent, type RefObject } from "react";
+import { memo, useCallback, type ChangeEvent, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,19 +34,21 @@ const menuItemIconBoxClass = cn(
   "light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-muted",
 );
 
-export function ComposerAttachmentMenu({
-  disabled = false,
-  fileInputRef,
-  onOpenFilePicker,
-  onFileSelected,
-  recentFiles = MOCK_RECENT_FILES,
-}: {
+type ComposerAttachmentMenuProps = {
   disabled?: boolean;
   fileInputRef: RefObject<HTMLInputElement | null>;
   onOpenFilePicker: () => void;
   onFileSelected: (file: File) => void;
   recentFiles?: readonly LibraryRecentFile[];
-}) {
+};
+
+function ComposerAttachmentMenuComponent({
+  disabled = false,
+  fileInputRef,
+  onOpenFilePicker,
+  onFileSelected,
+  recentFiles = MOCK_RECENT_FILES,
+}: ComposerAttachmentMenuProps) {
   const {
     menuId,
     recentMenuId,
@@ -179,3 +181,5 @@ export function ComposerAttachmentMenu({
     </div>
   );
 }
+
+export const ComposerAttachmentMenu = memo(ComposerAttachmentMenuComponent);

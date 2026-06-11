@@ -7,7 +7,7 @@ import {
   type AvatarSize,
 } from "@/components/ui/avatar";
 import { APP_ASSISTANT_AVATAR_ALT } from "@/constants/app";
-import { inStorybookUiPanel } from "@/mocks/storybook";
+import { inStorybookUiPanel } from "@sb/decorators";
 import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 
 const AVATAR_VARIANT_OPTIONS = ["assistant", "user"] as const;

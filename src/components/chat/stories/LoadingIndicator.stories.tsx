@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { LoadingIndicator } from "@/components/chat/loading-indicator";
 import { STORYBOOK_THEME_GLOBAL } from "@/constants/storybook";
 import { ThemeMode } from "@/constants/theme";
-import { inChatTranscript } from "@/mocks/storybook";
+import { inChatTranscript } from "@sb/decorators";
 
 const meta = {
   title: "Chat/LoadingIndicator",
