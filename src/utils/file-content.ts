@@ -1,4 +1,5 @@
-import { PDFParse } from "pdf-parse";
+"use client";
+
 import { FILE_ATTACHMENT_CONTENT_COPY } from "@/constants/file-attachment";
 import {
   FILE_PREVIEW_CODE_KINDS,
@@ -14,8 +15,21 @@ import {
   readCodePreviewFile,
 } from "@/utils/file-preview";
 
-/** PDF → plain text via pdf-parse (browser-safe build). */
+type PdfParseModule = typeof import("pdf-parse");
+
+let pdfParseModule: PdfParseModule | null = null;
+
+/** pdf-parse must load at runtime — static import breaks Next/Worker bundles. */
+async function loadPdfParse() {
+  if (!pdfParseModule) {
+    pdfParseModule = await import("pdf-parse");
+  }
+  return pdfParseModule;
+}
+
+/** PDF → plain text via pdf-parse (browser only). */
 async function extractPdfFileText(file: File): Promise<string> {
+  const { PDFParse } = await loadPdfParse();
   const parser = new PDFParse({ data: await file.arrayBuffer() });
   try {
     const result = await parser.getText();

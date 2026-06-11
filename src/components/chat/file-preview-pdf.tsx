@@ -21,13 +21,13 @@ export function FilePreviewPdf({ file, name }: NamedRawFilePreviewProps) {
       hasFailed={hasFailed}
       value={url}
     >
-      {url ? (
+      {(resolvedUrl) => (
         <iframe
-          src={withPdfEmbedParams(url)}
+          src={withPdfEmbedParams(resolvedUrl)}
           title={name}
           className="file-preview-pdf-frame"
         />
-      ) : null}
+      )}
     </FilePreviewAsyncEmbeddedBody>
   );
 }

@@ -20,10 +20,12 @@ export function FilePreviewDocx({ file }: RawFilePreviewProps) {
       hasFailed={hasFailed}
       value={html}
     >
-      <div
-        className="file-preview-docx-html"
-        dangerouslySetInnerHTML={{ __html: html! }}
-      />
+      {(resolvedHtml) => (
+        <div
+          className="file-preview-docx-html"
+          dangerouslySetInnerHTML={{ __html: resolvedHtml }}
+        />
+      )}
     </FilePreviewAsyncEmbeddedBody>
   );
 }
