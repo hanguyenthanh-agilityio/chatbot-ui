@@ -10,7 +10,7 @@ import {
   CHAT_TRANSCRIPT_COPY,
   MOCK_CHAT_SAMPLE_MESSAGES,
 } from "@/constants/chat";
-import { inChatTranscript } from "../../../../.storybook/decorators";
+import { inChatTranscript } from "@sb/decorators";
 import {
   mockBalanceTableProps,
   mockMyRequestsTableProps,

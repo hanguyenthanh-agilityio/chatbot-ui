@@ -3,7 +3,7 @@ import { fn, userEvent, within } from "storybook/test";
 
 import { ToolApprovalCard } from "@/components/chat/tool-approval-card";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
-import { inChatTranscript } from "../../../../.storybook/decorators";
+import { inChatTranscript } from "@sb/decorators";
 
 const submitCopy = CHAT_TRANSCRIPT_COPY.toolApproval.submitRequest;
 
