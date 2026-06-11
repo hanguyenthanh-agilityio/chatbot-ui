@@ -1,19 +1,17 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ToolOutputTable } from "@/components/chat/tool-output-table";
 import {
+  mockActionableMyRequestsTableProps,
   mockBalanceTableProps,
   mockEmptyTableProps,
   mockMyRequestsTableProps,
 } from "@/mocks/tool-output-table";
 
-/** Freeze calendar so fixture request dates stay actionable. */
-const ACTION_TEST_TIME = new Date("2026-06-08T12:00:00Z");
-
 function getSelectableRowButton(
-  props: ReturnType<typeof mockMyRequestsTableProps>,
+  props: ReturnType<typeof mockActionableMyRequestsTableProps>,
 ) {
   const actionableIndex = props.rowActions?.findIndex(
     (actions) => (actions?.length ?? 0) > 0,
@@ -32,16 +30,6 @@ describe("ToolOutputTable", () => {
   afterEach(() => {
     cleanup();
   });
-
-  describe("row actions", () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-      vi.setSystemTime(ACTION_TEST_TIME);
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-    });
 
   it.each([
     ["balance", mockBalanceTableProps()],
@@ -79,10 +67,11 @@ describe("ToolOutputTable", () => {
     expect(screen.getByText("0 records")).toBeInTheDocument();
   });
 
+  describe("row actions", () => {
     it("reveals row actions after selecting an actionable row", async () => {
       const user = userEvent.setup();
       const onActionClick = vi.fn();
-      const props = mockMyRequestsTableProps();
+      const props = mockActionableMyRequestsTableProps();
 
       render(
         <ToolOutputTable
@@ -104,7 +93,7 @@ describe("ToolOutputTable", () => {
 
     it("selects an actionable row on Enter key", async () => {
       const user = userEvent.setup();
-      const props = mockMyRequestsTableProps();
+      const props = mockActionableMyRequestsTableProps();
 
       render(<ToolOutputTable {...props} onActionClick={vi.fn()} />);
 
@@ -120,7 +109,7 @@ describe("ToolOutputTable", () => {
     it("disables row action buttons when disableActions is true", async () => {
       const user = userEvent.setup();
       const onActionClick = vi.fn();
-      const props = mockMyRequestsTableProps();
+      const props = mockActionableMyRequestsTableProps();
 
       render(
         <ToolOutputTable

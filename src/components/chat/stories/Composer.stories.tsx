@@ -197,7 +197,7 @@ export const Ready: Story = {
   },
 };
 
-/** Send button disabled while `isLoading` (play assertion). */
+/** Stop button replaces send while `isLoading` (play assertion). */
 export const Loading: Story = {
   args: {
     initialInput: "Checking balance…",
@@ -208,8 +208,11 @@ export const Loading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByRole("button", { name: CHAT_COMPOSER_COPY.sendButtonLabel }),
-    ).toBeDisabled();
+      canvas.getByRole("button", { name: CHAT_COMPOSER_COPY.stopButtonLabel }),
+    ).toBeInTheDocument();
+    expect(
+      canvas.queryByRole("button", { name: CHAT_COMPOSER_COPY.sendButtonLabel }),
+    ).toBeNull();
   },
 };
 
