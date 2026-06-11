@@ -99,7 +99,7 @@ export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
 
 export const COMPOSER_ATTACH_MENU_PANEL_CLASS = cn(
   "rounded-2xl border shadow-panel backdrop-blur-xl",
-  "border-white/12 bg-glass-panel",
+  "border-white/12 bg-[var(--palette-shell-dark)]",
   "light:border-app-border light:bg-app-surface-raised light:shadow-panel-sm",
 );
 
