@@ -19,7 +19,7 @@ type PdfParseModule = typeof import("pdf-parse");
 let pdfParseModule: PdfParseModule | null = null;
 
 /** pdf-parse must load at runtime — static import breaks Next/Worker bundles. */
-async function loadPdfParse() {
+async function loadPdfParse(): Promise<PdfParseModule> {
   if (!pdfParseModule) {
     pdfParseModule = await import("pdf-parse");
   }

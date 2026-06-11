@@ -1,15 +1,7 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  within,
-} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FilePreviewPanel } from "@/components/chat/file-preview-panel";
 import {
-  FILE_KIND_LABEL,
   FILE_PREVIEW_COPY,
   FILE_PREVIEW_PANEL_WIDTH,
 } from "@/constants/file-attachment";
@@ -126,6 +118,19 @@ describe("FilePreviewPanel", () => {
     renderPanel({ ...MOCK_COMPOSER_ATTACHMENT, kind });
 
     expect(screen.getByTestId(testId)).toBeInTheDocument();
+  });
+
+  it("closes the panel from the labeled close button", () => {
+    const onClose = vi.fn();
+    renderPanel(MOCK_COMPOSER_ATTACHMENT, { onClose });
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: FILE_PREVIEW_COPY.closePreviewLabel,
+      }),
+    );
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("starts resize drag from the separator handle", () => {

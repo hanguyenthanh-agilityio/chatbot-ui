@@ -12,11 +12,11 @@ const BUTTON_VARIANT_CLASSES = {
   primary:
     "app-button-primary bg-violet-600 text-white hover:bg-violet-500 disabled:bg-white/15 disabled:text-white/45 light:bg-btn-active light:text-white light:hover:brightness-105 light:disabled:bg-app-btn-brand-disabled light:disabled:text-white/85",
   secondary:
-    "bg-white/10 text-white/90 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/40 light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300 light:disabled:bg-slate-100 light:disabled:text-slate-400",
+    "bg-white/10 text-white/90 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/40 light:bg-app-surface-subtle light:text-app-fg light:hover:bg-app-hover light:disabled:bg-app-surface-subtle light:disabled:text-app-fg-faint",
   outline:
-    "border border-white/20 bg-transparent text-white/90 hover:bg-white/8 disabled:border-white/10 disabled:text-white/40 light:border-slate-300 light:bg-white light:text-slate-900 light:hover:bg-slate-50 light:disabled:border-slate-200 light:disabled:text-slate-400",
+    "border border-white/20 bg-transparent text-white/90 hover:bg-white/8 disabled:border-white/10 disabled:text-white/40 light:border-app-border light:bg-app-surface light:text-app-fg light:hover:bg-app-hover light:disabled:border-app-border-subtle light:disabled:text-app-fg-faint",
   ghost:
-    "bg-transparent text-white/80 hover:bg-white/10 disabled:text-white/40 light:text-slate-900 light:hover:bg-slate-100 light:disabled:text-slate-400",
+    "bg-transparent text-white/80 hover:bg-white/10 disabled:text-white/40 light:text-app-fg light:hover:bg-app-hover light:disabled:text-app-fg-faint",
   danger:
     "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-900/40 disabled:text-red-200/70 light:disabled:bg-red-200 light:disabled:text-red-400",
   themeToggle: THEME_TOGGLE_CLASS,

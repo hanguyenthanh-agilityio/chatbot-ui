@@ -17,7 +17,7 @@ let mammothModule: MammothModule | null = null;
 let domPurifyModule: DomPurifyModule["default"] | null = null;
 
 /** Mammoth is browser-only and must not be statically imported (SSR / Worker bundles). */
-async function loadMammoth() {
+async function loadMammoth(): Promise<MammothModule> {
   if (!mammothModule) {
     mammothModule = await import("mammoth");
   }
@@ -25,7 +25,7 @@ async function loadMammoth() {
 }
 
 /** DOMPurify needs `window`; dynamic import keeps it off the SSR module pass. */
-async function loadDomPurify() {
+async function loadDomPurify(): Promise<DomPurifyModule["default"]> {
   if (!domPurifyModule) {
     const domPurifyLib = await import("dompurify");
     domPurifyModule = domPurifyLib.default;
@@ -33,7 +33,10 @@ async function loadDomPurify() {
   return domPurifyModule;
 }
 
-async function readDocxWithMammoth(file: File) {
+async function readDocxWithMammoth(file: File): Promise<{
+  mammoth: MammothModule;
+  arrayBuffer: ArrayBuffer;
+}> {
   const mammoth = await loadMammoth();
   const arrayBuffer = await file.arrayBuffer();
   return { mammoth, arrayBuffer };
@@ -52,7 +55,11 @@ function formatJsonPreviewText(text: string): string {
     throw new Error(FILE_ATTACHMENT_CONTENT_COPY.invalidJson);
   }
 
-  return JSON.stringify(parsed, null, FILE_PREVIEW_CODE_PARSE.jsonIndent);
+  try {
+    return JSON.stringify(parsed, null, FILE_PREVIEW_CODE_PARSE.jsonIndent);
+  } catch {
+    throw new Error(FILE_ATTACHMENT_CONTENT_COPY.invalidJson);
+  }
 }
 
 export function assertNonEmptyTrimmed(text: string): string {
@@ -84,7 +91,7 @@ export async function extractDocxFileText(file: File): Promise<string> {
   return assertNonEmptyTrimmed(value);
 }
 
-export function withPdfEmbedParams(dataUrl: string) {
+export function withPdfEmbedParams(dataUrl: string): string {
   const base = dataUrl.split("#", 1)[0];
   return `${base}#${FILE_PREVIEW_PDF_EMBED.fragment}`;
 }
