@@ -28,6 +28,7 @@ const config: StorybookConfig = {
       alias: {
         ...((config.resolve?.alias as Record<string, string> | undefined) ?? {}),
         "@": path.resolve(__dirname, "../src"),
+        "@sb": path.resolve(__dirname),
       },
     },
   }),

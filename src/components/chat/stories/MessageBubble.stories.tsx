@@ -5,7 +5,7 @@ import { MessageAvatar, MessageBubble } from "@/components/chat/message-bubble";
 import { MOCK_CHAT_SAMPLE_MESSAGES } from "@/constants/chat";
 import { STORYBOOK_THEME_GLOBAL } from "@/constants/storybook";
 import { ThemeMode } from "@/constants/theme";
-import { inChatTranscript } from "../../../../.storybook/decorators";
+import { inChatTranscript } from "@sb/decorators";
 
 const meta = {
   title: "Chat/MessageBubble",

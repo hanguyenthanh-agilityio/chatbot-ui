@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { Input } from "@/components/ui/input";
-import { inStorybookUiPanel } from "../../../../.storybook/decorators";
+import { inStorybookUiPanel } from "@sb/decorators";
 import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 
 const VARIANT_OPTIONS = [
