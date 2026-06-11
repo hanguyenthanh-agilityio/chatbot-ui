@@ -6,10 +6,10 @@ import { ComposerAttachmentMenu } from "@/components/chat/composer-attachment-me
 import { RecentFilesFlyout } from "@/components/chat/recent-files-flyout";
 import { FILE_PREVIEW_COPY, MOCK_RECENT_FILES } from "@/constants/file-attachment";
 import {
-  STORYBOOK_THEME_GLOBAL,
   STORYBOOK_INLINE_CANVAS_PARAMETERS,
-  ThemeMode,
-} from "@/constants/theme";
+  STORYBOOK_THEME_GLOBAL,
+} from "@/constants/storybook";
+import { ThemeMode } from "@/constants/theme";
 import { MOCK_COMPOSER_ATTACHMENT } from "@/mocks/file-attachment";
 import { cn } from "@/utils/class-name";
 

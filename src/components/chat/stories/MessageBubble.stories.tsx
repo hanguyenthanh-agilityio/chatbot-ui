@@ -3,7 +3,8 @@ import { expect, within } from "storybook/test";
 
 import { MessageAvatar, MessageBubble } from "@/components/chat/message-bubble";
 import { MOCK_CHAT_SAMPLE_MESSAGES } from "@/constants/chat";
-import { STORYBOOK_THEME_GLOBAL, ThemeMode } from "@/constants/theme";
+import { STORYBOOK_THEME_GLOBAL } from "@/constants/storybook";
+import { ThemeMode } from "@/constants/theme";
 import { inChatTranscript } from "@/mocks/storybook";
 
 const meta = {

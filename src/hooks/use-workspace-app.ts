@@ -3,9 +3,11 @@
 import {
   DefaultChatTransport,
   isToolUIPart,
+  type UIMessage,
 } from "ai";
 import { useChat } from "@ai-sdk/react";
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -85,19 +87,9 @@ export function useWorkspaceApp(
   );
   /* eslint-enable react-hooks/refs */
 
-  const {
-    messages,
-    setMessages,
-    sendMessage,
-    addToolApprovalResponse,
-    status,
-    error,
-    clearError,
-    stop,
-  } = useChat({
-    transport,
-    sendAutomaticallyWhen: ({ messages }) => {
-      const lastMessage = messages.at(-1);
+  const sendAutomaticallyWhen = useCallback(
+    ({ messages: chatMessages }: { messages: UIMessage[] }) => {
+      const lastMessage = chatMessages.at(-1);
 
       if (!lastMessage || lastMessage.role !== "assistant") {
         return false;
@@ -125,6 +117,21 @@ export function useWorkspaceApp(
 
       return true;
     },
+    [],
+  );
+
+  const {
+    messages,
+    setMessages,
+    sendMessage,
+    addToolApprovalResponse,
+    status,
+    error,
+    clearError,
+    stop,
+  } = useChat({
+    transport,
+    sendAutomaticallyWhen,
   });
   const {
     activeThread,
@@ -184,77 +191,123 @@ export function useWorkspaceApp(
     clearError();
   }, [auth.role, clearError]);
 
-  async function submitTextMessage(
-    text: string,
-    options?: { restoreInputOnError?: boolean },
-  ) {
-    const messageText = text.trim();
-    if (!messageText) return;
+  const inputRef = useRef(input);
+  const isLoadingRef = useRef(isLoading);
+  const selectedRoleRef = useRef(selectedRole);
+  const submitContextRef = useRef({
+    isLoading,
+    isProviderReady: provider.isProviderReady,
+    providerRequestBody: provider.requestBody,
+    authRequestBody: auth.requestBody,
+  });
 
-    if (isLoading || !provider.isProviderReady) {
-      setInput(messageText);
-      return;
-    }
+  useLayoutEffect(() => {
+    inputRef.current = input;
+    isLoadingRef.current = isLoading;
+    selectedRoleRef.current = selectedRole;
+    submitContextRef.current = {
+      isLoading,
+      isProviderReady: provider.isProviderReady,
+      providerRequestBody: provider.requestBody,
+      authRequestBody: auth.requestBody,
+    };
+  });
 
-    setInput("");
-    clearError();
+  const submitTextMessage = useCallback(
+    async (
+      text: string,
+      options?: { restoreInputOnError?: boolean },
+    ) => {
+      const messageText = text.trim();
+      if (!messageText) return;
 
-    try {
-      await sendMessage(
-        { text: messageText },
-        {
-          body: {
-            ...provider.requestBody,
-            ...auth.requestBody,
-          },
-        },
-      );
-    } catch {
-      if (options?.restoreInputOnError ?? false) {
+      const {
+        isLoading: loading,
+        isProviderReady,
+        providerRequestBody,
+        authRequestBody,
+      } = submitContextRef.current;
+
+      if (loading || !isProviderReady) {
         setInput(messageText);
+        return;
       }
-    }
-  }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    await submitTextMessage(trimmedInput, { restoreInputOnError: true });
-  }
+      setInput("");
+      clearError();
 
-  async function handlePromptSelect(prompt: string) {
-    await submitTextMessage(prompt, { restoreInputOnError: true });
-  }
+      try {
+        await sendMessage(
+          { text: messageText },
+          {
+            body: {
+              ...providerRequestBody,
+              ...authRequestBody,
+            },
+          },
+        );
+      } catch {
+        if (options?.restoreInputOnError ?? false) {
+          setInput(messageText);
+        }
+      }
+    },
+    [clearError, sendMessage],
+  );
 
-  function handleToolApproval(id: string, approved: boolean) {
-    clearError();
-    void addToolApprovalResponse({ id, approved });
-  }
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      await submitTextMessage(inputRef.current.trim(), {
+        restoreInputOnError: true,
+      });
+    },
+    [submitTextMessage],
+  );
 
-  function handleStop() {
+  const handlePromptSelect = useCallback(
+    async (prompt: string) => {
+      await submitTextMessage(prompt, { restoreInputOnError: true });
+    },
+    [submitTextMessage],
+  );
+
+  const handleToolApproval = useCallback(
+    (id: string, approved: boolean) => {
+      clearError();
+      void addToolApprovalResponse({ id, approved });
+    },
+    [addToolApprovalResponse, clearError],
+  );
+
+  const handleStop = useCallback(() => {
     stop();
     clearError();
-  }
+  }, [clearError, stop]);
 
-  function handleResetChatPanel() {
-    if (isLoading) {
+  const handleResetChatPanel = useCallback(() => {
+    if (isLoadingRef.current) {
       stop();
     }
     clearError();
     setInput("");
     resetActiveThread();
-  }
+  }, [clearError, resetActiveThread, stop]);
 
-  function handleRoleChange(role: AppRole) {
-    if (role === selectedRole) {
-      return;
-    }
+  const handleRoleChange = useCallback(
+    (role: AppRole) => {
+      if (role === selectedRoleRef.current) {
+        return;
+      }
 
-    clearError();
-    setInput("");
-    setMessages([]);
-    autoSubmittedApprovalIdsRef.current.clear();
-    setSelectedRole(role);
-  }
+      clearError();
+      setInput("");
+      setMessages([]);
+      autoSubmittedApprovalIdsRef.current.clear();
+      setSelectedRole(role);
+    },
+    [clearError, setMessages],
+  );
 
   const helperText = useMemo(() => {
     if (isSubmitting) return CHAT_COMPOSER_COPY.submitHint;

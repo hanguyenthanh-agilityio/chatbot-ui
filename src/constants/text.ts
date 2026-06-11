@@ -1,3 +1,5 @@
+import { objectKeys } from "@/utils/object-keys";
+
 export const TEXT_VARIANT_CLASSES = {
   display:
     "font-primary text-3xl font-bold tracking-tight text-white light:text-app-fg",
@@ -25,6 +27,4 @@ export const TEXT_VARIANT_CLASSES = {
   warning: "text-xs text-amber-400 light:text-app-warning-fg",
 } as const;
 
-export const TEXT_VARIANT_OPTIONS = Object.keys(
-  TEXT_VARIANT_CLASSES,
-) as (keyof typeof TEXT_VARIANT_CLASSES)[];
+export const TEXT_VARIANT_OPTIONS = objectKeys(TEXT_VARIANT_CLASSES);

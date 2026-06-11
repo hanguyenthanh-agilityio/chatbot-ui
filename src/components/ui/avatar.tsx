@@ -1,4 +1,5 @@
 import { cn } from "@/utils/class-name";
+import { objectKeys } from "@/utils/object-keys";
 import {
   APP_ASSISTANT_AVATAR_ALT,
   APP_ASSISTANT_AVATAR_SRC,
@@ -12,7 +13,7 @@ const SIZE = {
 
 export type AvatarSize = keyof typeof SIZE;
 
-export const AVATAR_SIZE_OPTIONS = Object.keys(SIZE) as AvatarSize[];
+export const AVATAR_SIZE_OPTIONS = objectKeys(SIZE);
 
 const BASE =
   "relative shrink-0 select-none overflow-hidden rounded-full bg-cover bg-center";

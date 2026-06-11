@@ -6,6 +6,7 @@ import { ToolOutputTable } from "@/components/chat/tool-output-table";
 
 import { inChatTranscript } from "@/mocks/storybook";
 import {
+  mockActionableMyRequestsTableProps,
   mockBalanceTableProps,
   mockEmptyTableProps,
   mockMyRequestsTableProps,
@@ -81,11 +82,20 @@ export const DisabledActions: Story = {
 };
 
 export const Playground: Story = {
-  args: mockMyRequestsTableProps(),
+  args: mockActionableMyRequestsTableProps(),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const [firstRow] = canvas.getAllByRole("button");
-    await userEvent.click(firstRow);
+    const props = mockActionableMyRequestsTableProps();
+    const actionableIndex = props.rowActions?.findIndex(
+      (actions) => (actions?.length ?? 0) > 0,
+    );
+    const summary =
+      props.rowActionSummaries?.[actionableIndex ?? 0] ??
+      `Record ${(actionableIndex ?? 0) + 1}`;
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: `Select ${summary}` }),
+    );
     await userEvent.click(
       await canvas.findByRole("button", { name: "Cancel request" }),
     );

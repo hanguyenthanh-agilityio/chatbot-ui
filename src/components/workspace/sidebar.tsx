@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 
 // Components
 import { Badge } from "@/components/ui/badge";
@@ -183,7 +183,7 @@ export function ThreadSidebar({
   );
 }
 
-function ThreadCard({
+const ThreadCard = memo(function ThreadCard({
   thread,
   isActive = false,
   disabled = false,
@@ -250,4 +250,4 @@ function ThreadCard({
       </div>
     </Card>
   );
-}
+});

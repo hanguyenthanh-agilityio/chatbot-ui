@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/utils/class-name";
+import { objectKeys } from "@/utils/object-keys";
 
 function isTextChild(children: ReactNode): children is string | number {
   return typeof children === "string" || typeof children === "number";
@@ -34,13 +35,9 @@ const BADGE_SIZE_CLASSES = {
 export type BadgeVariant = keyof typeof BADGE_VARIANT_CLASSES;
 export type BadgeSize = keyof typeof BADGE_SIZE_CLASSES;
 
-export const BADGE_VARIANT_OPTIONS = Object.keys(
-  BADGE_VARIANT_CLASSES,
-) as BadgeVariant[];
+export const BADGE_VARIANT_OPTIONS = objectKeys(BADGE_VARIANT_CLASSES);
 
-export const BADGE_SIZE_OPTIONS = Object.keys(
-  BADGE_SIZE_CLASSES,
-) as BadgeSize[];
+export const BADGE_SIZE_OPTIONS = objectKeys(BADGE_SIZE_CLASSES);
 
 export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
   variant?: BadgeVariant;

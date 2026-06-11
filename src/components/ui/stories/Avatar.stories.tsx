@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/avatar";
 import { APP_ASSISTANT_AVATAR_ALT } from "@/constants/app";
 import { inStorybookUiPanel } from "@/mocks/storybook";
-import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 
 const AVATAR_VARIANT_OPTIONS = ["assistant", "user"] as const;
 type AvatarStoryVariant = (typeof AVATAR_VARIANT_OPTIONS)[number];

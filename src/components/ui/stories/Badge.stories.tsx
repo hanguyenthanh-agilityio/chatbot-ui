@@ -7,7 +7,7 @@ import {
   type BadgeVariant,
 } from "@/components/ui/badge";
 import { inStorybookUiPanel } from "@/mocks/storybook";
-import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 
 function VariantGrid({
   variants = BADGE_VARIANT_OPTIONS,

@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { getByLabelText } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -40,11 +41,10 @@ const addFilesMenuItem = () =>
 const queryAddFilesMenuItem = () =>
   screen.queryByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel });
 
-const fileInput = () => {
-  const input = document.querySelector<HTMLInputElement>('input[type="file"]');
-  if (!input) throw new Error("file input not found");
-  return input;
-};
+const fileInput = () =>
+  getByLabelText(document.body, FILE_PREVIEW_COPY.attachFileInputLabel, {
+    hidden: true,
+  });
 
 const recentFilesMenuItem = () =>
   screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel });
@@ -84,7 +84,7 @@ describe("ComposerAttachmentMenu", () => {
     expect(container.firstElementChild?.outerHTML ?? "").toMatchSnapshot();
   });
 
-  describe("handleToggleClick", () => {
+  describe("toggleMenu", () => {
     it("opens the menu when closed", async () => {
       const user = userEvent.setup();
       renderAttachmentMenu();
