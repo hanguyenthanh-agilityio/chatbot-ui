@@ -44,6 +44,7 @@ export function ProviderSelector({
         fullWidth
         controlSize="md"
         variant="panel"
+        aria-label={PROVIDER_PANEL_COPY.label}
       >
         {allowedProviders.includes("ollama") ? (
           <option value="ollama">{PROVIDER_OPTION_LABEL.ollama}</option>

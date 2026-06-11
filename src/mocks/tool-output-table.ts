@@ -6,7 +6,11 @@ import {
 } from "@/components/transcript/named-tables";
 import { getSelfRequestRowActions } from "@/components/transcript/cells";
 import { TOOL_OUTPUT_TABLE_TITLES } from "@/components/transcript/tool";
-import { FIXTURE_BALANCES, FIXTURE_REQUESTS } from "@/mocks/time-off-fixtures";
+import {
+  FIXTURE_BALANCES,
+  FIXTURE_REQUEST_FUTURE,
+  FIXTURE_REQUESTS,
+} from "@/mocks/time-off-fixtures";
 
 export type MockToolOutputTableProps = ComponentProps<typeof ToolOutputTable>;
 
@@ -44,6 +48,20 @@ export function mockMyRequestsTableProps(): MockToolOutputTableProps {
       id: "my-time-off-requests",
       title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
       payload: { requests: FIXTURE_REQUESTS },
+      showEmployee: false,
+      getRowActions: getSelfRequestRowActions,
+      emptyLabel: "No time-off requests found.",
+    }),
+  );
+}
+
+/** Future-dated rows so cancel actions stay available regardless of run date. */
+export function mockActionableMyRequestsTableProps(): MockToolOutputTableProps {
+  return fromModel(
+    getRequestTableModel({
+      id: "my-time-off-requests",
+      title: TOOL_OUTPUT_TABLE_TITLES.myTimeOffRequests,
+      payload: { requests: [FIXTURE_REQUEST_FUTURE, ...FIXTURE_REQUESTS] },
       showEmployee: false,
       getRowActions: getSelfRequestRowActions,
       emptyLabel: "No time-off requests found.",

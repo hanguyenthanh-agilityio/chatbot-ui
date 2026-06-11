@@ -14,7 +14,7 @@ import {
 import { LEAVE_TYPE_LABEL_BY_TYPE } from "@/constants/leave";
 import type { LeaveType } from "@/lib/db/schema";
 import { inStorybookInlineShell } from "@/mocks/storybook";
-import { STORYBOOK_CANVAS_PARAMETER } from "@/constants/theme";
+import { STORYBOOK_CANVAS_PARAMETER } from "@/constants/storybook";
 import {
   FIXTURE_REQUEST_FUTURE,
   FIXTURE_TEAM,

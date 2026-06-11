@@ -2,11 +2,8 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import {
-  STORYBOOK_THEME_GLOBAL,
-  THEME_TOGGLE_ARIA_LABEL,
-  ThemeMode,
-} from "@/constants/theme";
+import { STORYBOOK_THEME_GLOBAL } from "@/constants/storybook";
+import { THEME_TOGGLE_ARIA_LABEL, ThemeMode } from "@/constants/theme";
 
 const meta: Meta<typeof ThemeToggle> = {
   title: "UI/ThemeToggle",

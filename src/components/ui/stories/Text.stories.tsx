@@ -5,7 +5,7 @@ import { Text } from "@/components/ui/text";
 import { TEXT_VARIANT_OPTIONS } from "@/constants/text";
 import type { TextVariant } from "@/types/text";
 import { inStorybookUiPanel } from "@/mocks/storybook";
-import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 
 function VariantGrid({
   variants = TEXT_VARIANT_OPTIONS,

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Skeleton } from "@/components/ui/skeleton";
-import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 
 const meta = {
   title: "UI/Skeleton",

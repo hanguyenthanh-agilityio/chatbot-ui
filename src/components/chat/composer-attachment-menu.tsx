@@ -98,7 +98,7 @@ export function ComposerAttachmentMenu({
         accept={FILE_PREVIEW_ACCEPT}
         className="sr-only"
         tabIndex={-1}
-        aria-hidden
+        aria-label={FILE_PREVIEW_COPY.attachFileInputLabel}
         onChange={handleFileInputChange}
       />
 
