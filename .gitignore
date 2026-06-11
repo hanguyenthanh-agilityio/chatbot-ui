@@ -56,3 +56,16 @@ storybook-static
 .open-next/
 .wrangler/
 .dev.vars
+
+# GitHub Actions / Cloudflare deploy — local only; never commit on GitLab branches.
+# GitLab: git push origin (files stay on disk, not in commits).
+# GitHub: push deploy branches to github remote only.
+.github/
+public/_headers
+cloudflare-worker.ts
+open-next.config.ts
+wrangler.jsonc
+/scripts/ci-cloudflare-deploy.sh
+/scripts/ci-inject-wrangler-account.mjs
+/scripts/ci-resolve-cloudflare-account.mjs
+/scripts/ci-strip-wrangler-services.mjs
