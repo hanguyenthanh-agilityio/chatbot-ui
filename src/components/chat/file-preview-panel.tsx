@@ -16,7 +16,6 @@ import { FilePreviewImage } from "@/components/chat/file-preview-image";
 import { FilePreviewMp3, FilePreviewMp4 } from "@/components/chat/file-preview-media";
 import { FilePreviewPdf } from "@/components/chat/file-preview-pdf";
 import {
-  FILE_KIND_LABEL,
   FILE_PREVIEW_COPY,
   FILE_PREVIEW_PANEL_CLASS,
   FILE_PREVIEW_PANEL_WIDTH,
@@ -35,6 +34,7 @@ import {
 import {
   bindFilePreviewPanelResize,
   formatFileSize,
+  getFileKindLabel,
 } from "@/utils/file-attachment";
 import { cn } from "@/utils/class-name";
 
@@ -158,7 +158,7 @@ export function FilePreviewPanel({
               </Text>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 <Badge variant="warning" size="md">
-                  {FILE_KIND_LABEL[file.kind]}
+                  {getFileKindLabel(file.kind)}
                 </Badge>
                 {meta ? (
                   <Badge variant="subtle" size="md">

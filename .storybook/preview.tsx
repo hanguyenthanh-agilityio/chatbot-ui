@@ -3,17 +3,19 @@ import "./storybook-docs.css";
 import "./storybook-canvas.css";
 
 import type { Decorator, Preview } from "@storybook/nextjs-vite";
-import type { StorybookCanvasMode } from "@/constants/theme";
 import { useLayoutEffect } from "react";
 import { useGlobals } from "storybook/preview-api";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import {
-  DEFAULT_THEME,
   STORYBOOK_CANVAS_CLASS,
   STORYBOOK_CANVAS_PARAMETER,
   STORYBOOK_CANVAS_WIDTH,
   STORYBOOK_THEME_GLOBAL,
+  type StorybookCanvasMode,
+} from "@/constants/storybook";
+import {
+  DEFAULT_THEME,
   THEME_CHANGE_EVENT,
   ThemeMode,
   type Theme,

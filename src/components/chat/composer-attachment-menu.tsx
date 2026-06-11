@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import type { ChangeEvent, RefObject } from "react";
+import { useCallback, type ChangeEvent, type RefObject } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -61,21 +61,20 @@ export function ComposerAttachmentMenu({
     recentHover,
   } = useComposerAttachmentMenu();
 
-  function handleFileInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = readSelectedFileFromInput(event);
-    if (!file) return;
-    onFileSelected(file);
-    closeMenu();
-  }
+  const handleFileInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = readSelectedFileFromInput(event);
+      if (!file) return;
+      onFileSelected(file);
+      closeMenu();
+    },
+    [closeMenu, onFileSelected],
+  );
 
-  function handleToggleClick() {
-    toggleMenu();
-  }
-
-  function handleAddFilesClick() {
+  const handleAddFilesClick = useCallback(() => {
     onOpenFilePicker();
     closeMenu();
-  }
+  }, [closeMenu, onOpenFilePicker]);
 
   const recentFlyout =
     isRecentOpen && isBrowser() ? (
@@ -99,7 +98,7 @@ export function ComposerAttachmentMenu({
         accept={FILE_PREVIEW_ACCEPT}
         className="sr-only"
         tabIndex={-1}
-        aria-hidden
+        aria-label={FILE_PREVIEW_COPY.attachFileInputLabel}
         onChange={handleFileInputChange}
       />
 
@@ -112,7 +111,7 @@ export function ComposerAttachmentMenu({
         aria-haspopup="menu"
         aria-controls={isOpen ? menuId : undefined}
         title={FILE_PREVIEW_COPY.attachMenuLabel}
-        onClick={handleToggleClick}
+        onClick={toggleMenu}
         className={cn(
           isOpen &&
             "border-violet-400/55 bg-white/10 light:border-app-border-emphasis",

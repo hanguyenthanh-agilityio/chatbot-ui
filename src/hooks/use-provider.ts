@@ -164,31 +164,37 @@ export function useProviderSelection({
     );
   }, [verifiedOllamaBaseUrl]);
 
-  function selectProvider(nextProvider: AIProviderName) {
+  const selectProvider = useCallback((nextProvider: AIProviderName) => {
     setSelectedProvider(nextProvider);
     setValidationError(null);
-  }
+  }, []);
 
-  function updateOpenAIApiKeyInput(nextValue: string) {
-    setOpenaiApiKeyInput(nextValue);
-    setValidationError(null);
+  const updateOpenAIApiKeyInput = useCallback(
+    (nextValue: string) => {
+      setOpenaiApiKeyInput(nextValue);
+      setValidationError(null);
 
-    if (verifiedOpenAIKey && verifiedOpenAIKey !== nextValue.trim()) {
-      setVerifiedOpenAIKey(null);
-    }
-  }
+      if (verifiedOpenAIKey && verifiedOpenAIKey !== nextValue.trim()) {
+        setVerifiedOpenAIKey(null);
+      }
+    },
+    [verifiedOpenAIKey],
+  );
 
-  function updateOllamaBaseUrlInput(nextValue: string) {
-    setOllamaBaseUrlInput(nextValue);
-    setValidationError(null);
+  const updateOllamaBaseUrlInput = useCallback(
+    (nextValue: string) => {
+      setOllamaBaseUrlInput(nextValue);
+      setValidationError(null);
 
-    const normalized = normalizeOllamaBaseUrl(nextValue);
-    if (verifiedOllamaBaseUrl && verifiedOllamaBaseUrl !== normalized) {
-      setVerifiedOllamaBaseUrl(null);
-    }
-  }
+      const normalized = normalizeOllamaBaseUrl(nextValue);
+      if (verifiedOllamaBaseUrl && verifiedOllamaBaseUrl !== normalized) {
+        setVerifiedOllamaBaseUrl(null);
+      }
+    },
+    [verifiedOllamaBaseUrl],
+  );
 
-  async function verifyOpenAIKey() {
+  const verifyOpenAIKey = useCallback(async () => {
     const key = openaiApiKeyInput.trim();
     if (!key) {
       setValidationError(PROVIDER_STATUS_COPY.openaiKeyRequired);
@@ -224,9 +230,9 @@ export function useProviderSelection({
     } finally {
       setIsValidatingKey(false);
     }
-  }
+  }, [openaiApiKeyInput]);
 
-  async function verifyOllamaBaseUrl() {
+  const verifyOllamaBaseUrl = useCallback(async () => {
     const baseUrl = normalizeOllamaBaseUrl(ollamaBaseUrlInput);
     if (!baseUrl) {
       setValidationError(PROVIDER_STATUS_COPY.ollamaBaseUrlRequired);
@@ -258,7 +264,7 @@ export function useProviderSelection({
     } finally {
       setIsValidatingOllamaBaseUrl(false);
     }
-  }
+  }, [ollamaBaseUrlInput]);
 
   return {
     selectedProvider,

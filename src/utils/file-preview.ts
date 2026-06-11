@@ -44,6 +44,17 @@ function normalizeCodePreviewText(text: string): string {
   return text.replace(/\r\n/g, lineEnding).replace(/\r/g, lineEnding);
 }
 
+function formatJsonPreviewText(text: string): string {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    throw new Error(FILE_ATTACHMENT_CONTENT_COPY.invalidJson);
+  }
+
+  return JSON.stringify(parsed, null, FILE_PREVIEW_CODE_PARSE.jsonIndent);
+}
+
 export function assertNonEmptyTrimmed(text: string): string {
   const trimmed = text.trim();
   if (!trimmed) {
@@ -88,11 +99,7 @@ export async function readCodePreviewFile(
   }
 
   if (kind === FILE_PREVIEW_KIND.JSON) {
-    return JSON.stringify(
-      JSON.parse(text),
-      null,
-      FILE_PREVIEW_CODE_PARSE.jsonIndent,
-    );
+    return formatJsonPreviewText(text);
   }
 
   return text;

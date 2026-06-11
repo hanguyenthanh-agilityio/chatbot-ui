@@ -10,15 +10,15 @@ import { cn } from "@/utils/class-name";
 
 const BUTTON_VARIANT_CLASSES = {
   primary:
-    "app-button-primary bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-400 disabled:text-white light:bg-btn-active light:text-white light:hover:brightness-105 light:disabled:bg-app-btn-brand-disabled light:disabled:text-white/85",
+    "app-button-primary bg-violet-600 text-white hover:bg-violet-500 disabled:bg-white/15 disabled:text-white/45 light:bg-btn-active light:text-white light:hover:brightness-105 light:disabled:bg-app-btn-brand-disabled light:disabled:text-white/85",
   secondary:
-    "bg-slate-200 text-slate-900 hover:bg-slate-300 disabled:bg-slate-100 disabled:text-slate-400",
+    "bg-white/10 text-white/90 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/40 light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300 light:disabled:bg-slate-100 light:disabled:text-slate-400",
   outline:
-    "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50 disabled:border-slate-200 disabled:text-slate-400",
+    "border border-white/20 bg-transparent text-white/90 hover:bg-white/8 disabled:border-white/10 disabled:text-white/40 light:border-slate-300 light:bg-white light:text-slate-900 light:hover:bg-slate-50 light:disabled:border-slate-200 light:disabled:text-slate-400",
   ghost:
-    "bg-transparent text-slate-900 hover:bg-slate-100 disabled:text-slate-400",
+    "bg-transparent text-white/80 hover:bg-white/10 disabled:text-white/40 light:text-slate-900 light:hover:bg-slate-100 light:disabled:text-slate-400",
   danger:
-    "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-300 disabled:text-red-50",
+    "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-900/40 disabled:text-red-200/70 light:disabled:bg-red-200 light:disabled:text-red-400",
   themeToggle: THEME_TOGGLE_CLASS,
   chatPanelReset: CHAT_PANEL_RESET_CLASS,
   composerAttachToggle: COMPOSER_ATTACH_TOGGLE_BUTTON_CLASS,

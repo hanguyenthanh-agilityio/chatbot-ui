@@ -4,9 +4,8 @@ import {
   STORYBOOK_CANVAS_CLASS,
   STORYBOOK_INLINE_SHELL_CLASS,
   STORYBOOK_SHELL_CENTER_CLASS,
-  THEME_SHELL_CLASSES,
-  THEME_SHELL_UTILITIES,
-} from "@/constants/theme";
+} from "@/constants/storybook";
+import { THEME_SHELL_CLASSES, THEME_SHELL_UTILITIES } from "@/constants/theme";
 import { cn } from "@/utils/class-name";
 
 /** Full chat column (composer, transcript, tool cards). */

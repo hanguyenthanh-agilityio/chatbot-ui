@@ -1,14 +1,12 @@
 import type { ChangeEvent } from "react";
-import { describe, expect, it, vi } from "vitest";
-import {
-  MOCK_RECENT_FILES,
-  RECENT_FLYOUT_LAYOUT,
-} from "@/constants/file-attachment";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { MOCK_RECENT_FILES, RECENT_FLYOUT_LAYOUT } from "@/constants/file-attachment";
 import { FILE_PREVIEW_KIND } from "@/types/file-attachment";
 import {
   createAttachmentId,
   formatFileSize,
   formatLibraryFileMeta,
+  getFileKindLabel,
   getRecentFlyoutPosition,
   inferFilePreviewKind,
   isSupportedPreviewKind,
@@ -81,6 +79,13 @@ describe("formatFileSize", () => {
     [1_048_576, "1.0 MB"],
   ] as const)("formats %i bytes", (bytes, expected) => {
     expect(formatFileSize(bytes)).toBe(expected);
+  });
+});
+
+describe("getFileKindLabel", () => {
+  it("returns badge labels from kind meta", () => {
+    expect(getFileKindLabel(FILE_PREVIEW_KIND.PDF)).toBe("PDF");
+    expect(getFileKindLabel(FILE_PREVIEW_KIND.UNKNOWN)).toBe("FILE");
   });
 });
 
@@ -171,5 +176,26 @@ describe("getRecentFlyoutPosition", () => {
         left: menuBox.left + menuBox.width + gap,
       },
     );
+  });
+
+  const originalWindow = globalThis.window;
+
+  afterEach(() => {
+    vi.stubGlobal("window", originalWindow);
+  });
+
+  it("uses fallback viewport size when window is undefined", () => {
+    vi.stubGlobal("window", undefined);
+
+    const row = document.createElement("div");
+    const rowBox = { top: 12, left: 24, width: 100, height: 32 };
+    vi.spyOn(row, "getBoundingClientRect").mockReturnValue(
+      mockBoundingRect(rowBox),
+    );
+
+    expect(getRecentFlyoutPosition(row, null)).toEqual({
+      top: rowBox.top,
+      left: rowBox.left + rowBox.width + gap,
+    });
   });
 });

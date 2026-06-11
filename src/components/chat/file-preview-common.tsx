@@ -44,21 +44,40 @@ export function FilePreviewUnavailable({
   return <FilePreviewFallback kind={kind} message={message} />;
 }
 
-export function FilePreviewEmbeddedBody({
-  contentClassName = "",
-  kind,
-  file,
-  isLoading,
-  hasFailed,
-  children,
-}: {
+type FilePreviewEmbeddedBodyProps<T = undefined> = {
   contentClassName?: string;
   kind: FilePreviewMediaKind;
   file: File | undefined;
   isLoading: boolean;
   hasFailed: boolean;
-  children: ReactNode;
-}) {
+} & (
+  | { ready?: undefined; children: ReactNode }
+  | {
+      ready: T | null | undefined;
+      children: (value: NonNullable<T>) => ReactNode;
+    }
+);
+
+function renderEmbeddedPreview<T>(
+  ready: T | null | undefined,
+  children: FilePreviewEmbeddedBodyProps<T>["children"],
+): ReactNode {
+  if (typeof children === "function") {
+    return ready != null ? children(ready) : null;
+  }
+  return children;
+}
+
+/** Shared loading / failed / missing shell for embedded previews (sync or async). */
+export function FilePreviewEmbeddedBody<T = undefined>({
+  contentClassName = "",
+  kind,
+  file,
+  isLoading,
+  hasFailed,
+  ready,
+  children,
+}: FilePreviewEmbeddedBodyProps<T>) {
   const messages = getFilePreviewMessages(kind);
 
   if (!file) {
@@ -73,11 +92,8 @@ export function FilePreviewEmbeddedBody({
 
   return (
     <div className={contentClassName}>
-      {isLoading ? (
-        <FilePreviewFallback message={messages.loading} />
-      ) : (
-        children
-      )}
+      {isLoading ? <FilePreviewFallback message={messages.loading} /> : null}
+      {renderEmbeddedPreview(ready, children)}
     </div>
   );
 }
@@ -106,37 +122,6 @@ export function FilePreviewFramedDataUrl({
           {children({ url, onRenderError: handleRenderError })}
         </div>
       ) : null}
-    </FilePreviewEmbeddedBody>
-  );
-}
-
-export function FilePreviewAsyncEmbeddedBody<T>({
-  contentClassName,
-  kind,
-  file,
-  isLoading,
-  hasFailed,
-  value,
-  children,
-}: {
-  contentClassName?: string;
-  kind: FilePreviewMediaKind;
-  file: File | undefined;
-  isLoading: boolean;
-  hasFailed: boolean;
-  value: T | null | undefined;
-  /** Render prop — avoids evaluating preview UI before async `value` is ready. */
-  children: (value: NonNullable<T>) => ReactNode;
-}) {
-  return (
-    <FilePreviewEmbeddedBody
-      contentClassName={contentClassName}
-      kind={kind}
-      file={file}
-      isLoading={isLoading}
-      hasFailed={hasFailed}
-    >
-      {value != null ? children(value) : null}
     </FilePreviewEmbeddedBody>
   );
 }
@@ -173,15 +158,15 @@ export function FilePreviewCodeFile({
   const { text, isLoading, hasFailed } = useCodeFilePreview(file, kind);
 
   return (
-    <FilePreviewAsyncEmbeddedBody
+    <FilePreviewEmbeddedBody
       contentClassName={FILE_PREVIEW_CODE_CONTENT_CLASS}
       kind={kind}
       file={file}
       isLoading={isLoading}
       hasFailed={hasFailed}
-      value={text}
+      ready={text}
     >
       {(resolvedText) => <FilePreviewCodeBody text={resolvedText} />}
-    </FilePreviewAsyncEmbeddedBody>
+    </FilePreviewEmbeddedBody>
   );
 }

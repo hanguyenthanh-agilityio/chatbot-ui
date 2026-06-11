@@ -8,7 +8,7 @@ import {
   TOAST_PERSISTENT_DURATION_MS,
   TOAST_VARIANTS,
 } from "@/constants/toast";
-import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 
 function ToastPreviewFrame({ children }: { children: ReactNode }) {
   return (

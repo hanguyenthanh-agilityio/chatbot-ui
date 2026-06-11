@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useSyncExternalStore, type CSSProperties } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+} from "react";
 
 // Components
 import { ChatPanelResetButton } from "@/components/ui/chat-panel-reset-button";
@@ -64,6 +70,7 @@ export function WorkspaceApp({
       <main className="min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
         <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-md sm:gap-4 lg:flex-row">
           <div
+            data-testid="workspace-hydration-placeholder"
             className={cn(
               "h-chat-viewport w-full rounded-shell border lg:max-w-sm",
               SHELL_BACKDROP_BLUR_28,
@@ -72,6 +79,7 @@ export function WorkspaceApp({
             )}
           />
           <div
+            data-testid="workspace-hydration-placeholder"
             className={cn(
               "h-chat-viewport flex-1 rounded-shell border",
               SHELL_BACKDROP_BLUR_28,
@@ -129,25 +137,39 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
       ? ({ "--workspace-col-3-width": `${filePreviewWidth}px` } as CSSProperties)
       : undefined;
 
-  const handleAttachFile = (file: File) => {
-    composerAttachment.attachFile(file);
-    setIsFilePreviewOpen(true);
-  };
+  const { attachFile, clearAttachment } = composerAttachment;
 
-  const handleRemoveAttachedFile = () => {
+  const handleAttachFile = useCallback(
+    (file: File) => {
+      attachFile(file);
+      setIsFilePreviewOpen(true);
+    },
+    [attachFile],
+  );
+
+  const handleRemoveAttachedFile = useCallback(() => {
     setIsFilePreviewOpen(false);
     setFilePreviewWidth(null); // restore default column width for ThreadSidebar
-    composerAttachment.clearAttachment();
-  };
+    clearAttachment();
+  }, [clearAttachment]);
 
-  const handleOpenAttachedFilePreview = () => {
+  const handleOpenAttachedFilePreview = useCallback(() => {
     setIsFilePreviewOpen(true);
-  };
+  }, []);
 
-  const handleCloseFilePreview = () => {
+  const handleCloseFilePreview = useCallback(() => {
     setIsFilePreviewOpen(false);
     setFilePreviewWidth(null); // closing preview only hides panel; attachment stays in composer
-  };
+  }, []);
+
+  const handleFilePreviewWidthChange = useCallback((nextWidth: number) => {
+    setFilePreviewWidth(clampFilePreviewPanelWidth(nextWidth));
+  }, []);
+
+  const attachmentMenu = useMemo(
+    () => ({ onFileSelected: handleAttachFile }),
+    [handleAttachFile],
+  );
 
   const accountPanel = (
     <AuthPanel
@@ -296,9 +318,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
               isProviderReady={provider.isProviderReady}
               quickActions={quickActions}
               onQuickActionSelect={handlePromptSelect}
-              attachmentMenu={{
-                onFileSelected: handleAttachFile,
-              }}
+              attachmentMenu={attachmentMenu}
               attachedFile={attachedFile}
               onOpenAttachedFilePreview={handleOpenAttachedFilePreview}
               onRemoveAttachedFile={handleRemoveAttachedFile}
@@ -320,9 +340,7 @@ function WorkspaceAppClient({ authRole, authSessions }: WorkspaceAppProps) {
             <FilePreviewPanel
               file={attachedFile}
               width={filePreviewWidth}
-              onWidthChange={(nextWidth) =>
-                setFilePreviewWidth(clampFilePreviewPanelWidth(nextWidth))
-              }
+              onWidthChange={handleFilePreviewWidthChange}
               onClose={handleCloseFilePreview}
             />
           ) : (

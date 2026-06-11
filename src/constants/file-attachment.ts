@@ -14,6 +14,7 @@ export const COMPOSER_ATTACHMENT_ID_PREFIX = "attach";
 /** Attach-time content extraction (not preview UI). */
 export const FILE_ATTACHMENT_CONTENT_COPY = {
   emptyFile: "File is empty",
+  invalidJson: "Invalid JSON file",
   unsupportedKind: (kind: string) => `Unsupported attachment kind: ${kind}`,
 } as const;
 
@@ -73,13 +74,15 @@ const FILE_KIND_META: Record<
   },
 };
 
-export const FILE_KIND_LABEL: Record<FilePreviewKind, string> = {
-  ...(Object.fromEntries(
-    (Object.keys(FILE_KIND_META) as FilePreviewMediaKind[]).map((kind) => [
-      kind,
-      FILE_KIND_META[kind].badgeLabel,
-    ]),
-  ) as Record<FilePreviewMediaKind, string>),
+/** Badge text for chips and lists (derived from FILE_KIND_META). */
+export const FILE_KIND_BADGE_LABEL: Record<FilePreviewKind, string> = {
+  [FILE_PREVIEW_KIND.IMAGE]: FILE_KIND_META[FILE_PREVIEW_KIND.IMAGE].badgeLabel,
+  [FILE_PREVIEW_KIND.PDF]: FILE_KIND_META[FILE_PREVIEW_KIND.PDF].badgeLabel,
+  [FILE_PREVIEW_KIND.DOCX]: FILE_KIND_META[FILE_PREVIEW_KIND.DOCX].badgeLabel,
+  [FILE_PREVIEW_KIND.MP4]: FILE_KIND_META[FILE_PREVIEW_KIND.MP4].badgeLabel,
+  [FILE_PREVIEW_KIND.MP3]: FILE_KIND_META[FILE_PREVIEW_KIND.MP3].badgeLabel,
+  [FILE_PREVIEW_KIND.CSV]: FILE_KIND_META[FILE_PREVIEW_KIND.CSV].badgeLabel,
+  [FILE_PREVIEW_KIND.JSON]: FILE_KIND_META[FILE_PREVIEW_KIND.JSON].badgeLabel,
   [FILE_PREVIEW_KIND.UNKNOWN]: "FILE",
 };
 
@@ -96,7 +99,7 @@ export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
 
 export const COMPOSER_ATTACH_MENU_PANEL_CLASS = cn(
   "rounded-2xl border shadow-panel backdrop-blur-xl",
-  "border-white/12 bg-slate-900/95",
+  "border-white/12 bg-[var(--palette-shell-dark)]",
   "light:border-app-border light:bg-app-surface-raised light:shadow-panel-sm",
 );
 
@@ -324,6 +327,7 @@ export const FILE_PREVIEW_KIND_MAPS = buildFilePreviewKindMaps(
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
   attachMenuAriaLabel: "Open attachment menu",
+  attachFileInputLabel: "Choose file to attach",
   addFilesLabel: "Add photos & files",
   recentFilesLabel: "Recent files",
   recentFilesEmpty: "No recent files",

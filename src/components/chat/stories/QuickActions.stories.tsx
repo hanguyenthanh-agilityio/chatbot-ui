@@ -4,7 +4,7 @@ import { expect, fn, userEvent, within } from "storybook/test";
 import { ChatQuickActions } from "@/components/chat/quick-actions";
 import { QUICK_ACTIONS_BY_ROLE } from "@/constants/chat";
 import type { AppRole } from "@/lib/auth/session";
-import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/theme";
+import { STORYBOOK_INLINE_CANVAS_PARAMETERS } from "@/constants/storybook";
 import { cn } from "@/utils/class-name";
 
 /** Matches the composer footer strip where chips render in the app. */

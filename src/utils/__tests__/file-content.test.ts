@@ -78,6 +78,16 @@ describe("file-content", () => {
     },
   );
 
+  it("readAttachmentContent rejects invalid JSON", async () => {
+    const file = new File(["{not json"], "broken.json", {
+      type: "application/json",
+    });
+
+    await expect(
+      readAttachmentContent(file, FILE_PREVIEW_KIND.JSON),
+    ).rejects.toThrow(/Invalid JSON file/);
+  });
+
   it("readAttachmentContent rejects unsupported kinds", async () => {
     const file = new File(["x"], "photo.png", { type: "image/png" });
 

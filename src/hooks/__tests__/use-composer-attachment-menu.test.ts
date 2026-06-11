@@ -24,6 +24,17 @@ describe("useComposerAttachmentMenu", () => {
     expect(result.current.isRecentOpen).toBe(false);
   });
 
+  it("keeps stable toggleMenu and recentHover references", () => {
+    const { result, rerender } = renderHook(() => useComposerAttachmentMenu());
+    const firstToggle = result.current.toggleMenu;
+    const firstHover = result.current.recentHover;
+
+    rerender();
+
+    expect(result.current.toggleMenu).toBe(firstToggle);
+    expect(result.current.recentHover).toBe(firstHover);
+  });
+
   it("opens and closes recent flyout via recentHover", () => {
     vi.useFakeTimers();
     const { result } = renderHook(() => useComposerAttachmentMenu());

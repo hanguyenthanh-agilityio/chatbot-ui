@@ -5,11 +5,11 @@ import { CloseIcon } from "@/components/ui/icons";
 import { FileKindIcon } from "./file-kind-icon";
 import {
   COMPOSER_ATTACH_ICON_XS_CLASS,
-  FILE_KIND_LABEL,
   FILE_PREVIEW_COPY,
 } from "@/constants/file-attachment";
 import type { ComposerAttachment } from "@/types/file-attachment";
 import { cn } from "@/utils/class-name";
+import { getFileKindLabel } from "@/utils/file-attachment";
 
 const chipClass = cn(
   "flex min-w-0 items-center gap-2 rounded-xl border px-2 py-1.5",
@@ -41,7 +41,7 @@ export function ComposerAttachmentChip({
             {file.name}
           </p>
           <p className="text-xs uppercase tracking-wide text-white/45 light:text-app-fg-faint">
-            {FILE_KIND_LABEL[file.kind]}
+            {getFileKindLabel(file.kind)}
           </p>
         </div>
       </Button>

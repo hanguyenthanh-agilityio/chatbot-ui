@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, memo } from "react";
 import { type UIMessage } from "ai";
 import { CHAT_TRANSCRIPT_COPY } from "@/constants/chat";
 import { LoadingIndicator } from "@/components/chat/loading-indicator";
@@ -281,7 +281,7 @@ type ChatMessageProps = {
   onToolApproval: (id: string, approved: boolean) => void;
 };
 
-export function ChatMessage({
+export const ChatMessage = memo(function ChatMessage({
   message,
   isLastMessage,
   isLoading,
@@ -473,4 +473,4 @@ export function ChatMessage({
       ) : null}
     </article>
   );
-}
+});
