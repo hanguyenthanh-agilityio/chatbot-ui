@@ -13,10 +13,16 @@ type FileKeyedPreview<T> = {
   hasFailed: boolean;
 };
 
+type FilePreviewResult<T> = {
+  value: T | null;
+  hasFailed: boolean;
+  isLoading: boolean;
+};
+
 function derivePreviewResult<T>(
   file: File | undefined,
   preview: FileKeyedPreview<T> | null,
-) {
+): FilePreviewResult<T> {
   const current = file != null && preview?.file === file ? preview : null;
 
   return {
@@ -29,7 +35,11 @@ function derivePreviewResult<T>(
 }
 
 /** Read a local file as a data URL (image, PDF, audio, video). */
-export function useFileDataUrl(file: File | undefined) {
+export function useFileDataUrl(file: File | undefined): {
+  url: string | null;
+  isLoading: boolean;
+  hasFailed: boolean;
+} {
   const [preview, setPreview] = useState<FileKeyedPreview<string> | null>(
     null,
   );
@@ -67,7 +77,10 @@ export function useFileDataUrl(file: File | undefined) {
 }
 
 /** Track `<img>` / media decode failures keyed by `File` (resets when file changes). */
-export function useFileRenderFailure(file: File | undefined) {
+export function useFileRenderFailure(file: File | undefined): {
+  renderFailed: boolean;
+  handleRenderError: () => void;
+} {
   const [renderFailedFile, setRenderFailedFile] = useState<File | null>(null);
   const renderFailed = file != null && renderFailedFile === file;
 
@@ -84,7 +97,12 @@ export function useFileRenderFailure(file: File | undefined) {
 }
 
 /** Data URL read + optional `<img>` / media decode failure (image, MP3, MP4). */
-export function useDataUrlPreviewState(file: File | undefined) {
+export function useDataUrlPreviewState(file: File | undefined): {
+  url: string | null;
+  failed: boolean;
+  handleRenderError: () => void;
+  isLoading: boolean;
+} {
   const { url, isLoading, hasFailed } = useFileDataUrl(file);
   const { renderFailed, handleRenderError } = useFileRenderFailure(file);
   const failed = hasFailed || renderFailed;
@@ -101,7 +119,7 @@ export function useDataUrlPreviewState(file: File | undefined) {
 export function useAsyncFilePreview<T>(
   file: File | undefined,
   load: (input: File) => Promise<T>,
-) {
+): FilePreviewResult<T> {
   const [preview, setPreview] = useState<FileKeyedPreview<T> | null>(null);
 
   useEffect(() => {
@@ -129,14 +147,14 @@ export function useAsyncFilePreview<T>(
   return derivePreviewResult(file, preview);
 }
 
-export function useDocxPreview(docxFile: File | undefined) {
-  const loadDocx = useCallback(
-    (file: File) => convertDocxFileToHtml(file),
-    [],
-  );
+export function useDocxPreview(docxFile: File | undefined): {
+  html: string | null;
+  isLoading: boolean;
+  hasFailed: boolean;
+} {
   const { value, isLoading, hasFailed } = useAsyncFilePreview(
     docxFile,
-    loadDocx,
+    convertDocxFileToHtml,
   );
 
   return {
@@ -149,7 +167,11 @@ export function useDocxPreview(docxFile: File | undefined) {
 export function useCodeFilePreview(
   file: File | undefined,
   kind: CodeFilePreviewKind,
-) {
+): {
+  text: string | null;
+  isLoading: boolean;
+  hasFailed: boolean;
+} {
   const load = useCallback(
     (input: File) => readCodePreviewFile(input, kind),
     [kind],

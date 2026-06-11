@@ -4,7 +4,7 @@ import { expect, fn, userEvent, within } from "storybook/test";
 // Components
 import { ToolOutputTable } from "@/components/chat/tool-output-table";
 
-import { inChatTranscript } from "@/mocks/storybook";
+import { inChatTranscript } from "../../../../.storybook/decorators";
 import {
   mockActionableMyRequestsTableProps,
   mockBalanceTableProps,
