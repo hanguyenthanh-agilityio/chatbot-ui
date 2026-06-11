@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { getByLabelText } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -41,7 +42,9 @@ const queryAddFilesMenuItem = () =>
   screen.queryByRole("menuitem", { name: FILE_PREVIEW_COPY.addFilesLabel });
 
 const fileInput = () =>
-  screen.getByLabelText(FILE_PREVIEW_COPY.attachFileInputLabel);
+  getByLabelText(document.body, FILE_PREVIEW_COPY.attachFileInputLabel, {
+    hidden: true,
+  });
 
 const recentFilesMenuItem = () =>
   screen.getByRole("menuitem", { name: FILE_PREVIEW_COPY.recentFilesLabel });

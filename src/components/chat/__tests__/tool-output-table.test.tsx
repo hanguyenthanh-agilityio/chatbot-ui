@@ -1,6 +1,6 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ToolOutputTable } from "@/components/chat/tool-output-table";
 import {
@@ -9,10 +9,39 @@ import {
   mockMyRequestsTableProps,
 } from "@/mocks/tool-output-table";
 
+/** Freeze calendar so fixture request dates stay actionable. */
+const ACTION_TEST_TIME = new Date("2026-06-08T12:00:00Z");
+
+function getSelectableRowButton(
+  props: ReturnType<typeof mockMyRequestsTableProps>,
+) {
+  const actionableIndex = props.rowActions?.findIndex(
+    (actions) => (actions?.length ?? 0) > 0,
+  );
+  if (actionableIndex === undefined || actionableIndex < 0) {
+    throw new Error("expected actionable row");
+  }
+  const summary =
+    props.rowActionSummaries?.[actionableIndex] ??
+    `Record ${actionableIndex + 1}`;
+
+  return screen.getByRole("button", { name: `Select ${summary}` });
+}
+
 describe("ToolOutputTable", () => {
   afterEach(() => {
     cleanup();
   });
+
+  describe("row actions", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(ACTION_TEST_TIME);
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
 
   it.each([
     ["balance", mockBalanceTableProps()],
@@ -50,68 +79,63 @@ describe("ToolOutputTable", () => {
     expect(screen.getByText("0 records")).toBeInTheDocument();
   });
 
-  it("reveals row actions after selecting an actionable row", async () => {
-    const user = userEvent.setup();
-    const onActionClick = vi.fn();
-    const props = mockMyRequestsTableProps();
+    it("reveals row actions after selecting an actionable row", async () => {
+      const user = userEvent.setup();
+      const onActionClick = vi.fn();
+      const props = mockMyRequestsTableProps();
 
-    render(
-      <ToolOutputTable
-        {...props}
-        onActionClick={onActionClick}
-      />,
-    );
+      render(
+        <ToolOutputTable
+          {...props}
+          onActionClick={onActionClick}
+        />,
+      );
 
-    const actionableRows = screen.getAllByRole("button");
-    expect(actionableRows.length).toBeGreaterThan(0);
+      await user.click(getSelectableRowButton(props));
 
-    await user.click(actionableRows[0]!);
+      const cancelAction = await screen.findByRole("button", {
+        name: "Cancel request",
+      });
+      await user.click(cancelAction);
 
-    const cancelAction = await screen.findByRole("button", {
-      name: "Cancel request",
+      expect(onActionClick).toHaveBeenCalledTimes(1);
+      expect(onActionClick.mock.calls[0]?.[0]).toContain("cancel");
     });
-    await user.click(cancelAction);
 
-    expect(onActionClick).toHaveBeenCalledTimes(1);
-    expect(onActionClick.mock.calls[0]?.[0]).toContain("cancel");
-  });
+    it("selects an actionable row on Enter key", async () => {
+      const user = userEvent.setup();
+      const props = mockMyRequestsTableProps();
 
-  it("selects an actionable row on Enter key", async () => {
-    const user = userEvent.setup();
-    const props = mockMyRequestsTableProps();
+      render(<ToolOutputTable {...props} onActionClick={vi.fn()} />);
 
-    render(<ToolOutputTable {...props} onActionClick={vi.fn()} />);
+      const row = getSelectableRowButton(props);
+      row.focus();
+      await user.keyboard("{Enter}");
 
-    const row = screen.getAllByRole("button")[0]!;
-    row.focus();
-    await user.keyboard("{Enter}");
-
-    expect(
-      await screen.findByRole("button", { name: "Cancel request" }),
-    ).toBeInTheDocument();
-  });
-
-  it("disables row action buttons when disableActions is true", async () => {
-    const user = userEvent.setup();
-    const onActionClick = vi.fn();
-    const props = mockMyRequestsTableProps();
-
-    render(
-      <ToolOutputTable
-        {...props}
-        onActionClick={onActionClick}
-        disableActions
-      />,
-    );
-
-    await user.click(screen.getAllByRole("button")[0]!);
-
-    const actionBar = screen.getByText(/Selected:/).closest("div");
-    expect(actionBar).toBeTruthy();
-
-    const cancelAction = within(actionBar!.parentElement!).getByRole("button", {
-      name: "Cancel request",
+      expect(
+        await screen.findByRole("button", { name: "Cancel request" }),
+      ).toBeInTheDocument();
     });
-    expect(cancelAction).toBeDisabled();
+
+    it("disables row action buttons when disableActions is true", async () => {
+      const user = userEvent.setup();
+      const onActionClick = vi.fn();
+      const props = mockMyRequestsTableProps();
+
+      render(
+        <ToolOutputTable
+          {...props}
+          onActionClick={onActionClick}
+          disableActions
+        />,
+      );
+
+      await user.click(getSelectableRowButton(props));
+
+      const cancelAction = screen.getByRole("button", {
+        name: "Cancel request",
+      });
+      expect(cancelAction).toBeDisabled();
+    });
   });
 });

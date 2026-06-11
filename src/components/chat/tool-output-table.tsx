@@ -296,6 +296,11 @@ export function ToolOutputTable({
                 <div key={`${title}-${rowIndex}`}>
                   <div
                     role={hasRowActions && rowHasActions ? "button" : undefined}
+                    aria-label={
+                      hasRowActions && rowHasActions
+                        ? `Select ${rowSummary}`
+                        : undefined
+                    }
                     tabIndex={hasRowActions && rowHasActions ? 0 : undefined}
                     onClick={
                       hasRowActions && rowHasActions
