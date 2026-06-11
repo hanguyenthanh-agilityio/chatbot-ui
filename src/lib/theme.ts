@@ -9,7 +9,7 @@ import {
 } from "@/constants/theme";
 
 export function isTheme(value: string | null | undefined): value is Theme {
-  return (THEMES as readonly string[]).includes(value ?? "");
+  return THEMES.some((theme) => theme === value);
 }
 
 export function getThemeFromDocument(): Theme {

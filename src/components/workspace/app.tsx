@@ -70,6 +70,7 @@ export function WorkspaceApp({
       <main className="min-h-dvh px-3 py-3 sm:px-5 sm:py-5">
         <div className="mx-auto flex min-h-page-sm w-full max-w-shell flex-col gap-3 sm:min-h-page-md sm:gap-4 lg:flex-row">
           <div
+            data-testid="workspace-hydration-placeholder"
             className={cn(
               "h-chat-viewport w-full rounded-shell border lg:max-w-sm",
               SHELL_BACKDROP_BLUR_28,
@@ -78,6 +79,7 @@ export function WorkspaceApp({
             )}
           />
           <div
+            data-testid="workspace-hydration-placeholder"
             className={cn(
               "h-chat-viewport flex-1 rounded-shell border",
               SHELL_BACKDROP_BLUR_28,

@@ -99,7 +99,7 @@ export const FILE_KIND_BG: Record<FilePreviewKind, string> = {
 
 export const COMPOSER_ATTACH_MENU_PANEL_CLASS = cn(
   "rounded-2xl border shadow-panel backdrop-blur-xl",
-  "border-white/12 bg-slate-900/95",
+  "border-white/12 bg-[var(--palette-shell-dark)]",
   "light:border-app-border light:bg-app-surface-raised light:shadow-panel-sm",
 );
 
@@ -327,6 +327,7 @@ export const FILE_PREVIEW_KIND_MAPS = buildFilePreviewKindMaps(
 export const FILE_PREVIEW_COPY = {
   attachMenuLabel: "Add attachment",
   attachMenuAriaLabel: "Open attachment menu",
+  attachFileInputLabel: "Choose file to attach",
   addFilesLabel: "Add photos & files",
   recentFilesLabel: "Recent files",
   recentFilesEmpty: "No recent files",
