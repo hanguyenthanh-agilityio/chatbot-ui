@@ -7,18 +7,18 @@ import {
 import { cn } from "@/utils/class-name";
 
 const SELECT_DEFAULT_FOCUS_CLASSES =
-  "focus:border-violet-400/55 focus:ring-2 focus:ring-violet-400/20 light:focus:border-sky-400 light:focus:ring-sky-100";
+  "focus:border-violet-400/55 focus:ring-2 focus:ring-violet-400/20 light:focus:border-app-border-emphasis light:focus:ring-amber-700/25";
 
 const SELECT_VARIANT_CLASSES = {
   default:
-    "border border-white/12 bg-white/6 text-white/80 shadow-sm hover:border-white/20 light:border-slate-300 light:bg-white/95 light:text-slate-900 light:hover:border-slate-400",
+    "border border-white/12 bg-white/6 text-white/80 shadow-sm hover:border-white/20 light:border-app-border light:bg-app-field light:text-app-fg light:hover:border-app-border-emphasis",
   subtle:
-    "border border-white/8 bg-white/4 text-white/72 hover:border-white/14 light:border-slate-200 light:bg-slate-50/90 light:text-slate-900 light:hover:border-slate-300",
+    "border border-white/8 bg-white/4 text-white/72 hover:border-white/14 light:border-app-border-subtle light:bg-app-surface-subtle light:text-app-fg-muted light:hover:border-app-border",
   ghost:
-    "border-transparent bg-transparent text-white/80 hover:border-white/12 light:text-slate-900 light:hover:border-slate-200",
+    "border-transparent bg-transparent text-white/80 hover:border-white/12 light:text-app-fg light:hover:border-app-border-subtle",
   panel: cn(
     FORM_FIELD_PANEL_CLASSES,
-    "[&>option]:text-white/80 light:[&>option]:text-slate-900",
+    "[&>option]:text-white/80 light:[&>option]:text-app-fg",
   ),
 } as const;
 
@@ -72,7 +72,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           "pointer-events-none absolute inset-y-0 right-3 flex items-center transition",
           variant === "panel"
             ? "text-white/50 peer-focus:text-violet-300/90 light:text-app-fg-faint light:peer-focus:text-app-accent"
-            : "text-white/50 peer-focus:text-violet-300/90 light:text-slate-500 light:peer-focus:text-sky-500",
+            : "text-white/50 peer-focus:text-violet-300/90 light:text-app-fg-faint light:peer-focus:text-app-accent",
         )}
       >
         <svg

@@ -561,7 +561,7 @@ export function DateRangePickerCard({
                   "relative z-10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs transition",
                   isSelected &&
                     !showHalf &&
-                    "bg-white font-semibold text-slate-900 light:bg-app-accent light:text-white",
+                    "bg-white font-semibold text-stone-900 light:bg-app-accent light:text-white",
                   !isSelected &&
                     isWknd &&
                     cn(
@@ -611,10 +611,10 @@ export function DateRangePickerCard({
                     "relative z-10",
                     isSelected &&
                       !showHalf &&
-                      "font-semibold text-slate-900 light:text-white",
+                      "font-semibold text-stone-900 light:text-white",
                     isSelected &&
                       showHalf &&
-                      "font-semibold text-slate-900 light:text-app-fg",
+                      "font-semibold text-stone-900 light:text-app-fg",
                   )}
                 >
                   {Number(iso.slice(8))}
