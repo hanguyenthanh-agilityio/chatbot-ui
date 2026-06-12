@@ -183,7 +183,7 @@ export function FileVideoIcon({ className, strokeWidth = 1.5, ...props }: IconPr
       {...props}
     >
       <rect x="5" y="7" width="14" height="10" rx="2" />
-      <path d="M11 10.5v5l4.5-2.5L11 10.5z" fill="currentColor" stroke="none" />
+      <path d="M10 9.5v5l4-2.5L10 9.5z" fill="currentColor" stroke="none" />
     </svg>
   );
 }

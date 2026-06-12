@@ -182,13 +182,10 @@ export function FilePreviewPanel({
 
         <div
           className={cn(
-            "flex min-h-0 flex-1 flex-col overflow-hidden py-3",
+            "flex min-h-0 flex-1 flex-col py-3 px-2 sm:px-3",
             isFilePreviewEmbeddedKind(file.kind)
-              ? "px-2 sm:px-3"
-              : cn(
-                  "overflow-y-auto pl-2 pr-0 sm:pl-3",
-                  FILE_PREVIEW_SCROLL_CLASS,
-                ),
+              ? "overflow-hidden"
+              : cn("overflow-y-auto", FILE_PREVIEW_SCROLL_CLASS),
           )}
         >
           <FilePreviewPanelContent file={file} />
